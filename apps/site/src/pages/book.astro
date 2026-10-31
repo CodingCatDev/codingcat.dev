@@ -3,8 +3,36 @@ import Breadcrumbs from "@/components/Breadcrumbs.astro";
 import ExcalidrawDiagram from "@/components/ExcalidrawDiagram.astro";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import { getMultiCalendarAvailableSlots } from "@/lib/google-calendar";
+import { getSanityServerClient } from "@/lib/sanity/write-client";
 
 const searchParams = Astro.url.searchParams;
+const initialPortalToken = searchParams.get("portalToken") || "";
+const initialBookingIdParam = searchParams.get("bookingId") || "";
+const initialPreMeetingFor = searchParams.get("preMeetingFor") || "";
+
+let existingBooking: Record<string, any> | null = null;
+if (initialPortalToken || initialBookingIdParam || initialPreMeetingFor) {
+	try {
+		const { client } = getSanityServerClient();
+		const lookupId = initialBookingIdParam || initialPreMeetingFor;
+		const strippedId = lookupId.replace(/^private\./, "");
+		const privateId = strippedId ? `private.${strippedId}` : "";
+		existingBooking = await client.fetch(
+			`*[_type == "booking" && (
+				($token != "" && (portalToken == $token || legacyPortalToken == $token)) ||
+				($privateId != "" && _id in [$privateId, $strippedId])
+			)][0]`,
+			{
+				token: initialPortalToken,
+				privateId,
+				strippedId,
+			},
+		);
+	} catch {
+		// Non-fatal
+	}
+}
+
 const initialTrack =
 	searchParams.get("track") === "sponsored"
 		? "sponsored"
@@ -12,14 +40,25 @@ const initialTrack =
 			? "full-stack-launch"
 			: searchParams.get("track") === "sponsor-kickoff"
 				? "sponsor-kickoff"
-				: "editorial";
-const initialCompany = searchParams.get("company") || "";
-const initialName = searchParams.get("name") || "";
-const initialEmail = searchParams.get("email") || "";
-const initialPortalToken = searchParams.get("portalToken") || "";
+				: existingBooking?.track === "sponsored"
+					? "sponsored"
+					: "editorial";
+const initialCompany =
+	searchParams.get("company") || existingBooking?.company || "";
+const initialName =
+	searchParams.get("name") || existingBooking?.guestName || "";
+const initialEmail =
+	searchParams.get("email") || existingBooking?.guestEmail || "";
+const initialTopics =
+	searchParams.get("topics") || existingBooking?.topics || "";
+const initialSocialUrl =
+	searchParams.get("socialUrl") || existingBooking?.socialUrl || "";
+const resolvedPortalToken =
+	initialPortalToken || existingBooking?.portalToken || "";
+const resolvedBookingId = existingBooking?._id || initialBookingIdParam || "";
+const alreadySigned = Boolean(existingBooking?.signatureData);
 const initialSlotParam = searchParams.get("slot") || "";
 const initialStartDate = searchParams.get("startDate") || undefined;
-const initialPreMeetingFor = searchParams.get("preMeetingFor") || "";
 
 const [
 	{ slots: upcomingSlots, liveVerified },
@@ -371,7 +410,7 @@ const description =
 							required
 							placeholder="What technologies, architectural challenges, or live demos would you like to cover?"
 							class="w-full rounded-lg border border-border bg-background p-3 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
-						></textarea>
+						>{initialTopics}</textarea>
 					</div>
 
 					<div class="flex flex-col gap-1.5">
@@ -381,6 +420,7 @@ const description =
 						<input
 							type="url"
 							id="guest-url"
+							value={initialSocialUrl}
 							placeholder="https://x.com/yourhandle"
 							class="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
 						/>
@@ -439,7 +479,12 @@ const description =
 				</div>
 
 				<!-- Signature Pad: Dual Mode Canvas / Typed -->
-				<div class="flex flex-col gap-3">
+				{alreadySigned && (
+					<div class="rounded-xl border border-emerald-500/40 bg-emerald-500/10 p-3 text-xs text-emerald-700 dark:text-emerald-300 font-semibold">
+						✓ Your E-SIGN Media Release is already signed and on file for {initialName || "this guest"}. Simply pick your preferred 60-minute recording window above and click Confirm below!
+					</div>
+				)}
+				<div class={alreadySigned ? "hidden flex-col gap-3" : "flex flex-col gap-3"}>
 					<div class="flex items-center justify-between">
 						<span class="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Execute Digital Signature</span>
 						<div class="flex rounded-md border border-border bg-muted p-0.5 text-xs">
@@ -568,7 +613,7 @@ const description =
 	</div>
 </BaseLayout>
 
-<script is:inline define:vars={{ initialTrack, initialPortalToken, initialSlotParam, initialPreMeetingFor }}>
+<script is:inline define:vars={{ initialTrack, initialPortalToken: resolvedPortalToken, initialBookingId: resolvedBookingId, alreadySigned, initialSlotParam, initialPreMeetingFor }}>
 	(function () {
 		let selectedTrack = initialTrack || "editorial";
 		let selectedSlotStart = initialSlotParam || "";
@@ -918,21 +963,23 @@ const description =
 				}
 
 				let signatureData = name;
-				if (signatureMode === "draw") {
-					if (!hasDrawn) {
-						showError("Please provide your freehand signature on the canvas pad.");
-						return;
+				if (!alreadySigned) {
+					if (signatureMode === "draw") {
+						if (!hasDrawn) {
+							showError("Please provide your freehand signature on the canvas pad.");
+							return;
+						}
+						if (canvas && canvas instanceof HTMLCanvasElement) {
+							signatureData = canvas.toDataURL("image/png");
+						}
+					} else {
+						const typedVal = typedInput ? typedInput.value.trim() : "";
+						if (!typedVal) {
+							showError("Please type your name to sign the release.");
+							return;
+						}
+						signatureData = typedVal;
 					}
-					if (canvas && canvas instanceof HTMLCanvasElement) {
-						signatureData = canvas.toDataURL("image/png");
-					}
-				} else {
-					const typedVal = typedInput ? typedInput.value.trim() : "";
-					if (!typedVal) {
-						showError("Please type your name to sign the release.");
-						return;
-					}
-					signatureData = typedVal;
 				}
 
 				btnConfirm.setAttribute("disabled", "true");
@@ -944,6 +991,7 @@ const description =
 						method: "POST",
 						headers: { "Content-Type": "application/json" },
 						body: JSON.stringify({
+							bookingId: initialBookingId || undefined,
 							portalToken: initialPortalToken || undefined,
 							preMeetingForBookingId: initialPreMeetingFor || undefined,
 							guestName: name,
@@ -955,8 +1003,7 @@ const description =
 							requestPreMeeting: wantsPreMeeting,
 							preMeetingSlotStartAt: wantsPreMeeting ? selectedPreMeetingSlotStart : undefined,
 							topics,
-							signatureMode,
-							signatureData,
+							...(alreadySigned ? {} : { signatureMode, signatureData }),
 							consentRecording: chkRecording ? chkRecording.checked : true,
 							consentCommercial: chkCommercial ? chkCommercial.checked : true,
 							consentLikeness: chkLikeness ? chkLikeness.checked : true,

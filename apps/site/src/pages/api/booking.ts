@@ -15,6 +15,7 @@ import {
 } from "@/lib/stripe";
 
 interface BookingPayload {
+	bookingId?: string;
 	guestName?: string;
 	guestEmail?: string;
 	company?: string;
@@ -90,17 +91,44 @@ export const POST: APIRoute = async ({ request, url }) => {
 		);
 	}
 
+	const { client, canWrite } = getSanityServerClient();
+	const existingToken = data.portalToken?.trim();
+	const requestedBookingId =
+		data.bookingId?.trim() || data.preMeetingForBookingId?.trim();
+
+	let existingBookingDoc: Record<string, any> | null = null;
+	if (requestedBookingId || existingToken) {
+		try {
+			const stripped = (requestedBookingId || "").replace(/^private\./, "");
+			const privId = stripped ? `private.${stripped}` : "";
+			existingBookingDoc = await client.fetch(
+				`*[_type == "booking" && (
+					($privId != "" && _id in [$privId, $stripped]) ||
+					($token != "" && (portalToken == $token || legacyPortalToken == $token))
+				)][0]`,
+				{
+					privId,
+					stripped,
+					token: existingToken || "",
+				},
+			);
+		} catch {
+			// Non-fatal
+		}
+	}
+
 	const rawBookingId =
-		data.preMeetingForBookingId?.trim() ||
+		existingBookingDoc?._id ||
+		requestedBookingId ||
 		`booking-${crypto.randomUUID().replace(/-/g, "").slice(0, 16)}`;
 	const bookingId = rawBookingId.startsWith("private.")
 		? rawBookingId
 		: `private.${rawBookingId}`;
-	const existingToken = data.portalToken?.trim();
 	const portalToken =
-		existingToken && existingToken.length > 0
+		existingBookingDoc?.portalToken ||
+		(existingToken && existingToken.length > 0
 			? existingToken
-			: `spt_${crypto.randomUUID().replace(/-/g, "").slice(0, 16)}`;
+			: `spt_${crypto.randomUUID().replace(/-/g, "").slice(0, 16)}`);
 
 	const workerEnv = (env ?? {}) as unknown as Record<
 		string,
@@ -108,8 +136,6 @@ export const POST: APIRoute = async ({ request, url }) => {
 	>;
 	const fallbackOrigin = url?.origin ?? new URL(request.url).origin;
 	const siteUrl = (workerEnv.SITE_URL || fallbackOrigin).replace(/\/$/, "");
-
-	const { client, canWrite } = getSanityServerClient();
 	const queryFallback = new URLSearchParams({
 		bookedSlot: slotStartAt,
 	});
@@ -277,6 +303,34 @@ export const POST: APIRoute = async ({ request, url }) => {
 						...(calendarEvent.meetUrl
 							? { preMeetingMeetUrl: calendarEvent.meetUrl }
 							: {}),
+					})
+					.commit();
+			} else if (existingBookingDoc?._id) {
+				await client
+					.patch(existingBookingDoc._id)
+					.set({
+						guestName,
+						guestEmail,
+						company,
+						...(socialUrl ? { socialUrl } : {}),
+						track,
+						sessionType,
+						status: isKickoff ? "scheduled" : "pending",
+						slotStartAt,
+						recordingUrl: STREAMYARD_STUDIO_URL,
+						topics,
+						appointmentScheduleUrl,
+						...(calendarEvent.eventId
+							? { googleCalendarEventId: calendarEvent.eventId }
+							: {}),
+						...(data.signatureData
+							? {
+									signatureMode,
+									signatureData,
+									signedAt: new Date().toISOString(),
+								}
+							: {}),
+						portalToken,
 					})
 					.commit();
 			} else {

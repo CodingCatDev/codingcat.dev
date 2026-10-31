@@ -567,14 +567,22 @@ const pageDescription = !portalFound
 						: "Select a 45-minute recording window below to block Alex's studio calendar."}
 				</p>
 				{portalData.bookingStatus === "approved" || portalData.bookingStatus === "scheduled" || portalData.bookingStatus === "confirmed" ? (
-					<a
-						href={portalData.recordingUrl || "https://streamyard.com/c4kv26is93"}
-						target="_blank"
-						rel="noopener noreferrer"
-						class="mt-1 px-4 py-2 rounded-lg bg-primary text-primary-foreground text-xs font-bold text-center hover:bg-primary/90 transition-colors"
-					>
-						Enter StreamYard Recording Studio &nearr;
-					</a>
+					<div class="flex flex-wrap gap-2 mt-1">
+						<a
+							href={portalData.recordingUrl || "https://streamyard.com/c4kv26is93"}
+							target="_blank"
+							rel="noopener noreferrer"
+							class="flex-1 px-4 py-2 rounded-lg bg-primary text-primary-foreground text-xs font-bold text-center hover:bg-primary/90 transition-colors"
+						>
+							Enter StreamYard Studio &nearr;
+						</a>
+						<a
+							href="#schedule-section"
+							class="px-3 py-2 rounded-lg border border-primary/40 bg-primary/10 text-primary text-xs font-bold text-center hover:bg-primary/20 transition-colors"
+						>
+							Pick / Change Recording Slot &darr;
+						</a>
+					</div>
 				) : (
 					<span class="text-[11px] font-mono text-muted-foreground">
 						Your private StreamYard studio link unlocks automatically here as soon as Alex approves the recording hold.
@@ -936,21 +944,21 @@ const pageDescription = !portalFound
 							<div class="grid grid-cols-2 gap-2" role="group" aria-label="Select session duration">
 								<button
 									type="button"
-									data-portal-track="sponsor-kickoff"
-									data-portal-duration="15"
-									class="portal-track-btn px-3 py-2 rounded-lg border border-primary bg-primary/5 ring-1 ring-primary text-left transition-all cursor-pointer flex flex-col"
-								>
-									<span class="text-xs font-bold text-foreground">15-Min Kickoff Call</span>
-									<span class="text-[11px] text-muted-foreground">Scoping &amp; architecture sync</span>
-								</button>
-								<button
-									type="button"
-									data-portal-track="sponsored"
+									data-portal-track={portalData.totalAmountCents === 0 ? "editorial" : "sponsored"}
 									data-portal-duration="45"
-									class="portal-track-btn px-3 py-2 rounded-lg border border-border bg-card hover:bg-muted/50 text-left transition-all cursor-pointer flex flex-col"
+									class="portal-track-btn px-3 py-2 rounded-lg border border-primary bg-primary/5 ring-1 ring-primary text-left transition-all cursor-pointer flex flex-col"
 								>
 									<span class="text-xs font-bold text-foreground">45-Min Studio Recording</span>
 									<span class="text-[11px] text-muted-foreground">Podcast &amp; demo session</span>
+								</button>
+								<button
+									type="button"
+									data-portal-track="sponsor-kickoff"
+									data-portal-duration="15"
+									class="portal-track-btn px-3 py-2 rounded-lg border border-border bg-card hover:bg-muted/50 text-left transition-all cursor-pointer flex flex-col"
+								>
+									<span class="text-xs font-bold text-foreground">15-Min Pre-Call / Kickoff</span>
+									<span class="text-[11px] text-muted-foreground">Scoping &amp; architecture sync</span>
 								</button>
 							</div>
 						</div>
@@ -970,7 +978,7 @@ const pageDescription = !portalFound
 						)}
 
 						<!-- 15-Min Kickoff Slots Grid -->
-						<div id="portal-slots-15" class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+						<div id="portal-slots-15" class="hidden grid-cols-1 sm:grid-cols-2 gap-2">
 							{
 								kickoffSlots.map((slot, index) => (
 									<button
@@ -990,7 +998,7 @@ const pageDescription = !portalFound
 						</div>
 
 						<!-- 45-Min Recording Slots Grid -->
-						<div id="portal-slots-45" class="hidden grid-cols-1 sm:grid-cols-2 gap-2">
+						<div id="portal-slots-45" class="grid grid-cols-1 sm:grid-cols-2 gap-2">
 							{
 								recordingSlots.map((slot, index) => (
 									<button
@@ -1024,18 +1032,18 @@ const pageDescription = !portalFound
 					</div>
 
 					<a
-						href={`/book?track=sponsored&portalToken=${encodeURIComponent(portalData.portalToken)}&company=${encodeURIComponent(portalData.companyName)}&name=${encodeURIComponent(portalData.contactName)}&email=${encodeURIComponent(portalData.contactEmail)}`}
+						href={`/book?track=${portalData.totalAmountCents === 0 ? "editorial" : "sponsored"}&portalToken=${encodeURIComponent(portalData.portalToken)}&company=${encodeURIComponent(portalData.companyName)}&name=${encodeURIComponent(portalData.contactName)}&email=${encodeURIComponent(portalData.contactEmail)}`}
 						class="p-4 rounded-xl border border-border bg-background hover:border-primary transition-colors flex items-center justify-between"
 					>
 						<div class="flex flex-col gap-1">
 							<span class="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-								Mandatory Pre-Recording Step
+								Full Calendar Date Picker
 							</span>
 							<span class="text-sm font-bold text-foreground">
-								Complete Guest Intake &amp; E-SIGN Media Release
+								Browse All Dates &amp; Weeks on the Full Booking Page
 							</span>
 							<span class="text-xs text-muted-foreground">
-								Takes 60 seconds &middot; 15 U.S.C. &sect; 7001 E-SIGN compliant
+								Pre-filled with your details &amp; existing E-SIGN release
 							</span>
 						</div>
 						<span class="text-sm font-bold text-primary">&rarr;</span>
@@ -1264,6 +1272,7 @@ const pageDescription = !portalFound
 		contactName: isPortalAuthorized ? portalData.contactName : "",
 		contactEmail: isPortalAuthorized ? portalData.contactEmail : "",
 		tierId: isPortalAuthorized ? portalData.rateCard : "",
+		isEditorialGuest: portalData.totalAmountCents === 0,
 	}}
 >
 	// 0. Better-Auth Studio Portal Sign-In Gate (Email OTP, Magic Link, Google OAuth, Sign-Out)
@@ -1665,8 +1674,8 @@ const pageDescription = !portalFound
 
 	// 1-Click Deal Room Calendar Booking
 	(function () {
-		let activeTrack = "sponsor-kickoff";
-		let activeDuration = 15;
+		let activeTrack = isEditorialGuest ? "editorial" : "sponsored";
+		let activeDuration = 45;
 		let selectedSlot15 = "";
 		let selectedSlot45 = "";
 

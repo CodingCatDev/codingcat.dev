@@ -26,6 +26,7 @@ interface ManageBookingPayload {
 		| "cancel_booking"
 		| "request_pre_meeting"
 		| "schedule_pre_meeting"
+		| "request_recording_slot"
 		| "bypass_pre_meeting"
 		| "reconcile_calendar_holds"
 		| "migrate_private_ids";
@@ -413,6 +414,89 @@ export const POST: APIRoute = async ({ request, url }) => {
 				preMeetingSlotStartAt: preSlot,
 				preMeetingMeetUrl: meetUrl,
 				preMeetingBookUrl,
+				portalToken,
+				portalUrl,
+			}),
+			{ status: 200, headers: CORS_HEADERS },
+		);
+	}
+
+	if (body.action === "request_recording_slot") {
+		const recordingBookUrl = `${siteUrl}/book?portalToken=${encodeURIComponent(portalToken)}&bookingId=${encodeURIComponent(bookingId)}`;
+
+		if (canWrite) {
+			try {
+				await client
+					.patch(bookingId)
+					.set({
+						preMeetingStatus: "completed",
+						portalToken,
+					})
+					.commit();
+			} catch {
+				// Non-fatal
+			}
+		}
+
+		if (guestEmail) {
+			const subject = `Schedule Your CodingCat.dev Podcast Recording + Shared Run-of-Show (${company})`;
+			const text = [
+				`Hi ${guestName},`,
+				"",
+				"Great chatting during our pre-call! Everything is pre-filled and your E-SIGN release is already on file, so you can pick your 60-minute StreamYard recording slot in one click:",
+				"",
+				`1. Pick Your Recording Time Slot: ${recordingBookUrl}`,
+				`2. Shared Run-of-Show & Asset Vault: ${portalUrl}#run-of-show`,
+				"",
+				"On your Studio Portal link above, you can also review or edit our 5-part Run-of-Show outline and drop any repo links, demo URLs, or logos into the Vault.",
+				"",
+				"Looking forward to recording with you!",
+				"Alex Patterson",
+				"Founder, CodingCat.dev",
+			].join("\n");
+
+			const html = `
+				<div style="font-family: Inter, system-ui, sans-serif; max-width: 560px; margin: 0 auto; padding: 28px; background: #0B1326; color: #F8FAFC; border-radius: 16px; border: 2px solid #7C3AED;">
+					<div style="font-family: monospace; font-size: 12px; text-transform: uppercase; letter-spacing: 0.08em; color: #C084FC; font-weight: 700; margin-bottom: 8px;">
+						CodingCat.dev Studio &middot; Next Step After Pre-Call
+					</div>
+					<h1 style="font-size: 22px; font-weight: 800; margin: 0 0 12px; color: #FFFFFF;">
+						Pick Your Podcast Recording Slot
+					</h1>
+					<p style="font-size: 14px; line-height: 1.6; color: #CBD5E1; margin: 0 0 20px;">
+						Hi ${guestName}, great chatting during our pre-call! Your guest details and E-SIGN release are already on file. Click below to pick your 60-minute StreamYard recording window:
+					</p>
+					<div style="margin-bottom: 16px;">
+						<a href="${recordingBookUrl}" style="display: inline-block; background: #7C3AED; color: #FFFFFF; font-weight: 700; font-size: 14px; text-decoration: none; padding: 12px 22px; border-radius: 10px;">
+							1. Pick Your 60-Min Recording Slot &rarr;
+						</a>
+					</div>
+					<div style="margin-bottom: 20px;">
+						<a href="${portalUrl}#run-of-show" style="display: inline-block; background: #131B2E; color: #C084FC; border: 1px solid #7C3AED; font-weight: 700; font-size: 13px; text-decoration: none; padding: 10px 18px; border-radius: 10px;">
+							2. Review / Edit Shared Run-of-Show &amp; Asset Vault &rarr;
+						</a>
+					</div>
+					<p style="font-size: 12px; color: #94A3B8; line-height: 1.5; margin: 0;">
+						Once you pick a slot, I will lock it in on Google Calendar with the StreamYard studio link.
+					</p>
+				</div>
+			`;
+
+			await sendCodingCatEmail({
+				to: guestEmail,
+				subject,
+				text,
+				html,
+			});
+		}
+
+		return new Response(
+			JSON.stringify({
+				ok: true,
+				action: "request_recording_slot",
+				bookingId,
+				preMeetingStatus: "completed",
+				recordingBookUrl,
 				portalToken,
 				portalUrl,
 			}),

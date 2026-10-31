@@ -674,6 +674,7 @@ export function App() {
 			| "approve_recording"
 			| "cancel_booking"
 			| "request_pre_meeting"
+			| "request_recording_slot"
 			| "bypass_pre_meeting",
 	) => {
 		setBusyActionId(`${bookingId}:${action}`);
@@ -698,7 +699,11 @@ export function App() {
 				);
 			} else if (action === "request_pre_meeting") {
 				showFlash(
-					"Flagged booking for a 15-minute Google Meet pre-meeting.",
+					"Sent 15-minute Google Meet pre-call booking email to guest.",
+				);
+			} else if (action === "request_recording_slot") {
+				showFlash(
+					"Sent pre-filled 60m Podcast Recording booking link + Shared Run-of-Show email to guest!",
 				);
 			} else {
 				showFlash("Bypassed 15-minute pre-meeting.");
@@ -3377,6 +3382,28 @@ export function App() {
 																		📅 Request 15m Pre-Call
 																	</button>
 																)}
+															<button
+																type="button"
+																disabled={
+																	busyActionId ===
+																	`${b._id}:request_recording_slot`
+																}
+																onClick={() =>
+																	handleBookingManage(
+																		b._id,
+																		"request_recording_slot",
+																	)
+																}
+																style={{
+																	...btnStyle,
+																	borderColor: "#8b5cf6",
+																	color: "#5b21b6",
+																	background: "#f5f3ff",
+																}}
+																title="Email guest a pre-filled 1-click link to pick their 60m StreamYard recording slot + review the Shared Run-of-Show"
+															>
+																🎙️ Email 60m Recording Link
+															</button>
 															{b.preMeetingStatus === "requested" && (
 																<button
 																	type="button"
