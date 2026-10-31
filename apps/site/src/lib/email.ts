@@ -69,23 +69,40 @@ function buildMimeMessage(opts: {
 	return lines.join("\r\n");
 }
 
+function cleanSecret(val: string | undefined): string {
+	return (val || "").trim().replace(/^["']|["']$/g, "");
+}
+
 async function getGoogleGmailAccessToken(): Promise<string | null> {
 	const workerEnv = (env ?? {}) as unknown as Record<
 		string,
 		string | undefined
 	>;
-	const clientId = workerEnv.GOOGLE_CLIENT_ID || process.env.GOOGLE_CLIENT_ID;
-	const clientSecret =
-		workerEnv.GOOGLE_CLIENT_SECRET || process.env.GOOGLE_CLIENT_SECRET;
-	const refreshTokens = [
-		workerEnv.GOOGLE_REFRESH_TOKEN || process.env.GOOGLE_REFRESH_TOKEN,
-		workerEnv.GOOGLE_WORKSPACE_REFRESH_TOKEN ||
-			process.env.GOOGLE_WORKSPACE_REFRESH_TOKEN,
-	].filter(Boolean) as string[];
+	const clientId = cleanSecret(
+		workerEnv.GOOGLE_CLIENT_ID || process.env.GOOGLE_CLIENT_ID,
+	);
+	const clientSecret = cleanSecret(
+		workerEnv.GOOGLE_CLIENT_SECRET || process.env.GOOGLE_CLIENT_SECRET,
+	);
+	const refreshTokens = Array.from(
+		new Set(
+			[
+				cleanSecret(
+					workerEnv.GOOGLE_WORKSPACE_REFRESH_TOKEN ||
+						process.env.GOOGLE_WORKSPACE_REFRESH_TOKEN,
+				),
+				cleanSecret(
+					workerEnv.GOOGLE_REFRESH_TOKEN || process.env.GOOGLE_REFRESH_TOKEN,
+				),
+			].filter(Boolean),
+		),
+	);
 
 	if (!clientId || !clientSecret || refreshTokens.length === 0) {
 		return null;
 	}
+
+	let fallbackToken: string | null = null;
 
 	for (const refreshToken of refreshTokens) {
 		try {
@@ -105,14 +122,24 @@ async function getGoogleGmailAccessToken(): Promise<string | null> {
 				scope?: string;
 			};
 			if (data.access_token) {
-				return data.access_token;
+				if (
+					data.scope &&
+					(data.scope.includes("gmail.compose") ||
+						data.scope.includes("gmail.send") ||
+						data.scope.includes("mail.google.com"))
+				) {
+					return data.access_token;
+				}
+				if (!fallbackToken) {
+					fallbackToken = data.access_token;
+				}
 			}
 		} catch {
 			// try next token
 		}
 	}
 
-	return null;
+	return fallbackToken;
 }
 
 async function sendViaGmailApi(rawMime: string): Promise<boolean> {
