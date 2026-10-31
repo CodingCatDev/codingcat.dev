@@ -139,6 +139,10 @@ function resolveSocialProviders() {
 		providers.google = {
 			clientId: googleClientId,
 			clientSecret: googleClientSecret,
+			redirectURI:
+				workerEnv.GOOGLE_OAUTH_REDIRECT_URI ||
+				process.env.GOOGLE_OAUTH_REDIRECT_URI ||
+				"https://postiz.codingcat.dev/integrations/social/youtube",
 			prompt: "select_account",
 		};
 	}
@@ -320,9 +324,13 @@ export function getPortalAuth(origin: string, d1?: D1Database) {
 		trustedOrigins: [
 			"https://codingcat.dev",
 			"https://dev.codingcat.dev",
+			"https://postiz.codingcat.dev",
 			origin,
 		],
 		...(db ? { database: db } : {}),
+		account: {
+			skipStateCookieCheck: true,
+		},
 		socialProviders: resolveSocialProviders(),
 		plugins: buildAuthPlugins(origin),
 	});
