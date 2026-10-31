@@ -105,6 +105,15 @@ export async function ensureDefaultUserAndSession(db: D1Database) {
 				"updatedAt" integer NOT NULL
 			)`,
 		),
+		db.prepare(
+			`CREATE TABLE IF NOT EXISTS "jwks" (
+				"id" text PRIMARY KEY NOT NULL,
+				"publicKey" text NOT NULL,
+				"privateKey" text NOT NULL,
+				"createdAt" integer NOT NULL,
+				"expiresAt" integer
+			)`,
+		),
 		db
 			.prepare(
 				`INSERT OR IGNORE INTO user (id, name, email, emailVerified, createdAt, updatedAt)
@@ -155,9 +164,8 @@ function resolveSocialProviders() {
 	return providers;
 }
 
-function buildAuthPlugins(origin: string) {
+function buildPortalAuthPlugins() {
 	return [
-		jwt(),
 		emailOTP({
 			otpLength: 6,
 			expiresIn: 300,
@@ -257,6 +265,13 @@ function buildAuthPlugins(origin: string) {
 				});
 			},
 		}),
+	];
+}
+
+function buildMcpAuthPlugins(origin: string) {
+	return [
+		jwt(),
+		...buildPortalAuthPlugins(),
 		mcp({
 			resource: `${origin}/mcp`,
 			resources: [`${origin}/mcp`, origin],
@@ -295,11 +310,20 @@ export function getAuth(origin: string, d1?: D1Database) {
 		trustedOrigins: [
 			"https://codingcat.dev",
 			"https://dev.codingcat.dev",
+			"https://postiz.codingcat.dev",
 			origin,
 		],
 		...(db ? { database: db } : {}),
+		advanced: {
+			database: {
+				validateSchema: false,
+			},
+		},
+		account: {
+			skipStateCookieCheck: true,
+		},
 		socialProviders: resolveSocialProviders(),
-		plugins: buildAuthPlugins(origin),
+		plugins: buildMcpAuthPlugins(origin),
 	});
 
 	if (!db) {
@@ -328,10 +352,15 @@ export function getPortalAuth(origin: string, d1?: D1Database) {
 			origin,
 		],
 		...(db ? { database: db } : {}),
+		advanced: {
+			database: {
+				validateSchema: false,
+			},
+		},
 		account: {
 			skipStateCookieCheck: true,
 		},
 		socialProviders: resolveSocialProviders(),
-		plugins: buildAuthPlugins(origin),
+		plugins: buildPortalAuthPlugins(),
 	});
 }

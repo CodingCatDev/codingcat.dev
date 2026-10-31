@@ -75,6 +75,9 @@ jobs:
           if [ -n "$GOOGLE_REFRESH_TOKEN" ]; then
             echo "$GOOGLE_REFRESH_TOKEN" | pnpm --filter @codingcatdev/site exec wrangler secret put GOOGLE_REFRESH_TOKEN --env=""
           fi
+          if [ -n "$GOOGLE_WORKSPACE_REFRESH_TOKEN" ]; then
+            echo "$GOOGLE_WORKSPACE_REFRESH_TOKEN" | pnpm --filter @codingcatdev/site exec wrangler secret put GOOGLE_WORKSPACE_REFRESH_TOKEN --env=""
+          fi
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
@@ -87,6 +90,7 @@ jobs:
           GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
           GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
           GOOGLE_REFRESH_TOKEN: ${{ secrets.GOOGLE_REFRESH_TOKEN }}
+          GOOGLE_WORKSPACE_REFRESH_TOKEN: ${{ secrets.GOOGLE_WORKSPACE_REFRESH_TOKEN }}
 
   deploy-production:
     if: github.ref == 'refs/heads/main'
@@ -149,6 +153,9 @@ jobs:
           if [ -n "$GOOGLE_REFRESH_TOKEN" ]; then
             echo "$GOOGLE_REFRESH_TOKEN" | pnpm --filter @codingcatdev/site exec wrangler secret put GOOGLE_REFRESH_TOKEN --env production
           fi
+          if [ -n "$GOOGLE_WORKSPACE_REFRESH_TOKEN" ]; then
+            echo "$GOOGLE_WORKSPACE_REFRESH_TOKEN" | pnpm --filter @codingcatdev/site exec wrangler secret put GOOGLE_WORKSPACE_REFRESH_TOKEN --env production
+          fi
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
@@ -161,3 +168,4 @@ jobs:
           GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
           GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
           GOOGLE_REFRESH_TOKEN: ${{ secrets.GOOGLE_REFRESH_TOKEN }}
+          GOOGLE_WORKSPACE_REFRESH_TOKEN: ${{ secrets.GOOGLE_WORKSPACE_REFRESH_TOKEN }}

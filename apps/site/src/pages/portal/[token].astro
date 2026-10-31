@@ -1314,7 +1314,7 @@ const pageDescription = !portalFound
 			googleBtn.addEventListener("click", async () => {
 				googleBtn.setAttribute("disabled", "true");
 				try {
-					const callbackURL = window.location.pathname + window.location.hash;
+					const callbackURL = window.location.origin + window.location.pathname;
 					const res = await fetch("/api/auth/sign-in/social", {
 						method: "POST",
 						headers: { "Content-Type": "application/json" },
@@ -1415,7 +1415,7 @@ const pageDescription = !portalFound
 				const origText = sendMagicBtn.textContent;
 				sendMagicBtn.textContent = "Sending Magic Link...";
 				try {
-					const callbackURL = window.location.pathname + window.location.hash;
+					const callbackURL = window.location.origin + window.location.pathname;
 					const res = await fetch("/api/auth/sign-in/magic-link", {
 						method: "POST",
 						headers: {
