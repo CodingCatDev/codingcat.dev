@@ -721,7 +721,12 @@ export function App() {
 			const res = await fetch(`${siteOrigin}/api/ops/daily-digest`, {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({ sendEmail: true, to: "alex@codingcat.dev" }),
+				body: JSON.stringify({
+					action: "send_digest",
+					sendEmail: true,
+					force: true,
+					to: "alex@codingcat.dev",
+				}),
 			});
 			const data = await res.json();
 			if (!res.ok) {

@@ -132,6 +132,7 @@ async function fetchUpcomingCalendarEvents(
 
 async function buildAndOptionallySendDigest(opts: {
 	sendEmail: boolean;
+	force?: boolean;
 	recipientEmail?: string;
 	siteOrigin: string;
 }) {
@@ -283,11 +284,46 @@ async function buildAndOptionallySendDigest(opts: {
 	let emailResult: { sent: boolean; provider: string } | null = null;
 
 	if (opts.sendEmail) {
-		emailResult = await sendCodingCatEmail({
-			to: opts.recipientEmail || "alex@codingcat.dev",
-			subject: `[CodingCat.dev Today] ${todayEtStr}: ${pendingHolds.length} Holds, ${upcoming72hBookings.length} Upcoming Recordings, ${actionLeads.length} Deals`,
-			text: emailText,
-		});
+		const digestStateId = "private.opsDigestState";
+		let alreadySentToday = false;
+		if (!opts.force) {
+			try {
+				const lastSentDateEt = await client.fetch<string | null>(
+					`*[_id == $id][0].lastSentDateEt`,
+					{ id: digestStateId },
+				);
+				if (lastSentDateEt === todayEtStr) {
+					alreadySentToday = true;
+				}
+			} catch {
+				// Proceed if state lookup fails
+			}
+		}
+
+		if (alreadySentToday) {
+			emailResult = {
+				sent: false,
+				provider: `skipped-already-sent-${todayEtStr}`,
+			};
+		} else {
+			emailResult = await sendCodingCatEmail({
+				to: opts.recipientEmail || "alex@codingcat.dev",
+				subject: `[CodingCat.dev Today] ${todayEtStr}: ${pendingHolds.length} Holds, ${upcoming72hBookings.length} Upcoming Recordings, ${actionLeads.length} Deals`,
+				text: emailText,
+			});
+			if (emailResult.sent) {
+				try {
+					await client.createOrReplace({
+						_id: digestStateId,
+						_type: "opsDigestState",
+						lastSentDateEt: todayEtStr,
+						lastSentAt: new Date().toISOString(),
+					});
+				} catch {
+					// Ignore state persistence failure
+				}
+			}
+		}
 	}
 
 	return {
@@ -311,11 +347,15 @@ export const GET: APIRoute = async ({ url, request }) => {
 	const sendEmail =
 		url.searchParams.get("sendEmail") === "1" ||
 		url.searchParams.get("sendEmail") === "true";
+	const force =
+		url.searchParams.get("force") === "1" ||
+		url.searchParams.get("force") === "true";
 	const recipientEmail = url.searchParams.get("to") || undefined;
 	const siteOrigin = url.origin || new URL(request.url).origin;
 
 	const payload = await buildAndOptionallySendDigest({
 		sendEmail,
+		force,
 		recipientEmail,
 		siteOrigin,
 	});
@@ -327,23 +367,29 @@ export const GET: APIRoute = async ({ url, request }) => {
 
 export const POST: APIRoute = async ({ url, request }) => {
 	let body: {
-		action?: "patch_doc" | "create_doc" | "delete_doc";
+		action?: "patch_doc" | "create_doc" | "delete_doc" | "send_digest";
 		docId?: string;
 		patch?: Record<string, any>;
+		set?: Record<string, any>;
 		doc?: Record<string, any>;
 		sendEmail?: boolean;
+		force?: boolean;
 		to?: string;
 	} = {};
 	try {
 		body = await request.json();
 	} catch {
-		// Default to sending email on POST
+		// Ignore invalid JSON body
 	}
 
-	if (body.action) {
+	if (body.action && body.action !== "send_digest") {
 		const { client } = getSanityServerClient();
-		if (body.action === "patch_doc" && body.docId && body.patch) {
-			const updated = await client.patch(body.docId).set(body.patch).commit();
+		const patchPayload = body.patch || body.set;
+		if (body.action === "patch_doc" && body.docId && patchPayload) {
+			const updated = await client
+				.patch(body.docId)
+				.set(patchPayload)
+				.commit();
 			return new Response(JSON.stringify({ ok: true, doc: updated }), {
 				status: 200,
 				headers: CORS_HEADERS,
@@ -363,11 +409,22 @@ export const POST: APIRoute = async ({ url, request }) => {
 				headers: CORS_HEADERS,
 			});
 		}
+		return new Response(
+			JSON.stringify({
+				ok: false,
+				error: `Invalid or incomplete payload for action "${body.action}"`,
+			}),
+			{
+				status: 400,
+				headers: CORS_HEADERS,
+			},
+		);
 	}
 
 	const siteOrigin = url.origin || new URL(request.url).origin;
 	const payload = await buildAndOptionallySendDigest({
-		sendEmail: body.sendEmail ?? true,
+		sendEmail: body.sendEmail === true || body.action === "send_digest",
+		force: body.force === true,
 		recipientEmail: body.to,
 		siteOrigin,
 	});
