@@ -221,6 +221,50 @@ export default defineType({
       type: 'string',
     }),
     defineField({
+      name: 'guestSlug',
+      title: 'Linked Guest Slug',
+      type: 'string',
+    }),
+    defineField({
+      name: 'guestDocId',
+      title: 'Linked Guest Document ID',
+      type: 'string',
+    }),
+    defineField({
+      name: 'allowedEmails',
+      title: 'Authorized Portal Emails',
+      type: 'array',
+      of: [{type: 'string'}],
+    }),
+    defineField({
+      name: 'coordinatorEmails',
+      title: 'PR / Coordinator CC Emails',
+      type: 'array',
+      of: [{type: 'string'}],
+    }),
+    defineField({
+      name: 'gmailThreadId',
+      title: 'Canonical Gmail Thread ID',
+      type: 'string',
+      description: 'Canonical Gmail thread ID for all guest lifecycle emails (Portal, Approval, Pre-Call, Run-of-Show).',
+    }),
+    defineField({
+      name: 'gmailMessageId',
+      title: 'Canonical RFC 2822 Message-ID',
+      type: 'string',
+      description: 'RFC 2822 Message-ID header of the root or latest message in the canonical guest thread.',
+    }),
+    defineField({
+      name: 'gmailDraftId',
+      title: 'Active Gmail Draft ID',
+      type: 'string',
+    }),
+    defineField({
+      name: 'gmailSubject',
+      title: 'Canonical Email Subject Line',
+      type: 'string',
+    }),
+    defineField({
       name: 'sponsorLeadRef',
       title: 'Linked Sponsor Lead',
       type: 'reference',

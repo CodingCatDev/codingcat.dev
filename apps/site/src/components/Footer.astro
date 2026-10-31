@@ -159,12 +159,12 @@ const socialLinks = [
 					Get weekly courses, podcast episodes, blog posts, and system diagrams in your inbox.
 				</p>
 				<form
+					id="footer-newsletter-form"
 					class="flex gap-2"
-					action="https://buttondown.email/api/emails/embed-subscribe/codingcatdev"
+					action="https://buttondown.com/api/emails/embed-subscribe/codingcatdev"
 					method="post"
-					target="popupwindow"
 					toolname="subscribe_newsletter"
-					tooldescription="Subscribe to the CodingCat.dev web development newsletter"
+					tooldescription="Subscribe to the CodingCat.dev web development newsletter (The Purrfect Dispatch)"
 				>
 					<label class="sr-only" for="footer-email">Email</label>
 					<input
@@ -185,6 +185,31 @@ const socialLinks = [
 						Join
 					</button>
 				</form>
+				<p
+					id="footer-newsletter-status"
+					role="status"
+					aria-live="polite"
+					class="mt-2 hidden rounded-xl border border-[#7C3AED]/40 bg-white/90 px-3 py-2 text-xs font-bold text-[#2A1155] dark:border-purple-400/40 dark:bg-[#0B1326]/90 dark:text-purple-200"
+				></p>
+				<script is:inline>
+					(() => {
+						const params = new URLSearchParams(window.location.search);
+						const sub = params.get("subscribed");
+						const statusEl = document.getElementById("footer-newsletter-status");
+						if (!statusEl || !sub) return;
+						if (sub === "pending") {
+							statusEl.textContent =
+								"🐾 Almost there! Check your inbox and click the confirmation link to join The Purrfect Dispatch.";
+							statusEl.classList.remove("hidden");
+							statusEl.scrollIntoView({ behavior: "smooth", block: "center" });
+						} else if (sub === "confirmed") {
+							statusEl.textContent =
+								"🎉 You are subscribed to The Purrfect Dispatch! Watch your inbox on Fridays.";
+							statusEl.classList.remove("hidden");
+							statusEl.scrollIntoView({ behavior: "smooth", block: "center" });
+						}
+					})();
+				</script>
 			</div>
 		</div>
 

@@ -72,8 +72,12 @@ export async function ensureMediaLibraryFolders(
 	mediaLibraryId: string,
 	token: string,
 ): Promise<boolean> {
-	if (!mediaLibraryId || !token) return false;
-	if (foldersInitializedForLibrary === mediaLibraryId) return true;
+	if (!mediaLibraryId || !token) {
+		return false;
+	}
+	if (foldersInitializedForLibrary === mediaLibraryId) {
+		return true;
+	}
 
 	const ids = getMediaLibraryFolderIds(mediaLibraryId);
 	const mutations = [
@@ -256,7 +260,7 @@ export async function uploadAndLinkMediaLibraryAsset(params: {
 				"Content-Type": "application/x-www-form-urlencoded",
 				Authorization: `Bearer ${token}`,
 			},
-			body: params.bytes,
+			body: params.bytes as unknown as BodyInit,
 		});
 
 		if (!uploadRes.ok) {

@@ -480,7 +480,7 @@ export const GET: APIRoute = async ({ request }) => {
 
 export const POST: APIRoute = async ({ request }) => {
 	const cfEnv = env as unknown as Record<string, unknown> | undefined;
-	const sanityToken =
+	const _sanityToken =
 		(cfEnv?.SANITY_API_READ_TOKEN as string | undefined) ||
 		(cfEnv?.SANITY_AUTH_TOKEN as string | undefined) ||
 		process.env.SANITY_API_READ_TOKEN ||
@@ -819,7 +819,7 @@ export const POST: APIRoute = async ({ request }) => {
 				await connectSanityContextMcp(cfEnv);
 			mcpClient = connectedMcpClient;
 
-			const mcpGroqTool = rawMcpTools.groq_query;
+			const _mcpGroqTool = rawMcpTools.groq_query;
 			let initialContextOutline = "";
 			let cachedInitialContextResult: unknown;
 

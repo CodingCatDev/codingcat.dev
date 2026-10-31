@@ -55,7 +55,8 @@ export const POST: APIRoute = async ({ request, url }) => {
 			return new Response(
 				JSON.stringify({
 					ok: false,
-					error: "All three appearance release consent checkboxes are required.",
+					error:
+						"All three appearance release consent checkboxes are required.",
 				}),
 				{ status: 400, headers: CORS_HEADERS },
 			);

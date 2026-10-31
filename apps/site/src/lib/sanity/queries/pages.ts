@@ -17,8 +17,10 @@ export const pageQuery =
 }`);
 
 export const coursesQuery =
-	defineQuery(`*[_type == "course"] | order(date asc) {
+	defineQuery(`*[_type == "course" && coalesce(archived, false) != true] | order(coalesce(lastUpdated, date) desc) {
   ${baseFieldsNoContent},
+  archived,
+  lastUpdated,
   youtube,
   videoCloudinary,
   "sectionsCount": count(sections),

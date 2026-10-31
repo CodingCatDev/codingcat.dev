@@ -43,7 +43,9 @@ async function getGoogleCalendarToken(): Promise<string | null> {
 			grant_type: "refresh_token",
 		}),
 	});
-	if (!res.ok) return null;
+	if (!res.ok) {
+		return null;
+	}
 	const data = (await res.json()) as { access_token?: string };
 	return data.access_token ?? null;
 }
@@ -64,13 +66,13 @@ async function fetchUpcomingCalendarEvents(
 	daysAhead = 45,
 ): Promise<MasterScheduleItem[]> {
 	const token = await getGoogleCalendarToken();
-	if (!token) return [];
+	if (!token) {
+		return [];
+	}
 
 	const now = new Date();
 	const timeMin = new Date(now.getTime() - 12 * 3600_000).toISOString();
-	const timeMax = new Date(
-		now.getTime() + daysAhead * 86400_000,
-	).toISOString();
+	const timeMax = new Date(now.getTime() + daysAhead * 86400_000).toISOString();
 
 	const calendars = ["alex@codingcat.dev", "alex.patterson@sanity.io"];
 	const results: MasterScheduleItem[] = [];
@@ -82,7 +84,9 @@ async function fetchUpcomingCalendarEvents(
 					`https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(calId)}/events?timeMin=${encodeURIComponent(timeMin)}&timeMax=${encodeURIComponent(timeMax)}&singleEvents=true&orderBy=startTime&maxResults=120`,
 					{ headers: { Authorization: `Bearer ${token}` } },
 				);
-				if (!res.ok) return;
+				if (!res.ok) {
+					return;
+				}
 				const data = (await res.json()) as {
 					items?: Array<{
 						id?: string;
@@ -98,7 +102,9 @@ async function fetchUpcomingCalendarEvents(
 				for (const item of data.items || []) {
 					const startAt = item.start?.dateTime || item.start?.date;
 					const endAt = item.end?.dateTime || item.end?.date;
-					if (!startAt || !endAt || item.status === "cancelled") continue;
+					if (!startAt || !endAt || item.status === "cancelled") {
+						continue;
+					}
 					// Skip duplicate private shadow blocks from alex.patterson@sanity.io in the master feed
 					// since alex@codingcat.dev already has the primary booking event
 					if (
@@ -205,7 +211,9 @@ async function buildAndOptionallySendDigest(opts: {
 		(b) => b.status === "pending",
 	);
 	const upcoming72hBookings = (data.bookings || []).filter((b) => {
-		if (!b.slotStartAt) return false;
+		if (!b.slotStartAt) {
+			return false;
+		}
 		const ms = new Date(b.slotStartAt).getTime();
 		return ms >= now.getTime() - 4 * 3600_000 && ms <= next72hMs;
 	});
@@ -226,7 +234,9 @@ async function buildAndOptionallySendDigest(opts: {
 	);
 
 	const fmtTime = (iso?: string) => {
-		if (!iso) return "Unscheduled";
+		if (!iso) {
+			return "Unscheduled";
+		}
 		try {
 			return new Date(iso).toLocaleString("en-US", {
 				weekday: "short",
@@ -289,7 +299,7 @@ async function buildAndOptionallySendDigest(opts: {
 		if (!opts.force) {
 			try {
 				const lastSentDateEt = await client.fetch<string | null>(
-					`*[_id == $id][0].lastSentDateEt`,
+					"*[_id == $id][0].lastSentDateEt",
 					{ id: digestStateId },
 				);
 				if (lastSentDateEt === todayEtStr) {
@@ -386,10 +396,7 @@ export const POST: APIRoute = async ({ url, request }) => {
 		const { client } = getSanityServerClient();
 		const patchPayload = body.patch || body.set;
 		if (body.action === "patch_doc" && body.docId && patchPayload) {
-			const updated = await client
-				.patch(body.docId)
-				.set(patchPayload)
-				.commit();
+			const updated = await client.patch(body.docId).set(patchPayload).commit();
 			return new Response(JSON.stringify({ ok: true, doc: updated }), {
 				status: 200,
 				headers: CORS_HEADERS,

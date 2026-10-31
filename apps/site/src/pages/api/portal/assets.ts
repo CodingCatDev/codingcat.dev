@@ -3,7 +3,10 @@ import {
 	extractPortalAllowedEmails,
 	verifyPortalRequestAuth,
 } from "@/lib/portal-security";
-import { uploadAndLinkMediaLibraryAsset } from "@/lib/sanity/media-library";
+import {
+	DEFAULT_MEDIA_LIBRARY_ID,
+	uploadAndLinkMediaLibraryAsset,
+} from "@/lib/sanity/media-library";
 import { getSanityServerClient } from "@/lib/sanity/write-client";
 
 const CORS_HEADERS = {
@@ -28,7 +31,9 @@ export async function ensureSanityMediaTags(
 			.replace(/[^a-z0-9:-]/g, "-")
 			.replace(/-+/g, "-")
 			.slice(0, 64);
-		if (!slug) continue;
+		if (!slug) {
+			continue;
+		}
 		const tagId = `media-tag-${slug.replace(/:/g, "-")}`;
 		try {
 			await client.createIfNotExists({
@@ -103,7 +108,8 @@ export const GET: APIRoute = async ({ request, url }) => {
 		return new Response(
 			JSON.stringify({
 				ok: false,
-				message: "Please unlock the studio portal with your invited email to download private vault assets.",
+				message:
+					"Please unlock the studio portal with your invited email to download private vault assets.",
 			}),
 			{
 				status: 403,
@@ -113,21 +119,30 @@ export const GET: APIRoute = async ({ request, url }) => {
 	}
 
 	const assetDoc = await client.fetch<{
+		_type?: string;
 		url?: string;
+		path?: string;
 		originalFilename?: string;
 		mimeType?: string;
+		source?: { id?: string; name?: string };
 	} | null>(
 		`*[_id == $assetId && _type in ["sanity.fileAsset", "sanity.imageAsset"]][0]{
+			_type,
 			url,
+			path,
 			originalFilename,
-			mimeType
+			mimeType,
+			source
 		}`,
 		{ assetId },
 	);
 
 	if (!assetDoc?.url) {
 		return new Response(
-			JSON.stringify({ ok: false, message: "Asset not found in Media Library" }),
+			JSON.stringify({
+				ok: false,
+				message: "Asset not found in Media Library",
+			}),
 			{
 				status: 404,
 				headers: { ...CORS_HEADERS, "Content-Type": "application/json" },
@@ -135,7 +150,18 @@ export const GET: APIRoute = async ({ request, url }) => {
 		);
 	}
 
-	const upstream = await fetch(assetDoc.url);
+	const pathBasename = assetDoc.path?.split("/").pop();
+	const mediaLibraryUrl =
+		assetDoc.source?.name === "sanity-media-library" && pathBasename
+			? `https://cdn.sanity.io/media-libraries/${DEFAULT_MEDIA_LIBRARY_ID}/${
+					assetDoc._type === "sanity.imageAsset" ? "images" : "files"
+				}/${pathBasename}`
+			: null;
+
+	let upstream = mediaLibraryUrl ? await fetch(mediaLibraryUrl) : null;
+	if (!upstream || !upstream.ok || !upstream.body) {
+		upstream = await fetch(assetDoc.url);
+	}
 	if (!upstream.ok || !upstream.body) {
 		return new Response("Failed to stream asset", {
 			status: 502,

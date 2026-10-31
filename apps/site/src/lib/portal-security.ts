@@ -31,7 +31,9 @@ const FORBIDDEN_GROQ_IDENTIFIERS = [
  * trendSignal, draft, or system documents/fields.
  */
 export function isForbiddenPrivateQuery(query: string): boolean {
-	if (!query || typeof query !== "string") return true;
+	if (!query || typeof query !== "string") {
+		return true;
+	}
 	const normalized = query.toLowerCase();
 	for (const term of FORBIDDEN_GROQ_IDENTIFIERS) {
 		if (normalized.includes(term.toLowerCase())) {
@@ -46,7 +48,9 @@ export function isForbiddenPrivateQuery(query: string): boolean {
  * (`private.*`, `drafts.*`, `trend.*`, `versions.*`, `_.**`).
  */
 export function isForbiddenDocumentId(documentId: string): boolean {
-	if (!documentId || typeof documentId !== "string") return true;
+	if (!documentId || typeof documentId !== "string") {
+		return true;
+	}
 	const id = documentId.trim().toLowerCase();
 	return (
 		id.startsWith("private.") ||
@@ -96,7 +100,9 @@ export function extractPortalAllowedEmails(
 ): string[] {
 	const out = new Set<string>();
 	for (const doc of docs) {
-		if (!doc || typeof doc !== "object") continue;
+		if (!doc || typeof doc !== "object") {
+			continue;
+		}
 		const rawStrings = [
 			doc.guestEmail,
 			doc.contactEmail,
@@ -105,10 +111,12 @@ export function extractPortalAllowedEmails(
 			...(Array.isArray(doc.allowedEmails) ? doc.allowedEmails : []),
 		];
 		for (const item of rawStrings) {
-			if (typeof item !== "string") continue;
+			if (typeof item !== "string") {
+				continue;
+			}
 			for (const part of item.split(/[,;\s]+/)) {
 				const clean = part.trim().toLowerCase();
-				if (clean && clean.includes("@")) {
+				if (clean?.includes("@")) {
 					out.add(clean);
 				}
 			}
@@ -127,25 +135,41 @@ export function isAllowedPortalEmail(
 	allowedEmails: Array<string | undefined | null>,
 ): boolean {
 	const cleanCandidate = (candidateEmail || "").trim().toLowerCase();
-	if (!cleanCandidate || !cleanCandidate.includes("@")) return false;
-	if (cleanCandidate === "explorer@codingcat.dev") return false;
-	if (HOST_ADMIN_EMAILS.has(cleanCandidate)) return true;
+	if (!cleanCandidate || !cleanCandidate.includes("@")) {
+		return false;
+	}
+	if (cleanCandidate === "explorer@codingcat.dev") {
+		return false;
+	}
+	if (HOST_ADMIN_EMAILS.has(cleanCandidate)) {
+		return true;
+	}
 
 	const candidateDomain = cleanCandidate.split("@")[1] || "";
 
 	for (const rawAllowed of allowedEmails) {
-		if (!rawAllowed) continue;
+		if (!rawAllowed) {
+			continue;
+		}
 		for (const part of String(rawAllowed).split(/[,;\s]+/)) {
 			const cleanAllowed = part.trim().toLowerCase();
-			if (!cleanAllowed || !cleanAllowed.includes("@")) continue;
-			if (cleanCandidate === cleanAllowed) return true;
+			if (!cleanAllowed || !cleanAllowed.includes("@")) {
+				continue;
+			}
+			if (cleanCandidate === cleanAllowed) {
+				return true;
+			}
 
 			// Allow teammates from the same corporate email domain (e.g. @mastra.ai, @fusionauth.io, @aws.com <-> @amazon.com)
 			const allowedDomain = cleanAllowed.split("@")[1] || "";
 			if (allowedDomain && !PUBLIC_EMAIL_DOMAINS.has(allowedDomain)) {
-				if (candidateDomain === allowedDomain) return true;
+				if (candidateDomain === allowedDomain) {
+					return true;
+				}
 				const aliases = CORPORATE_DOMAIN_ALIASES[allowedDomain] || [];
-				if (aliases.includes(candidateDomain)) return true;
+				if (aliases.includes(candidateDomain)) {
+					return true;
+				}
 			}
 		}
 	}
@@ -158,9 +182,13 @@ export function isAllowedPortalEmail(
  */
 export function maskEmailAddress(email?: string | null): string {
 	const clean = (email || "").trim();
-	if (!clean || !clean.includes("@")) return "your invited email address";
+	if (!clean || !clean.includes("@")) {
+		return "your invited email address";
+	}
 	const [local, domain] = clean.split("@");
-	if (!local || !domain) return "your invited email address";
+	if (!local || !domain) {
+		return "your invited email address";
+	}
 	if (local.length <= 2) {
 		return `${local[0] || "*"}***@${domain}`;
 	}
@@ -202,7 +230,12 @@ export async function verifyPortalRequestAuth(opts: {
 		const email = sessionUser?.email?.trim().toLowerCase() || "";
 		const isVerified = Boolean(sessionUser?.emailVerified);
 
-		if (!sessionUser || !email || email === "explorer@codingcat.dev" || !isVerified) {
+		if (
+			!sessionUser ||
+			!email ||
+			email === "explorer@codingcat.dev" ||
+			!isVerified
+		) {
 			return {
 				authorized: false,
 				authenticated: false,

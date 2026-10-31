@@ -9,21 +9,53 @@ type Builder = ReturnType<typeof createImageUrlBuilder>;
 
 const builders = new Map<string, Builder>();
 
-function builderFor({ projectId, dataset }: SanityConfig): Builder {
-	const key = `${projectId}:${dataset}`;
+function builderFor(
+	{ projectId, dataset }: SanityConfig,
+	mediaLibraryId?: string,
+): Builder {
+	const key = mediaLibraryId
+		? `ml:${mediaLibraryId}`
+		: `${projectId}:${dataset}`;
 	let b = builders.get(key);
 	if (!b) {
-		b = createImageUrlBuilder({ projectId, dataset });
+		b = createImageUrlBuilder(
+			mediaLibraryId
+				? ({ mediaLibraryId } as unknown as {
+						projectId: string;
+						dataset: string;
+					})
+				: { projectId, dataset },
+		);
 		builders.set(key, b);
 	}
 	return b;
 }
 
+function extractMediaLibraryId(
+	source: SanityImageSource | undefined,
+): string | undefined {
+	if (!source || typeof source !== "object") {
+		return undefined;
+	}
+	const mediaRef = stegaClean(
+		(source as { media?: { _ref?: string } })?.media?._ref,
+	);
+	if (typeof mediaRef === "string" && mediaRef.startsWith("media-library:")) {
+		const [, libraryId] = mediaRef.split(":");
+		if (libraryId) {
+			return libraryId;
+		}
+	}
+	return undefined;
+}
+
 /**
  * Consolidated from the Next app, which had two divergent copies: a bare one in
  * sanity/lib/image.ts and one in sanity/lib/utils.ts that added
- * `.auto("format").fit("max")`. The latter behaviour wins — auto=format is what
- * serves WebP/AVIF.
+ * `.auto("format").fit("max")`. Auto=format serves WebP/AVIF.
+ *
+ * When an image includes a `media` globalDocumentReference (`media-library:mlttp0BZbCpV:<assetId>`),
+ * URLs are served directly from the Sanity Media Library CDN (`https://cdn.sanity.io/media-libraries/mlttp0BZbCpV/images/...`).
  */
 export function urlForImage(
 	config: SanityConfig,
@@ -32,7 +64,11 @@ export function urlForImage(
 	if (!source || !(source as { asset?: unknown })?.asset) {
 		return undefined;
 	}
-	return builderFor(config).image(source).auto("format").fit("max");
+	const mediaLibraryId = extractMediaLibraryId(source);
+	return builderFor(config, mediaLibraryId)
+		.image(source)
+		.auto("format")
+		.fit("max");
 }
 
 export function resolveOpenGraphImage(

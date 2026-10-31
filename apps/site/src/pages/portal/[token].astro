@@ -87,6 +87,8 @@ interface LeadPortalData {
 	hasSignedRelease?: boolean;
 	signedAt?: string;
 	signatureMode?: string;
+	signatureData?: string;
+	guestProfileExists?: boolean;
 	guestSlug?: string;
 	guestTitle?: string;
 	guestAvatarUrl?: string;
@@ -281,6 +283,7 @@ try {
 				_id: string;
 				title?: string;
 				slug?: { current?: string };
+				coverImage?: Record<string, any>;
 				avatarUrl?: string;
 				excerpt?: string;
 				content?: unknown[];
@@ -295,6 +298,7 @@ try {
 					_id,
 					title,
 					slug,
+					coverImage,
 					"avatarUrl": coverImage.asset->url,
 					excerpt,
 					content,
@@ -310,6 +314,16 @@ try {
 				},
 			)
 			.catch(() => null);
+		if (guestProfileDoc?.coverImage) {
+			const mlAvatarUrl = Astro.locals.sanity
+				.urlForImage(guestProfileDoc.coverImage as never)
+				?.width(400)
+				.height(400)
+				.url();
+			if (mlAvatarUrl) {
+				guestProfileDoc.avatarUrl = mlAvatarUrl;
+			}
+		}
 
 		const tier = resolveSponsorTier(doc?.rateCard || fallbackTier.id);
 		const combinedAssets = [
@@ -1091,7 +1105,7 @@ const pageDescription = !portalFound
 								rows="4"
 								placeholder="Write 1 to 3 short paragraphs about what you build, your role, and what developers should check out..."
 								class="w-full rounded-xl border border-border bg-background p-3 text-xs text-foreground leading-relaxed focus:outline-none focus:ring-2 focus:ring-primary"
-							>{portalData.guestAboutHtml
+							>{(portalData.guestAboutHtml || "")
 								.replace(/<\/p>\s*<p>/gi, "\n\n")
 								.replace(/<br\s*\/?>/gi, "\n")
 								.replace(/<[^>]+>/g, "")
@@ -1115,7 +1129,7 @@ const pageDescription = !portalFound
 									type="url"
 									id={`gp-social-${field.key}`}
 									data-social-key={field.key}
-									value={portalData.guestSocials[field.key] || ""}
+									value={portalData.guestSocials?.[field.key] || ""}
 									placeholder={field.placeholder}
 									class="gp-social-input rounded-lg border border-border bg-background px-2.5 py-1.5 text-xs font-mono text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
 								/>

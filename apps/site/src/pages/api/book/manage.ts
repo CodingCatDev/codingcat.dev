@@ -1,6 +1,10 @@
 import { env } from "cloudflare:workers";
 import type { APIRoute } from "astro";
-import { sendCodingCatEmail } from "@/lib/email";
+import {
+	buildCanonicalPodcastBookingSubject,
+	buildPodcastPortalEmailCard,
+	sendCodingCatEmailDetailed,
+} from "@/lib/email";
 import {
 	approveGoogleCalendarRecordingEvent,
 	cancelGoogleCalendarBookingEvent,
@@ -60,7 +64,10 @@ export const POST: APIRoute = async ({ request, url }) => {
 	if (body.action === "migrate_private_ids") {
 		if (!canWrite) {
 			return new Response(
-				JSON.stringify({ ok: false, message: "Sanity write token unavailable" }),
+				JSON.stringify({
+					ok: false,
+					message: "Sanity write token unavailable",
+				}),
 				{ status: 500, headers: CORS_HEADERS },
 			);
 		}
@@ -69,10 +76,16 @@ export const POST: APIRoute = async ({ request, url }) => {
 		);
 		const migratedIds: string[] = [];
 		const deletedIds: string[] = [];
-		const rotatedTokens: Array<{ id: string; legacyToken: string; newToken: string }> = [];
+		const rotatedTokens: Array<{
+			id: string;
+			legacyToken: string;
+			newToken: string;
+		}> = [];
 		for (const d of publicDocs || []) {
 			const oldId = String(d._id || "");
-			if (!oldId || oldId.startsWith("private.")) continue;
+			if (!oldId || oldId.startsWith("private.")) {
+				continue;
+			}
 			const newId = `private.${oldId}`;
 			const { _rev, ...rest } = d;
 			await client.createOrReplace({
@@ -103,7 +116,9 @@ export const POST: APIRoute = async ({ request, url }) => {
 			if (isPredictable) {
 				const hashBuf = await crypto.subtle.digest(
 					"SHA-256",
-					new TextEncoder().encode(`codingcat-portal-token:${doc._id}:${token}`),
+					new TextEncoder().encode(
+						`codingcat-portal-token:${doc._id}:${token}`,
+					),
 				);
 				const suffix = Array.from(new Uint8Array(hashBuf))
 					.map((b) => b.toString(16).padStart(2, "0"))
@@ -176,7 +191,10 @@ export const POST: APIRoute = async ({ request, url }) => {
 	if (body.action === "reconcile_calendar_holds") {
 		if (!canWrite) {
 			return new Response(
-				JSON.stringify({ ok: false, message: "Sanity write token unavailable" }),
+				JSON.stringify({
+					ok: false,
+					message: "Sanity write token unavailable",
+				}),
 				{ status: 500, headers: CORS_HEADERS },
 			);
 		}
@@ -195,16 +213,23 @@ export const POST: APIRoute = async ({ request, url }) => {
 			} else if (doc._id && doc._type === "guest") {
 				const { avatarImageUrl, ...guestFields } = doc;
 				let coverImage = guestFields.coverImage;
-				if (!coverImage && typeof avatarImageUrl === "string" && avatarImageUrl.startsWith("http")) {
+				if (
+					!coverImage &&
+					typeof avatarImageUrl === "string" &&
+					avatarImageUrl.startsWith("http")
+				) {
 					try {
 						const imgRes = await fetch(avatarImageUrl);
 						if (imgRes.ok) {
-							const contentType = imgRes.headers.get("content-type") || "image/jpeg";
+							const contentType =
+								imgRes.headers.get("content-type") || "image/jpeg";
 							const arrayBuf = await imgRes.arrayBuffer();
 							const asset = await client.assets.upload(
 								"image",
 								new Blob([arrayBuf], { type: contentType }),
-								{ filename: `${String(doc._id).replace(/[^a-z0-9-_]/gi, "-")}.jpg` },
+								{
+									filename: `${String(doc._id).replace(/[^a-z0-9-_]/gi, "-")}.jpg`,
+								},
 							);
 							if (asset?._id) {
 								coverImage = {
@@ -231,7 +256,9 @@ export const POST: APIRoute = async ({ request, url }) => {
 			if (p.id && p.set) {
 				const targetIds = [
 					p.id,
-					p.id.startsWith("private.") ? p.id.replace(/^private\./, "") : `private.${p.id}`,
+					p.id.startsWith("private.")
+						? p.id.replace(/^private\./, "")
+						: `private.${p.id}`,
 				];
 				for (const tid of targetIds) {
 					try {
@@ -243,10 +270,10 @@ export const POST: APIRoute = async ({ request, url }) => {
 				}
 			}
 		}
-		return new Response(
-			JSON.stringify({ ok: true, created, patched }),
-			{ status: 200, headers: CORS_HEADERS },
-		);
+		return new Response(JSON.stringify({ ok: true, created, patched }), {
+			status: 200,
+			headers: CORS_HEADERS,
+		});
 	}
 
 	const rawBookingId = body.bookingId?.trim();
@@ -296,6 +323,20 @@ export const POST: APIRoute = async ({ request, url }) => {
 	const siteUrl = (workerEnv.SITE_URL || fallbackOrigin).replace(/\/$/, "");
 	const portalUrl = `${siteUrl}/portal/${portalToken}`;
 
+	const canonicalSubject =
+		(doc?.gmailSubject as string | undefined) ||
+		buildCanonicalPodcastBookingSubject(guestName, company);
+	const existingThreadId = doc?.gmailThreadId as string | undefined;
+	const existingMessageId = doc?.gmailMessageId as string | undefined;
+	const coordinatorEmails = Array.isArray(doc?.coordinatorEmails)
+		? (doc.coordinatorEmails as string[])
+		: undefined;
+	const runOfShowLines =
+		typeof doc?.runOfShowNotes === "string" &&
+		doc.runOfShowNotes.trim().length > 0
+			? doc.runOfShowNotes.trim().split("\n")
+			: undefined;
+
 	if (body.action === "approve_recording") {
 		const approved = await approveGoogleCalendarRecordingEvent({
 			eventId: googleCalendarEventId,
@@ -313,11 +354,60 @@ export const POST: APIRoute = async ({ request, url }) => {
 			status: "approved",
 			recordingUrl: STREAMYARD_STUDIO_URL,
 			portalToken,
+			gmailSubject: canonicalSubject,
 			...(approved.eventId ? { googleCalendarEventId: approved.eventId } : {}),
 			...(approved.htmlLink
 				? { appointmentScheduleUrl: approved.htmlLink }
 				: {}),
 		};
+
+		if (guestEmail) {
+			const formattedSlot = new Date(slotStartAt).toLocaleString("en-US", {
+				dateStyle: "full",
+				timeStyle: "short",
+				timeZone: "America/New_York",
+			});
+
+			const card = buildPodcastPortalEmailCard({
+				guestName,
+				company,
+				statusBadge: "CodingCat.dev Studio · Recording Approved & Confirmed",
+				headline: "Your CodingCat.dev Podcast Session Is Confirmed!",
+				introParagraph:
+					"your CodingCat.dev Podcast recording session is approved and locked in on Google Calendar! Use your Studio Portal below to review our 5-part Run-of-Show, update your speaker profile, or drop any demo assets into the Vault before we go live.",
+				slotSummary: `${formattedSlot} ET (60 min)`,
+				portalUrl,
+				primaryCtaLabel: "Open Your Studio Portal ->",
+				primaryCtaUrl: portalUrl,
+				secondaryCtaLabel: "Join StreamYard Studio ->",
+				secondaryCtaUrl: STREAMYARD_STUDIO_URL,
+				runOfShowLines,
+			});
+
+			const emailRes = await sendCodingCatEmailDetailed({
+				to: guestEmail,
+				cc: coordinatorEmails,
+				subject: existingThreadId
+					? `Re: ${canonicalSubject}`
+					: canonicalSubject,
+				text: card.text,
+				html: card.html,
+				...(existingThreadId ? { threadId: existingThreadId } : {}),
+				...(existingMessageId
+					? {
+							inReplyTo: existingMessageId,
+							references: existingMessageId,
+						}
+					: {}),
+			});
+
+			if (emailRes.threadId) {
+				patchFields.gmailThreadId = emailRes.threadId;
+			}
+			if (emailRes.rfc822MessageId) {
+				patchFields.gmailMessageId = emailRes.rfc822MessageId;
+			}
+		}
 
 		if (canWrite) {
 			try {
@@ -325,26 +415,6 @@ export const POST: APIRoute = async ({ request, url }) => {
 			} catch {
 				// Non-fatal
 			}
-		}
-
-		if (guestEmail) {
-			await sendCodingCatEmail({
-				to: guestEmail,
-				subject: `Approved: CodingCat.dev Podcast Recording & Studio Link (${company})`,
-				text: [
-					`Hi ${guestName},`,
-					"",
-					`Your CodingCat.dev Podcast recording session is approved and confirmed on Google Calendar!`,
-					"",
-					`Scheduled Time: ${new Date(slotStartAt).toLocaleString("en-US", { dateStyle: "full", timeStyle: "short", timeZone: "America/New_York" })} ET`,
-					`StreamYard Recording Studio: ${STREAMYARD_STUDIO_URL}`,
-					`Deal Room & Asset Vault (Drop logos, slides, or talking points): ${portalUrl}#vault`,
-					"",
-					"Looking forward to recording with you!",
-					"Alex Patterson",
-					"Founder, CodingCat.dev",
-				].join("\n"),
-			});
 		}
 
 		return new Response(
@@ -355,9 +425,11 @@ export const POST: APIRoute = async ({ request, url }) => {
 				status: "approved",
 				recordingUrl: STREAMYARD_STUDIO_URL,
 				googleCalendarEventId: approved.eventId || googleCalendarEventId,
-				appointmentScheduleUrl: approved.htmlLink || doc?.appointmentScheduleUrl,
+				appointmentScheduleUrl:
+					approved.htmlLink || doc?.appointmentScheduleUrl,
 				portalToken,
 				portalUrl,
+				gmailThreadId: patchFields.gmailThreadId || existingThreadId,
 			}),
 			{ status: 200, headers: CORS_HEADERS },
 		);
@@ -390,52 +462,82 @@ export const POST: APIRoute = async ({ request, url }) => {
 		const nextPreStatus = preSlot ? "scheduled" : "requested";
 		const preMeetingBookUrl = `${siteUrl}/book?track=sponsor-kickoff&preMeetingFor=${encodeURIComponent(bookingId)}&portalToken=${encodeURIComponent(portalToken)}&company=${encodeURIComponent(company)}&name=${encodeURIComponent(guestName)}&email=${encodeURIComponent(guestEmail)}`;
 
-		if (canWrite) {
-			try {
-				await client
-					.patch(bookingId)
-					.set({
-						preMeetingStatus: nextPreStatus,
-						portalToken,
-						...(preSlot ? { preMeetingSlotStartAt: preSlot } : {}),
-						...(meetUrl ? { preMeetingMeetUrl: meetUrl } : {}),
-						...(preEventId ? { preMeetingGoogleEventId: preEventId } : {}),
-					})
-					.commit();
-			} catch {
-				// Non-fatal
+		const prePatchFields: Record<string, unknown> = {
+			preMeetingStatus: nextPreStatus,
+			portalToken,
+			gmailSubject: canonicalSubject,
+			...(preSlot ? { preMeetingSlotStartAt: preSlot } : {}),
+			...(meetUrl ? { preMeetingMeetUrl: meetUrl } : {}),
+			...(preEventId ? { preMeetingGoogleEventId: preEventId } : {}),
+		};
+
+		if (guestEmail) {
+			const formattedPreSlot = preSlot
+				? `${new Date(preSlot).toLocaleString("en-US", {
+						dateStyle: "full",
+						timeStyle: "short",
+						timeZone: "America/New_York",
+					})} ET (15 min)`
+				: undefined;
+
+			const card = buildPodcastPortalEmailCard({
+				guestName,
+				company,
+				statusBadge: preSlot
+					? "CodingCat.dev Studio · 15-Minute Pre-Call Confirmed"
+					: "CodingCat.dev Studio · 15-Minute Pre-Call Invited",
+				headline: preSlot
+					? "15-Minute Google Meet Pre-Call Confirmed"
+					: "Let's Grab a Quick 15-Minute Google Meet Pre-Call",
+				introParagraph: preSlot
+					? "your 15-minute Google Meet pre-call with Alex Patterson is confirmed! You can open your Studio Portal anytime to review our shared outline and upload any assets."
+					: "before we lock in the final StreamYard recording script, let's jump on a quick 15-minute Google Meet pre-call to align on talking points and live demo flow.",
+				slotSummary: formattedPreSlot,
+				portalUrl,
+				primaryCtaLabel: preSlot
+					? "Open Your Studio Portal ->"
+					: "Pick a 15-Min Pre-Call Slot ->",
+				primaryCtaUrl: preSlot ? portalUrl : preMeetingBookUrl,
+				secondaryCtaLabel: preSlot
+					? meetUrl
+						? "Join Google Meet ->"
+						: undefined
+					: "Open Your Studio Portal ->",
+				secondaryCtaUrl: preSlot ? meetUrl : portalUrl,
+				runOfShowLines,
+			});
+
+			const emailRes = await sendCodingCatEmailDetailed({
+				to: guestEmail,
+				cc: coordinatorEmails,
+				subject: existingThreadId
+					? `Re: ${canonicalSubject}`
+					: canonicalSubject,
+				text: card.text,
+				html: card.html,
+				...(existingThreadId ? { threadId: existingThreadId } : {}),
+				...(existingMessageId
+					? {
+							inReplyTo: existingMessageId,
+							references: existingMessageId,
+						}
+					: {}),
+			});
+
+			if (emailRes.threadId) {
+				prePatchFields.gmailThreadId = emailRes.threadId;
+			}
+			if (emailRes.rfc822MessageId) {
+				prePatchFields.gmailMessageId = emailRes.rfc822MessageId;
 			}
 		}
 
-		if (guestEmail) {
-			await sendCodingCatEmail({
-				to: guestEmail,
-				subject: preSlot
-					? `Google Meet Pre-Call Confirmed: ${company} × CodingCat.dev`
-					: `Quick 15-Min Google Meet Pre-Call for CodingCat.dev (${company})`,
-				text: preSlot
-					? [
-							`Hi ${guestName},`,
-							"",
-							`Your 15-minute Google Meet pre-call with Alex Patterson is scheduled for ${new Date(preSlot).toLocaleString("en-US", { dateStyle: "full", timeStyle: "short", timeZone: "America/New_York" })} ET.`,
-							...(meetUrl ? [`Google Meet Link: ${meetUrl}`] : []),
-							`Asset Vault & Deal Room: ${portalUrl}#vault`,
-							"",
-							"Talk soon,",
-							"Alex Patterson",
-						].join("\n")
-					: [
-							`Hi ${guestName},`,
-							"",
-							"Before we lock in the final StreamYard recording script, let's jump on a quick 15-minute Google Meet pre-call to align on talking points and flow.",
-							"",
-							`Pick a 15-minute Google Meet slot here: ${preMeetingBookUrl}`,
-							`Drop any slides, logos, or briefs in your Asset Vault: ${portalUrl}#vault`,
-							"",
-							"Talk soon,",
-							"Alex Patterson",
-						].join("\n"),
-			});
+		if (canWrite) {
+			try {
+				await client.patch(bookingId).set(prePatchFields).commit();
+			} catch {
+				// Non-fatal
+			}
 		}
 
 		return new Response(
@@ -449,6 +551,7 @@ export const POST: APIRoute = async ({ request, url }) => {
 				preMeetingBookUrl,
 				portalToken,
 				portalUrl,
+				gmailThreadId: prePatchFields.gmailThreadId || existingThreadId,
 			}),
 			{ status: 200, headers: CORS_HEADERS },
 		);
@@ -457,70 +560,59 @@ export const POST: APIRoute = async ({ request, url }) => {
 	if (body.action === "request_recording_slot") {
 		const recordingBookUrl = `${siteUrl}/book?portalToken=${encodeURIComponent(portalToken)}&bookingId=${encodeURIComponent(bookingId)}`;
 
-		if (canWrite) {
-			try {
-				await client
-					.patch(bookingId)
-					.set({
-						preMeetingStatus: "completed",
-						portalToken,
-					})
-					.commit();
-			} catch {
-				// Non-fatal
+		const slotPatchFields: Record<string, unknown> = {
+			preMeetingStatus: "completed",
+			portalToken,
+			gmailSubject: canonicalSubject,
+		};
+
+		if (guestEmail) {
+			const card = buildPodcastPortalEmailCard({
+				guestName,
+				company,
+				statusBadge: "CodingCat.dev Studio · Next Step After Pre-Call",
+				headline: "Pick Your 60-Minute Podcast Recording Slot",
+				introParagraph:
+					"great chatting during our pre-call! Your guest details and E-SIGN release are already on file, so you can pick your 60-minute StreamYard recording slot in one click and review our shared 5-part Run-of-Show on your Studio Portal.",
+				portalUrl,
+				primaryCtaLabel: "1. Pick Your 60-Min Recording Slot ->",
+				primaryCtaUrl: recordingBookUrl,
+				secondaryCtaLabel: "2. Open Studio Portal & Run-of-Show ->",
+				secondaryCtaUrl: `${portalUrl}#run-of-show`,
+				runOfShowLines,
+			});
+
+			const emailRes = await sendCodingCatEmailDetailed({
+				to: guestEmail,
+				cc: coordinatorEmails,
+				subject: existingThreadId
+					? `Re: ${canonicalSubject}`
+					: canonicalSubject,
+				text: card.text,
+				html: card.html,
+				...(existingThreadId ? { threadId: existingThreadId } : {}),
+				...(existingMessageId
+					? {
+							inReplyTo: existingMessageId,
+							references: existingMessageId,
+						}
+					: {}),
+			});
+
+			if (emailRes.threadId) {
+				slotPatchFields.gmailThreadId = emailRes.threadId;
+			}
+			if (emailRes.rfc822MessageId) {
+				slotPatchFields.gmailMessageId = emailRes.rfc822MessageId;
 			}
 		}
 
-		if (guestEmail) {
-			const subject = `Schedule Your CodingCat.dev Podcast Recording + Shared Run-of-Show (${company})`;
-			const text = [
-				`Hi ${guestName},`,
-				"",
-				"Great chatting during our pre-call! Everything is pre-filled and your E-SIGN release is already on file, so you can pick your 60-minute StreamYard recording slot in one click:",
-				"",
-				`1. Pick Your Recording Time Slot: ${recordingBookUrl}`,
-				`2. Shared Run-of-Show & Asset Vault: ${portalUrl}#run-of-show`,
-				"",
-				"On your Studio Portal link above, you can also review or edit our 5-part Run-of-Show outline and drop any repo links, demo URLs, or logos into the Vault.",
-				"",
-				"Looking forward to recording with you!",
-				"Alex Patterson",
-				"Founder, CodingCat.dev",
-			].join("\n");
-
-			const html = `
-				<div style="font-family: Inter, system-ui, sans-serif; max-width: 560px; margin: 0 auto; padding: 28px; background: #0B1326; color: #F8FAFC; border-radius: 16px; border: 2px solid #7C3AED;">
-					<div style="font-family: monospace; font-size: 12px; text-transform: uppercase; letter-spacing: 0.08em; color: #C084FC; font-weight: 700; margin-bottom: 8px;">
-						CodingCat.dev Studio &middot; Next Step After Pre-Call
-					</div>
-					<h1 style="font-size: 22px; font-weight: 800; margin: 0 0 12px; color: #FFFFFF;">
-						Pick Your Podcast Recording Slot
-					</h1>
-					<p style="font-size: 14px; line-height: 1.6; color: #CBD5E1; margin: 0 0 20px;">
-						Hi ${guestName}, great chatting during our pre-call! Your guest details and E-SIGN release are already on file. Click below to pick your 60-minute StreamYard recording window:
-					</p>
-					<div style="margin-bottom: 16px;">
-						<a href="${recordingBookUrl}" style="display: inline-block; background: #7C3AED; color: #FFFFFF; font-weight: 700; font-size: 14px; text-decoration: none; padding: 12px 22px; border-radius: 10px;">
-							1. Pick Your 60-Min Recording Slot &rarr;
-						</a>
-					</div>
-					<div style="margin-bottom: 20px;">
-						<a href="${portalUrl}#run-of-show" style="display: inline-block; background: #131B2E; color: #C084FC; border: 1px solid #7C3AED; font-weight: 700; font-size: 13px; text-decoration: none; padding: 10px 18px; border-radius: 10px;">
-							2. Review / Edit Shared Run-of-Show &amp; Asset Vault &rarr;
-						</a>
-					</div>
-					<p style="font-size: 12px; color: #94A3B8; line-height: 1.5; margin: 0;">
-						Once you pick a slot, I will lock it in on Google Calendar with the StreamYard studio link.
-					</p>
-				</div>
-			`;
-
-			await sendCodingCatEmail({
-				to: guestEmail,
-				subject,
-				text,
-				html,
-			});
+		if (canWrite) {
+			try {
+				await client.patch(bookingId).set(slotPatchFields).commit();
+			} catch {
+				// Non-fatal
+			}
 		}
 
 		return new Response(
@@ -532,6 +624,7 @@ export const POST: APIRoute = async ({ request, url }) => {
 				recordingBookUrl,
 				portalToken,
 				portalUrl,
+				gmailThreadId: slotPatchFields.gmailThreadId || existingThreadId,
 			}),
 			{ status: 200, headers: CORS_HEADERS },
 		);
@@ -568,10 +661,7 @@ export const POST: APIRoute = async ({ request, url }) => {
 		});
 		if (canWrite) {
 			try {
-				await client
-					.patch(bookingId)
-					.set({ status: "cancelled" })
-					.commit();
+				await client.patch(bookingId).set({ status: "cancelled" }).commit();
 			} catch {
 				// Non-fatal
 			}

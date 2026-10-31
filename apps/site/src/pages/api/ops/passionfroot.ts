@@ -138,7 +138,8 @@ export const POST: APIRoute = async ({ request, url }) => {
 
 		for (const collab of collaborations) {
 			const partner = partnerById.get(collab.partnerId);
-			const companyName = partner?.name || collab.name || "Passionfroot Partner";
+			const companyName =
+				partner?.name || collab.name || "Passionfroot Partner";
 			const convo = conversations.find(
 				(c) =>
 					c.collaborationId === collab.id || c.partnerId === collab.partnerId,
@@ -166,7 +167,9 @@ export const POST: APIRoute = async ({ request, url }) => {
 				if (m.request?.requestId && !activeRequestId) {
 					activeRequestId = m.request.requestId;
 					proposalStatus = m.request.status || proposalStatus;
-					if (m.request.budgetCents) grossBudgetCents = m.request.budgetCents;
+					if (m.request.budgetCents) {
+						grossBudgetCents = m.request.budgetCents;
+					}
 					if (m.request.priceCents && !netPriceCents) {
 						netPriceCents = m.request.priceCents;
 					}
@@ -174,7 +177,9 @@ export const POST: APIRoute = async ({ request, url }) => {
 				if (m.proposal?.proposalId && !activeProposalId) {
 					activeProposalId = m.proposal.proposalId;
 					proposalStatus = m.proposal.status || proposalStatus;
-					if (m.proposal.budgetCents) grossBudgetCents = m.proposal.budgetCents;
+					if (m.proposal.budgetCents) {
+						grossBudgetCents = m.proposal.budgetCents;
+					}
 					if (m.proposal.priceCents && !netPriceCents) {
 						netPriceCents = m.proposal.priceCents;
 					}
@@ -193,7 +198,7 @@ export const POST: APIRoute = async ({ request, url }) => {
 							title?: string;
 							assetId?: string;
 						}>;
-					} | null>(`*[_id in [$id, $legacyId]][0]{ sharedAssets }`, {
+					} | null>("*[_id in [$id, $legacyId]][0]{ sharedAssets }", {
 						id: leadId,
 						legacyId: legacyLeadId,
 					})
@@ -206,15 +211,21 @@ export const POST: APIRoute = async ({ request, url }) => {
 			if (canWrite) {
 				for (const m of messages) {
 					for (const att of m.attachments || []) {
-						if (!att.downloadUrl || !att.fileName) continue;
+						if (!att.downloadUrl || !att.fileName) {
+							continue;
+						}
 						const alreadyMirrored = existingSharedAssets.some(
 							(a) => a.title === att.fileName,
 						);
-						if (alreadyMirrored) continue;
+						if (alreadyMirrored) {
+							continue;
+						}
 
 						try {
 							const fileRes = await fetch(att.downloadUrl);
-							if (!fileRes.ok) continue;
+							if (!fileRes.ok) {
+								continue;
+							}
 							const buf = await fileRes.arrayBuffer();
 							const isImg = (att.mimeType || "").startsWith("image/");
 							const uploadedAsset = await client.assets.upload(
@@ -298,7 +309,9 @@ export const POST: APIRoute = async ({ request, url }) => {
 							: ""),
 				createdAt: m.createdAt,
 				...(m.request?.requestId ? { requestId: m.request.requestId } : {}),
-				...(m.proposal?.proposalId ? { proposalId: m.proposal.proposalId } : {}),
+				...(m.proposal?.proposalId
+					? { proposalId: m.proposal.proposalId }
+					: {}),
 			}));
 
 			if (canWrite) {
@@ -384,10 +397,10 @@ export const POST: APIRoute = async ({ request, url }) => {
 			apiKeyOverride,
 		);
 		if (!res.ok) {
-			return new Response(
-				JSON.stringify({ ok: false, message: res.error }),
-				{ status: 400, headers: CORS_HEADERS },
-			);
+			return new Response(JSON.stringify({ ok: false, message: res.error }), {
+				status: 400,
+				headers: CORS_HEADERS,
+			});
 		}
 		if (canWrite && leadId) {
 			await client
@@ -424,10 +437,10 @@ export const POST: APIRoute = async ({ request, url }) => {
 			apiKeyOverride,
 		);
 		if (!res.ok) {
-			return new Response(
-				JSON.stringify({ ok: false, message: res.error }),
-				{ status: 400, headers: CORS_HEADERS },
-			);
+			return new Response(JSON.stringify({ ok: false, message: res.error }), {
+				status: 400,
+				headers: CORS_HEADERS,
+			});
 		}
 		if (canWrite && leadId) {
 			await client
@@ -439,19 +452,19 @@ export const POST: APIRoute = async ({ request, url }) => {
 				.commit()
 				.catch(() => {});
 		}
-		return new Response(
-			JSON.stringify({ ok: true, action, requestId }),
-			{ status: 200, headers: CORS_HEADERS },
-		);
+		return new Response(JSON.stringify({ ok: true, action, requestId }), {
+			status: 200,
+			headers: CORS_HEADERS,
+		});
 	}
 
 	if (action === "accept_proposal" && proposalId) {
 		const res = await acceptPassionfrootProposal(proposalId, apiKeyOverride);
 		if (!res.ok) {
-			return new Response(
-				JSON.stringify({ ok: false, message: res.error }),
-				{ status: 400, headers: CORS_HEADERS },
-			);
+			return new Response(JSON.stringify({ ok: false, message: res.error }), {
+				status: 400,
+				headers: CORS_HEADERS,
+			});
 		}
 		if (canWrite && leadId) {
 			await client
@@ -472,10 +485,10 @@ export const POST: APIRoute = async ({ request, url }) => {
 	if (action === "reject_proposal" && proposalId) {
 		const res = await rejectPassionfrootProposal(proposalId, apiKeyOverride);
 		if (!res.ok) {
-			return new Response(
-				JSON.stringify({ ok: false, message: res.error }),
-				{ status: 400, headers: CORS_HEADERS },
-			);
+			return new Response(JSON.stringify({ ok: false, message: res.error }), {
+				status: 400,
+				headers: CORS_HEADERS,
+			});
 		}
 		if (canWrite && leadId) {
 			await client
@@ -487,10 +500,10 @@ export const POST: APIRoute = async ({ request, url }) => {
 				.commit()
 				.catch(() => {});
 		}
-		return new Response(
-			JSON.stringify({ ok: true, action, proposalId }),
-			{ status: 200, headers: CORS_HEADERS },
-		);
+		return new Response(JSON.stringify({ ok: true, action, proposalId }), {
+			status: 200,
+			headers: CORS_HEADERS,
+		});
 	}
 
 	if (
@@ -517,15 +530,16 @@ export const POST: APIRoute = async ({ request, url }) => {
 			apiKeyOverride,
 		);
 		if (!res.ok) {
-			return new Response(
-				JSON.stringify({ ok: false, message: res.error }),
-				{ status: 400, headers: CORS_HEADERS },
-			);
+			return new Response(JSON.stringify({ ok: false, message: res.error }), {
+				status: 400,
+				headers: CORS_HEADERS,
+			});
 		}
 
-		await markPassionfrootConversationRead(conversationId, apiKeyOverride).catch(
-			() => {},
-		);
+		await markPassionfrootConversationRead(
+			conversationId,
+			apiKeyOverride,
+		).catch(() => {});
 
 		if (canWrite && leadId) {
 			await client

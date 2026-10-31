@@ -1,8 +1,8 @@
 import { CogIcon } from "@sanity/icons/Cog";
 import { DocumentTextIcon } from "@sanity/icons/DocumentText";
 import { UserIcon } from "@sanity/icons/User";
-import { FaCat, FaFire, FaPodcast, FaRocket, FaShareAlt } from "react-icons/fa";
-import { HiOutlineDocumentText, HiOutlinePencilAlt } from "react-icons/hi";
+import { FaCat, FaFire, FaGraduationCap, FaPodcast, FaRocket, FaShareAlt } from "react-icons/fa";
+import { HiOutlineBookOpen, HiOutlineDocumentText, HiOutlinePencilAlt } from "react-icons/hi";
 import { PiCurrencyDollarSimpleFill } from "react-icons/pi";
 import type { StructureResolver } from "sanity/structure";
 
@@ -12,6 +12,8 @@ const MANAGED_DOCUMENT_TYPES = new Set([
 	"booking",
 	"sponsorLead",
 	"sponsorPool",
+	"course",
+	"lesson",
 	"post",
 	"podcast",
 	"podcastType",
@@ -205,6 +207,56 @@ export const editorialStructure: StructureResolver = (S) =>
 			S.divider(),
 
 			// 3. Core Content
+			S.listItem()
+				.title("Courses & Lessons")
+				.icon(FaGraduationCap)
+				.child(
+					S.list()
+						.title("Courses & Lessons")
+						.items([
+							S.listItem()
+								.title("Active Courses (Newsletter Eligible)")
+								.icon(FaGraduationCap)
+								.child(
+									S.documentList()
+										.title("Active Courses")
+										.schemaType("course")
+										.filter('_type == "course" && coalesce(archived, false) != true')
+										.defaultOrdering([
+											{ field: "lastUpdated", direction: "desc" },
+											{ field: "date", direction: "desc" },
+										]),
+								),
+							S.listItem()
+								.title("Archived / Outdated Courses")
+								.icon(FaGraduationCap)
+								.child(
+									S.documentList()
+										.title("Archived Courses")
+										.schemaType("course")
+										.filter('_type == "course" && archived == true')
+										.defaultOrdering([{ field: "date", direction: "desc" }]),
+								),
+							S.listItem()
+								.title("All Courses")
+								.icon(FaGraduationCap)
+								.child(
+									S.documentTypeList("course")
+										.title("All Courses")
+										.defaultOrdering([{ field: "date", direction: "desc" }]),
+								),
+							S.divider(),
+							S.listItem()
+								.title("All Lessons")
+								.icon(HiOutlineBookOpen)
+								.child(
+									S.documentTypeList("lesson")
+										.title("All Lessons")
+										.defaultOrdering([{ field: "date", direction: "desc" }]),
+								),
+						]),
+				),
+
 			S.listItem()
 				.title("Posts")
 				.icon(HiOutlinePencilAlt)

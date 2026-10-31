@@ -27,6 +27,7 @@ export default defineType({
 					{ title: "Medium", value: "medium" },
 					{ title: "Reddit (r/CodingCatDev)", value: "reddit" },
 					{ title: "YouTube", value: "youtube" },
+					{ title: "Buttondown Newsletter", value: "buttondown" },
 				],
 			},
 			validation: (rule) => rule.required(),

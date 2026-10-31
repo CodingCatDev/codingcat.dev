@@ -685,9 +685,10 @@ function buildMcpHtml(
 			<button type="submit">Search</button>
 		</form>
 
-		<form action="/sponsorships" method="get" toolname="subscribe_newsletter" tooldescription="Subscribe to the CodingCat.dev web development newsletter">
+		<form action="https://buttondown.com/api/emails/embed-subscribe/codingcatdev" method="post" toolname="subscribe_newsletter" tooldescription="Subscribe to the CodingCat.dev web development newsletter (The Purrfect Dispatch)">
 			<label for="mcp-email">Newsletter:</label>
 			<input id="mcp-email" type="email" name="email" required placeholder="you@example.com" toolparamdescription="Developer email address to subscribe to the CodingCat.dev newsletter" />
+			<input type="hidden" name="embed" value="1" />
 			<button type="submit">Subscribe</button>
 		</form>
 

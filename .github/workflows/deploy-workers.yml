@@ -54,6 +54,9 @@ jobs:
           if [ -n "$SANITY_AUTH_TOKEN" ]; then
             echo "$SANITY_AUTH_TOKEN" | pnpm --filter @codingcatdev/site exec wrangler secret put SANITY_AUTH_TOKEN --env=""
           fi
+          if [ -n "$SANITY_MEDIA_LIBRARY_TOKEN" ]; then
+            echo "$SANITY_MEDIA_LIBRARY_TOKEN" | pnpm --filter @codingcatdev/site exec wrangler secret put SANITY_MEDIA_LIBRARY_TOKEN --env=""
+          fi
           if [ -n "$SANITY_CONTEXT_TOKEN" ]; then
             echo "$SANITY_CONTEXT_TOKEN" | pnpm --filter @codingcatdev/site exec wrangler secret put SANITY_CONTEXT_TOKEN --env=""
           fi
@@ -84,6 +87,7 @@ jobs:
           SANITY_API_READ_TOKEN: ${{ secrets.SANITY_API_READ_TOKEN }}
           SANITY_API_WRITE_TOKEN: ${{ secrets.SANITY_API_WRITE_TOKEN }}
           SANITY_AUTH_TOKEN: ${{ secrets.SANITY_AUTH_TOKEN }}
+          SANITY_MEDIA_LIBRARY_TOKEN: ${{ secrets.SANITY_MEDIA_LIBRARY_TOKEN }}
           SANITY_CONTEXT_TOKEN: ${{ secrets.SANITY_CONTEXT_TOKEN }}
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
           GUEST_PORTAL_SECRET: ${{ secrets.GUEST_PORTAL_SECRET }}
@@ -132,6 +136,9 @@ jobs:
           if [ -n "$SANITY_AUTH_TOKEN" ]; then
             echo "$SANITY_AUTH_TOKEN" | pnpm --filter @codingcatdev/site exec wrangler secret put SANITY_AUTH_TOKEN --env production
           fi
+          if [ -n "$SANITY_MEDIA_LIBRARY_TOKEN" ]; then
+            echo "$SANITY_MEDIA_LIBRARY_TOKEN" | pnpm --filter @codingcatdev/site exec wrangler secret put SANITY_MEDIA_LIBRARY_TOKEN --env production
+          fi
           if [ -n "$SANITY_CONTEXT_TOKEN" ]; then
             echo "$SANITY_CONTEXT_TOKEN" | pnpm --filter @codingcatdev/site exec wrangler secret put SANITY_CONTEXT_TOKEN --env production
           fi
@@ -162,6 +169,7 @@ jobs:
           SANITY_API_READ_TOKEN: ${{ secrets.SANITY_API_READ_TOKEN }}
           SANITY_API_WRITE_TOKEN: ${{ secrets.SANITY_API_WRITE_TOKEN }}
           SANITY_AUTH_TOKEN: ${{ secrets.SANITY_AUTH_TOKEN }}
+          SANITY_MEDIA_LIBRARY_TOKEN: ${{ secrets.SANITY_MEDIA_LIBRARY_TOKEN }}
           SANITY_CONTEXT_TOKEN: ${{ secrets.SANITY_CONTEXT_TOKEN }}
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
           GUEST_PORTAL_SECRET: ${{ secrets.GUEST_PORTAL_SECRET }}

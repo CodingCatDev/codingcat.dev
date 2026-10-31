@@ -104,7 +104,7 @@ export interface PassionfrootConversation {
 }
 
 function getPassionfrootApiKey(overrideKey?: string): string | null {
-	if (overrideKey && overrideKey.trim()) {
+	if (overrideKey?.trim()) {
 		return overrideKey.trim();
 	}
 	const workerEnv = (env ?? {}) as unknown as Record<
@@ -160,7 +160,8 @@ async function passionfrootFetch<T>(
 		const res = await fetch(url, {
 			method,
 			headers,
-			body: options.body !== undefined ? JSON.stringify(options.body) : undefined,
+			body:
+				options.body !== undefined ? JSON.stringify(options.body) : undefined,
 		});
 
 		if (res.status === 429 && attempt === 0) {

@@ -620,7 +620,9 @@ export async function createGoogleCalendarBookingEvent(opts: {
 			: [
 					`CodingCat.dev Podcast Recording (${durationMinutes} min)`,
 					`Guest: ${opts.guestName} (${opts.company})`,
-					...(opts.portalUrl ? [`Deal Room & Asset Vault: ${opts.portalUrl}#vault`] : []),
+					...(opts.portalUrl
+						? [`Deal Room & Asset Vault: ${opts.portalUrl}#vault`]
+						: []),
 				].join("\n"),
 	});
 
@@ -658,7 +660,11 @@ export async function createGoogleCalendarBookingEvent(opts: {
 	// lands on their Google Calendar right away without exposing any personal email address.
 	const sendUpdates = "all";
 	const attendees = [
-		{ email: "alex@codingcat.dev", displayName: "Alex Patterson", responseStatus: "accepted" },
+		{
+			email: "alex@codingcat.dev",
+			displayName: "Alex Patterson",
+			responseStatus: "accepted",
+		},
 		{ email: opts.guestEmail, displayName: opts.guestName },
 	];
 
@@ -818,7 +824,11 @@ export async function approveGoogleCalendarRecordingEvent(opts: {
 		start: { dateTime: start.toISOString() },
 		end: { dateTime: end.toISOString() },
 		attendees: [
-			{ email: "alex@codingcat.dev", displayName: "Alex Patterson", responseStatus: "accepted" },
+			{
+				email: "alex@codingcat.dev",
+				displayName: "Alex Patterson",
+				responseStatus: "accepted",
+			},
 			{ email: opts.guestEmail, displayName: opts.guestName },
 		],
 		reminders: {

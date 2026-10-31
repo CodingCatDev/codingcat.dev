@@ -62,8 +62,7 @@ export const POST: APIRoute = async ({ request }) => {
 				? body.systemPrompt.trim()
 				: DEFAULT_SYSTEM_BY_TASK[task];
 
-		const cfEnv =
-			(env as unknown as Record<string, unknown> | undefined) || {};
+		const cfEnv = (env as unknown as Record<string, unknown> | undefined) || {};
 
 		const openRouterApiKey =
 			(cfEnv.OPENROUTER_API_KEY as string | undefined) ||
@@ -95,7 +94,11 @@ export const POST: APIRoute = async ({ request }) => {
 			}
 		}
 
-		if (!generatedText && aiBinding && typeof (aiBinding as any).run === "function") {
+		if (
+			!generatedText &&
+			aiBinding &&
+			typeof (aiBinding as any).run === "function"
+		) {
 			try {
 				const cfRes = await (aiBinding as any).run(
 					"@cf/meta/llama-3.1-8b-instruct",

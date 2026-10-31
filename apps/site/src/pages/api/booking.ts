@@ -1,6 +1,11 @@
 import { env } from "cloudflare:workers";
 import type { APIRoute } from "astro";
-import { sendCodingCatEmail } from "@/lib/email";
+import {
+	buildCanonicalPodcastBookingSubject,
+	buildPodcastPortalEmailCard,
+	sendCodingCatEmail,
+	sendCodingCatEmailDetailed,
+} from "@/lib/email";
 import {
 	createGoogleCalendarBookingEvent,
 	STREAMYARD_STUDIO_URL,
@@ -200,7 +205,8 @@ export const POST: APIRoute = async ({ request, url }) => {
 						contactEmail: guestEmail,
 						...(socialUrl ? { website: socialUrl } : {}),
 						portalToken,
-						source: bookingSource === "passionfroot" ? "passionfroot" : "booking",
+						source:
+							bookingSource === "passionfroot" ? "passionfroot" : "booking",
 						billingProvider:
 							bookingSource === "passionfroot" ? "passionfroot" : "stripe",
 						status: "booked",
@@ -384,8 +390,95 @@ export const POST: APIRoute = async ({ request, url }) => {
 		? `15m Google Meet invite sent (${preMeetingMeetUrl || "Google Calendar Meet link"})`
 		: "Opaque Busy hold created on Alex's Google Calendar (Approve in Ops App to send StreamYard https://streamyard.com/c4kv26is93)";
 
+	const canonicalSubject =
+		(existingBookingDoc?.gmailSubject as string | undefined) ||
+		buildCanonicalPodcastBookingSubject(guestName, company);
+	const existingThreadId = existingBookingDoc?.gmailThreadId as
+		| string
+		| undefined;
+	const existingMessageId = existingBookingDoc?.gmailMessageId as
+		| string
+		| undefined;
+	const coordinatorEmails = Array.isArray(existingBookingDoc?.coordinatorEmails)
+		? (existingBookingDoc.coordinatorEmails as string[])
+		: undefined;
+
+	const formattedSlot = new Date(slotStartAt).toLocaleString("en-US", {
+		dateStyle: "full",
+		timeStyle: "short",
+		timeZone: "America/New_York",
+	});
+
+	const guestCard = buildPodcastPortalEmailCard({
+		guestName,
+		company,
+		statusBadge: isKickoff
+			? "CodingCat.dev Studio · 15-Minute Google Meet Pre-Call"
+			: "CodingCat.dev Studio · Booking Received & Studio Portal Ready",
+		headline: isKickoff
+			? `15-Minute Pre-Call Scheduled (${company})`
+			: "Thank You for Booking on the CodingCat.dev Podcast!",
+		introParagraph: isKickoff
+			? "your 15-minute Google Meet pre-call is on the calendar. Before we chat, you can open your Studio Portal below to review our shared outline and drop any links or assets into the Vault."
+			: "thank you for booking your session on the CodingCat.dev Podcast! Your calendar hold is reserved while we finalize the studio schedule, and your private Studio Portal is live right now so you can review your speaker profile, co-edit our 5-part Run-of-Show, and upload any show assets.",
+		slotSummary: `${formattedSlot} ET (${durationMinutes} min)`,
+		portalUrl,
+		primaryCtaLabel: "Open Your Studio Portal ->",
+		primaryCtaUrl: portalUrl,
+		...(isKickoff && preMeetingMeetUrl
+			? {
+					secondaryCtaLabel: "Join 15-Min Google Meet ->",
+					secondaryCtaUrl: preMeetingMeetUrl,
+				}
+			: {}),
+		closingNote:
+			"Reply directly to this thread anytime if you need to adjust your time slot, loop in a teammate, or tweak the episode angle.",
+	});
+
+	const guestEmailResult = await sendCodingCatEmailDetailed({
+		to: guestEmail,
+		cc: coordinatorEmails,
+		subject: existingThreadId ? `Re: ${canonicalSubject}` : canonicalSubject,
+		text: guestCard.text,
+		html: guestCard.html,
+		...(existingThreadId ? { threadId: existingThreadId } : {}),
+		...(existingMessageId
+			? {
+					inReplyTo: existingMessageId,
+					references: existingMessageId,
+				}
+			: {}),
+	});
+
+	const activeThreadId = guestEmailResult.threadId || existingThreadId;
+	const activeMessageId = guestEmailResult.rfc822MessageId || existingMessageId;
+
+	if (canWrite && (activeThreadId || activeMessageId)) {
+		const targetDocId =
+			data.preMeetingForBookingId && isKickoff
+				? data.preMeetingForBookingId
+				: existingBookingDoc?._id || bookingId;
+		try {
+			await client
+				.patch(targetDocId)
+				.set({
+					gmailSubject: canonicalSubject,
+					...(activeThreadId ? { gmailThreadId: activeThreadId } : {}),
+					...(activeMessageId ? { gmailMessageId: activeMessageId } : {}),
+				})
+				.commit();
+		} catch {
+			// Non-fatal
+		}
+	}
+
+	const gmailThreadUrl = activeThreadId
+		? `https://mail.google.com/mail/u/0/#inbox/${activeThreadId}`
+		: undefined;
+
 	await sendCodingCatEmail({
 		to: "alex@codingcat.dev",
+		replyTo: `"${guestName}" <${guestEmail}>`,
 		subject: `[CodingCat.dev ${subjectLabel}] ${guestName} (${company})`,
 		text: [
 			`New CodingCat.dev ${subjectLabel}`,
@@ -393,14 +486,20 @@ export const POST: APIRoute = async ({ request, url }) => {
 			`Track: ${track} (${durationMinutes} min)`,
 			`Guest / Contact: ${guestName} <${guestEmail}>`,
 			`Company: ${company}`,
-			`Scheduled Slot: ${slotStartAt}`,
+			`Scheduled Slot: ${slotStartAt} (${formattedSlot} ET)`,
 			...(preMeetingSlotStartAt
-				? [`15m Pre-Meeting Slot (Google Meet): ${preMeetingSlotStartAt} (${preMeetingMeetUrl || "Meet attached"})`]
+				? [
+						`15m Pre-Meeting Slot (Google Meet): ${preMeetingSlotStartAt} (${preMeetingMeetUrl || "Meet attached"})`,
+					]
 				: wantsPreMeeting
 					? ["15m Pre-Meeting: Requested by guest"]
 					: []),
 			`Calendar Status: ${calendarStatusLabel}`,
 			`Topics: ${topics}`,
+			...(gmailThreadUrl
+				? [`Canonical Guest Email Thread (Reply Here): ${gmailThreadUrl}`]
+				: []),
+			`Admin Bookings Queue (1-Click Approve / Pre-Call): ${siteUrl}/admin/bookings`,
 			`Google Calendar Event: ${appointmentScheduleUrl}`,
 			`Deal Room & Sanity Media Vault: ${portalUrl}#vault`,
 		].join("\n"),
@@ -429,6 +528,8 @@ export const POST: APIRoute = async ({ request, url }) => {
 			portalToken,
 			portalUrl,
 			vaultUrl: `${portalUrl}#vault`,
+			gmailThreadId: activeThreadId,
+			gmailSubject: canonicalSubject,
 			stripeDepositCheckoutUrl,
 			stripeDepositInvoiceUrl,
 		}),
