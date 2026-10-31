@@ -384,7 +384,7 @@ export function App() {
 				}>(
 					`{
 					"leads": *[_type == "sponsorLead" && !(_id in path("drafts.**"))] | order(coalesce(lastEmailAt, _updatedAt, _createdAt) desc),
-					"bookings": *[_type == "booking" && !(_id in path("drafts.**"))] | order(coalesce(slotStartAt, _createdAt) desc),
+					"bookings": *[_type == "booking" && !(_id in path("drafts.**"))] | order(coalesce(slotStartAt, _createdAt) asc),
 					"syndicatedContent": *[_type in ["post", "podcast"] && !(_id in path("drafts.**"))] | order(coalesce(date, _createdAt) desc)[0...50] {
 						_id,
 						_type,
