@@ -25,7 +25,9 @@ import { singletonPlugin } from "./plugins/settings";
 import { assistWithPresets } from "./plugins/assist";
 import { editorialStructure } from "./structure";
 import author from "./schemas/documents/author";
+import course from "./schemas/documents/course";
 import guest from "./schemas/documents/guest";
+import lesson from "./schemas/documents/lesson";
 import page from "./schemas/documents/page";
 import podcast from "./schemas/documents/podcast";
 import podcastType from "./schemas/documents/podcastType";
@@ -44,6 +46,36 @@ import trendSignal from "./schemas/documents/trendSignal";
 // ── Shared constants ─────────────────────────────────────────────────
 const projectId = process.env.SANITY_STUDIO_PROJECT_ID || "hfh83o0w";
 const apiVersion = process.env.SANITY_STUDIO_API_VERSION || "2025-09-30";
+export const MEDIA_LIBRARY_ID =
+	process.env.SANITY_STUDIO_MEDIA_LIBRARY_ID || "mlttp0BZbCpV";
+
+export function buildMediaLibraryFilters(dataset: "production" | "dev") {
+	return [
+		{
+			name:
+				dataset === "production"
+					? "Production Public Assets"
+					: "Dev Sandbox Assets",
+			query: `aspects.metadata.environment == "${dataset}" && aspects.metadata.visibility != "private-vault"`,
+		},
+		{
+			name: "Editorial (Courses, Podcasts, Blog)",
+			query: `aspects.metadata.environment == "${dataset}" && aspects.metadata.category == "editorial"`,
+		},
+		{
+			name: "Guest Speaker Headshots",
+			query: `aspects.metadata.environment == "${dataset}" && aspects.metadata.category == "guest"`,
+		},
+		{
+			name: "Sponsor Logos & Creatives",
+			query: `aspects.metadata.environment == "${dataset}" && aspects.metadata.category == "sponsor"`,
+		},
+		{
+			name: "Studio Portal Vault (Private)",
+			query: `aspects.metadata.environment == "${dataset}" && (aspects.metadata.category == "portal-vault" || aspects.metadata.visibility == "private-vault")`,
+		},
+	];
+}
 
 // Set SANITY_STUDIO_DISABLE_PRESENTATION=true if you get network errors to api.sanity.io (e.g. firewall/VPN)
 const presentationEnabled =
@@ -84,7 +116,9 @@ const schemaTypes = [
 	sponsorConfig,
 	// Documents
 	author,
+	course,
 	guest,
+	lesson,
 	page,
 	podcast,
 	podcastType,
@@ -187,12 +221,23 @@ function buildPlugins(previewUrl: string): PluginOptions[] {
 // ── Workspace definitions ────────────────────────────────────────────
 const targetDataset = process.env.SANITY_STUDIO_DATASET;
 
+const sharedMediaLibraryConfig = {
+	mediaLibrary: {
+		enabled: true,
+		libraryId: MEDIA_LIBRARY_ID,
+	},
+	auth: {
+		loginMethod: "token" as const,
+	},
+};
+
 const devWorkspace = {
 	name: "dev",
 	title: "CodingCat.dev (Dev)",
 	projectId,
 	dataset: "dev",
 	basePath: targetDataset === "dev" ? "/" : "/dev",
+	...sharedMediaLibraryConfig,
 	schema: { types: schemaTypes },
 	plugins: buildPlugins(
 		isLocal ? localPreviewOrigin : "https://dev.codingcat.dev",
@@ -205,6 +250,7 @@ const prodWorkspace = {
 	projectId,
 	dataset: "production",
 	basePath: targetDataset === "production" ? "/" : "/production",
+	...sharedMediaLibraryConfig,
 	schema: { types: schemaTypes },
 	plugins: buildPlugins(
 		isLocal ? localPreviewOrigin : "https://codingcat.dev",

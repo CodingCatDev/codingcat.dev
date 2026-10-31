@@ -3,6 +3,7 @@ import {
 	extractPortalAllowedEmails,
 	verifyPortalRequestAuth,
 } from "@/lib/portal-security";
+import { uploadAndLinkMediaLibraryAsset } from "@/lib/sanity/media-library";
 import { getSanityServerClient } from "@/lib/sanity/write-client";
 
 const CORS_HEADERS = {
@@ -330,16 +331,23 @@ export const POST: APIRoute = async ({ request, url }) => {
 		uploadedBy === "passionfroot";
 
 	let assetId: string | undefined;
+	let mediaLibraryId: string | undefined;
+	let mediaLibraryAssetId: string | undefined;
+	let mediaLibraryFolderId: string | undefined;
+	let mediaGdr:
+		| { _type: "globalDocumentReference"; _ref: string; _weak: true }
+		| undefined;
 	let mimeType: string | undefined;
 	let fileSize: number | undefined;
 	let resolvedUrl = externalUrl;
 
 	if (uploadedFile) {
 		const arrayBuf = await uploadedFile.arrayBuffer();
+		const bytes = new Uint8Array(arrayBuf);
 		const isImg = (uploadedFile.type || "").startsWith("image/");
 		const uploadedAsset = await client.assets.upload(
 			isImg ? "image" : "file",
-			new Uint8Array(arrayBuf) as unknown as Blob,
+			bytes as unknown as Blob,
 			{
 				filename: uploadedFile.name,
 				contentType: uploadedFile.type || "application/octet-stream",
@@ -353,13 +361,33 @@ export const POST: APIRoute = async ({ request, url }) => {
 			title = uploadedFile.name;
 		}
 
-		// Tag asset in Sanity Media Library (sanity-plugin-media)
-		const tagRefs = await ensureSanityMediaTags(client, [
+		const tagStrings = [
 			visibility === "private" ? "private-vault" : "public-brand-asset",
 			isPassionfroot ? "source:passionfroot" : "source:direct",
 			`partner:${partnerLabel}`,
 			`category:${category}`,
-		]);
+		];
+
+		// Dual-write into Sanity Media Library (`mlttp0BZbCpV`) under `/Production/Portal-Vault` or `/Dev/Portal-Vault`
+		const mlResult = await uploadAndLinkMediaLibraryAsset({
+			bytes,
+			filename: uploadedFile.name,
+			category: "portal-vault",
+			visibility: visibility === "private" ? "private-vault" : "public",
+			title: title || uploadedFile.name,
+			partnerSlug: partnerLabel,
+			docType: primaryDoc?._type || "booking",
+			tags: tagStrings,
+		});
+		if (mlResult) {
+			mediaLibraryId = mlResult.mediaLibraryId;
+			mediaLibraryAssetId = mlResult.mediaLibraryAssetId;
+			mediaLibraryFolderId = mlResult.folderId;
+			mediaGdr = mlResult.gdr;
+		}
+
+		// Also tag dataset-local asset for legacy `sanity-plugin-media` compatibility
+		const tagRefs = await ensureSanityMediaTags(client, tagStrings);
 		if (tagRefs.length > 0) {
 			try {
 				await client
@@ -399,6 +427,10 @@ export const POST: APIRoute = async ({ request, url }) => {
 		uploadedBy,
 		uploadedAt: new Date().toISOString(),
 		...(assetId ? { assetId } : {}),
+		...(mediaLibraryId ? { mediaLibraryId } : {}),
+		...(mediaLibraryAssetId ? { mediaLibraryAssetId } : {}),
+		...(mediaLibraryFolderId ? { mediaLibraryFolderId } : {}),
+		...(mediaGdr ? { media: mediaGdr } : {}),
 		...(mimeType ? { mimeType } : {}),
 		...(fileSize ? { fileSize } : {}),
 		externalUrl: resolvedUrl,

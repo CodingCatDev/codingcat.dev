@@ -8,6 +8,7 @@ import {
 	extractPortalAllowedEmails,
 	verifyPortalRequestAuth,
 } from "@/lib/portal-security";
+import { uploadAndLinkMediaLibraryAsset } from "@/lib/sanity/media-library";
 import {
 	getSanityServerClient,
 	uploadSanityImageDataUrl,
@@ -252,12 +253,52 @@ export const POST: APIRoute = async ({ request, url }) => {
 				resolvedSlug,
 			);
 			if (uploadedAsset) {
+				let mediaGdr:
+					| { _type: "globalDocumentReference"; _ref: string; _weak: true }
+					| undefined;
+				try {
+					const b64Match = body.avatarDataUrl.match(
+						/^data:(image\/(?:jpeg|png|webp));base64,([A-Za-z0-9+/=]+)$/,
+					);
+					if (b64Match) {
+						const bin = atob(b64Match[2]);
+						const bytes = new Uint8Array(bin.length);
+						for (let i = 0; i < bin.length; i++) {
+							bytes[i] = bin.charCodeAt(i);
+						}
+						const ext =
+							b64Match[1] === "image/png"
+								? "png"
+								: b64Match[1] === "image/webp"
+									? "webp"
+									: "jpg";
+						const mlResult = await uploadAndLinkMediaLibraryAsset({
+							bytes,
+							filename: `${resolvedSlug}-headshot.${ext}`,
+							category: "guest",
+							visibility: "public",
+							title: `${resolvedTitle} Headshot`,
+							altText: resolvedTitle,
+							description: cleanExcerpt,
+							partnerSlug: resolvedSlug,
+							docType: "guest",
+							tags: ["guest-headshot", `guest:${resolvedSlug}`],
+						});
+						if (mlResult) {
+							mediaGdr = mlResult.gdr;
+						}
+					}
+				} catch {
+					// Non-fatal
+				}
+
 				coverImage = {
 					_type: "image",
 					asset: {
 						_type: "reference",
 						_ref: uploadedAsset._id,
 					},
+					...(mediaGdr ? { media: mediaGdr } : {}),
 				};
 				uploadedAvatarUrl = uploadedAsset.url;
 			}
