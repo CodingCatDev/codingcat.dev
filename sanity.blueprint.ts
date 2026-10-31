@@ -8,7 +8,7 @@ export default defineBlueprint({
 	resources: [
 		defineDocumentFunction({
 			name: "syndicate-content",
-			displayName: "Syndicate Content (Dev.to & Hashnode)",
+			displayName: "Syndicate Content (Dev.to, daily.dev, Reddit & AWS Builder)",
 			project: process.env.SANITY_STUDIO_PROJECT_ID || "hfh83o0w",
 			event: {
 				on: ["create", "update"],
@@ -19,8 +19,6 @@ export default defineBlueprint({
 			timeout: 30,
 			env: {
 				DEVTO_API_KEY: process.env.PRIVATE_DEVTO || process.env.DEVTO_API_KEY || "",
-				HASHNODE_ACCESS_TOKEN: process.env.PRIVATE_HASHNODE || process.env.HASHNODE_ACCESS_TOKEN || "",
-				HASHNODE_PUBLICATION_ID: process.env.HASHNODE_PUBLICATION_ID || "60242f8180da6c44eadf775b",
 				SANITY_AUTH_TOKEN: process.env.SANITY_AUTH_TOKEN || "",
 				SANITY_API_WRITE_TOKEN: process.env.SANITY_API_WRITE_TOKEN || "",
 			},

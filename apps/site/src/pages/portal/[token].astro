@@ -93,6 +93,8 @@ const bookedSlotParam = searchParams.get("bookedSlot");
 
 let portalFound = false;
 let isPortalAuthorized = false;
+let isPortalAuthenticated = false;
+let authReason: string | undefined;
 let maskedEmailHint = "your invited email address";
 let verifiedPortalEmail = "";
 
@@ -154,10 +156,9 @@ try {
 			allowedEmails,
 		});
 		isPortalAuthorized = authResult.authorized;
+		isPortalAuthenticated = authResult.authenticated;
+		authReason = authResult.reason;
 		verifiedPortalEmail = authResult.verifiedEmail || "";
-		if (authResult.setCookieHeader) {
-			Astro.response.headers.set("Set-Cookie", authResult.setCookieHeader);
-		}
 
 		const tier = resolveSponsorTier(doc?.rateCard || fallbackTier.id);
 		const combinedAssets = [
@@ -326,19 +327,19 @@ const pageDescription = !portalFound
 		<div class="w-full max-w-xl mx-auto my-12 p-6 md:p-8 rounded-2xl border-2 border-primary/40 bg-card shadow-xs flex flex-col gap-5">
 			<div class="flex items-center justify-between gap-2">
 				<span class="px-3 py-1 rounded-full text-xs font-mono uppercase tracking-wider bg-primary/15 text-primary font-bold">
-					🔒 Private Studio Checkpoint
+					🔒 Better-Auth Studio Checkpoint
 				</span>
 				<span class="text-xs font-mono text-muted-foreground">
-					Private Sanity ACL
+					6-Digit OTP &middot; Magic Link &middot; Google OAuth
 				</span>
 			</div>
 
 			<div class="flex flex-col gap-2">
 				<h1 class="text-2xl md:text-3xl font-bold tracking-tight text-foreground">
-					Verify Email to Unlock Studio Portal
+					Sign In to Unlock Studio Portal
 				</h1>
 				<p class="text-xs md:text-sm text-muted-foreground leading-relaxed">
-					To protect private StreamYard studio links, Google Meet pre-call rooms, run-of-show outlines, and Sanity Media Library vault assets, please enter the email address associated with this invite
+					To protect private StreamYard studio links, Google Meet pre-call rooms, run-of-show outlines, and Sanity Media Library vault assets, this portal requires a verified Better-Auth session for the invited email address
 					{maskedEmailHint ? (
 						<span>
 							{" "}(hint: <code class="px-1.5 py-0.5 rounded bg-muted text-foreground font-mono">{maskedEmailHint}</code> or the same company domain)
@@ -347,14 +348,55 @@ const pageDescription = !portalFound
 				</p>
 			</div>
 
-			<form id="portal-verify-form" class="flex flex-col gap-3">
+			{isPortalAuthenticated && authReason === "forbidden_email" ? (
+				<div class="p-4 rounded-xl border border-amber-500/40 bg-amber-500/10 flex flex-col gap-3">
+					<p class="text-xs text-foreground leading-relaxed">
+						<strong>Account Mismatch:</strong> You are currently signed in via Better-Auth as <code class="px-1.5 py-0.5 rounded bg-background font-mono">{verifiedPortalEmail}</code>, which is not on the invite list for this Studio Portal ({maskedEmailHint}).
+					</p>
+					<button
+						type="button"
+						id="btn-portal-switch-account"
+						class="self-start px-3.5 py-2 rounded-lg bg-foreground text-background text-xs font-bold hover:opacity-90 transition-opacity cursor-pointer"
+					>
+						Sign Out &amp; Switch Account &rarr;
+					</button>
+				</div>
+			) : null}
+
+			<!-- Method 1: Continue with Google OAuth -->
+			<div class="flex flex-col gap-2.5">
+				<button
+					type="button"
+					id="btn-portal-google"
+					class="w-full flex items-center justify-center gap-2.5 px-4 py-2.5 rounded-lg border-2 border-border bg-background hover:bg-muted text-foreground text-xs font-bold transition-colors cursor-pointer"
+				>
+					<svg class="w-4 h-4" viewBox="0 0 24 24" aria-hidden="true">
+						<path fill="#EA4335" d="M12 5c1.6 0 3 .6 4.1 1.7l3.1-3.1C17.3 1.8 14.8 1 12 1 7.4 1 3.5 3.6 1.6 7.4l3.7 2.8C6.2 7.2 8.9 5 12 5z"/>
+						<path fill="#4285F4" d="M23.5 12.3c0-.8-.1-1.6-.2-2.3H12v4.5h6.5c-.3 1.5-1.1 2.8-2.4 3.6l3.7 2.9c2.2-2 3.7-5 3.7-8.7z"/>
+						<path fill="#FBBC05" d="M5.3 14.8c-.2-.8-.4-1.6-.4-2.5s.2-1.7.4-2.5L1.6 7C.6 9 0 11.2 0 13.5s.6 4.5 1.6 6.5l3.7-2.9z"/>
+						<path fill="#34A853" d="M12 24c3.2 0 6-1.1 8-3l-3.7-2.9c-1.1.7-2.5 1.2-4.3 1.2-3.1 0-5.8-2.1-6.7-5l-3.7 2.8C3.5 20.9 7.4 24 12 24z"/>
+					</svg>
+					<span>Continue with Google (OAuth)</span>
+				</button>
+			</div>
+
+			<div class="relative flex items-center py-1">
+				<div class="flex-grow border-t border-border"></div>
+				<span class="flex-shrink mx-3 text-[11px] font-mono uppercase tracking-wider text-muted-foreground">
+					or verify via One-Time Password / Magic Link
+				</span>
+				<div class="flex-grow border-t border-border"></div>
+			</div>
+
+			<!-- Method 2 & 3: 6-Digit Email OTP + 1-Click Magic Link -->
+			<form id="portal-otp-request-form" class="flex flex-col gap-3">
 				<div class="flex flex-col gap-1.5">
-					<label for="portal-verify-email" class="text-xs font-semibold text-foreground">
+					<label for="portal-auth-email" class="text-xs font-semibold text-foreground">
 						Invited Guest / Sponsor Email Address
 					</label>
 					<input
 						type="email"
-						id="portal-verify-email"
+						id="portal-auth-email"
 						name="email"
 						required
 						autocomplete="email"
@@ -362,19 +404,69 @@ const pageDescription = !portalFound
 						class="w-full rounded-lg border border-border bg-background px-3.5 py-2.5 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
 					/>
 				</div>
-				<button
-					type="submit"
-					id="btn-portal-verify"
-					class="w-full px-4 py-2.5 rounded-lg bg-primary text-primary-foreground text-xs font-bold hover:bg-primary/90 transition-colors cursor-pointer"
-				>
-					Verify Email &amp; Unlock Studio Portal &rarr;
-				</button>
-				<div id="portal-verify-feedback" class="hidden text-xs p-3 rounded-lg border border-destructive/40 bg-destructive/10 text-destructive"></div>
+
+				<div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+					<button
+						type="submit"
+						id="btn-portal-send-otp"
+						class="w-full px-4 py-2.5 rounded-lg bg-primary text-primary-foreground text-xs font-bold hover:bg-primary/90 transition-colors cursor-pointer"
+					>
+						Send 6-Digit OTP Code &rarr;
+					</button>
+					<button
+						type="button"
+						id="btn-portal-send-magic"
+						class="w-full px-4 py-2.5 rounded-lg border border-primary/50 bg-primary/10 text-primary text-xs font-bold hover:bg-primary/20 transition-colors cursor-pointer"
+					>
+						Send 1-Click Magic Link &#9993;
+					</button>
+				</div>
 			</form>
 
-			<p class="text-[11px] text-muted-foreground font-mono">
-				Verification sets an encrypted 30-day HttpOnly session cookie for this browser. Need help or want a colleague added? Email <a href="mailto:alex@codingcat.dev" class="text-primary underline">alex@codingcat.dev</a>.
-			</p>
+			<!-- Step 2: 6-Digit OTP Code Entry (revealed after sending OTP or clicking toggle) -->
+			<form id="portal-otp-verify-form" class="hidden flex-col gap-3 p-4 rounded-xl border border-primary/40 bg-primary/5">
+				<div class="flex items-center justify-between gap-2">
+					<label for="portal-otp-code" class="text-xs font-bold text-foreground">
+						Enter 6-Digit Verification Code
+					</label>
+					<span class="text-[11px] font-mono text-muted-foreground">
+						Expires in 5 minutes
+					</span>
+				</div>
+				<input
+					type="text"
+					id="portal-otp-code"
+					name="otp"
+					inputmode="numeric"
+					pattern="[0-9]{6}"
+					maxlength="6"
+					autocomplete="one-time-code"
+					placeholder="123456"
+					class="w-full rounded-lg border-2 border-primary/50 bg-background px-4 py-2.5 text-center font-mono text-lg font-bold tracking-[0.35em] text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+				/>
+				<button
+					type="submit"
+					id="btn-portal-verify-otp"
+					class="w-full px-4 py-2.5 rounded-lg bg-emerald-600 text-white text-xs font-bold hover:bg-emerald-500 transition-colors cursor-pointer"
+				>
+					Verify 6-Digit Code &amp; Unlock Studio Portal &rarr;
+				</button>
+			</form>
+
+			<div id="portal-auth-feedback" class="hidden text-xs p-3 rounded-lg border"></div>
+
+			<div class="flex items-center justify-between gap-2 pt-1">
+				<button
+					type="button"
+					id="btn-portal-toggle-otp-box"
+					class="text-[11px] font-mono text-primary hover:underline cursor-pointer"
+				>
+					Already have a 6-digit code? Enter it here
+				</button>
+				<span class="text-[11px] text-muted-foreground font-mono">
+					Need help? <a href="mailto:alex@codingcat.dev" class="text-primary underline">alex@codingcat.dev</a>
+				</span>
+			</div>
 		</div>
 	) : (
 	<div class="w-full flex flex-col gap-8 md:gap-10 my-8 md:my-12 max-w-5xl mx-auto">
@@ -406,8 +498,8 @@ const pageDescription = !portalFound
 				<div class="flex flex-wrap items-center gap-2 text-xs font-mono uppercase tracking-wider text-primary">
 					<span>CodingCat.dev Studio &amp; Deal Room</span>
 					<span>&middot;</span>
-					<span class="px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30 font-bold">
-						🔒 Verified Session
+					<span class="px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30 font-bold" title="Authenticated via Better-Auth">
+						🔒 {verifiedPortalEmail || "Better-Auth Verified"}
 					</span>
 					{portalData.source === "passionfroot" ? (
 						<span class="px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-600 dark:text-amber-300 border border-amber-500/30 font-bold">
@@ -422,9 +514,9 @@ const pageDescription = !portalFound
 						type="button"
 						id="btn-portal-lock"
 						class="px-2 py-0.5 rounded border border-border bg-background text-muted-foreground hover:text-foreground text-[10px] font-mono cursor-pointer"
-						title="Clear session cookie and lock this portal"
+						title="Sign out of Better-Auth and lock this portal"
 					>
-						Lock Portal
+						Sign Out
 					</button>
 				</div>
 				<h1 class="text-2xl md:text-4xl font-bold tracking-tight">
@@ -1174,87 +1266,268 @@ const pageDescription = !portalFound
 		tierId: isPortalAuthorized ? portalData.rateCard : "",
 	}}
 >
-	// 0. Studio Portal Email Verification Gate & Session Lock
+	// 0. Better-Auth Studio Portal Sign-In Gate (Email OTP, Magic Link, Google OAuth, Sign-Out)
 	(function () {
-		const verifyForm = document.getElementById("portal-verify-form");
-		const verifyBtn = document.getElementById("btn-portal-verify");
-		const verifyFeedback = document.getElementById("portal-verify-feedback");
+		const emailInput = document.getElementById("portal-auth-email");
+		const otpRequestForm = document.getElementById("portal-otp-request-form");
+		const sendOtpBtn = document.getElementById("btn-portal-send-otp");
+		const sendMagicBtn = document.getElementById("btn-portal-send-magic");
+		const otpVerifyForm = document.getElementById("portal-otp-verify-form");
+		const otpCodeInput = document.getElementById("portal-otp-code");
+		const verifyOtpBtn = document.getElementById("btn-portal-verify-otp");
+		const toggleOtpBoxBtn = document.getElementById("btn-portal-toggle-otp-box");
+		const googleBtn = document.getElementById("btn-portal-google");
+		const feedbackEl = document.getElementById("portal-auth-feedback");
 
-		if (verifyForm && verifyForm instanceof HTMLFormElement) {
-			verifyForm.addEventListener("submit", async (e) => {
-				e.preventDefault();
-				const emailInput = document.getElementById("portal-verify-email");
-				const email =
-					emailInput && emailInput instanceof HTMLInputElement
-						? emailInput.value.trim()
-						: "";
-				if (!email || !email.includes("@")) {
-					if (verifyFeedback) {
-						verifyFeedback.textContent =
-							"Please enter the email address associated with this portal invite.";
-						verifyFeedback.classList.remove("hidden");
-					}
-					return;
-				}
-				if (verifyBtn) {
-					verifyBtn.setAttribute("disabled", "true");
-					verifyBtn.textContent = "Verifying Email...";
-				}
-				if (verifyFeedback) verifyFeedback.classList.add("hidden");
+		function showFeedback(message, isSuccess) {
+			if (!feedbackEl) return;
+			feedbackEl.textContent = message;
+			feedbackEl.className = isSuccess
+				? "text-xs p-3 rounded-lg border border-emerald-500/40 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 font-medium"
+				: "text-xs p-3 rounded-lg border border-destructive/40 bg-destructive/10 text-destructive font-medium";
+		}
 
+		function getEnteredEmail() {
+			return emailInput && emailInput instanceof HTMLInputElement
+				? emailInput.value.trim().toLowerCase()
+				: "";
+		}
+
+		function revealOtpVerifyPanel() {
+			if (otpVerifyForm) {
+				otpVerifyForm.classList.remove("hidden");
+				otpVerifyForm.classList.add("flex");
+			}
+			if (otpCodeInput && otpCodeInput instanceof HTMLInputElement) {
+				otpCodeInput.focus();
+			}
+		}
+
+		if (toggleOtpBoxBtn) {
+			toggleOtpBoxBtn.addEventListener("click", () => {
+				revealOtpVerifyPanel();
+			});
+		}
+
+		// 1. Continue with Google OAuth
+		if (googleBtn) {
+			googleBtn.addEventListener("click", async () => {
+				googleBtn.setAttribute("disabled", "true");
 				try {
-					const res = await fetch("/api/portal/verify", {
+					const callbackURL = window.location.pathname + window.location.hash;
+					const res = await fetch("/api/auth/sign-in/social", {
 						method: "POST",
 						headers: { "Content-Type": "application/json" },
 						body: JSON.stringify({
-							token: portalToken,
-							email,
+							provider: "google",
+							callbackURL,
 						}),
 					});
-					const data = await res.json();
-					if (res.ok && data.ok) {
-						window.location.reload();
+					const data = await res.json().catch(() => ({}));
+					if (res.ok && data.url) {
+						window.location.href = data.url;
 						return;
 					}
-					if (verifyFeedback) {
-						verifyFeedback.textContent =
-							data.message ||
-							"Email did not match this studio portal. Please try your invited email or contact alex@codingcat.dev.";
-						verifyFeedback.classList.remove("hidden");
-					}
+					showFeedback(
+						data.message ||
+							"Could not start Google OAuth right now. Please use the 6-digit OTP or Magic Link below.",
+						false,
+					);
 				} catch {
-					if (verifyFeedback) {
-						verifyFeedback.textContent =
-							"Network error while verifying portal access. Please try again.";
-						verifyFeedback.classList.remove("hidden");
-					}
+					showFeedback(
+						"Network error starting Google Sign-In. Please use the 6-digit OTP below.",
+						false,
+					);
 				} finally {
-					if (verifyBtn) {
-						verifyBtn.removeAttribute("disabled");
-						verifyBtn.textContent = "Verify Email & Unlock Studio Portal →";
+					googleBtn.removeAttribute("disabled");
+				}
+			});
+		}
+
+		// 2. Send 6-Digit Email OTP via Better-Auth
+		if (otpRequestForm && otpRequestForm instanceof HTMLFormElement) {
+			otpRequestForm.addEventListener("submit", async (e) => {
+				e.preventDefault();
+				const email = getEnteredEmail();
+				if (!email || !email.includes("@")) {
+					showFeedback(
+						"Please enter the invited guest or sponsor email address.",
+						false,
+					);
+					return;
+				}
+				if (sendOtpBtn) {
+					sendOtpBtn.setAttribute("disabled", "true");
+					sendOtpBtn.textContent = "Sending 6-Digit Code...";
+				}
+				try {
+					const res = await fetch("/api/auth/email-otp/send-verification-otp", {
+						method: "POST",
+						headers: {
+							"Content-Type": "application/json",
+							"x-portal-token": portalToken,
+						},
+						body: JSON.stringify({
+							email,
+							type: "sign-in",
+						}),
+					});
+					const data = await res.json().catch(() => ({}));
+					if (res.ok && (data.success || data.status)) {
+						revealOtpVerifyPanel();
+						showFeedback(
+							`✓ Sent a 6-digit verification code to ${email}. Enter it above within 5 minutes.`,
+							true,
+						);
+						return;
+					}
+					showFeedback(
+						data.message ||
+							"Email is not on the invite list for this Studio Portal, or could not send code.",
+						false,
+					);
+				} catch {
+					showFeedback(
+						"Network error while sending 6-digit OTP code. Please try again.",
+						false,
+					);
+				} finally {
+					if (sendOtpBtn) {
+						sendOtpBtn.removeAttribute("disabled");
+						sendOtpBtn.textContent = "Send 6-Digit OTP Code →";
 					}
 				}
 			});
 		}
 
-		const lockBtn = document.getElementById("btn-portal-lock");
-		if (lockBtn) {
-			lockBtn.addEventListener("click", async () => {
+		// 3. Send 1-Click Magic Link via Better-Auth
+		if (sendMagicBtn) {
+			sendMagicBtn.addEventListener("click", async () => {
+				const email = getEnteredEmail();
+				if (!email || !email.includes("@")) {
+					showFeedback(
+						"Please enter your invited guest or sponsor email address first.",
+						false,
+					);
+					return;
+				}
+				sendMagicBtn.setAttribute("disabled", "true");
+				const origText = sendMagicBtn.textContent;
+				sendMagicBtn.textContent = "Sending Magic Link...";
 				try {
-					await fetch("/api/portal/verify", {
+					const callbackURL = window.location.pathname + window.location.hash;
+					const res = await fetch("/api/auth/sign-in/magic-link", {
+						method: "POST",
+						headers: {
+							"Content-Type": "application/json",
+							"x-portal-token": portalToken,
+						},
+						body: JSON.stringify({
+							email,
+							callbackURL,
+						}),
+					});
+					const data = await res.json().catch(() => ({}));
+					if (res.ok && (data.status || data.success !== false)) {
+						showFeedback(
+							`✓ Sent a 1-click sign-in Magic Link to ${email}. Check your inbox to unlock this portal.`,
+							true,
+						);
+						return;
+					}
+					showFeedback(
+						data.message ||
+							"Could not send Magic Link for that email address.",
+						false,
+					);
+				} catch {
+					showFeedback(
+						"Network error while sending Magic Link. Please try again.",
+						false,
+					);
+				} finally {
+					sendMagicBtn.removeAttribute("disabled");
+					sendMagicBtn.textContent = origText;
+				}
+			});
+		}
+
+		// 4. Verify 6-Digit OTP & Sign In via Better-Auth
+		if (otpVerifyForm && otpVerifyForm instanceof HTMLFormElement) {
+			otpVerifyForm.addEventListener("submit", async (e) => {
+				e.preventDefault();
+				const email = getEnteredEmail();
+				const otp =
+					otpCodeInput && otpCodeInput instanceof HTMLInputElement
+						? otpCodeInput.value.replace(/\D/g, "").trim()
+						: "";
+				if (!email || !email.includes("@")) {
+					showFeedback("Please enter your email address above.", false);
+					return;
+				}
+				if (otp.length !== 6) {
+					showFeedback("Please enter the 6-digit numeric code from your email.", false);
+					return;
+				}
+				if (verifyOtpBtn) {
+					verifyOtpBtn.setAttribute("disabled", "true");
+					verifyOtpBtn.textContent = "Verifying 6-Digit Code...";
+				}
+				try {
+					const res = await fetch("/api/auth/sign-in/email-otp", {
 						method: "POST",
 						headers: { "Content-Type": "application/json" },
 						body: JSON.stringify({
-							token: portalToken,
-							action: "logout",
+							email,
+							otp,
 						}),
 					});
+					const data = await res.json().catch(() => ({}));
+					if (res.ok && (data.token || data.user)) {
+						showFeedback("✓ Verified! Unlocking Studio Portal...", true);
+						window.location.reload();
+						return;
+					}
+					showFeedback(
+						data.message ||
+							"Invalid or expired 6-digit code. Please request a fresh OTP code.",
+						false,
+					);
+				} catch {
+					showFeedback(
+						"Network error while verifying 6-digit code. Please try again.",
+						false,
+					);
 				} finally {
-					const cleanUrl = new URL(window.location.href);
-					cleanUrl.searchParams.delete("key");
-					window.location.href = cleanUrl.toString();
+					if (verifyOtpBtn) {
+						verifyOtpBtn.removeAttribute("disabled");
+						verifyOtpBtn.textContent =
+							"Verify 6-Digit Code & Unlock Studio Portal →";
+					}
 				}
 			});
+		}
+
+		// 5. Sign Out / Switch Account
+		async function signOutPortal() {
+			try {
+				await fetch("/api/auth/sign-out", {
+					method: "POST",
+					headers: { "Content-Type": "application/json" },
+					body: JSON.stringify({}),
+				});
+			} finally {
+				window.location.reload();
+			}
+		}
+
+		const lockBtn = document.getElementById("btn-portal-lock");
+		if (lockBtn) {
+			lockBtn.addEventListener("click", signOutPortal);
+		}
+		const switchAccountBtn = document.getElementById("btn-portal-switch-account");
+		if (switchAccountBtn) {
+			switchAccountBtn.addEventListener("click", signOutPortal);
 		}
 	})();
 

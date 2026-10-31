@@ -1,6 +1,6 @@
 ---
 /**
- * `/sign-in` | CodingCat.dev OAuth 2.1 / MCP & Mascot Lab Creator Sign-In Page.
+ * `/sign-in` | CodingCat.dev Better-Auth Sign-In Page (Email OTP, Magic Link, Google OAuth & MCP OAuth 2.1).
  * Zero em-dashes used.
  */
 import AjAnimatedMascot from "@/components/AjAnimatedMascot.astro";
@@ -19,7 +19,7 @@ const authorizeTarget = `/oauth2/authorize?${query.toString()}`;
 
 <BaseLayout
 	title="Sign In | CodingCat.dev"
-	description="Link your custom assistant, MCP agent, or Mascot Lab creator session to CodingCat.dev"
+	description="Sign in to CodingCat.dev Studio Portals, Mascot Lab, and Model Context Protocol (MCP) sessions via Better-Auth."
 >
 	<div class="min-h-[70vh] flex items-center justify-center px-4 py-12">
 		<div class="duo-card hand-border max-w-md w-full p-8 text-center">
@@ -35,10 +35,10 @@ const authorizeTarget = `/oauth2/authorize?${query.toString()}`;
 			</div>
 
 			<h1 class="font-display text-3xl font-black text-[#2A1155] dark:text-white mb-2">
-				Connect to CodingCat.dev
+				Sign In to CodingCat.dev
 			</h1>
 			<p class="text-sm font-medium text-[#2A1155]/80 dark:text-slate-300 mb-6 leading-relaxed">
-				Authorize your AI assistant, Model Context Protocol (MCP) client, or Mascot Lab creator session to save presets and retrieve Courses, Podcasts, and Blog Posts.
+				Authenticate with Better-Auth via a 6-digit One-Time Password (OTP), 1-click Magic Link, or Google OAuth.
 			</p>
 
 			{clientId && redirectUri ? (
@@ -74,48 +74,95 @@ const authorizeTarget = `/oauth2/authorize?${query.toString()}`;
 					</script>
 				</div>
 			) : (
-				<form id="creator-signin-form" class="space-y-4 text-left" data-redirect={redirectPath}>
-					<div>
-						<label
-							for="creator-name"
-							class="block font-mono text-xs font-extrabold uppercase tracking-wider text-[#2A1155] dark:text-purple-200 mb-1.5"
-						>
-							Creator Display Name
-						</label>
-						<input
-							id="creator-name"
-							name="name"
-							type="text"
-							required
-							value="Alex Patterson"
-							class="w-full rounded-xl border-2 border-[#2A1155] bg-white px-3.5 py-2.5 text-sm font-bold text-[#2A1155] dark:border-purple-400/40 dark:bg-[#0B1326] dark:text-white focus:outline-none focus:ring-2 focus:ring-[#7C3AED]"
-						/>
-					</div>
-
-					<div>
-						<label
-							for="creator-email"
-							class="block font-mono text-xs font-extrabold uppercase tracking-wider text-[#2A1155] dark:text-purple-200 mb-1.5"
-						>
-							Developer Email
-						</label>
-						<input
-							id="creator-email"
-							name="email"
-							type="email"
-							required
-							value="alex@codingcat.dev"
-							class="w-full rounded-xl border-2 border-[#2A1155] bg-white px-3.5 py-2.5 text-sm font-bold text-[#2A1155] dark:border-purple-400/40 dark:bg-[#0B1326] dark:text-white focus:outline-none focus:ring-2 focus:ring-[#7C3AED]"
-						/>
-					</div>
-
+				<div class="space-y-4 text-left" id="better-auth-signin-root" data-redirect={redirectPath}>
 					<button
-						type="submit"
-						class="tactile-btn w-full justify-center py-3.5 px-5 text-base font-extrabold cursor-pointer"
+						type="button"
+						id="btn-signin-google"
+						class="w-full flex items-center justify-center gap-2.5 rounded-xl border-2 border-[#2A1155] bg-white px-4 py-3 text-sm font-extrabold text-[#2A1155] hover:bg-purple-50 dark:border-purple-400/40 dark:bg-[#0B1326] dark:text-white dark:hover:bg-slate-800 transition-colors cursor-pointer"
 					>
-						<span>Sign In &amp; Continue</span>
-						<span class="text-[#86EFAC]">&rarr;</span>
+						<svg class="w-4 h-4" viewBox="0 0 24 24" aria-hidden="true">
+							<path fill="#EA4335" d="M12 5c1.6 0 3 .6 4.1 1.7l3.1-3.1C17.3 1.8 14.8 1 12 1 7.4 1 3.5 3.6 1.6 7.4l3.7 2.8C6.2 7.2 8.9 5 12 5z"/>
+							<path fill="#4285F4" d="M23.5 12.3c0-.8-.1-1.6-.2-2.3H12v4.5h6.5c-.3 1.5-1.1 2.8-2.4 3.6l3.7 2.9c2.2-2 3.7-5 3.7-8.7z"/>
+							<path fill="#FBBC05" d="M5.3 14.8c-.2-.8-.4-1.6-.4-2.5s.2-1.7.4-2.5L1.6 7C.6 9 0 11.2 0 13.5s.6 4.5 1.6 6.5l3.7-2.9z"/>
+							<path fill="#34A853" d="M12 24c3.2 0 6-1.1 8-3l-3.7-2.9c-1.1.7-2.5 1.2-4.3 1.2-3.1 0-5.8-2.1-6.7-5l-3.7 2.8C3.5 20.9 7.4 24 12 24z"/>
+						</svg>
+						<span>Continue with Google</span>
 					</button>
+
+					<div class="relative flex items-center py-1">
+						<div class="flex-grow border-t border-[#2A1155]/20 dark:border-slate-700"></div>
+						<span class="flex-shrink mx-3 text-[11px] font-mono uppercase tracking-wider text-[#2A1155]/60 dark:text-slate-400">
+							or Email OTP / Magic Link
+						</span>
+						<div class="flex-grow border-t border-[#2A1155]/20 dark:border-slate-700"></div>
+					</div>
+
+					<form id="signin-otp-request-form" class="space-y-3">
+						<div>
+							<label
+								for="signin-email"
+								class="block font-mono text-xs font-extrabold uppercase tracking-wider text-[#2A1155] dark:text-purple-200 mb-1.5"
+							>
+								Email Address
+							</label>
+							<input
+								id="signin-email"
+								name="email"
+								type="email"
+								required
+								placeholder="you@company.com"
+								class="w-full rounded-xl border-2 border-[#2A1155] bg-white px-3.5 py-2.5 text-sm font-bold text-[#2A1155] dark:border-purple-400/40 dark:bg-[#0B1326] dark:text-white focus:outline-none focus:ring-2 focus:ring-[#7C3AED]"
+							/>
+						</div>
+
+						<div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+							<button
+								type="submit"
+								id="btn-signin-send-otp"
+								class="tactile-btn w-full justify-center py-3 px-4 text-xs font-extrabold cursor-pointer"
+							>
+								<span>Send 6-Digit OTP</span>
+								<span class="text-[#86EFAC]">&rarr;</span>
+							</button>
+							<button
+								type="button"
+								id="btn-signin-send-magic"
+								class="rounded-xl border-2 border-[#7C3AED] bg-[#7C3AED]/10 px-4 py-3 text-xs font-extrabold text-[#7C3AED] dark:text-[#C084FC] hover:bg-[#7C3AED]/20 transition-colors cursor-pointer"
+							>
+								Send Magic Link &#9993;
+							</button>
+						</div>
+					</form>
+
+					<form id="signin-otp-verify-form" class="hidden space-y-3 p-4 rounded-xl border-2 border-[#7C3AED]/40 bg-[#7C3AED]/5">
+						<label
+							for="signin-otp-code"
+							class="block font-mono text-xs font-extrabold uppercase tracking-wider text-[#2A1155] dark:text-purple-200"
+						>
+							Enter 6-Digit Verification Code
+						</label>
+						<input
+							id="signin-otp-code"
+							name="otp"
+							type="text"
+							inputmode="numeric"
+							pattern="[0-9]{6}"
+							maxlength="6"
+							autocomplete="one-time-code"
+							placeholder="123456"
+							class="w-full rounded-xl border-2 border-[#2A1155] bg-white px-4 py-2.5 text-center font-mono text-lg font-extrabold tracking-[0.35em] text-[#2A1155] dark:border-purple-400/40 dark:bg-[#0B1326] dark:text-white focus:outline-none focus:ring-2 focus:ring-[#7C3AED]"
+						/>
+						<button
+							type="submit"
+							id="btn-signin-verify-otp"
+							class="tactile-btn w-full justify-center py-3 px-4 text-xs font-extrabold cursor-pointer"
+						>
+							<span>Verify Code &amp; Sign In</span>
+							<span class="text-[#86EFAC]">&rarr;</span>
+						</button>
+					</form>
+
+					<div id="signin-feedback" class="hidden text-xs p-3 rounded-xl border"></div>
 
 					<div class="pt-2 text-center">
 						<a
@@ -125,31 +172,134 @@ const authorizeTarget = `/oauth2/authorize?${query.toString()}`;
 							Return to {redirectPath}
 						</a>
 					</div>
-				</form>
+				</div>
 			)}
 		</div>
 	</div>
 
 	<script>
-		const form = document.getElementById("creator-signin-form") as HTMLFormElement | null;
-		form?.addEventListener("submit", async (e) => {
-			e.preventDefault();
-			const formData = new FormData(form);
-			const name = String(formData.get("name") || "Alex Patterson");
-			const email = String(formData.get("email") || "alex@codingcat.dev");
-			const redirect = form.dataset.redirect || "/mascot-lab";
+		const root = document.getElementById("better-auth-signin-root");
+		const redirect = root?.getAttribute("data-redirect") || "/mascot-lab";
+		const emailInput = document.getElementById("signin-email") as HTMLInputElement | null;
+		const otpReqForm = document.getElementById("signin-otp-request-form") as HTMLFormElement | null;
+		const otpVerifyForm = document.getElementById("signin-otp-verify-form") as HTMLFormElement | null;
+		const otpCodeInput = document.getElementById("signin-otp-code") as HTMLInputElement | null;
+		const sendOtpBtn = document.getElementById("btn-signin-send-otp");
+		const sendMagicBtn = document.getElementById("btn-signin-send-magic");
+		const verifyOtpBtn = document.getElementById("btn-signin-verify-otp");
+		const googleBtn = document.getElementById("btn-signin-google");
+		const feedbackEl = document.getElementById("signin-feedback");
 
+		function showFeedback(msg: string, ok: boolean) {
+			if (!feedbackEl) return;
+			feedbackEl.textContent = msg;
+			feedbackEl.className = ok
+				? "text-xs p-3 rounded-xl border border-emerald-500/40 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 font-bold"
+				: "text-xs p-3 rounded-xl border border-red-500/40 bg-red-500/10 text-red-600 dark:text-red-300 font-bold";
+		}
+
+		googleBtn?.addEventListener("click", async () => {
+			googleBtn.setAttribute("disabled", "true");
 			try {
-				await fetch("/api/mascot-lab", {
+				const res = await fetch("/api/auth/sign-in/social", {
 					method: "POST",
 					headers: { "Content-Type": "application/json" },
-					body: JSON.stringify({ action: "login", name, email }),
+					body: JSON.stringify({ provider: "google", callbackURL: redirect }),
 				});
+				const data = await res.json().catch(() => ({}));
+				if (res.ok && data.url) {
+					window.location.href = data.url;
+					return;
+				}
+				showFeedback(data.message || "Could not start Google Sign-In.", false);
 			} catch {
-				// Fallback cookie in browser if offline
-				document.cookie = `cc_mascot_lab_user=${encodeURIComponent(`${name}|${email}`)}; Path=/; Max-Age=2592000; SameSite=Lax`;
+				showFeedback("Network error starting Google Sign-In.", false);
+			} finally {
+				googleBtn.removeAttribute("disabled");
 			}
-			window.location.href = redirect;
+		});
+
+		otpReqForm?.addEventListener("submit", async (e) => {
+			e.preventDefault();
+			const email = emailInput?.value.trim().toLowerCase() || "";
+			if (!email || !email.includes("@")) {
+				showFeedback("Please enter a valid email address.", false);
+				return;
+			}
+			sendOtpBtn?.setAttribute("disabled", "true");
+			try {
+				const res = await fetch("/api/auth/email-otp/send-verification-otp", {
+					method: "POST",
+					headers: { "Content-Type": "application/json" },
+					body: JSON.stringify({ email, type: "sign-in" }),
+				});
+				const data = await res.json().catch(() => ({}));
+				if (res.ok && (data.success || data.status)) {
+					otpVerifyForm?.classList.remove("hidden");
+					otpCodeInput?.focus();
+					showFeedback(`✓ Sent a 6-digit OTP code to ${email}.`, true);
+					return;
+				}
+				showFeedback(data.message || "Could not send 6-digit OTP code.", false);
+			} catch {
+				showFeedback("Network error sending OTP code.", false);
+			} finally {
+				sendOtpBtn?.removeAttribute("disabled");
+			}
+		});
+
+		sendMagicBtn?.addEventListener("click", async () => {
+			const email = emailInput?.value.trim().toLowerCase() || "";
+			if (!email || !email.includes("@")) {
+				showFeedback("Please enter your email address first.", false);
+				return;
+			}
+			sendMagicBtn.setAttribute("disabled", "true");
+			try {
+				const res = await fetch("/api/auth/sign-in/magic-link", {
+					method: "POST",
+					headers: { "Content-Type": "application/json" },
+					body: JSON.stringify({ email, callbackURL: redirect }),
+				});
+				const data = await res.json().catch(() => ({}));
+				if (res.ok && (data.status || data.success !== false)) {
+					showFeedback(`✓ Sent a 1-click Magic Link to ${email}.`, true);
+					return;
+				}
+				showFeedback(data.message || "Could not send Magic Link.", false);
+			} catch {
+				showFeedback("Network error sending Magic Link.", false);
+			} finally {
+				sendMagicBtn.removeAttribute("disabled");
+			}
+		});
+
+		otpVerifyForm?.addEventListener("submit", async (e) => {
+			e.preventDefault();
+			const email = emailInput?.value.trim().toLowerCase() || "";
+			const otp = otpCodeInput?.value.replace(/\D/g, "").trim() || "";
+			if (otp.length !== 6) {
+				showFeedback("Please enter the 6-digit code from your email.", false);
+				return;
+			}
+			verifyOtpBtn?.setAttribute("disabled", "true");
+			try {
+				const res = await fetch("/api/auth/sign-in/email-otp", {
+					method: "POST",
+					headers: { "Content-Type": "application/json" },
+					body: JSON.stringify({ email, otp }),
+				});
+				const data = await res.json().catch(() => ({}));
+				if (res.ok && (data.token || data.user)) {
+					window.location.href = redirect;
+					return;
+				}
+				showFeedback(data.message || "Invalid or expired 6-digit code.", false);
+			} catch {
+				showFeedback("Network error verifying code.", false);
+			} finally {
+				verifyOtpBtn?.removeAttribute("disabled");
+			}
 		});
 	</script>
 </BaseLayout>

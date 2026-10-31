@@ -5,7 +5,6 @@ import {
 	createGoogleCalendarBookingEvent,
 	STREAMYARD_STUDIO_URL,
 } from "@/lib/google-calendar";
-import { computePortalAccessKey } from "@/lib/portal-security";
 import {
 	getSanityServerClient,
 	resolveSponsorTier,
@@ -111,9 +110,7 @@ export const POST: APIRoute = async ({ request, url }) => {
 	const siteUrl = (workerEnv.SITE_URL || fallbackOrigin).replace(/\/$/, "");
 
 	const { client, canWrite } = getSanityServerClient();
-	const accessKey = await computePortalAccessKey(portalToken, guestEmail);
 	const queryFallback = new URLSearchParams({
-		key: accessKey,
 		bookedSlot: slotStartAt,
 	});
 	const portalUrl = `${siteUrl}/portal/${portalToken}?${queryFallback.toString()}`;

@@ -15,6 +15,7 @@ This skill encodes the exact editorial voice, canonical terminology, formatting 
      - **Podcasts** (`/podcasts` -> `/podcast/[slug]`), made of **Episodes** (`Watch Podcasts`, `Watch Episode →`).
      - **Blog** (`/blog` -> `/post/[slug]`), made of **Blog Posts** (`Read Blog`, `Read Post →`).
    - Never invent synonyms such as `"Teardowns"`, `"Blueprints"`, `"Curriculum"`, `"Units"`, `"Boss Node"`, or `"Skill Trees"`.
+   - Never write or reference the retired domain `"purrfect.dev"` (or `"Purrfect.dev"`) anywhere in prose, links, diagrams, or image prompts; always use **`codingcat.dev`** (`CodingCat.dev`).
    - Never write the brand word `"Excalidraw"` in user-facing UI copy, badges, headings, or captions; always call them **Diagrams**, **Visual Diagrams**, or **Architecture Diagrams**.
 2. **NEVER Use Em-Dashes**: Do not use the em-dash character anywhere in prose, titles, subtitles, video scripts, comments, or social posts. Use commas, parentheses, colons, or split the thought into two crisp sentences.
 3. **Always Use Markdown Tables for Comparisons**: Whenever comparing two or more tools, frameworks, databases, pricing tiers, or architectural trade-offs, you must render a Markdown comparison table. Never bury comparisons in long bulleted paragraphs.

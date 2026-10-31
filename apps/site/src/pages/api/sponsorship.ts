@@ -2,7 +2,6 @@ import { env } from "cloudflare:workers";
 import type { APIRoute } from "astro";
 import { sendCodingCatEmail } from "@/lib/email";
 import { createGoogleCalendarBookingEvent } from "@/lib/google-calendar";
-import { computePortalAccessKey } from "@/lib/portal-security";
 import {
 	getSanityServerClient,
 	resolveSponsorTier,
@@ -142,12 +141,9 @@ export const POST: APIRoute = async ({ request, url }) => {
 	const fallbackOrigin = url?.origin ?? new URL(request.url).origin;
 	const siteUrl = (workerEnv.SITE_URL || fallbackOrigin).replace(/\/$/, "");
 
-	const accessKey = await computePortalAccessKey(portalToken, email);
-	const queryFallback = new URLSearchParams({
-		key: accessKey,
-		...(kickoffSlotStartAt ? { bookedSlot: kickoffSlotStartAt } : {}),
-	});
-	const portalUrl = `${siteUrl}/portal/${portalToken}?${queryFallback.toString()}`;
+	const portalUrl = kickoffSlotStartAt
+		? `${siteUrl}/portal/${portalToken}?bookedSlot=${encodeURIComponent(kickoffSlotStartAt)}`
+		: `${siteUrl}/portal/${portalToken}`;
 
 	// 1. Optional 15-min Sponsor Kickoff Call booking if slot pre-selected on /sponsorships
 	let calendarEventUrl: string | undefined;

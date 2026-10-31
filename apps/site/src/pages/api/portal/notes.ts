@@ -110,8 +110,6 @@ export const POST: APIRoute = async ({ request, url }) => {
 		url: url ?? new URL(request.url),
 		token: canonicalToken,
 		allowedEmails,
-		explicitEmail: body.email,
-		explicitKey: body.key,
 	});
 
 	if (!auth.authorized) {
@@ -119,7 +117,7 @@ export const POST: APIRoute = async ({ request, url }) => {
 			JSON.stringify({
 				ok: false,
 				message:
-					"Unauthorized: Please verify your invited guest email before editing Run-of-Show notes.",
+					"Unauthorized: Please sign in with your invited guest or sponsor email via Better-Auth before editing Run-of-Show notes.",
 			}),
 			{ status: 403, headers: CORS_HEADERS },
 		);
@@ -162,10 +160,7 @@ export const POST: APIRoute = async ({ request, url }) => {
 		}),
 		{
 			status: 200,
-			headers: {
-				...CORS_HEADERS,
-				...(auth.setCookieHeader ? { "Set-Cookie": auth.setCookieHeader } : {}),
-			},
+			headers: CORS_HEADERS,
 		},
 	);
 };

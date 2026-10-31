@@ -7,7 +7,6 @@ import {
 	createGoogleCalendarBookingEvent,
 	STREAMYARD_STUDIO_URL,
 } from "@/lib/google-calendar";
-import { computePortalAccessKey } from "@/lib/portal-security";
 import { getSanityServerClient } from "@/lib/sanity/write-client";
 
 const CORS_HEADERS = {
@@ -261,12 +260,7 @@ export const POST: APIRoute = async ({ request, url }) => {
 	>;
 	const fallbackOrigin = url?.origin ?? new URL(request.url).origin;
 	const siteUrl = (workerEnv.SITE_URL || fallbackOrigin).replace(/\/$/, "");
-	const accessKey = guestEmail
-		? await computePortalAccessKey(portalToken, guestEmail)
-		: "";
-	const portalUrl = accessKey
-		? `${siteUrl}/portal/${portalToken}?key=${encodeURIComponent(accessKey)}`
-		: `${siteUrl}/portal/${portalToken}`;
+	const portalUrl = `${siteUrl}/portal/${portalToken}`;
 
 	if (body.action === "approve_recording") {
 		const approved = await approveGoogleCalendarRecordingEvent({
