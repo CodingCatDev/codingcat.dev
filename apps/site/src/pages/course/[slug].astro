@@ -96,16 +96,30 @@ const sanitizedContent = (course.content ?? []).filter((block) => {
 					)
 				}
 			</div>
-			{
-				firstLesson?.slug && (
-					<a
-						href={`/course/${slug}/lesson/${firstLesson.slug}`}
-						class="tactile-btn inline-flex items-center gap-2 rounded-xl border-2 border-[#2A1155] bg-[#7C3AED] px-5 py-2.5 font-display text-sm font-black text-white shadow-sketch-sm transition hover:bg-[#6D28D9] dark:border-white/80"
-					>
-						Start Course →
-					</a>
-				)
-			}
+			<div class="flex flex-wrap items-center gap-2.5">
+				<a
+					href={
+						course.youtube ||
+						firstLesson?.youtube ||
+						"https://www.youtube.com/@codingcatdev/playlists?sub_confirmation=1"
+					}
+					target="_blank"
+					rel="noopener noreferrer"
+					class="inline-flex items-center gap-2 rounded-xl border-2 border-[#2A1155] bg-white px-4 py-2.5 font-display text-xs font-black text-[#2A1155] shadow-sketch-sm transition hover:border-[#FF0000] hover:bg-[#FEF2F2] hover:text-[#DC2626] dark:border-white/25 dark:bg-[#131B2E] dark:text-white dark:hover:border-red-400"
+				>
+					<span>▶ Watch Course Playlist on YouTube ↗</span>
+				</a>
+				{
+					firstLesson?.slug && (
+						<a
+							href={`/course/${slug}/lesson/${firstLesson.slug}`}
+							class="tactile-btn inline-flex items-center gap-2 rounded-xl border-2 border-[#2A1155] bg-[#7C3AED] px-5 py-2.5 font-display text-sm font-black text-white shadow-sketch-sm transition hover:bg-[#6D28D9] dark:border-white/80"
+						>
+							Start Course →
+						</a>
+					)
+				}
+			</div>
 		</div>
 
 		<h1 class="mb-8 break-words font-display text-3xl font-black leading-tight tracking-tight text-[#2A1155] dark:text-white sm:text-4xl md:text-6xl">

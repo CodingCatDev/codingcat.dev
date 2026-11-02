@@ -6,6 +6,7 @@ import CoverMedia from "@/components/CoverMedia.astro";
 import ExcalidrawBlueprintCard from "@/components/ExcalidrawBlueprintCard.astro";
 import FormattedDate from "@/components/FormattedDate.astro";
 import PortableTextContent from "@/components/portable-text/PortableTextContent.astro";
+import PtYouTube from "@/components/portable-text/PtYouTube.astro";
 import SectionHeader from "@/components/SectionHeader.astro";
 import SponsorCard from "@/components/SponsorCard.astro";
 import TranscriptModal from "@/components/TranscriptModal.astro";
@@ -52,6 +53,20 @@ const transcriptText =
 const matchedTopics = matchTopicsForText(
 	`${post.title ?? ""} ${post.excerpt ?? ""}`,
 );
+const isSanityTopic = matchedTopics.some((t) => t.slug === "sanity");
+const fallbackRelatedVideo = isSanityTopic
+	? {
+			title: "Naive Vector RAG vs. Sanity Context Knowledge Bases",
+			youtube: "https://youtu.be/gH9Q6-b1b4Y",
+			description:
+				"See how structured knowledge bases and MCP context beat brittle chunking pipelines in production.",
+		}
+	: {
+			title: "3,000 AI Images for $1: Dockerless Serverless GPUs in TypeScript",
+			youtube: "https://youtu.be/7d6iJHEPMZI",
+			description:
+				"Watch the full architecture walkthrough and TypeScript implementation on the @CodingCatDev YouTube channel.",
+		};
 const videoSchema = post.youtube
 	? videoObjectSchema(
 			origin,
@@ -191,6 +206,31 @@ const faqNode = faqSchema(extractFaqsFromPortableText(post.content));
 						Sponsors<span class="text-[#7C3AED] dark:text-[#C084FC]">.</span>
 					</h2>
 					<SponsorCard sponsors={post.sponsor} />
+				</section>
+			)
+		}
+
+		{
+			!post.youtube && (
+				<section class="my-10 rounded-3xl border-2 border-[#2A1155] bg-[#FAF9FC] p-6 shadow-sketch dark:border-white/25 dark:bg-[#131B2E]">
+					<div class="mb-4 flex flex-wrap items-center justify-between gap-3">
+						<div>
+							<span class="inline-flex items-center gap-1.5 rounded-full border border-[#FF0000]/40 bg-[#FF0000]/10 px-3 py-0.5 font-mono text-[11px] font-extrabold uppercase tracking-wider text-[#DC2626] dark:border-[#FF0000]/50 dark:bg-[#FF0000]/20 dark:text-red-300">
+								▶ Watch on @CodingCatDev YouTube
+							</span>
+							<h2 class="mt-2 font-display text-2xl font-black text-[#2A1155] dark:text-white">
+								Watch the Related Video Deep Dive: {fallbackRelatedVideo.title}
+							</h2>
+							<p class="mt-1 text-sm font-medium text-[#2A1155]/75 dark:text-slate-300">
+								{fallbackRelatedVideo.description}
+							</p>
+						</div>
+					</div>
+					<PtYouTube
+						node={{ _type: "youtube", youtube: fallbackRelatedVideo.youtube }}
+						index={0}
+						isInline={false}
+					/>
 				</section>
 			)
 		}
