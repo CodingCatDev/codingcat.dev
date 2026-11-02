@@ -26,7 +26,7 @@ if (initialPortalToken || initialBookingIdParam || initialPreMeetingFor) {
 				token: initialPortalToken,
 				privateId,
 				strippedId,
-			},
+			} as Record<string, any>,
 		);
 	} catch {
 		// Non-fatal

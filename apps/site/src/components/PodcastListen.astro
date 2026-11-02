@@ -39,7 +39,13 @@ const appleUrl =
 	(src
 		? "https://podcasts.apple.com/us/podcast/codingcat-dev-podcast/id1491655542"
 		: null);
-const youtubeUrl = cleanLinks.youtube || cleanYoutube || null;
+const rawYoutubeUrl = cleanLinks.youtube || cleanYoutube || null;
+const youtubeVideoMatch = rawYoutubeUrl?.match(
+	/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/))([A-Za-z0-9_-]{11})/,
+);
+const youtubeUrl = youtubeVideoMatch?.[1]
+	? `https://www.youtube.com/watch?v=${youtubeVideoMatch[1]}&list=PLUKgAjyG9B0ZhUEXp9eVa7h4L__FDW3uV`
+	: rawYoutubeUrl;
 const pocketCastsUrl = cleanLinks.pocketCasts || null;
 const castboxUrl = cleanLinks.castbox || null;
 const castroUrl = cleanLinks.castro || null;
@@ -151,6 +157,19 @@ const buttonClass =
 						<span>YouTube</span>
 					</a>
 				)}
+				<a
+					href="https://www.youtube.com/@codingcatdev?sub_confirmation=1"
+					target="_blank"
+					rel="noreferrer noopener"
+					class="tactile-btn inline-flex items-center justify-center gap-1.5 rounded-xl border-2 border-[#2A1155] bg-[#FF0000] px-3.5 py-2 font-display text-xs font-black text-white shadow-sketch-sm transition-all hover:-translate-y-0.5 hover:bg-[#DC2626] dark:border-white/60"
+					title="Subscribe to CodingCat.dev on YouTube (62.5K / 100K Goal)"
+					aria-label="Subscribe to CodingCat.dev on YouTube"
+					data-track="podcast_listen"
+					data-track-label="youtube_subscribe"
+					data-track-target="https://www.youtube.com/@codingcatdev?sub_confirmation=1"
+				>
+					<span>Subscribe on YouTube (62.5K / 100K) →</span>
+				</a>
 				{pocketCastsUrl && (
 					<a
 						href={pocketCastsUrl}

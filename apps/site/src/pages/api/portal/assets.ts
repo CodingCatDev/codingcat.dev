@@ -84,7 +84,7 @@ export const GET: APIRoute = async ({ request, url }) => {
 			allowedEmails,
 			sharedAssets
 		}`,
-		{ token },
+		{ token } as Record<string, any>,
 	);
 
 	if (!ownerDoc) {
@@ -305,7 +305,7 @@ export const POST: APIRoute = async ({ request, url }) => {
 			source,
 			bookingSource
 		}`,
-		{ token, docId },
+		{ token, docId } as Record<string, any>,
 	);
 
 	if (!targetDocs || targetDocs.length === 0) {

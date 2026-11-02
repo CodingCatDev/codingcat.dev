@@ -206,7 +206,7 @@ const authorizeTarget = `/oauth2/authorize?${query.toString()}`;
 					headers: { "Content-Type": "application/json" },
 					body: JSON.stringify({ provider: "google", callbackURL: redirect }),
 				});
-				const data = await res.json().catch(() => ({}));
+				const data = (await res.json().catch(() => ({}))) as Record<string, any>;
 				if (res.ok && data.url) {
 					window.location.href = data.url;
 					return;
@@ -233,7 +233,7 @@ const authorizeTarget = `/oauth2/authorize?${query.toString()}`;
 					headers: { "Content-Type": "application/json" },
 					body: JSON.stringify({ email, type: "sign-in" }),
 				});
-				const data = await res.json().catch(() => ({}));
+				const data = (await res.json().catch(() => ({}))) as Record<string, any>;
 				if (res.ok && (data.success || data.status)) {
 					otpVerifyForm?.classList.remove("hidden");
 					otpCodeInput?.focus();
@@ -261,7 +261,7 @@ const authorizeTarget = `/oauth2/authorize?${query.toString()}`;
 					headers: { "Content-Type": "application/json" },
 					body: JSON.stringify({ email, callbackURL: redirect }),
 				});
-				const data = await res.json().catch(() => ({}));
+				const data = (await res.json().catch(() => ({}))) as Record<string, any>;
 				if (res.ok && (data.status || data.success !== false)) {
 					showFeedback(`✓ Sent a 1-click Magic Link to ${email}.`, true);
 					return;
@@ -289,7 +289,7 @@ const authorizeTarget = `/oauth2/authorize?${query.toString()}`;
 					headers: { "Content-Type": "application/json" },
 					body: JSON.stringify({ email, otp }),
 				});
-				const data = await res.json().catch(() => ({}));
+				const data = (await res.json().catch(() => ({}))) as Record<string, any>;
 				if (res.ok && (data.token || data.user)) {
 					window.location.href = redirect;
 					return;

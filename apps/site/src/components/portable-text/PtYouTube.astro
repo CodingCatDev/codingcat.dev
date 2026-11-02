@@ -12,7 +12,10 @@ type Props = PtProps<YouTubeNode> & {
 };
 
 const { node, coverImage, priority = false } = Astro.props;
-const id = youtubeId(stegaClean(node.youtube ?? node.url));
+const rawYoutubeUrl = stegaClean(node.youtube ?? node.url) ?? "";
+const id = youtubeId(rawYoutubeUrl);
+const customListMatch = rawYoutubeUrl.match(/[?&]list=([A-Za-z0-9_-]+)/);
+const playlistId = customListMatch?.[1] || "UUnKZ8gEb78zXKMi1ns-IQ2g";
 
 const builder = Astro.locals.sanity.urlForImage(coverImage ?? undefined);
 const sanitySrc = builder?.width(1920).height(1080).quality(82).url();
@@ -121,7 +124,7 @@ const alt = rawAlt && rawAlt.trim().length > 0 ? rawAlt : "";
 
 				<div class="flex flex-wrap items-center gap-2">
 					<a
-						href={`https://www.youtube.com/watch?v=${id}&list=UUnKZ8gEb78zXKMi1ns-IQ2g`}
+						href={`https://www.youtube.com/watch?v=${id}&list=${playlistId}`}
 						target="_blank"
 						rel="noopener noreferrer"
 						class="inline-flex items-center gap-1.5 rounded-xl border-2 border-[#2A1155] bg-white px-3.5 py-1.5 font-mono text-xs font-extrabold text-[#2A1155] shadow-sketch-sm transition hover:border-[#7C3AED] hover:bg-[#EDE9FE] hover:text-[#7C3AED] dark:border-white/25 dark:bg-[#0B1326] dark:text-white dark:hover:border-[#C084FC] dark:hover:bg-purple-950/60"

@@ -96,7 +96,7 @@ export const POST: APIRoute = async ({ request, url }) => {
 				guestSlug,
 				guestDocId
 			}`,
-			{ token },
+			{ token } as Record<string, any>,
 		);
 
 		if (!targetDocs || targetDocs.length === 0) {

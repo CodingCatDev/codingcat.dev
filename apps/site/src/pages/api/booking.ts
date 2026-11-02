@@ -115,7 +115,7 @@ export const POST: APIRoute = async ({ request, url }) => {
 					privId,
 					stripped,
 					token: existingToken || "",
-				},
+				} as Record<string, any>,
 			);
 		} catch {
 			// Non-fatal

@@ -45,14 +45,14 @@ export const ALL: APIRoute = async ({ request, locals }) => {
 						token: portalTokenHeader,
 						privateLeadId: `private.sponsorLead-${portalTokenHeader}`,
 						leadId: `sponsorLead-${portalTokenHeader}`,
-					},
+					} as Record<string, any>,
 				),
 				client.fetch<Record<string, any> | null>(
 					`*[_type == "booking" && (portalToken == $token || legacyPortalToken == $token || _id == $privateBookingId)] | order(_createdAt desc)[0]{ guestEmail, coordinatorEmail, coordinatorEmails, allowedEmails }`,
 					{
 						token: portalTokenHeader,
 						privateBookingId: `private.booking-${portalTokenHeader}`,
-					},
+					} as Record<string, any>,
 				),
 			]);
 

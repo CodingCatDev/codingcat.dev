@@ -316,11 +316,15 @@ async function buildAndOptionallySendDigest(opts: {
 				provider: `skipped-already-sent-${todayEtStr}`,
 			};
 		} else {
-			emailResult = await sendCodingCatEmail({
+			const sentOk = await sendCodingCatEmail({
 				to: opts.recipientEmail || "alex@codingcat.dev",
 				subject: `[CodingCat.dev Today] ${todayEtStr}: ${pendingHolds.length} Holds, ${upcoming72hBookings.length} Upcoming Recordings, ${actionLeads.length} Deals`,
 				text: emailText,
 			});
+			emailResult = {
+				sent: Boolean(sentOk),
+				provider: sentOk ? "gmail-or-resend" : "failed",
+			};
 			if (emailResult.sent) {
 				try {
 					await client.createOrReplace({

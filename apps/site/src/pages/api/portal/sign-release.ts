@@ -92,7 +92,7 @@ export const POST: APIRoute = async ({ request, url }) => {
 				coordinatorEmails,
 				allowedEmails
 			}`,
-			{ token },
+			{ token } as Record<string, any>,
 		);
 
 		if (!targetDocs || targetDocs.length === 0) {

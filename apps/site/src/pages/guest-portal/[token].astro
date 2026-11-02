@@ -44,7 +44,7 @@ let guestDoc: GuestDoc | null = null;
 if (token) {
 	const directPortalMatch = await client.fetch<{ portalToken?: string } | null>(
 		`*[_type in ["booking", "sponsorLead"] && (portalToken == $token || legacyPortalToken == $token)][0]{ portalToken }`,
-		{ token },
+		{ token } as Record<string, any>,
 	);
 	if (directPortalMatch?.portalToken) {
 		return Astro.redirect(
