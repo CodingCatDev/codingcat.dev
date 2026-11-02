@@ -53,6 +53,9 @@ export async function hashToken(token: string): Promise<string> {
  * and the default MCP explorer user exist in Cloudflare D1.
  */
 export async function ensureDefaultUserAndSession(db: D1Database) {
+	if (typeof db.batch !== "function") {
+		return;
+	}
 	const now = Date.now();
 	await db.batch([
 		db.prepare(
