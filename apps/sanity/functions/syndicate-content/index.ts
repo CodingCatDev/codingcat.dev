@@ -172,7 +172,7 @@ export const handler = documentEventHandler<ContentDocument>(
 			process.env.FORCE_AWS_BUILDER === "true";
 
 		const platforms: Array<
-			"devto" | "dailydev" | "reddit" | "awsbuilder"
+			"devto" | "hashnode" | "dailydev" | "reddit" | "awsbuilder"
 		> = [
 			"devto",
 			"dailydev",
