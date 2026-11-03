@@ -49,6 +49,28 @@ interface VaultAssetItem {
 	externalUrl?: string;
 }
 
+interface CollaborationAttachmentItem {
+	_key?: string;
+	title: string;
+	category?: string;
+	assetId?: string;
+	mimeType?: string;
+	fileSize?: number;
+	externalUrl: string;
+}
+
+interface CollaborationThreadItem {
+	_key?: string;
+	authorName: string;
+	authorRole: "host" | "guest";
+	authorEmail?: string;
+	noteType?: "call_note" | "comment" | "ros_update" | "file_drop";
+	message: string;
+	createdAt?: string;
+	emailedToCounterpart?: boolean;
+	attachments?: CollaborationAttachmentItem[];
+}
+
 interface LeadPortalData {
 	_id: string;
 	portalToken: string;
@@ -72,6 +94,7 @@ interface LeadPortalData {
 	stripeBalanceInvoiceUrl?: string;
 	deliverables: DeliverableItem[];
 	sharedAssets: VaultAssetItem[];
+	collaborationThread: CollaborationThreadItem[];
 	bookingStatus?: string;
 	bookingSlotStartAt?: string;
 	recordingUrl?: string;
@@ -230,6 +253,7 @@ let portalData: LeadPortalData = {
 		status: paymentNotice === "deposit_success" ? "in-progress" : "pending",
 	})),
 	sharedAssets: [],
+	collaborationThread: [],
 };
 
 try {
@@ -294,7 +318,7 @@ try {
 					slug.current == $slug ||
 					_id in [$docId, $draftId, $pubId] ||
 					lower(title) == lower($guestName)
-				)] | order(_id asc)[0]{
+				)] | order(_updatedAt desc)[0]{
 					_id,
 					title,
 					slug,
@@ -330,6 +354,26 @@ try {
 			...(Array.isArray(doc?.sharedAssets) ? doc.sharedAssets : []),
 			...(Array.isArray(bookingDoc?.sharedAssets) ? bookingDoc.sharedAssets : []),
 		];
+		const rawThread = [
+			...(Array.isArray(doc?.collaborationThread) ? doc.collaborationThread : []),
+			...(Array.isArray(bookingDoc?.collaborationThread)
+				? bookingDoc.collaborationThread
+				: []),
+		];
+		const seenThreadKeys = new Set<string>();
+		const combinedThread: CollaborationThreadItem[] = [];
+		for (const item of rawThread) {
+			const k = item?._key || `${item?.createdAt}-${item?.authorName}`;
+			if (k && !seenThreadKeys.has(k)) {
+				seenThreadKeys.add(k);
+				combinedThread.push(item);
+			}
+		}
+		combinedThread.sort(
+			(a, b) =>
+				new Date(a.createdAt || 0).getTime() -
+				new Date(b.createdAt || 0).getTime(),
+		);
 		const isPf =
 			doc?.source === "passionfroot" ||
 			doc?.billingProvider === "passionfroot" ||
@@ -390,6 +434,7 @@ try {
 							status: "pending",
 						})),
 			sharedAssets: combinedAssets,
+			collaborationThread: combinedThread,
 			bookingStatus: resolvedBookingStatus,
 			bookingSlotStartAt: bookingDoc?.slotStartAt,
 			recordingUrl: isRecordingApproved
@@ -409,6 +454,7 @@ try {
 			hasSignedRelease: Boolean(bookingDoc?.signatureData),
 			signedAt: bookingDoc?.signedAt,
 			signatureMode: bookingDoc?.signatureMode,
+			guestProfileExists: Boolean(guestProfileDoc?._id),
 			guestSlug: guestProfileDoc?.slug?.current || candidateSlug,
 			guestTitle:
 				guestProfileDoc?.title ||
@@ -1325,17 +1371,28 @@ const pageDescription = !portalFound
 				</div>
 
 				<div class="lg:col-span-12 flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-1">
-					<div class="flex items-center gap-2">
-						<label for="ros-updated-by" class="text-xs font-semibold text-muted-foreground">
-							Saving as:
+					<div class="flex flex-wrap items-center gap-3">
+						<div class="flex items-center gap-2">
+							<label for="ros-updated-by" class="text-xs font-semibold text-muted-foreground">
+								Saving as:
+							</label>
+							<input
+								type="text"
+								id="ros-updated-by"
+								name="updatedBy"
+								value={portalData.contactName || portalData.companyName}
+								class="rounded-lg border border-border bg-background px-2.5 py-1 text-xs font-semibold text-foreground"
+							/>
+						</div>
+						<label class="inline-flex items-center gap-1.5 text-xs text-muted-foreground cursor-pointer select-none">
+							<input
+								type="checkbox"
+								id="ros-notify-counterpart"
+								checked
+								class="rounded border-border text-primary focus:ring-primary"
+							/>
+							<span>Also email updated outline to Alex in our booking thread</span>
 						</label>
-						<input
-							type="text"
-							id="ros-updated-by"
-							name="updatedBy"
-							value={portalData.contactName || portalData.companyName}
-							class="rounded-lg border border-border bg-background px-2.5 py-1 text-xs font-semibold text-foreground"
-						/>
 					</div>
 					<div class="flex items-center gap-3">
 						<span id="ros-save-feedback" class="hidden text-xs font-medium"></span>
@@ -1344,11 +1401,257 @@ const pageDescription = !portalFound
 							id="btn-save-ros"
 							class="px-5 py-2 rounded-lg bg-primary text-primary-foreground text-xs font-bold hover:bg-primary/90 transition-colors cursor-pointer"
 						>
-							Save Run-of-Show &amp; Notes &rarr;
+							Save Run-of-Show &amp; Notify Alex &rarr;
 						</button>
 					</div>
 				</div>
 			</form>
+
+			<!-- 2-Way Call Notes, Back-and-Forth Comments & File Drop Feed -->
+			<div class="mt-2 pt-5 border-t border-border flex flex-col gap-4">
+				<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+					<div class="flex flex-col gap-0.5">
+						<div class="flex flex-wrap items-center gap-2">
+							<h3 class="text-base font-bold tracking-tight">
+								💬 Shared Call Notes, Comments &amp; File Drop
+							</h3>
+							<span id="portal-thread-count-badge" class="text-[11px] font-mono px-2 py-0.5 rounded-full bg-primary/15 text-primary font-semibold">
+								{(portalData.collaborationThread || []).length} {(portalData.collaborationThread || []).length === 1 ? "note" : "notes"}
+							</span>
+						</div>
+						<p class="text-xs text-muted-foreground">
+							Drop pre-call notes, architecture diagrams, slides, code links, or questions right into this thread. Every file you attach is automatically saved to your Sanity Media Library Vault (<code class="font-mono text-[11px]">#vault</code>) and emailed to Alex in your canonical booking thread.
+						</p>
+					</div>
+					<button
+						type="button"
+						id="btn-refresh-portal-thread"
+						class="self-start sm:self-auto px-3 py-1.5 rounded-lg border border-border bg-background hover:bg-muted text-xs font-semibold text-foreground transition-colors cursor-pointer"
+					>
+						🔄 Refresh Live Feed
+					</button>
+				</div>
+
+				<!-- Thread Messages List -->
+				<div
+					id="portal-collaboration-thread-list"
+					class="flex flex-col gap-3 max-h-[420px] overflow-y-auto pr-1"
+				>
+					{(portalData.collaborationThread || []).length === 0 ? (
+						<div id="portal-thread-empty-state" class="p-4 rounded-xl border border-dashed border-border bg-muted/20 text-center text-xs text-muted-foreground">
+							No call notes or back-and-forth comments yet. Post a note or drop files below to kick off the thread with Alex!
+						</div>
+					) : (
+						(portalData.collaborationThread || []).map((item) => {
+							const isHost = item.authorRole === "host";
+							const badgeLabel =
+								item.noteType === "call_note"
+									? "📞 Call Note"
+									: item.noteType === "file_drop"
+										? "📎 File Drop"
+										: item.noteType === "ros_update"
+											? "📝 Run-of-Show Update"
+											: "💬 Comment";
+							return (
+								<div
+									class={`p-3.5 rounded-xl border ${
+										isHost
+											? "border-primary/40 bg-primary/5"
+											: "border-border bg-background"
+									} flex flex-col gap-2`}
+								>
+									<div class="flex flex-wrap items-center justify-between gap-2">
+										<div class="flex flex-wrap items-center gap-2">
+											<span
+												class={`text-xs font-bold px-2 py-0.5 rounded-md ${
+													isHost
+														? "bg-primary text-primary-foreground"
+														: "bg-secondary text-secondary-foreground"
+												}`}
+											>
+												{isHost ? "🐱 " : "🎙️ "}
+												{item.authorName}
+											</span>
+											<span class="text-[11px] font-mono px-2 py-0.5 rounded bg-muted text-muted-foreground">
+												{badgeLabel}
+											</span>
+											{item.emailedToCounterpart && (
+												<span class="text-[10px] font-mono px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
+													✓ Emailed in thread
+												</span>
+											)}
+										</div>
+										<span class="text-[11px] font-mono text-muted-foreground">
+											{item.createdAt
+												? new Date(item.createdAt).toLocaleString("en-US", {
+														dateStyle: "medium",
+														timeStyle: "short",
+													})
+												: ""}
+										</span>
+									</div>
+									{item.message && (
+										<div class="text-xs text-foreground whitespace-pre-wrap leading-relaxed font-sans">
+											{item.message}
+										</div>
+									)}
+									{Array.isArray(item.attachments) && item.attachments.length > 0 && (
+										<div class="flex flex-wrap gap-2 pt-1">
+											{item.attachments.map((att) => {
+												const href = att.assetId
+													? `/api/portal/assets?token=${encodeURIComponent(portalData.portalToken)}&assetId=${encodeURIComponent(att.assetId)}`
+													: att.externalUrl || "#vault";
+												return (
+													<a
+														href={href}
+														target="_blank"
+														rel="noopener noreferrer"
+														class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-primary/30 bg-background hover:bg-primary/10 text-xs font-semibold text-primary transition-colors"
+													>
+														<span>📎 {att.title}</span>
+														<span class="text-[10px] font-mono text-muted-foreground">
+															({att.category})
+														</span>
+													</a>
+												);
+											})}
+										</div>
+									)}
+								</div>
+							);
+						})
+					)}
+				</div>
+
+				<!-- Composer Form with Drag-and-Drop Multi-File Upload -->
+				<form
+					id="portal-chat-form"
+					class="p-4 rounded-xl border border-border bg-muted/20 flex flex-col gap-3"
+				>
+					<div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+						<div class="flex flex-col gap-1">
+							<label for="chat-author-name" class="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
+								Your Name
+							</label>
+							<input
+								type="text"
+								id="chat-author-name"
+								name="authorName"
+								value={portalData.contactName || portalData.companyName}
+								required
+								class="rounded-lg border border-border bg-background px-2.5 py-1.5 text-xs font-semibold text-foreground"
+							/>
+						</div>
+						<div class="flex flex-col gap-1">
+							<label for="chat-note-type" class="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
+								Note Type
+							</label>
+							<select
+								id="chat-note-type"
+								name="noteType"
+								class="rounded-lg border border-border bg-background px-2.5 py-1.5 text-xs font-semibold text-foreground"
+							>
+								<option value="comment">💬 Back-and-Forth Comment / Question</option>
+								<option value="call_note">📞 Call Note / Pre-Interview Summary</option>
+								<option value="file_drop">📎 Slides / Diagram / Asset Drop</option>
+							</select>
+						</div>
+						<div class="flex flex-col gap-1">
+							<label for="chat-asset-category" class="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
+								File Vault Category (if attaching)
+							</label>
+							<select
+								id="chat-asset-category"
+								name="assetCategory"
+								class="rounded-lg border border-border bg-background px-2.5 py-1.5 text-xs font-semibold text-foreground"
+							>
+								<option value="deck">📊 Slides / Architecture Diagram</option>
+								<option value="broll">🎬 Demo Video / B-Roll Clip</option>
+								<option value="headshot">📸 Speaker Headshot</option>
+								<option value="logo">🎨 Brand Logo (SVG/PNG)</option>
+								<option value="other">📁 Other Reference Doc</option>
+							</select>
+						</div>
+					</div>
+
+					<div class="flex flex-col gap-1">
+						<label for="chat-message-input" class="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
+							Message, Call Notes, or Question for Alex
+						</label>
+						<textarea
+							id="chat-message-input"
+							name="message"
+							rows="3"
+							placeholder="Write a note from our call, paste a demo repo link, or explain the files you are dropping below..."
+							class="w-full rounded-xl border border-border bg-background p-3 text-xs text-foreground leading-relaxed focus:outline-none focus:ring-2 focus:ring-primary"
+						></textarea>
+					</div>
+
+					<!-- Drag & Drop Zone + Optional External Link -->
+					<div class="grid grid-cols-1 md:grid-cols-12 gap-3 items-stretch">
+						<div class="md:col-span-7">
+							<label
+								id="chat-dropzone-label"
+								for="chat-file-input"
+								class="h-full flex flex-col items-center justify-center gap-1 p-3 rounded-xl border-2 border-dashed border-primary/40 bg-background hover:bg-primary/5 transition-colors cursor-pointer text-center"
+							>
+								<span class="text-xs font-bold text-primary">
+									📥 Drag &amp; drop files right into this chat (or click to browse)
+								</span>
+								<span class="text-[11px] text-muted-foreground">
+									Images, PDFs, slides, SVG logos, audio, or MP4 clips (auto-synced to Sanity Media Library &amp; <code class="font-mono">#vault</code>)
+								</span>
+								<input
+									type="file"
+									id="chat-file-input"
+									name="files"
+									multiple
+									class="sr-only"
+								/>
+								<span id="chat-selected-files-pill" class="hidden mt-1 text-[11px] font-mono px-2 py-0.5 rounded bg-primary/15 text-primary font-semibold"></span>
+							</label>
+						</div>
+						<div class="md:col-span-5 flex flex-col justify-between gap-2">
+							<input
+								type="text"
+								id="chat-external-title"
+								name="externalTitle"
+								placeholder="Optional link label (e.g., Demo Repo / Figma)"
+								class="rounded-lg border border-border bg-background px-2.5 py-1.5 text-xs text-foreground"
+							/>
+							<input
+								type="url"
+								id="chat-external-url"
+								name="externalUrl"
+								placeholder="Optional URL (https://github.com/...)"
+								class="rounded-lg border border-border bg-background px-2.5 py-1.5 text-xs font-mono text-foreground"
+							/>
+						</div>
+					</div>
+
+					<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-1">
+						<label class="inline-flex items-center gap-1.5 text-xs text-muted-foreground cursor-pointer select-none">
+							<input
+								type="checkbox"
+								id="chat-notify-counterpart"
+								checked
+								class="rounded border-border text-primary focus:ring-primary"
+							/>
+							<span>Email this note &amp; attached files to Alex in our booking thread</span>
+						</label>
+						<div class="flex items-center gap-3">
+							<span id="chat-post-feedback" class="hidden text-xs font-semibold"></span>
+							<button
+								type="submit"
+								id="btn-post-chat-note"
+								class="px-4 py-2 rounded-lg bg-primary text-primary-foreground text-xs font-bold hover:bg-primary/90 transition-colors cursor-pointer"
+							>
+								Post Note &amp; Sync to Vault &rarr;
+							</button>
+						</div>
+					</div>
+				</form>
+			</div>
 		</section>
 
 		<!-- 1-Click Guest Co-Distribution Launch Pack -->
@@ -2281,6 +2584,11 @@ const pageDescription = !portalFound
 					updatedByEl && updatedByEl instanceof HTMLInputElement
 						? updatedByEl.value.trim()
 						: contactName || companyName || "guest";
+				const notifyEl = document.getElementById("ros-notify-counterpart");
+				const notifyCounterpart =
+					notifyEl && notifyEl instanceof HTMLInputElement
+						? notifyEl.checked
+						: true;
 
 				if (rosSaveBtn) {
 					rosSaveBtn.setAttribute("disabled", "true");
@@ -2300,14 +2608,20 @@ const pageDescription = !portalFound
 							runOfShowNotes,
 							guestQuestions,
 							updatedBy,
+							authorRole: "guest",
+							notifyCounterpart,
 						}),
 					});
 					const data = await res.json();
 					if (res.ok && data.ok) {
 						if (rosFeedback) {
-							rosFeedback.textContent = `✓ Saved to Sanity (${new Date(data.updatedAt || Date.now()).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })})`;
+							const emailNote = data.emailResult?.sent ? " & emailed Alex" : "";
+							rosFeedback.textContent = `✓ Saved to Sanity${emailNote} (${new Date(data.updatedAt || Date.now()).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })})`;
 							rosFeedback.className =
 								"text-xs font-semibold text-emerald-600 dark:text-emerald-400";
+						}
+						if (Array.isArray(data.collaborationThread)) {
+							renderPortalCollaborationThread(data.collaborationThread);
 						}
 						return;
 					}
@@ -2325,7 +2639,296 @@ const pageDescription = !portalFound
 				} finally {
 					if (rosSaveBtn) {
 						rosSaveBtn.removeAttribute("disabled");
-						rosSaveBtn.textContent = "Save Run-of-Show & Notes →";
+						rosSaveBtn.textContent = "Save Run-of-Show & Notify Alex →";
+					}
+				}
+			});
+		}
+
+		// Render & wire 2-Way Call Notes, Comments & File Drop Chat
+		function escapeHtml(str) {
+			return String(str || "")
+				.replace(/&/g, "&amp;")
+				.replace(/</g, "&lt;")
+				.replace(/>/g, "&gt;")
+				.replace(/"/g, "&quot;");
+		}
+
+		function renderPortalCollaborationThread(items) {
+			const listEl = document.getElementById("portal-collaboration-thread-list");
+			const badgeEl = document.getElementById("portal-thread-count-badge");
+			if (badgeEl) {
+				badgeEl.textContent = `${items.length} ${items.length === 1 ? "note" : "notes"}`;
+			}
+			if (!listEl) return;
+			if (!Array.isArray(items) || items.length === 0) {
+				listEl.innerHTML = `<div id="portal-thread-empty-state" class="p-4 rounded-xl border border-dashed border-border bg-muted/20 text-center text-xs text-muted-foreground">No call notes or back-and-forth comments yet. Post a note or drop files below to kick off the thread with Alex!</div>`;
+				return;
+			}
+			listEl.innerHTML = items
+				.map((item) => {
+					const isHost = item.authorRole === "host";
+					const badgeLabel =
+						item.noteType === "call_note"
+							? "📞 Call Note"
+							: item.noteType === "file_drop"
+								? "📎 File Drop"
+								: item.noteType === "ros_update"
+									? "📝 Run-of-Show Update"
+									: "💬 Comment";
+					const attachmentsHtml =
+						Array.isArray(item.attachments) && item.attachments.length > 0
+							? `<div class="flex flex-wrap gap-2 pt-1">${item.attachments
+									.map((att) => {
+										const href = att.assetId
+											? `/api/portal/assets?token=${encodeURIComponent(portalToken)}&assetId=${encodeURIComponent(att.assetId)}`
+											: att.externalUrl || "#vault";
+										return `<a href="${escapeHtml(href)}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-primary/30 bg-background hover:bg-primary/10 text-xs font-semibold text-primary transition-colors"><span>📎 ${escapeHtml(att.title)}</span><span class="text-[10px] font-mono text-muted-foreground">(${escapeHtml(att.category || "other")})</span></a>`;
+									})
+									.join("")}</div>`
+							: "";
+					const timeLabel = item.createdAt
+						? new Date(item.createdAt).toLocaleString("en-US", {
+								dateStyle: "medium",
+								timeStyle: "short",
+							})
+						: "";
+					return `<div class="p-3.5 rounded-xl border ${isHost ? "border-primary/40 bg-primary/5" : "border-border bg-background"} flex flex-col gap-2">
+						<div class="flex flex-wrap items-center justify-between gap-2">
+							<div class="flex flex-wrap items-center gap-2">
+								<span class="text-xs font-bold px-2 py-0.5 rounded-md ${isHost ? "bg-primary text-primary-foreground" : "bg-secondary text-secondary-foreground"}">${isHost ? "🐱 " : "🎙️ "}${escapeHtml(item.authorName)}</span>
+								<span class="text-[11px] font-mono px-2 py-0.5 rounded bg-muted text-muted-foreground">${badgeLabel}</span>
+								${item.emailedToCounterpart ? `<span class="text-[10px] font-mono px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">✓ Emailed in thread</span>` : ""}
+							</div>
+							<span class="text-[11px] font-mono text-muted-foreground">${escapeHtml(timeLabel)}</span>
+						</div>
+						${item.message ? `<div class="text-xs text-foreground whitespace-pre-wrap leading-relaxed font-sans">${escapeHtml(item.message)}</div>` : ""}
+						${attachmentsHtml}
+					</div>`;
+				})
+				.join("");
+			listEl.scrollTop = listEl.scrollHeight;
+		}
+
+		const chatFileInput = document.getElementById("chat-file-input");
+		const chatFilesPill = document.getElementById("chat-selected-files-pill");
+		const chatDropzone = document.getElementById("chat-dropzone-label");
+
+		function updateSelectedFilesPill() {
+			if (
+				!chatFileInput ||
+				!(chatFileInput instanceof HTMLInputElement) ||
+				!chatFilesPill
+			) {
+				return;
+			}
+			const files = chatFileInput.files;
+			if (!files || files.length === 0) {
+				chatFilesPill.classList.add("hidden");
+				chatFilesPill.textContent = "";
+				return;
+			}
+			const names = Array.from(files)
+				.map((f) => f.name)
+				.join(", ");
+			chatFilesPill.textContent = `📎 ${files.length} file${files.length === 1 ? "" : "s"} staged: ${names}`;
+			chatFilesPill.classList.remove("hidden");
+		}
+
+		if (chatFileInput) {
+			chatFileInput.addEventListener("change", updateSelectedFilesPill);
+		}
+
+		if (chatDropzone && chatFileInput && chatFileInput instanceof HTMLInputElement) {
+			["dragenter", "dragover"].forEach((evtName) => {
+				chatDropzone.addEventListener(evtName, (e) => {
+					e.preventDefault();
+					e.stopPropagation();
+					chatDropzone.classList.add("border-primary", "bg-primary/10");
+				});
+			});
+			["dragleave", "drop"].forEach((evtName) => {
+				chatDropzone.addEventListener(evtName, (e) => {
+					e.preventDefault();
+					e.stopPropagation();
+					chatDropzone.classList.remove("border-primary", "bg-primary/10");
+				});
+			});
+			chatDropzone.addEventListener("drop", (e) => {
+				const dt = e.dataTransfer;
+				if (dt && dt.files && dt.files.length > 0) {
+					chatFileInput.files = dt.files;
+					updateSelectedFilesPill();
+				}
+			});
+		}
+
+		const refreshThreadBtn = document.getElementById("btn-refresh-portal-thread");
+		if (refreshThreadBtn) {
+			refreshThreadBtn.addEventListener("click", async () => {
+				refreshThreadBtn.setAttribute("disabled", "true");
+				refreshThreadBtn.textContent = "🔄 Syncing...";
+				try {
+					const res = await fetch(
+						`/api/portal/notes?token=${encodeURIComponent(portalToken)}`,
+					);
+					const data = await res.json();
+					if (res.ok && data.ok) {
+						const precallEl = document.getElementById("ros-precall-notes");
+						const outlineEl = document.getElementById("ros-outline-notes");
+						const questionsEl = document.getElementById("ros-guest-questions");
+						if (precallEl && precallEl instanceof HTMLTextAreaElement && typeof data.preCallNotes === "string") {
+							precallEl.value = data.preCallNotes;
+						}
+						if (outlineEl && outlineEl instanceof HTMLTextAreaElement && typeof data.runOfShowNotes === "string") {
+							outlineEl.value = data.runOfShowNotes;
+						}
+						if (questionsEl && questionsEl instanceof HTMLTextAreaElement && typeof data.guestQuestions === "string") {
+							questionsEl.value = data.guestQuestions;
+						}
+						if (Array.isArray(data.collaborationThread)) {
+							renderPortalCollaborationThread(data.collaborationThread);
+						}
+					}
+				} finally {
+					refreshThreadBtn.removeAttribute("disabled");
+					refreshThreadBtn.textContent = "🔄 Refresh Live Feed";
+				}
+			});
+		}
+
+		const chatForm = document.getElementById("portal-chat-form");
+		const postChatBtn = document.getElementById("btn-post-chat-note");
+		const chatFeedback = document.getElementById("chat-post-feedback");
+
+		if (chatForm && chatForm instanceof HTMLFormElement) {
+			chatForm.addEventListener("submit", async (e) => {
+				e.preventDefault();
+				const authorEl = document.getElementById("chat-author-name");
+				const noteTypeEl = document.getElementById("chat-note-type");
+				const catEl = document.getElementById("chat-asset-category");
+				const msgEl = document.getElementById("chat-message-input");
+				const extTitleEl = document.getElementById("chat-external-title");
+				const extUrlEl = document.getElementById("chat-external-url");
+				const notifyEl = document.getElementById("chat-notify-counterpart");
+
+				const authorName =
+					authorEl && authorEl instanceof HTMLInputElement
+						? authorEl.value.trim()
+						: contactName || companyName || "Guest";
+				const noteType =
+					noteTypeEl && noteTypeEl instanceof HTMLSelectElement
+						? noteTypeEl.value
+						: "comment";
+				const assetCategory =
+					catEl && catEl instanceof HTMLSelectElement ? catEl.value : "deck";
+				const message =
+					msgEl && msgEl instanceof HTMLTextAreaElement
+						? msgEl.value.trim()
+						: "";
+				const externalTitle =
+					extTitleEl && extTitleEl instanceof HTMLInputElement
+						? extTitleEl.value.trim()
+						: "";
+				const externalUrl =
+					extUrlEl && extUrlEl instanceof HTMLInputElement
+						? extUrlEl.value.trim()
+						: "";
+				const notifyCounterpart =
+					notifyEl && notifyEl instanceof HTMLInputElement
+						? notifyEl.checked
+						: true;
+				const hasFiles =
+					chatFileInput &&
+					chatFileInput instanceof HTMLInputElement &&
+					chatFileInput.files &&
+					chatFileInput.files.length > 0;
+
+				if (!message && !hasFiles && !externalUrl) {
+					if (chatFeedback) {
+						chatFeedback.textContent =
+							"Write a message, drop a file, or paste a URL first.";
+						chatFeedback.className = "text-xs font-semibold text-destructive";
+					}
+					return;
+				}
+
+				if (postChatBtn) {
+					postChatBtn.setAttribute("disabled", "true");
+					postChatBtn.textContent = hasFiles
+						? "Uploading to Sanity Vault & Posting..."
+						: "Posting Note...";
+				}
+				if (chatFeedback) {
+					chatFeedback.classList.add("hidden");
+				}
+
+				try {
+					const fd = new FormData();
+					fd.append("token", portalToken);
+					fd.append("authorRole", "guest");
+					fd.append("updatedBy", authorName);
+					fd.append("noteType", hasFiles && noteType === "comment" ? "file_drop" : noteType);
+					fd.append("assetCategory", assetCategory);
+					fd.append("message", message);
+					fd.append("externalTitle", externalTitle);
+					fd.append("externalUrl", externalUrl);
+					fd.append("notifyCounterpart", notifyCounterpart ? "true" : "false");
+
+					if (
+						chatFileInput &&
+						chatFileInput instanceof HTMLInputElement &&
+						chatFileInput.files
+					) {
+						Array.from(chatFileInput.files).forEach((file) => {
+							fd.append("files", file);
+						});
+					}
+
+					const res = await fetch("/api/portal/notes", {
+						method: "POST",
+						body: fd,
+					});
+					const data = await res.json();
+					if (res.ok && data.ok) {
+						if (msgEl && msgEl instanceof HTMLTextAreaElement) msgEl.value = "";
+						if (extTitleEl && extTitleEl instanceof HTMLInputElement) extTitleEl.value = "";
+						if (extUrlEl && extUrlEl instanceof HTMLInputElement) extUrlEl.value = "";
+						if (chatFileInput && chatFileInput instanceof HTMLInputElement) {
+							chatFileInput.value = "";
+							updateSelectedFilesPill();
+						}
+						if (Array.isArray(data.collaborationThread)) {
+							renderPortalCollaborationThread(data.collaborationThread);
+						}
+						if (chatFeedback) {
+							const fileCount = Array.isArray(data.uploadedAttachments)
+								? data.uploadedAttachments.length
+								: 0;
+							const vaultMsg =
+								fileCount > 0 ? ` + ${fileCount} file(s) synced to #vault` : "";
+							const emailMsg = data.emailResult?.sent ? " & emailed Alex" : "";
+							chatFeedback.textContent = `✓ Note posted${vaultMsg}${emailMsg}`;
+							chatFeedback.className =
+								"text-xs font-semibold text-emerald-600 dark:text-emerald-400";
+						}
+						return;
+					}
+					if (chatFeedback) {
+						chatFeedback.textContent =
+							data.message || "Could not post note. Please try again.";
+						chatFeedback.className = "text-xs font-semibold text-destructive";
+					}
+				} catch {
+					if (chatFeedback) {
+						chatFeedback.textContent =
+							"Network error while posting note to Sanity.";
+						chatFeedback.className = "text-xs font-semibold text-destructive";
+					}
+				} finally {
+					if (postChatBtn) {
+						postChatBtn.removeAttribute("disabled");
+						postChatBtn.textContent = "Post Note & Sync to Vault →";
 					}
 				}
 			});
@@ -2790,6 +3393,7 @@ const pageDescription = !portalFound
 							token: portalToken,
 							title,
 							excerpt,
+							rawBio,
 							aboutHtml,
 							websiteUrl,
 							socials,
@@ -2799,13 +3403,14 @@ const pageDescription = !portalFound
 					const data = await res.json();
 					if (res.ok && data.ok) {
 						if (gpFeedback) {
-							gpFeedback.innerHTML = `✓ Saved to <code>${data.draftId}</code>! <a href="${data.previewUrl}" target="_blank" rel="noopener noreferrer" class="underline font-bold">Open Draft Preview &nearr;</a>`;
+							const savedDocId = data.draftId || data.guestId || "drafts.guest";
+							gpFeedback.innerHTML = `✓ Saved to <code>${savedDocId}</code>! <a href="${data.previewUrl}" target="_blank" rel="noopener noreferrer" class="underline font-bold">Open Draft Preview &nearr;</a>`;
 							gpFeedback.className = "text-xs font-semibold text-emerald-600 dark:text-emerald-400";
 						}
 						return;
 					}
 					if (gpFeedback) {
-						gpFeedback.textContent = data.message || "Could not save guest profile.";
+						gpFeedback.textContent = data.error || data.message || "Could not save guest profile.";
 						gpFeedback.className = "text-xs font-semibold text-destructive";
 					}
 				} catch {

@@ -2,6 +2,7 @@ import type { APIRoute } from "astro";
 import {
 	ALLOWED_SOCIAL_KEYS,
 	normalizeSocialInput,
+	plainTextOrHtmlToPortableTextBlocks,
 	sanitizePortableTextBlocks,
 } from "@/lib/guest-portal";
 import {
@@ -49,6 +50,9 @@ export const POST: APIRoute = async ({ request, url }) => {
 			title?: string;
 			websiteUrl?: string;
 			excerpt?: string;
+			aboutHtml?: string;
+			rawBio?: string;
+			bio?: string;
 			content?: unknown[];
 			avatarDataUrl?: string;
 			socials?: Record<string, string>;
@@ -154,7 +158,7 @@ export const POST: APIRoute = async ({ request, url }) => {
 			`*[_type in ["guest", "author"] && (
 				slug.current == $slug ||
 				_id in [$draftId, $pubId]
-			)] | order(_id desc)[0]{
+			)] | order(_updatedAt desc)[0]{
 				_id,
 				_type,
 				title,
@@ -222,25 +226,33 @@ export const POST: APIRoute = async ({ request, url }) => {
 		const sanitizedBlocks = Array.isArray(body.content)
 			? sanitizePortableTextBlocks(body.content)
 			: [];
+		const parsedTextBlocks =
+			sanitizedBlocks.length === 0
+				? plainTextOrHtmlToPortableTextBlocks(
+						body.rawBio || body.bio || body.aboutHtml,
+					)
+				: [];
 		const contentBlocks =
 			sanitizedBlocks.length > 0
 				? sanitizedBlocks
-				: existingGuest?.content || [
-						{
-							_key: "bio-0",
-							_type: "block",
-							style: "normal",
-							markDefs: [],
-							children: [
-								{
-									_key: "bio-span-0",
-									_type: "span",
-									marks: [],
-									text: cleanExcerpt,
-								},
-							],
-						},
-					];
+				: parsedTextBlocks.length > 0
+					? parsedTextBlocks
+					: existingGuest?.content || [
+							{
+								_key: "bio-0",
+								_type: "block",
+								style: "normal",
+								markDefs: [],
+								children: [
+									{
+										_key: "bio-span-0",
+										_type: "span",
+										marks: [],
+										text: cleanExcerpt,
+									},
+								],
+							},
+						];
 
 		let coverImage = existingGuest?.coverImage;
 		let uploadedAvatarUrl: string | undefined;
@@ -327,21 +339,13 @@ export const POST: APIRoute = async ({ request, url }) => {
 		// Always save to `drafts.<id>` so draft preview (`/guest/<slug>?sanity-preview-perspective=drafts`) works immediately
 		await client.createOrReplace(guestPayload as any);
 
-		// If a published guest doc already exists, keep it updated too
-		if (existingGuest?._id && !existingGuest._id.startsWith("drafts.")) {
-			await client
-				.patch(existingGuest._id)
-				.set({
-					title: resolvedTitle,
-					excerpt: cleanExcerpt,
-					content: contentBlocks,
-					socials: mergedSocials,
-					...(websites.length > 0 ? { websites } : {}),
-					...(coverImage ? { coverImage } : {}),
-				})
-				.commit()
-				.catch(() => {});
-		}
+		// Keep the published guest doc (`guest-<slug>`) synced as well so `/guest/<slug>` works with or without preview cookies
+		await client
+			.createOrReplace({
+				...guestPayload,
+				_id: basePubId,
+			} as any)
+			.catch(() => {});
 
 		// Sync guestSlug & guestDocId onto the booking / sponsorLead record(s)
 		const finalSlug = existingGuest?.slug?.current || resolvedSlug;
@@ -363,6 +367,7 @@ export const POST: APIRoute = async ({ request, url }) => {
 			JSON.stringify({
 				ok: true,
 				guestId: draftDocId,
+				draftId: draftDocId,
 				guestSlug: finalSlug,
 				previewUrl: `/guest/${finalSlug}?sanity-preview-perspective=drafts`,
 				socials: mergedSocials,

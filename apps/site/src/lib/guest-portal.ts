@@ -505,3 +505,112 @@ export function sanitizePortableTextBlocks(
 
 	return sanitized;
 }
+
+/**
+ * Converts multi-paragraph plain text or HTML (`<p>...</p>`) from the Studio Portal
+ * bio textarea into Sanity Portable Text blocks, auto-linking any https:// URLs.
+ */
+export function plainTextOrHtmlToPortableTextBlocks(
+	rawInput: string | undefined | null,
+): PortableTextBlock[] {
+	const raw = String(rawInput ?? "").trim();
+	if (!raw) {
+		return [];
+	}
+
+	// Normalize HTML paragraphs/line-breaks into double-newline separated plain text paragraphs
+	const normalizedText = raw
+		.replace(/<\/p>\s*<p[^>]*>/gi, "\n\n")
+		.replace(/<br\s*\/?>/gi, "\n")
+		.replace(/<[^>]+>/g, "")
+		.replace(/&amp;/g, "&")
+		.replace(/&lt;/g, "<")
+		.replace(/&gt;/g, ">")
+		.replace(/&quot;/g, '"')
+		.replace(/&#39;/g, "'")
+		.trim();
+
+	const paragraphs = normalizedText
+		.split(/\n{2,}/)
+		.map((p) => p.trim())
+		.filter((p) => p.length > 0);
+
+	const blocks: PortableTextBlock[] = [];
+	const urlRegex = /(https?:\/\/[^\s<>)]+)/g;
+
+	for (const para of paragraphs) {
+		const markDefs: PortableTextMarkDef[] = [];
+		const children: PortableTextSpan[] = [];
+		let lastIndex = 0;
+		let match: RegExpExecArray | null = urlRegex.exec(para);
+
+		while (match !== null) {
+			const matchStart = match.index;
+			let urlText = match[0];
+			// Strip trailing punctuation like period or comma from the URL itself
+			let trailingPunct = "";
+			const punctMatch = urlText.match(/([.,;!?]+)$/);
+			if (punctMatch) {
+				trailingPunct = punctMatch[1];
+				urlText = urlText.slice(0, -trailingPunct.length);
+			}
+
+			if (matchStart > lastIndex) {
+				children.push({
+					_type: "span",
+					_key: generateKey(),
+					text: para.slice(lastIndex, matchStart),
+					marks: [],
+				});
+			}
+
+			const linkKey = `link-${generateKey()}`;
+			markDefs.push({
+				_type: "link",
+				_key: linkKey,
+				href: urlText,
+				blank: true,
+			});
+			children.push({
+				_type: "span",
+				_key: generateKey(),
+				text: urlText,
+				marks: [linkKey],
+			});
+
+			lastIndex = matchStart + urlText.length;
+			if (trailingPunct) {
+				// Leave trailing punctuation for the next plain text span
+			}
+			match = urlRegex.exec(para);
+		}
+
+		if (lastIndex < para.length) {
+			children.push({
+				_type: "span",
+				_key: generateKey(),
+				text: para.slice(lastIndex),
+				marks: [],
+			});
+		}
+
+		if (children.length === 0) {
+			children.push({
+				_type: "span",
+				_key: generateKey(),
+				text: para,
+				marks: [],
+			});
+		}
+
+		blocks.push({
+			_type: "block",
+			_key: generateKey(),
+			style: "normal",
+			markDefs,
+			children,
+		});
+	}
+
+	return blocks;
+}

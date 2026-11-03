@@ -2,6 +2,7 @@ import type { APIRoute } from "astro";
 import {
 	ALLOWED_SOCIAL_KEYS,
 	normalizeSocialInput,
+	plainTextOrHtmlToPortableTextBlocks,
 	sanitizePortableTextBlocks,
 	verifyGuestPortalToken,
 } from "@/lib/guest-portal";
@@ -17,6 +18,9 @@ export const POST: APIRoute = async ({ request }) => {
 			title?: string;
 			websiteUrl?: string;
 			excerpt?: string;
+			aboutHtml?: string;
+			rawBio?: string;
+			bio?: string;
 			content?: unknown[];
 			avatarDataUrl?: string;
 			socials?: Record<string, string>;
@@ -131,6 +135,13 @@ export const POST: APIRoute = async ({ request }) => {
 			const sanitizedBlocks = sanitizePortableTextBlocks(body.content);
 			if (sanitizedBlocks.length > 0) {
 				patchSet.content = sanitizedBlocks;
+			}
+		} else if (body.rawBio || body.bio || body.aboutHtml) {
+			const parsedBlocks = plainTextOrHtmlToPortableTextBlocks(
+				body.rawBio || body.bio || body.aboutHtml,
+			);
+			if (parsedBlocks.length > 0) {
+				patchSet.content = parsedBlocks;
 			}
 		}
 
