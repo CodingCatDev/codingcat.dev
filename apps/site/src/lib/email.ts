@@ -413,53 +413,15 @@ async function sendViaGmailApi(
 export async function sendCodingCatEmailDetailed(
 	opts: CodingCatEmailOptions,
 ): Promise<CodingCatEmailResult> {
-	const from = opts.from ?? "alex@codingcat.dev";
-	const fromName = opts.fromName ?? "Alex Patterson (CodingCat.dev)";
 	const rfc822MessageId =
 		opts.messageId || `<${crypto.randomUUID()}@codingcat.dev>`;
-	const raw = buildMimeMessage({
-		from,
-		fromName,
-		to: opts.to,
-		cc: opts.cc,
-		replyTo: opts.replyTo,
+	// Automated email sending is intentionally disabled; all emails and drafts
+	// are managed directly by Alex in Antigravity chat.
+	return {
+		ok: false,
+		rfc822MessageId,
 		subject: opts.subject,
-		text: opts.text,
-		html: opts.html,
-		inReplyTo: opts.inReplyTo,
-		references: opts.references || opts.inReplyTo,
-		messageId: rfc822MessageId,
-	});
-
-	// 1. Primary: Send via Gmail API (delivers to any external guest or sponsor email address)
-	const gmailRes = await sendViaGmailApi(raw, opts.threadId);
-	if (gmailRes.ok) {
-		return {
-			ok: true,
-			id: gmailRes.id,
-			threadId: gmailRes.threadId,
-			rfc822MessageId,
-			subject: opts.subject,
-		};
-	}
-
-	// 2. Fallback: Cloudflare Email Routing send_email binding
-	try {
-		const workerEnv = (env ?? {}) as unknown as {
-			EMAIL?: SendEmailBinding;
-		};
-		if (!workerEnv.EMAIL) {
-			return { ok: false, rfc822MessageId, subject: opts.subject };
-		}
-
-		const primaryTo = Array.isArray(opts.to) ? opts.to[0] : opts.to;
-		const { EmailMessage } = await import("cloudflare:email");
-		const msg = new EmailMessage(from, primaryTo, raw);
-		await workerEnv.EMAIL.send(msg);
-		return { ok: true, rfc822MessageId, subject: opts.subject };
-	} catch {
-		return { ok: false, rfc822MessageId, subject: opts.subject };
-	}
+	};
 }
 
 export async function sendCodingCatEmail(
