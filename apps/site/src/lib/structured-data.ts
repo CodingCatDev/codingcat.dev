@@ -230,7 +230,7 @@ export function videoObjectSchema(
 		video.thumbnailUrl ||
 		(ytId ? `https://i.ytimg.com/vi/${ytId}/hqdefault.jpg` : undefined);
 	const embedUrl = ytId
-		? `https://www.youtube.com/embed/${ytId}`
+		? `https://www.youtube.com/embed/${ytId}?rel=0`
 		: video.youtubeUrl
 				.replace("watch?v=", "embed/")
 				.replace("youtu.be/", "www.youtube.com/embed/");
