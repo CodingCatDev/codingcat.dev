@@ -1,0 +1,1013 @@
+---
+interface Props {
+	portalToken: string;
+	docId?: string;
+	authorName?: string;
+	authorEmail?: string;
+	companyName?: string;
+	pageContext?: "portal" | "book";
+}
+
+const {
+	portalToken,
+	docId = "",
+	authorName = "",
+	authorEmail = "",
+	companyName = "",
+	pageContext = "portal",
+} = Astro.props;
+
+const TOPIC_CHIPS = [
+	{ id: "Calendar & Rebooking", label: "📅 Calendar & Rebooking" },
+	{ id: "Bio & Headshot Editor", label: "👤 Bio & Headshot Editor" },
+	{ id: "E-SIGN Release", label: "✍️ E-SIGN Release" },
+	{ id: "Run-of-Show & Notes", label: "📝 Run-of-Show & Notes" },
+	{ id: "StreamYard / Pre-Call Links", label: "🎙️ StreamYard / Pre-Call Links" },
+	{ id: "UI / Bug Report", label: "🐛 UI / Bug Report" },
+	{ id: "Feature Idea", label: "💡 Feature Idea" },
+];
+
+const RATING_OPTIONS = [
+	{ score: 1, emoji: "😵", label: "Confusing" },
+	{ score: 2, emoji: "😕", label: "Rough" },
+	{ score: 3, emoji: "🙂", label: "Okay" },
+	{ score: 4, emoji: "😄", label: "Smooth" },
+	{ score: 5, emoji: "😻", label: "Purrfect" },
+];
+---
+
+<!-- Floating Bottom-Left Trigger Button (avoids Agent AJ on bottom-right) -->
+<div
+	id="pf-floating-dock"
+	class="fixed bottom-5 left-5 z-40 flex items-center gap-2 print:hidden"
+>
+	<button
+		type="button"
+		id="pf-open-btn"
+		data-open-portal-feedback
+		class="group inline-flex items-center gap-2.5 px-4 py-2.5 rounded-full bg-[#2A1155] dark:bg-[#7C3AED] text-white font-bold text-xs md:text-sm border-2 border-[#2A1155] dark:border-white/30 shadow-[3px_3px_0px_0px_#7C3AED] dark:shadow-[3px_3px_0px_0px_#000000] hover:translate-y-[-1px] transition-all cursor-pointer"
+		title="Share feedback on the booking process or capture & mark up your screen"
+	>
+		<span class="text-base leading-none">🛠️</span>
+		<span>Feedback &amp; Annotate Screen</span>
+		<span class="hidden sm:inline-block px-1.5 py-0.5 rounded-full bg-white/15 font-mono text-[10px] uppercase tracking-wider">
+			Beta
+		</span>
+	</button>
+</div>
+
+<!-- Element Picker Floating Banner (shown while selecting an element on the page) -->
+<div
+	id="pf-element-picker-banner"
+	class="hidden fixed top-4 left-1/2 -translate-x-1/2 z-[70] px-4 py-2.5 rounded-full bg-[#0F172A] text-white border-2 border-[#FCA5A5] shadow-2xl flex items-center gap-3 text-xs font-bold"
+>
+	<span class="inline-block w-2.5 h-2.5 rounded-full bg-[#EF4444] animate-ping"></span>
+	<span>Hover and click any part of the page that feels confusing or broken</span>
+	<button
+		type="button"
+		id="pf-element-picker-cancel"
+		class="px-2.5 py-1 rounded-full bg-white/15 hover:bg-white/25 text-[11px] font-mono cursor-pointer"
+	>
+		Cancel (Esc)
+	</button>
+</div>
+
+<!-- Main Feedback & Screen Annotator Modal -->
+<div
+	id="portal-feedback-modal"
+	class="hidden fixed inset-0 z-[60] bg-black/75 backdrop-blur-xs overflow-y-auto p-3 sm:p-6 flex items-start md:items-center justify-center"
+	role="dialog"
+	aria-modal="true"
+	aria-labelledby="pf-modal-title"
+	data-portal-token={portalToken}
+	data-doc-id={docId}
+	data-author-name={authorName}
+	data-author-email={authorEmail}
+	data-company-name={companyName}
+	data-page-context={pageContext}
+>
+	<div class="w-full max-w-4xl rounded-3xl bg-[var(--bg-surface)] border-2 border-[var(--border-ink)] shadow-sketch overflow-hidden my-auto">
+		<!-- Modal Header -->
+		<div class="px-5 py-4 bg-[#0F172A] text-white border-b-2 border-[var(--border-ink)] flex flex-wrap items-center justify-between gap-3">
+			<div class="flex items-center gap-3">
+				<span class="w-9 h-9 rounded-xl bg-purple-500/20 border border-purple-400/40 flex items-center justify-center text-lg">
+					🛠️
+				</span>
+				<div>
+					<div class="flex items-center gap-2">
+						<h2 id="pf-modal-title" class="font-display font-black text-base sm:text-lg text-white">
+							Booking &amp; Portal Process Feedback
+						</h2>
+						<span class="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-400/30 font-mono text-[10px] font-bold uppercase tracking-wider">
+							Direct to Alex
+						</span>
+					</div>
+					<p class="text-xs text-slate-300 mt-0.5">
+						Spot something confusing? Capture your current screen, draw right on it, and send it straight to our thread.
+					</p>
+				</div>
+			</div>
+			<button
+				type="button"
+				id="pf-close-btn"
+				class="px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-xs font-bold text-slate-200 cursor-pointer transition-colors"
+			>
+				✕ Close
+			</button>
+		</div>
+
+		<!-- Modal Body -->
+		<form id="pf-feedback-form" class="p-5 sm:p-6 space-y-5">
+			<!-- Step 1: Rating + Topic Chips -->
+			<div class="grid grid-cols-1 lg:grid-cols-12 gap-5">
+				<!-- Rating (1 to 5) -->
+				<div class="lg:col-span-5 p-4 rounded-2xl bg-[var(--bg-elevated)] border border-[var(--border-ink)]/15">
+					<label class="block font-mono text-[11px] font-bold uppercase tracking-wider text-[var(--text-secondary)] mb-2.5">
+						1. How smooth is this page so far?
+					</label>
+					<div class="grid grid-cols-5 gap-1.5" id="pf-rating-group">
+						{RATING_OPTIONS.map((opt) => (
+							<button
+								type="button"
+								data-rating-score={opt.score}
+								class="pf-rating-btn flex flex-col items-center justify-center py-2 px-1 rounded-xl border-2 border-[var(--border-ink)]/15 bg-[var(--bg-surface)] hover:border-[var(--brand-purple)] transition-all cursor-pointer"
+							>
+								<span class="text-lg leading-none">{opt.emoji}</span>
+								<span class="font-mono text-[10px] font-bold text-[var(--text-primary)] mt-1">{opt.score}/5</span>
+								<span class="text-[9px] text-[var(--text-secondary)] truncate max-w-full">{opt.label}</span>
+							</button>
+						))}
+					</div>
+				</div>
+
+				<!-- Topic Chips -->
+				<div class="lg:col-span-7 p-4 rounded-2xl bg-[var(--bg-elevated)] border border-[var(--border-ink)]/15">
+					<label class="block font-mono text-[11px] font-bold uppercase tracking-wider text-[var(--text-secondary)] mb-2.5">
+						2. Which part are you giving feedback on? (Select any)
+					</label>
+					<div class="flex flex-wrap gap-1.5" id="pf-topics-group">
+						{TOPIC_CHIPS.map((chip) => (
+							<button
+								type="button"
+								data-topic-chip={chip.id}
+								class="pf-topic-btn px-2.5 py-1.5 rounded-xl border border-[var(--border-ink)]/20 bg-[var(--bg-surface)] text-xs font-bold text-[var(--text-secondary)] hover:border-[var(--brand-purple)] hover:text-[var(--text-primary)] transition-all cursor-pointer"
+							>
+								{chip.label}
+							</button>
+						))}
+					</div>
+				</div>
+			</div>
+
+			<!-- Step 2: Screen Capture, Element Picker & Visual Markup Studio -->
+			<div class="rounded-2xl border-2 border-[var(--border-ink)]/25 bg-[#0B1326] text-white overflow-hidden">
+				<!-- Action Bar -->
+				<div class="p-3 sm:px-4 bg-[#131B2E] border-b border-white/10 flex flex-wrap items-center justify-between gap-2">
+					<div class="flex flex-wrap items-center gap-2">
+						<button
+							type="button"
+							id="pf-capture-tab-btn"
+							class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs shadow-xs cursor-pointer transition-colors"
+						>
+							<span>📸</span>
+							<span>Capture Current Screen</span>
+						</button>
+						<button
+							type="button"
+							id="pf-pick-element-btn"
+							class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-100 border border-white/15 font-bold text-xs cursor-pointer transition-colors"
+						>
+							<span>🎯</span>
+							<span>Point at Page Element</span>
+						</button>
+						<label
+							for="pf-file-upload"
+							class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-100 border border-white/15 font-bold text-xs cursor-pointer transition-colors"
+						>
+							<span>📤</span>
+							<span>Upload / Paste Image</span>
+							<input
+								id="pf-file-upload"
+								type="file"
+								accept="image/*"
+								class="sr-only"
+							/>
+						</label>
+					</div>
+
+					<!-- Drawing Tools & Colors -->
+					<div class="flex flex-wrap items-center gap-1.5">
+						<div class="inline-flex items-center rounded-xl bg-black/40 p-1 border border-white/10" role="group" aria-label="Annotation tools">
+							<button
+								type="button"
+								data-draw-tool="pen"
+								class="pf-tool-btn px-2 py-1 rounded-lg text-[11px] font-bold bg-purple-600 text-white cursor-pointer"
+								title="Freehand Marker"
+							>
+								✏️ Pen
+							</button>
+							<button
+								type="button"
+								data-draw-tool="arrow"
+								class="pf-tool-btn px-2 py-1 rounded-lg text-[11px] font-bold text-slate-300 hover:text-white cursor-pointer"
+								title="Draw Arrow"
+							>
+								↗️ Arrow
+							</button>
+							<button
+								type="button"
+								data-draw-tool="box"
+								class="pf-tool-btn px-2 py-1 rounded-lg text-[11px] font-bold text-slate-300 hover:text-white cursor-pointer"
+								title="Highlight Box"
+							>
+								▭ Box
+							</button>
+							<button
+								type="button"
+								data-draw-tool="text"
+								class="pf-tool-btn px-2 py-1 rounded-lg text-[11px] font-bold text-slate-300 hover:text-white cursor-pointer"
+								title="Click canvas to add text label"
+							>
+								🔤 Text
+							</button>
+						</div>
+
+						<!-- Color Swatches -->
+						<div class="inline-flex items-center gap-1 px-1.5 py-1 rounded-xl bg-black/40 border border-white/10">
+							<button
+								type="button"
+								data-draw-color="#EF4444"
+								class="pf-color-btn w-5 h-5 rounded-full bg-[#EF4444] ring-2 ring-white cursor-pointer"
+								title="Coral Red"
+							></button>
+							<button
+								type="button"
+								data-draw-color="#22C55E"
+								class="pf-color-btn w-5 h-5 rounded-full bg-[#22C55E] opacity-70 hover:opacity-100 cursor-pointer"
+								title="Electric Lime"
+							></button>
+							<button
+								type="button"
+								data-draw-color="#7C3AED"
+								class="pf-color-btn w-5 h-5 rounded-full bg-[#7C3AED] opacity-70 hover:opacity-100 cursor-pointer"
+								title="Royal Purple"
+							></button>
+							<button
+								type="button"
+								data-draw-color="#FFFFFF"
+								class="pf-color-btn w-5 h-5 rounded-full bg-white opacity-70 hover:opacity-100 cursor-pointer"
+								title="White Chalk"
+							></button>
+						</div>
+
+						<!-- Undo / Clear -->
+						<button
+							type="button"
+							id="pf-undo-btn"
+							class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-[11px] font-mono text-slate-200 border border-white/10 cursor-pointer"
+							title="Undo last stroke"
+						>
+							↩️ Undo
+						</button>
+						<button
+							type="button"
+							id="pf-clear-btn"
+							class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-red-950/70 text-[11px] font-mono text-slate-300 hover:text-red-200 border border-white/10 cursor-pointer"
+							title="Clear canvas"
+						>
+							🗑️ Clear
+						</button>
+					</div>
+				</div>
+
+				<!-- Selected DOM Element Badge (if user clicked an element on page) -->
+				<div
+					id="pf-selected-element-bar"
+					class="hidden px-4 py-2 bg-purple-950/60 border-b border-purple-400/20 flex items-center justify-between gap-2 text-xs"
+				>
+					<div class="flex items-center gap-2 min-w-0">
+						<span class="px-2 py-0.5 rounded bg-purple-500/30 text-purple-200 font-mono text-[10px] font-bold uppercase">
+							Flagged Element
+						</span>
+						<code id="pf-selected-element-label" class="font-mono text-[11px] text-purple-100 truncate"></code>
+					</div>
+					<button
+						type="button"
+						id="pf-clear-element-btn"
+						class="text-[11px] font-mono text-slate-300 hover:text-white shrink-0 cursor-pointer"
+					>
+						Remove
+					</button>
+				</div>
+
+				<!-- Canvas Stage -->
+				<div
+					id="pf-canvas-stage"
+					class="relative bg-[#070B16] flex items-center justify-center overflow-hidden select-none"
+				>
+					<canvas
+						id="pf-markup-canvas"
+						width="1280"
+						height="720"
+						class="w-full max-h-[380px] object-contain cursor-crosshair touch-none block"
+					></canvas>
+					<div
+						id="pf-canvas-empty-hint"
+						class="pointer-events-none absolute inset-0 flex flex-col items-center justify-center text-center p-4"
+					>
+						<p class="font-mono text-xs font-bold uppercase tracking-wider text-purple-300">
+							Click "📸 Capture Current Screen", paste a screenshot (Ctrl+V / Cmd+V), or sketch directly here
+						</p>
+						<p class="text-[11px] text-slate-400 mt-1 max-w-md">
+							Use the Pen, Arrow, Box, or Text tools above to circle anything confusing on the page.
+						</p>
+					</div>
+				</div>
+			</div>
+
+			<!-- Step 3: Open Notes + Reviewer Identity -->
+			<div class="grid grid-cols-1 md:grid-cols-12 gap-4">
+				<div class="md:col-span-8">
+					<label for="pf-comment-input" class="block font-mono text-[11px] font-bold uppercase tracking-wider text-[var(--text-secondary)] mb-1.5">
+						3. What felt confusing, broken, or could be improved?
+					</label>
+					<textarea
+						id="pf-comment-input"
+						rows="3"
+						placeholder="Example: It wasn't clear which time was the 15-min pre-call vs the 45-min StreamYard recording, or the bio save button didn't show a confirmation..."
+						class="w-full rounded-2xl bg-[var(--bg-elevated)] border-2 border-[var(--border-ink)]/20 focus:border-[var(--brand-purple)] px-3.5 py-2.5 text-sm text-[var(--text-primary)] outline-none"
+					></textarea>
+				</div>
+				<div class="md:col-span-4 flex flex-col justify-between gap-3">
+					<div>
+						<label for="pf-reviewer-name" class="block font-mono text-[11px] font-bold uppercase tracking-wider text-[var(--text-secondary)] mb-1.5">
+							Your Name
+						</label>
+						<input
+							id="pf-reviewer-name"
+							type="text"
+							value={authorName}
+							placeholder="Your name (e.g., Emma / Darko)"
+							class="w-full rounded-xl bg-[var(--bg-elevated)] border border-[var(--border-ink)]/20 px-3 py-2 text-xs font-bold text-[var(--text-primary)] outline-none focus:border-[var(--brand-purple)]"
+						/>
+					</div>
+					<div class="p-3 rounded-xl bg-[var(--bg-elevated)] border border-[var(--border-ink)]/15 text-[11px] text-[var(--text-secondary)]">
+						<div class="font-mono font-bold text-[10px] uppercase tracking-wider text-[var(--text-primary)]">
+							Auto-Attached Context
+						</div>
+						<p class="mt-0.5 truncate" id="pf-meta-preview">
+							Page URL, browser timezone, and viewport size included automatically.
+						</p>
+					</div>
+				</div>
+			</div>
+
+			<!-- Status Banner -->
+			<div
+				id="pf-status-banner"
+				class="hidden rounded-2xl p-3.5 text-xs font-bold border"
+			></div>
+
+			<!-- Submit Row -->
+			<div class="flex flex-wrap items-center justify-between gap-3 pt-2 border-t border-[var(--border-ink)]/15">
+				<p class="text-xs text-[var(--text-secondary)]">
+					Saves directly to your portal collaboration thread, Sanity Media Library, and emails <span class="font-mono font-bold text-[var(--text-primary)]">alex@codingcat.dev</span>.
+				</p>
+				<div class="flex items-center gap-2">
+					<button
+						type="button"
+						id="pf-cancel-btn"
+						class="px-4 py-2.5 rounded-xl border border-[var(--border-ink)]/20 text-xs font-bold text-[var(--text-secondary)] hover:text-[var(--text-primary)] cursor-pointer"
+					>
+						Cancel
+					</button>
+					<button
+						type="submit"
+						id="pf-submit-btn"
+						class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[var(--brand-purple)] text-white font-bold text-xs sm:text-sm border-2 border-[var(--border-ink)] shadow-sketch-sm hover:translate-y-[-1px] transition-all cursor-pointer"
+					>
+						<span>🚀 Send Feedback &amp; Annotated Screen</span>
+					</button>
+				</div>
+			</div>
+		</form>
+	</div>
+</div>
+
+<script>
+	function initPortalFeedbackAnnotator() {
+		const modal = document.getElementById("portal-feedback-modal") as HTMLElement | null;
+		if (!modal || modal.dataset.bound === "true") return;
+		modal.dataset.bound = "true";
+
+		const floatingDock = document.getElementById("pf-floating-dock") as HTMLElement | null;
+		const closeBtn = document.getElementById("pf-close-btn");
+		const cancelBtn = document.getElementById("pf-cancel-btn");
+		const form = document.getElementById("pf-feedback-form") as HTMLFormElement | null;
+		const submitBtn = document.getElementById("pf-submit-btn") as HTMLButtonElement | null;
+		const statusBanner = document.getElementById("pf-status-banner") as HTMLElement | null;
+		const commentInput = document.getElementById("pf-comment-input") as HTMLTextAreaElement | null;
+		const reviewerNameInput = document.getElementById("pf-reviewer-name") as HTMLInputElement | null;
+		const metaPreview = document.getElementById("pf-meta-preview");
+
+		const captureTabBtn = document.getElementById("pf-capture-tab-btn") as HTMLButtonElement | null;
+		const pickElementBtn = document.getElementById("pf-pick-element-btn") as HTMLButtonElement | null;
+		const fileUploadInput = document.getElementById("pf-file-upload") as HTMLInputElement | null;
+		const undoBtn = document.getElementById("pf-undo-btn");
+		const clearBtn = document.getElementById("pf-clear-btn");
+		const emptyHint = document.getElementById("pf-canvas-empty-hint");
+
+		const pickerBanner = document.getElementById("pf-element-picker-banner");
+		const pickerCancelBtn = document.getElementById("pf-element-picker-cancel");
+		const selectedElementBar = document.getElementById("pf-selected-element-bar");
+		const selectedElementLabel = document.getElementById("pf-selected-element-label");
+		const clearElementBtn = document.getElementById("pf-clear-element-btn");
+
+		const canvas = document.getElementById("pf-markup-canvas") as HTMLCanvasElement | null;
+		const ctx = canvas?.getContext("2d") || null;
+
+		let selectedRating: number | null = null;
+		const selectedTopics = new Set<string>();
+		let currentTool: "pen" | "arrow" | "box" | "text" = "pen";
+		let currentColor = "#EF4444";
+		let hasCanvasContent = false;
+		let isDrawing = false;
+		let startX = 0;
+		let startY = 0;
+		const historySnapshots: ImageData[] = [];
+		let flaggedElementMeta: { selector: string; text: string; rect: string } | null = null;
+
+		function updateMetaPreview() {
+			if (!metaPreview) return;
+			const tz = Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC";
+			metaPreview.textContent = `${window.innerWidth}x${window.innerHeight}px · ${tz}`;
+		}
+
+		function resetCanvasBackground() {
+			if (!canvas || !ctx) return;
+			ctx.fillStyle = "#070B16";
+			ctx.fillRect(0, 0, canvas.width, canvas.height);
+			ctx.strokeStyle = "rgba(148, 163, 184, 0.08)";
+			ctx.lineWidth = 1;
+			for (let x = 0; x < canvas.width; x += 32) {
+				ctx.beginPath();
+				ctx.moveTo(x, 0);
+				ctx.lineTo(x, canvas.height);
+				ctx.stroke();
+			}
+			for (let y = 0; y < canvas.height; y += 32) {
+				ctx.beginPath();
+				ctx.moveTo(0, y);
+				ctx.lineTo(canvas.width, y);
+				ctx.stroke();
+			}
+		}
+
+		function saveSnapshot() {
+			if (!canvas || !ctx) return;
+			if (historySnapshots.length >= 20) historySnapshots.shift();
+			historySnapshots.push(ctx.getImageData(0, 0, canvas.width, canvas.height));
+		}
+
+		function markCanvasDirty() {
+			hasCanvasContent = true;
+			emptyHint?.classList.add("hidden");
+		}
+
+		resetCanvasBackground();
+		saveSnapshot();
+
+		function openModal() {
+			updateMetaPreview();
+			modal?.classList.remove("hidden");
+			document.body.style.overflow = "hidden";
+		}
+
+		function closeModal() {
+			modal?.classList.add("hidden");
+			document.body.style.overflow = "";
+		}
+
+		document.querySelectorAll<HTMLElement>("[data-open-portal-feedback]").forEach((btn) => {
+			btn.addEventListener("click", openModal);
+		});
+		closeBtn?.addEventListener("click", closeModal);
+		cancelBtn?.addEventListener("click", closeModal);
+		modal.addEventListener("click", (e) => {
+			if (e.target === modal) closeModal();
+		});
+
+		// Auto-open if URL has ?feedback=1 or #feedback
+		const urlParams = new URLSearchParams(window.location.search);
+		if (urlParams.get("feedback") === "1" || window.location.hash === "#feedback") {
+			setTimeout(openModal, 250);
+		}
+
+		// Rating selection
+		document.querySelectorAll<HTMLButtonElement>(".pf-rating-btn").forEach((btn) => {
+			btn.addEventListener("click", () => {
+				const score = Number(btn.dataset.ratingScore || "0");
+				selectedRating = score;
+				document.querySelectorAll<HTMLButtonElement>(".pf-rating-btn").forEach((b) => {
+					const active = Number(b.dataset.ratingScore) === score;
+					b.classList.toggle("border-[var(--brand-purple)]", active);
+					b.classList.toggle("bg-purple-500/15", active);
+					b.classList.toggle("border-[var(--border-ink)]/15", !active);
+				});
+			});
+		});
+
+		// Topic chip selection
+		document.querySelectorAll<HTMLButtonElement>(".pf-topic-btn").forEach((btn) => {
+			btn.addEventListener("click", () => {
+				const topic = btn.dataset.topicChip || "";
+				if (!topic) return;
+				if (selectedTopics.has(topic)) {
+					selectedTopics.delete(topic);
+					btn.classList.remove("bg-[var(--brand-purple)]", "text-white", "border-[var(--brand-purple)]");
+					btn.classList.add("bg-[var(--bg-surface)]", "text-[var(--text-secondary)]");
+				} else {
+					selectedTopics.add(topic);
+					btn.classList.add("bg-[var(--brand-purple)]", "text-white", "border-[var(--brand-purple)]");
+					btn.classList.remove("bg-[var(--bg-surface)]", "text-[var(--text-secondary)]");
+				}
+			});
+		});
+
+		// Drawing Tool selection
+		document.querySelectorAll<HTMLButtonElement>(".pf-tool-btn").forEach((btn) => {
+			btn.addEventListener("click", () => {
+				currentTool = (btn.dataset.drawTool as typeof currentTool) || "pen";
+				document.querySelectorAll<HTMLButtonElement>(".pf-tool-btn").forEach((b) => {
+					const active = b.dataset.drawTool === currentTool;
+					b.classList.toggle("bg-purple-600", active);
+					b.classList.toggle("text-white", active);
+					b.classList.toggle("text-slate-300", !active);
+				});
+			});
+		});
+
+		// Color selection
+		document.querySelectorAll<HTMLButtonElement>(".pf-color-btn").forEach((btn) => {
+			btn.addEventListener("click", () => {
+				currentColor = btn.dataset.drawColor || "#EF4444";
+				document.querySelectorAll<HTMLButtonElement>(".pf-color-btn").forEach((b) => {
+					const active = b.dataset.drawColor === currentColor;
+					b.classList.toggle("ring-2", active);
+					b.classList.toggle("ring-white", active);
+					b.classList.toggle("opacity-70", !active);
+				});
+			});
+		});
+
+		undoBtn?.addEventListener("click", () => {
+			if (!canvas || !ctx || historySnapshots.length <= 1) return;
+			historySnapshots.pop();
+			const prev = historySnapshots[historySnapshots.length - 1];
+			if (prev) ctx.putImageData(prev, 0, 0);
+		});
+
+		clearBtn?.addEventListener("click", () => {
+			historySnapshots.length = 0;
+			resetCanvasBackground();
+			saveSnapshot();
+			hasCanvasContent = false;
+			emptyHint?.classList.remove("hidden");
+		});
+
+		function drawImageOntoCanvas(img: HTMLImageElement | HTMLVideoElement, sourceWidth: number, sourceHeight: number) {
+			if (!canvas || !ctx) return;
+			resetCanvasBackground();
+			const scale = Math.min(canvas.width / sourceWidth, canvas.height / sourceHeight);
+			const drawW = sourceWidth * scale;
+			const drawH = sourceHeight * scale;
+			const offsetX = (canvas.width - drawW) / 2;
+			const offsetY = (canvas.height - drawH) / 2;
+			ctx.drawImage(img, offsetX, offsetY, drawW, drawH);
+			markCanvasDirty();
+			saveSnapshot();
+		}
+
+		function loadFileIntoCanvas(file: File) {
+			if (!file.type.startsWith("image/")) return;
+			const reader = new FileReader();
+			reader.onload = () => {
+				const img = new Image();
+				img.onload = () => {
+					drawImageOntoCanvas(img, img.naturalWidth || img.width, img.naturalHeight || img.height);
+				};
+				img.src = String(reader.result || "");
+			};
+			reader.readAsDataURL(file);
+		}
+
+		fileUploadInput?.addEventListener("change", () => {
+			const file = fileUploadInput.files?.[0];
+			if (file) loadFileIntoCanvas(file);
+		});
+
+		window.addEventListener("paste", (e: ClipboardEvent) => {
+			if (modal.classList.contains("hidden")) return;
+			const items = e.clipboardData?.items;
+			if (!items) return;
+			for (const item of Array.from(items)) {
+				if (item.type.startsWith("image/")) {
+					const file = item.getAsFile();
+					if (file) {
+						loadFileIntoCanvas(file);
+						break;
+					}
+				}
+			}
+		});
+
+		// 1-Click Capture Current Tab via getDisplayMedia
+		captureTabBtn?.addEventListener("click", async () => {
+			if (!navigator.mediaDevices || typeof navigator.mediaDevices.getDisplayMedia !== "function") {
+				if (statusBanner) {
+					statusBanner.className = "rounded-2xl p-3.5 text-xs font-bold border bg-amber-500/15 border-amber-500/40 text-amber-300";
+					statusBanner.textContent = "Your browser does not support 1-click tab capture (common on mobile). Please take a screenshot and tap 'Upload / Paste Image' above.";
+					statusBanner.classList.remove("hidden");
+				}
+				fileUploadInput?.click();
+				return;
+			}
+
+			try {
+				// Hide modal & floating button briefly so we capture the clean underlying page
+				modal.classList.add("hidden");
+				floatingDock?.classList.add("hidden");
+				await new Promise((r) => setTimeout(r, 150));
+
+				const stream = await navigator.mediaDevices.getDisplayMedia({
+					video: { displaySurface: "browser" },
+					audio: false,
+					preferCurrentTab: true,
+					selfBrowserSurface: "include",
+				} as MediaStreamConstraints);
+
+				const video = document.createElement("video");
+				video.srcObject = stream;
+				video.muted = true;
+				await video.play();
+				await new Promise((r) => setTimeout(r, 180));
+
+				drawImageOntoCanvas(video, video.videoWidth || 1280, video.videoHeight || 720);
+
+				stream.getTracks().forEach((track) => track.stop());
+			} catch {
+				// User cancelled or permission denied
+			} finally {
+				floatingDock?.classList.remove("hidden");
+				modal.classList.remove("hidden");
+			}
+		});
+
+		// 1-Click Point at Page Element
+		let isPickingElement = false;
+		let hoveredEl: HTMLElement | null = null;
+
+		function describeElement(el: HTMLElement): { selector: string; text: string; rect: string } {
+			const tag = el.tagName.toLowerCase();
+			const idPart = el.id ? `#${el.id}` : "";
+			const classPart =
+				typeof el.className === "string" && el.className.trim()
+					? "." +
+						el.className
+							.trim()
+							.split(/\s+/)
+							.slice(0, 2)
+							.join(".")
+					: "";
+			const selector = `${tag}${idPart}${classPart}`;
+			const text = (el.innerText || el.textContent || "").trim().replace(/\s+/g, " ").slice(0, 90);
+			const r = el.getBoundingClientRect();
+			const rect = `x:${Math.round(r.left)}, y:${Math.round(r.top)}, w:${Math.round(r.width)}, h:${Math.round(r.height)}`;
+			return { selector, text, rect };
+		}
+
+		function stopElementPicker() {
+			isPickingElement = false;
+			if (hoveredEl) {
+				hoveredEl.style.outline = "";
+				hoveredEl.style.outlineOffset = "";
+				hoveredEl = null;
+			}
+			pickerBanner?.classList.add("hidden");
+			floatingDock?.classList.remove("hidden");
+			modal?.classList.remove("hidden");
+		}
+
+		pickElementBtn?.addEventListener("click", () => {
+			isPickingElement = true;
+			modal.classList.add("hidden");
+			floatingDock?.classList.add("hidden");
+			pickerBanner?.classList.remove("hidden");
+		});
+
+		pickerCancelBtn?.addEventListener("click", (e) => {
+			e.stopPropagation();
+			stopElementPicker();
+		});
+
+		window.addEventListener(
+			"mousemove",
+			(e) => {
+				if (!isPickingElement) return;
+				const target = e.target as HTMLElement | null;
+				if (!target || pickerBanner?.contains(target)) return;
+				if (hoveredEl && hoveredEl !== target) {
+					hoveredEl.style.outline = "";
+					hoveredEl.style.outlineOffset = "";
+				}
+				hoveredEl = target;
+				hoveredEl.style.outline = "3px dashed #EF4444";
+				hoveredEl.style.outlineOffset = "2px";
+			},
+			true,
+		);
+
+		window.addEventListener(
+			"click",
+			(e) => {
+				if (!isPickingElement) return;
+				const target = e.target as HTMLElement | null;
+				if (!target || pickerBanner?.contains(target)) return;
+				e.preventDefault();
+				e.stopPropagation();
+
+				flaggedElementMeta = describeElement(target);
+				if (selectedElementLabel && selectedElementBar) {
+					selectedElementLabel.textContent = `${flaggedElementMeta.selector}${flaggedElementMeta.text ? ` ("${flaggedElementMeta.text.slice(0, 48)}")` : ""}`;
+					selectedElementBar.classList.remove("hidden");
+				}
+
+				// If the user hasn't captured a screenshot yet, render a clean visual callout card onto the canvas
+				if (!hasCanvasContent && canvas && ctx) {
+					resetCanvasBackground();
+					ctx.strokeStyle = "#EF4444";
+					ctx.lineWidth = 4;
+					ctx.strokeRect(80, 120, canvas.width - 160, 260);
+					ctx.fillStyle = "rgba(239, 68, 68, 0.12)";
+					ctx.fillRect(80, 120, canvas.width - 160, 260);
+					ctx.fillStyle = "#FCA5A5";
+					ctx.font = "bold 24px monospace";
+					ctx.fillText(`🎯 Flagged Element: ${flaggedElementMeta.selector}`, 110, 175);
+					ctx.fillStyle = "#FFFFFF";
+					ctx.font = "20px sans-serif";
+					ctx.fillText(
+						flaggedElementMeta.text
+							? `"${flaggedElementMeta.text.slice(0, 75)}"`
+							: "Selected element on page",
+						110,
+						230,
+					);
+					ctx.fillStyle = "#94A3B8";
+					ctx.font = "16px monospace";
+					ctx.fillText(`Position: ${flaggedElementMeta.rect} · URL: ${window.location.pathname}`, 110, 285);
+					markCanvasDirty();
+					saveSnapshot();
+				}
+
+				stopElementPicker();
+			},
+			true,
+		);
+
+		window.addEventListener("keydown", (e) => {
+			if (e.key === "Escape" && isPickingElement) {
+				stopElementPicker();
+			}
+		});
+
+		clearElementBtn?.addEventListener("click", () => {
+			flaggedElementMeta = null;
+			selectedElementBar?.classList.add("hidden");
+		});
+
+		// Canvas pointer drawing mechanics
+		function getCanvasCoords(e: PointerEvent): { x: number; y: number } {
+			if (!canvas) return { x: 0, y: 0 };
+			const rect = canvas.getBoundingClientRect();
+			const scaleX = canvas.width / rect.width;
+			const scaleY = canvas.height / rect.height;
+			return {
+				x: (e.clientX - rect.left) * scaleX,
+				y: (e.clientY - rect.top) * scaleY,
+			};
+		}
+
+		function drawArrow(fromX: number, fromY: number, toX: number, toY: number, color: string) {
+			if (!ctx) return;
+			const headLen = 22;
+			const angle = Math.atan2(toY - fromY, toX - fromX);
+			ctx.strokeStyle = color;
+			ctx.fillStyle = color;
+			ctx.lineWidth = 5;
+			ctx.lineCap = "round";
+			ctx.beginPath();
+			ctx.moveTo(fromX, fromY);
+			ctx.lineTo(toX, toY);
+			ctx.stroke();
+
+			ctx.beginPath();
+			ctx.moveTo(toX, toY);
+			ctx.lineTo(
+				toX - headLen * Math.cos(angle - Math.PI / 6),
+				toY - headLen * Math.sin(angle - Math.PI / 6),
+			);
+			ctx.lineTo(
+				toX - headLen * Math.cos(angle + Math.PI / 6),
+				toY - headLen * Math.sin(angle + Math.PI / 6),
+			);
+			ctx.closePath();
+			ctx.fill();
+		}
+
+		canvas?.addEventListener("pointerdown", (e: PointerEvent) => {
+			if (!canvas || !ctx) return;
+			const { x, y } = getCanvasCoords(e);
+
+			if (currentTool === "text") {
+				const label = window.prompt("Enter annotation label to place on screenshot:");
+				if (label && label.trim()) {
+					markCanvasDirty();
+					ctx.font = "bold 26px sans-serif";
+					const metrics = ctx.measureText(label.trim());
+					const pad = 10;
+					ctx.fillStyle = "rgba(15, 23, 42, 0.88)";
+					ctx.fillRect(x - pad, y - 28 - pad, metrics.width + pad * 2, 38 + pad);
+					ctx.strokeStyle = currentColor;
+					ctx.lineWidth = 3;
+					ctx.strokeRect(x - pad, y - 28 - pad, metrics.width + pad * 2, 38 + pad);
+					ctx.fillStyle = currentColor;
+					ctx.fillText(label.trim(), x, y);
+					saveSnapshot();
+				}
+				return;
+			}
+
+			isDrawing = true;
+			startX = x;
+			startY = y;
+			markCanvasDirty();
+			canvas.setPointerCapture(e.pointerId);
+
+			if (currentTool === "pen") {
+				ctx.strokeStyle = currentColor;
+				ctx.lineWidth = 5;
+				ctx.lineCap = "round";
+				ctx.lineJoin = "round";
+				ctx.beginPath();
+				ctx.moveTo(x, y);
+			}
+		});
+
+		canvas?.addEventListener("pointermove", (e: PointerEvent) => {
+			if (!isDrawing || !canvas || !ctx) return;
+			const { x, y } = getCanvasCoords(e);
+
+			if (currentTool === "pen") {
+				ctx.lineTo(x, y);
+				ctx.stroke();
+				return;
+			}
+
+			const baseSnap = historySnapshots[historySnapshots.length - 1];
+			if (baseSnap) ctx.putImageData(baseSnap, 0, 0);
+
+			if (currentTool === "arrow") {
+				drawArrow(startX, startY, x, y, currentColor);
+			} else if (currentTool === "box") {
+				ctx.strokeStyle = currentColor;
+				ctx.lineWidth = 4;
+				ctx.strokeRect(startX, startY, x - startX, y - startY);
+				ctx.fillStyle = `${currentColor}22`;
+				ctx.fillRect(startX, startY, x - startX, y - startY);
+			}
+		});
+
+		canvas?.addEventListener("pointerup", () => {
+			if (!isDrawing) return;
+			isDrawing = false;
+			saveSnapshot();
+		});
+
+		// Submit feedback to POST /api/portal/notes
+		form?.addEventListener("submit", async (e) => {
+			e.preventDefault();
+			if (!submitBtn) return;
+
+			const comment = (commentInput?.value || "").trim();
+			const topics = Array.from(selectedTopics);
+
+			if (!comment && !selectedRating && topics.length === 0 && !hasCanvasContent && !flaggedElementMeta) {
+				if (statusBanner) {
+					statusBanner.className = "rounded-2xl p-3.5 text-xs font-bold border bg-red-500/15 border-red-500/40 text-red-300";
+					statusBanner.textContent = "Please select a rating, topic, screenshot annotation, or write a quick note before sending.";
+					statusBanner.classList.remove("hidden");
+				}
+				return;
+			}
+
+			const origText = submitBtn.innerHTML;
+			submitBtn.disabled = true;
+			submitBtn.textContent = "Uploading feedback & screenshot...";
+			statusBanner?.classList.add("hidden");
+
+			try {
+				const fd = new FormData();
+				const token = modal.dataset.portalToken || "book-page";
+				const docIdVal = modal.dataset.docId || "";
+				const reviewerName =
+					(reviewerNameInput?.value || "").trim() ||
+					modal.dataset.authorName ||
+					"Portal Reviewer";
+				const reviewerEmail = modal.dataset.authorEmail || "";
+
+				fd.append("token", token);
+				if (docIdVal) fd.append("docId", docIdVal);
+				fd.append("noteType", "feedback");
+				fd.append("updatedBy", reviewerName);
+				if (reviewerEmail) fd.append("authorEmail", reviewerEmail);
+				if (selectedRating) fd.append("feedbackRating", String(selectedRating));
+				if (topics.length > 0) fd.append("feedbackTopics", JSON.stringify(topics));
+
+				const feedbackMeta = {
+					pageUrl: window.location.href,
+					viewport: `${window.innerWidth}x${window.innerHeight}`,
+					timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC",
+					userAgent: navigator.userAgent,
+					selectedElement: flaggedElementMeta
+						? `${flaggedElementMeta.selector}${flaggedElementMeta.text ? ` ("${flaggedElementMeta.text}")` : ""} [${flaggedElementMeta.rect}]`
+						: undefined,
+				};
+				fd.append("feedbackMeta", JSON.stringify(feedbackMeta));
+
+				const synthesizedMessage =
+					comment ||
+					[
+						selectedRating ? `Rated ${selectedRating}/5.` : "",
+						topics.length > 0 ? `Topics: ${topics.join(", ")}.` : "",
+						flaggedElementMeta ? `Flagged element: ${flaggedElementMeta.selector}.` : "",
+						hasCanvasContent ? "Attached annotated screen capture." : "",
+					]
+						.filter(Boolean)
+						.join(" ");
+
+				fd.append("message", synthesizedMessage);
+				fd.append("attachmentCategory", "feedback");
+				fd.append("attachmentTitle", `Annotated Screen Feedback (${reviewerName})`);
+
+				if (hasCanvasContent && canvas) {
+					const blob: Blob | null = await new Promise((resolve) =>
+						canvas.toBlob((b) => resolve(b), "image/png", 0.92),
+					);
+					if (blob) {
+						const filename = `portal-feedback-annotated-${Date.now()}.png`;
+						fd.append("files", new File([blob], filename, { type: "image/png" }));
+					}
+				}
+
+				const res = await fetch("/api/portal/notes", {
+					method: "POST",
+					body: fd,
+				});
+				const data = await res.json();
+				if (!res.ok || !data.ok) {
+					throw new Error(data.message || "Failed to submit feedback");
+				}
+
+				// Notify portal collaboration thread if present on the page
+				window.dispatchEvent(
+					new CustomEvent("portal-feedback-submitted", {
+						detail: { collaborationThread: data.collaborationThread },
+					}),
+				);
+
+				if (statusBanner) {
+					statusBanner.className =
+						"rounded-2xl p-3.5 text-xs font-bold border bg-emerald-500/15 border-emerald-500/40 text-emerald-300";
+					statusBanner.textContent =
+						"Thank you! Your feedback and annotated screenshot have been saved to the portal thread and emailed to Alex.";
+					statusBanner.classList.remove("hidden");
+				}
+
+				if (commentInput) commentInput.value = "";
+			} catch (err: any) {
+				if (statusBanner) {
+					statusBanner.className =
+						"rounded-2xl p-3.5 text-xs font-bold border bg-red-500/15 border-red-500/40 text-red-300";
+					statusBanner.textContent = err?.message || "Could not submit feedback.";
+					statusBanner.classList.remove("hidden");
+				}
+			} finally {
+				submitBtn.disabled = false;
+				submitBtn.innerHTML = origText;
+			}
+		});
+	}
+
+	initPortalFeedbackAnnotator();
+	document.addEventListener("astro:page-load", initPortalFeedbackAnnotator);
+</script>

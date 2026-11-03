@@ -1,5 +1,6 @@
 ---
 import Breadcrumbs from "@/components/Breadcrumbs.astro";
+import PortalFeedbackAnnotator from "@/components/PortalFeedbackAnnotator.astro";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import { getMultiCalendarAvailableSlots } from "@/lib/google-calendar";
 import { portableTextToHtml } from "@/lib/guest-portal";
@@ -901,6 +902,14 @@ const pageDescription = !portalFound
 						class="px-3.5 py-2 rounded-xl border border-border bg-background hover:bg-muted text-foreground text-xs font-bold transition-colors cursor-pointer"
 					>
 						{preMeetingSlotDetails ? "🔄 Rebook 15-Min Pre-Call" : "➕ Book 15-Min Pre-Call"}
+					</button>
+					<button
+						type="button"
+						data-open-portal-feedback
+						class="px-3.5 py-2 rounded-xl border border-primary/40 bg-background hover:bg-primary/10 text-primary text-xs font-bold transition-colors cursor-pointer"
+						title="Capture & annotate your screen or share feedback on the booking process"
+					>
+						🛠️ Feedback &amp; Annotate Screen
 					</button>
 				</div>
 			</div>
@@ -1962,7 +1971,9 @@ const pageDescription = !portalFound
 										? "📎 File Drop"
 										: item.noteType === "ros_update"
 											? "📝 Run-of-Show Update"
-											: "💬 Comment";
+											: item.noteType === "feedback"
+												? `🛠️ Portal Feedback${(item as any).feedbackRating ? ` (${(item as any).feedbackRating}/5)` : ""}`
+												: "💬 Comment";
 							return (
 								<div
 									class={`p-3.5 rounded-xl border ${
@@ -2686,6 +2697,14 @@ const pageDescription = !portalFound
 				)}
 			</div>
 		</section>
+		<PortalFeedbackAnnotator
+			portalToken={portalData.portalToken}
+			docId={portalData._id}
+			authorName={portalData.contactName || portalData.companyName}
+			authorEmail={verifiedPortalEmail || portalData.contactEmail}
+			companyName={portalData.companyName}
+			pageContext="portal"
+		/>
 	</div>
 	)}
 </BaseLayout>
@@ -3142,7 +3161,9 @@ const pageDescription = !portalFound
 								? "📎 File Drop"
 								: item.noteType === "ros_update"
 									? "📝 Run-of-Show Update"
-									: "💬 Comment";
+									: item.noteType === "feedback"
+										? `🛠️ Portal Feedback${item.feedbackRating ? ` (${item.feedbackRating}/5)` : ""}`
+										: "💬 Comment";
 					const attachmentsHtml =
 						Array.isArray(item.attachments) && item.attachments.length > 0
 							? `<div class="flex flex-wrap gap-2 pt-1">${item.attachments
@@ -3176,6 +3197,13 @@ const pageDescription = !portalFound
 				.join("");
 			listEl.scrollTop = listEl.scrollHeight;
 		}
+
+		window.addEventListener("portal-feedback-submitted", (evt) => {
+			const customEvt = evt;
+			if (customEvt && customEvt.detail && Array.isArray(customEvt.detail.collaborationThread)) {
+				renderPortalCollaborationThread(customEvt.detail.collaborationThread);
+			}
+		});
 
 		const chatFileInput = document.getElementById("chat-file-input");
 		const chatFilesPill = document.getElementById("chat-selected-files-pill");

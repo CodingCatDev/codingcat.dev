@@ -1,8 +1,10 @@
 ---
 import Breadcrumbs from "@/components/Breadcrumbs.astro";
 import ExcalidrawDiagram from "@/components/ExcalidrawDiagram.astro";
+import PortalFeedbackAnnotator from "@/components/PortalFeedbackAnnotator.astro";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import { getMultiCalendarAvailableSlots } from "@/lib/google-calendar";
+import { verifyPortalRequestAuth } from "@/lib/portal-security";
 import { getSanityServerClient } from "@/lib/sanity/write-client";
 
 const searchParams = Astro.url.searchParams;
@@ -63,6 +65,7 @@ const initialStartDate = searchParams.get("startDate") || undefined;
 const [
 	{ slots: upcomingSlots, liveVerified },
 	{ slots: preMeetingSlots },
+	bookAuth,
 ] = await Promise.all([
 	getMultiCalendarAvailableSlots(
 		9,
@@ -70,7 +73,17 @@ const [
 		initialStartDate,
 	),
 	getMultiCalendarAvailableSlots(6, 15, initialStartDate),
+	verifyPortalRequestAuth({
+		request: Astro.request,
+		url: Astro.url,
+		token: resolvedPortalToken || "book-page",
+		allowedEmails: [],
+	}),
 ]);
+
+const showBookFeedbackAnnotator = Boolean(
+	bookAuth.authenticated || existingBooking,
+);
 
 const title = "Book a Podcast and Showcase Session | CodingCat.dev";
 const description =
@@ -611,6 +624,16 @@ const description =
 			</div>
 		</footer>
 	</div>
+	{showBookFeedbackAnnotator && (
+		<PortalFeedbackAnnotator
+			portalToken={resolvedPortalToken || "book-page"}
+			docId={resolvedBookingId}
+			authorName={initialName}
+			authorEmail={bookAuth.verifiedEmail || initialEmail}
+			companyName={initialCompany}
+			pageContext="book"
+		/>
+	)}
 </BaseLayout>
 
 <script is:inline define:vars={{ initialTrack, initialPortalToken: resolvedPortalToken, initialBookingId: resolvedBookingId, alreadySigned, initialSlotParam, initialPreMeetingFor }}>
