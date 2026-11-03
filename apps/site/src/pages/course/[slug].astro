@@ -75,14 +75,16 @@ const sanitizedContent = (course.content ?? []).filter((block) => {
 	}}
 	canonical={`/course/${slug}`}
 >
-	<Breadcrumbs
-		links={[
-			{ title: "Courses", href: "/courses" },
-			{ title: course.title },
-		]}
-	/>
+	<div class="mx-auto max-w-4xl">
+		<Breadcrumbs
+			links={[
+				{ title: "Courses", href: "/courses" },
+				{ title: course.title },
+			]}
+		/>
+	</div>
 
-	<article class="min-w-0 max-w-full py-6">
+	<article class="mx-auto min-w-0 max-w-4xl py-6">
 		<div class="mb-6 flex flex-wrap items-center justify-between gap-4">
 			<div class="flex flex-wrap items-center gap-3">
 				<div class="inline-flex items-center gap-2 rounded-full border-2 border-[#2A1155] bg-[#EDE9FE] px-4 py-1 font-mono text-xs font-extrabold uppercase tracking-wider text-[#7C3AED] dark:border-purple-400/40 dark:bg-purple-950/60 dark:text-purple-200 hand-border shadow-sketch-sm">
@@ -134,18 +136,12 @@ const sanitizedContent = (course.content ?? []).filter((block) => {
 			/>
 		</div>
 
-		<ExcalidrawBlueprintCard
-			title={course.title}
-			kind="course"
-			tags={sections.map((s) => s?.title)}
-		/>
-
 		{
 			sanitizedContent.length > 0 && (
 				<div class="my-8">
 					<PortableTextContent
 						value={sanitizedContent}
-						class="mx-auto prose-violet lg:prose-xl"
+						class="mx-auto prose-violet lg:prose-xl lg:max-w-4xl"
 					/>
 				</div>
 			)
@@ -229,5 +225,11 @@ const sanitizedContent = (course.content ?? []).filter((block) => {
 				</section>
 			)
 		}
+
+		<ExcalidrawBlueprintCard
+			title={course.title}
+			kind="course"
+			tags={sections.map((s) => s?.title)}
+		/>
 	</article>
 </BaseLayout>

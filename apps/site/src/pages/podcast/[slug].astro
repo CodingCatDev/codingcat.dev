@@ -126,11 +126,13 @@ const faqNode = faqSchema(extractFaqsFromPortableText(podcast.content));
 		...(faqNode ? [faqNode] : []),
 	]}
 >
-	<Breadcrumbs
-		links={[{ title: "Podcasts", href: "/podcasts" }, { title: podcast.title }]}
-	/>
+	<div class="mx-auto max-w-4xl">
+		<Breadcrumbs
+			links={[{ title: "Podcasts", href: "/podcasts" }, { title: podcast.title }]}
+		/>
+	</div>
 
-	<article class="min-w-0 max-w-full py-4">
+	<article class="mx-auto min-w-0 max-w-4xl py-4">
 		{/* Episode Badge & Matched Vendor / Topic Pills */}
 		<div class="mb-4 flex flex-wrap items-center gap-2">
 			<span class="inline-flex items-center gap-2 rounded-full border-2 border-[#2A1155] bg-[#EDE9FE] px-4 py-1 font-mono text-xs font-extrabold uppercase tracking-wider text-[#7C3AED] dark:border-purple-400/40 dark:bg-purple-950/60 dark:text-purple-200 hand-border shadow-sketch-sm">
@@ -239,22 +241,16 @@ const faqNode = faqSchema(extractFaqsFromPortableText(podcast.content));
 			)
 		}
 
-		<ExcalidrawBlueprintCard
-			title={podcast.title}
-			kind="podcast"
-			tags={guests.map((g) => g.title)}
-		/>
-
 		<div class="my-4 md:my-8">
 			<PortableTextContent
 				value={podcast.content}
-				class="mx-auto prose-violet lg:prose-xl"
+				class="mx-auto prose-violet lg:prose-xl lg:max-w-4xl"
 			/>
 		</div>
 
 		{
 			podcast.transcript?.summary && (
-				<section class="duo-card hand-border mx-auto my-8 max-w-4xl p-6">
+				<section class="duo-card hand-border my-8 p-6">
 					<h2 class="mb-3 font-display text-xl font-black text-[#2A1155] dark:text-white">
 						✏️ Episode Summary
 					</h2>
@@ -264,9 +260,17 @@ const faqNode = faqSchema(extractFaqsFromPortableText(podcast.content));
 				</section>
 			)
 		}
+
+		<ExcalidrawBlueprintCard
+			title={podcast.title}
+			kind="podcast"
+			tags={guests.map((g) => g.title)}
+		/>
 	</article>
 
-	<PodcastPicks picks={podcast.pick} />
+	<div class="mx-auto max-w-4xl">
+		<PodcastPicks picks={podcast.pick} />
+	</div>
 
 	{
 		more.length > 0 && (
