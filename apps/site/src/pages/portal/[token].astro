@@ -95,8 +95,10 @@ interface LeadPortalData {
 	deliverables: DeliverableItem[];
 	sharedAssets: VaultAssetItem[];
 	collaborationThread: CollaborationThreadItem[];
+	bookingDocId?: string;
 	bookingStatus?: string;
 	bookingSlotStartAt?: string;
+	appointmentScheduleUrl?: string;
 	recordingUrl?: string;
 	preMeetingStatus?: string;
 	preMeetingSlotStartAt?: string;
@@ -435,8 +437,10 @@ try {
 						})),
 			sharedAssets: combinedAssets,
 			collaborationThread: combinedThread,
+			bookingDocId: bookingDoc?._id,
 			bookingStatus: resolvedBookingStatus,
 			bookingSlotStartAt: bookingDoc?.slotStartAt,
+			appointmentScheduleUrl: bookingDoc?.appointmentScheduleUrl,
 			recordingUrl: isRecordingApproved
 				? bookingDoc?.recordingUrl || "https://streamyard.com/c4kv26is93"
 				: undefined,
@@ -501,6 +505,87 @@ const isDepositPaid =
 
 const isBalancePaid =
 	Boolean(portalData.balancePaidAt) || portalData.status === "paid";
+
+interface FormattedSessionSlot {
+	iso: string;
+	durationMinutes: number;
+	monthShort: string;
+	dayNum: string;
+	weekdayShort: string;
+	fullDateEt: string;
+	timeRangeEt: string;
+	shortSummaryEt: string;
+	isPast: boolean;
+}
+
+function formatSessionDetails(
+	iso?: string | null,
+	durationMinutes = 45,
+): FormattedSessionSlot | null {
+	if (!iso) return null;
+	const start = new Date(iso);
+	if (Number.isNaN(start.getTime())) return null;
+	const end = new Date(start.getTime() + durationMinutes * 60_000);
+	const tz = "America/New_York";
+	const monthShort = start
+		.toLocaleDateString("en-US", { month: "short", timeZone: tz })
+		.toUpperCase();
+	const dayNum = start.toLocaleDateString("en-US", {
+		day: "numeric",
+		timeZone: tz,
+	});
+	const weekdayShort = start
+		.toLocaleDateString("en-US", { weekday: "short", timeZone: tz })
+		.toUpperCase();
+	const fullDateEt = start.toLocaleDateString("en-US", {
+		weekday: "long",
+		month: "long",
+		day: "numeric",
+		year: "numeric",
+		timeZone: tz,
+	});
+	const startTimeEt = start.toLocaleTimeString("en-US", {
+		hour: "numeric",
+		minute: "2-digit",
+		timeZone: tz,
+	});
+	const endTimeEt = end.toLocaleTimeString("en-US", {
+		hour: "numeric",
+		minute: "2-digit",
+		timeZone: tz,
+		timeZoneName: "short",
+	});
+	const shortDateEt = start.toLocaleDateString("en-US", {
+		weekday: "short",
+		month: "short",
+		day: "numeric",
+		timeZone: tz,
+	});
+	return {
+		iso: start.toISOString(),
+		durationMinutes,
+		monthShort,
+		dayNum,
+		weekdayShort,
+		fullDateEt,
+		timeRangeEt: `${startTimeEt} – ${endTimeEt}`,
+		shortSummaryEt: `${shortDateEt} · ${startTimeEt} ET`,
+		isPast: end.getTime() < Date.now(),
+	};
+}
+
+const recordingSlotDetails = formatSessionDetails(
+	portalData.bookingSlotStartAt,
+	45,
+);
+const preMeetingSlotDetails = formatSessionDetails(
+	portalData.preMeetingSlotStartAt,
+	15,
+);
+const isRecordingApprovedStatus =
+	portalData.bookingStatus === "approved" ||
+	portalData.bookingStatus === "scheduled" ||
+	portalData.bookingStatus === "confirmed";
 
 const pageTitle = !portalFound
 	? "Studio Portal Not Found | CodingCat.dev"
@@ -720,8 +805,10 @@ const pageDescription = !portalFound
 		}
 		{
 			bookedSlotParam && (
-				<div class="p-4 rounded-xl border border-primary/30 bg-primary/10 text-foreground text-sm">
-					<strong>✓ Kickoff Call Scheduled!</strong> Your Google Calendar invite has been sent for <code>{new Date(bookedSlotParam).toLocaleString("en-US", { dateStyle: "medium", timeStyle: "short" })}</code>.
+				<div class="p-4 rounded-xl border border-emerald-500/40 bg-emerald-500/10 text-foreground text-sm flex flex-wrap items-center justify-between gap-2">
+					<div>
+						<strong>✓ Session Updated on Google Calendar!</strong> Your calendar invite has been sent for <code class="font-mono font-bold">{new Date(bookedSlotParam).toLocaleString("en-US", { dateStyle: "full", timeStyle: "short", timeZone: "America/New_York", timeZoneName: "short" })}</code>.
+					</div>
 				</div>
 			)
 		}
@@ -777,6 +864,511 @@ const pageDescription = !portalFound
 				</span>
 			</div>
 		</header>
+
+		<!-- PROMINENT SCHEDULED SESSIONS & 1-CLICK REBOOKING COMMAND CENTER -->
+		<section
+			id="booked-sessions"
+			class="flex flex-col gap-5 p-5 sm:p-6 rounded-2xl border-2 border-primary bg-card shadow-md scroll-mt-20"
+		>
+			<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-border pb-4">
+				<div class="flex flex-col gap-1">
+					<div class="flex flex-wrap items-center gap-2">
+						<span class="text-xs font-mono uppercase tracking-wider text-primary font-extrabold">
+							📅 Your Scheduled Sessions &amp; Studio Links
+						</span>
+						<span
+							id="visitor-timezone-pill"
+							class="text-[11px] font-mono px-2.5 py-0.5 rounded-full bg-primary/15 text-primary font-semibold"
+						>
+							🕒 Times shown in US Eastern (ET) &amp; your local timezone
+						</span>
+					</div>
+					<p class="text-xs text-muted-foreground">
+						Here is the exact status of your <strong>45-Minute StreamYard Recording</strong> and your optional <strong>15-Minute Google Meet Pre-Meeting</strong>. Need a different time? Click <strong>Rebook</strong> on either card to pick a new slot in 1 click.
+					</p>
+				</div>
+				<div class="flex flex-wrap items-center gap-2 shrink-0">
+					<button
+						type="button"
+						data-open-rebook="45"
+						class="px-3.5 py-2 rounded-xl border-2 border-primary bg-primary/10 hover:bg-primary/20 text-primary text-xs font-bold transition-colors cursor-pointer"
+					>
+						🔄 Rebook Recording Time
+					</button>
+					<button
+						type="button"
+						data-open-rebook="15"
+						class="px-3.5 py-2 rounded-xl border border-border bg-background hover:bg-muted text-foreground text-xs font-bold transition-colors cursor-pointer"
+					>
+						{preMeetingSlotDetails ? "🔄 Rebook 15-Min Pre-Call" : "➕ Book 15-Min Pre-Call"}
+					</button>
+				</div>
+			</div>
+
+			<div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+				<!-- CARD 1: 45-Min Podcast Recording (StreamYard Studio) -->
+				<div
+					class={`flex flex-col justify-between gap-4 p-5 rounded-2xl border-2 ${
+						recordingSlotDetails && isRecordingApprovedStatus
+							? "border-emerald-500/50 bg-emerald-500/[0.04]"
+							: "border-primary/40 bg-primary/[0.03]"
+					}`}
+				>
+					<div class="flex flex-col gap-3.5">
+						<div class="flex flex-wrap items-center justify-between gap-2">
+							<div class="flex items-center gap-2">
+								<span class="inline-flex size-8 items-center justify-center rounded-lg bg-primary text-primary-foreground text-sm font-bold">
+									🎙️
+								</span>
+								<div class="flex flex-col">
+									<span class="text-[11px] font-mono uppercase tracking-wider text-primary font-bold">
+										Main Session &middot; 45 Minutes
+									</span>
+									<h2 class="text-base sm:text-lg font-extrabold tracking-tight text-foreground">
+										StreamYard Podcast Recording
+									</h2>
+								</div>
+							</div>
+							<span
+								class={`text-xs font-mono font-bold px-3 py-1 rounded-full border ${
+									!recordingSlotDetails
+										? "border-amber-500/40 bg-amber-500/15 text-amber-700 dark:text-amber-300"
+										: isRecordingApprovedStatus
+											? "border-emerald-500/40 bg-emerald-500/15 text-emerald-700 dark:text-emerald-300"
+											: "border-amber-500/40 bg-amber-500/15 text-amber-700 dark:text-amber-300"
+								}`}
+							>
+								{!recordingSlotDetails
+									? "⚠️ No Slot Selected"
+									: isRecordingApprovedStatus
+										? "✓ Confirmed & Approved"
+										: "⏳ Hold Reserved (Pending Approval)"}
+							</span>
+						</div>
+
+						{recordingSlotDetails ? (
+							<div class="flex items-stretch gap-3.5 p-3.5 rounded-xl border border-border bg-card shadow-2xs">
+								<!-- Visual Calendar Leaf Badge -->
+								<div class="flex flex-col items-center justify-center w-16 shrink-0 rounded-xl border border-primary/30 bg-primary/10 px-2 py-2 text-center">
+									<span class="text-[10px] font-mono font-extrabold uppercase tracking-widest text-primary">
+										{recordingSlotDetails.monthShort}
+									</span>
+									<span class="text-2xl font-black leading-none text-foreground my-0.5">
+										{recordingSlotDetails.dayNum}
+									</span>
+									<span class="text-[10px] font-mono font-bold uppercase text-muted-foreground">
+										{recordingSlotDetails.weekdayShort}
+									</span>
+								</div>
+
+								<!-- Booked Date, Local Time & ET Time -->
+								<div class="flex flex-col justify-center gap-1 min-w-0 flex-1">
+									<div class="flex flex-wrap items-center gap-2">
+										<span class="text-xs font-mono font-bold uppercase tracking-wider text-muted-foreground">
+											Current Booked Recording Time
+										</span>
+										<span
+											data-session-relative-badge
+											data-start-iso={recordingSlotDetails.iso}
+											data-duration="45"
+											class={`text-[10px] font-mono font-bold px-2 py-0.5 rounded ${
+												recordingSlotDetails.isPast
+													? "bg-amber-500/15 text-amber-700 dark:text-amber-300"
+													: "bg-emerald-500/15 text-emerald-700 dark:text-emerald-300"
+											}`}
+										>
+											{recordingSlotDetails.isPast ? "⚠️ Past Slot — Rebook If Needed" : "📅 Scheduled"}
+										</span>
+									</div>
+									<div
+										data-session-local-date
+										data-start-iso={recordingSlotDetails.iso}
+										class="text-sm sm:text-base font-extrabold text-foreground leading-snug"
+									>
+										{recordingSlotDetails.fullDateEt}
+									</div>
+									<div
+										data-session-local-time
+										data-start-iso={recordingSlotDetails.iso}
+										data-duration="45"
+										class="text-sm sm:text-base font-mono font-extrabold text-primary"
+									>
+										{recordingSlotDetails.timeRangeEt}
+									</div>
+									<div
+										data-session-tz-note
+										data-start-iso={recordingSlotDetails.iso}
+										data-duration="45"
+										data-et-range={recordingSlotDetails.timeRangeEt}
+										class="text-[11px] font-mono text-muted-foreground"
+									>
+										Eastern Time (Host): {recordingSlotDetails.timeRangeEt} (America/New_York)
+									</div>
+								</div>
+							</div>
+						) : (
+							<div class="p-4 rounded-xl border-2 border-dashed border-amber-500/40 bg-amber-500/5 flex flex-col gap-1.5">
+								<span class="text-sm font-bold text-foreground">
+									No 45-Minute Recording Slot Selected Yet
+								</span>
+								<p class="text-xs text-muted-foreground">
+									Click <strong>Select Recording Time</strong> below to pick a conflict-free 45-minute window on Alex Patterson's studio calendar.
+								</p>
+							</div>
+						)}
+					</div>
+
+					<div class="flex flex-col gap-2 pt-1">
+						<div class="flex flex-wrap items-center gap-2">
+							{isRecordingApprovedStatus ? (
+								<a
+									href={portalData.recordingUrl || "https://streamyard.com/c4kv26is93"}
+									target="_blank"
+									rel="noopener noreferrer"
+									class="flex-1 min-w-[180px] px-4 py-2.5 rounded-xl bg-primary text-primary-foreground text-xs font-extrabold text-center hover:bg-primary/90 transition-colors shadow-2xs"
+								>
+									🎙️ Enter StreamYard Studio &nearr;
+								</a>
+							) : null}
+							<button
+								type="button"
+								data-open-rebook="45"
+								class="flex-1 min-w-[170px] px-4 py-2.5 rounded-xl border-2 border-primary bg-background hover:bg-primary/10 text-primary text-xs font-extrabold text-center transition-colors cursor-pointer"
+							>
+								{recordingSlotDetails ? "🔄 Rebook / Change Time" : "📅 Select Recording Time"}
+							</button>
+						</div>
+						<div class="flex flex-wrap items-center justify-between gap-2 text-[11px] font-mono text-muted-foreground px-1">
+							<span>
+								Studio Room: <code class="text-foreground">streamyard.com/c4kv26is93</code>
+							</span>
+							{portalData.appointmentScheduleUrl && (
+								<a
+									href={portalData.appointmentScheduleUrl}
+									target="_blank"
+									rel="noopener noreferrer"
+									class="text-primary font-semibold hover:underline"
+								>
+									Open Google Calendar Invite &nearr;
+								</a>
+							)}
+						</div>
+					</div>
+				</div>
+
+				<!-- CARD 2: 15-Min Pre-Meeting / Tech Check (Google Meet) -->
+				<div
+					class={`flex flex-col justify-between gap-4 p-5 rounded-2xl border-2 ${
+						preMeetingSlotDetails
+							? "border-emerald-500/50 bg-emerald-500/[0.04]"
+							: "border-border bg-background/60"
+					}`}
+				>
+					<div class="flex flex-col gap-3.5">
+						<div class="flex flex-wrap items-center justify-between gap-2">
+							<div class="flex items-center gap-2">
+								<span class="inline-flex size-8 items-center justify-center rounded-lg bg-secondary text-secondary-foreground text-sm font-bold">
+									📹
+								</span>
+								<div class="flex flex-col">
+									<span class="text-[11px] font-mono uppercase tracking-wider text-muted-foreground font-bold">
+										Optional Prep &middot; 15 Minutes
+									</span>
+									<h2 class="text-base sm:text-lg font-extrabold tracking-tight text-foreground">
+										Google Meet Pre-Meeting
+									</h2>
+								</div>
+							</div>
+							<span
+								class={`text-xs font-mono font-bold px-3 py-1 rounded-full border ${
+									preMeetingSlotDetails
+										? "border-emerald-500/40 bg-emerald-500/15 text-emerald-700 dark:text-emerald-300"
+										: "border-border bg-muted text-muted-foreground"
+								}`}
+							>
+								{preMeetingSlotDetails
+									? "✓ Scheduled on Google Meet"
+									: "Optional · Not Booked"}
+							</span>
+						</div>
+
+						{preMeetingSlotDetails ? (
+							<div class="flex items-stretch gap-3.5 p-3.5 rounded-xl border border-border bg-card shadow-2xs">
+								<!-- Visual Calendar Leaf Badge -->
+								<div class="flex flex-col items-center justify-center w-16 shrink-0 rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-2 py-2 text-center">
+									<span class="text-[10px] font-mono font-extrabold uppercase tracking-widest text-emerald-600 dark:text-emerald-400">
+										{preMeetingSlotDetails.monthShort}
+									</span>
+									<span class="text-2xl font-black leading-none text-foreground my-0.5">
+										{preMeetingSlotDetails.dayNum}
+									</span>
+									<span class="text-[10px] font-mono font-bold uppercase text-muted-foreground">
+										{preMeetingSlotDetails.weekdayShort}
+									</span>
+								</div>
+
+								<!-- Booked Date, Local Time & ET Time -->
+								<div class="flex flex-col justify-center gap-1 min-w-0 flex-1">
+									<div class="flex flex-wrap items-center gap-2">
+										<span class="text-xs font-mono font-bold uppercase tracking-wider text-muted-foreground">
+											Current Booked Pre-Meeting Time
+										</span>
+										<span
+											data-session-relative-badge
+											data-start-iso={preMeetingSlotDetails.iso}
+											data-duration="15"
+											class={`text-[10px] font-mono font-bold px-2 py-0.5 rounded ${
+												preMeetingSlotDetails.isPast
+													? "bg-amber-500/15 text-amber-700 dark:text-amber-300"
+													: "bg-emerald-500/15 text-emerald-700 dark:text-emerald-300"
+											}`}
+										>
+											{preMeetingSlotDetails.isPast ? "⚠️ Past Slot" : "📅 Scheduled"}
+										</span>
+									</div>
+									<div
+										data-session-local-date
+										data-start-iso={preMeetingSlotDetails.iso}
+										class="text-sm sm:text-base font-extrabold text-foreground leading-snug"
+									>
+										{preMeetingSlotDetails.fullDateEt}
+									</div>
+									<div
+										data-session-local-time
+										data-start-iso={preMeetingSlotDetails.iso}
+										data-duration="15"
+										class="text-sm sm:text-base font-mono font-extrabold text-emerald-600 dark:text-emerald-400"
+									>
+										{preMeetingSlotDetails.timeRangeEt}
+									</div>
+									<div
+										data-session-tz-note
+										data-start-iso={preMeetingSlotDetails.iso}
+										data-duration="15"
+										data-et-range={preMeetingSlotDetails.timeRangeEt}
+										class="text-[11px] font-mono text-muted-foreground"
+									>
+										Eastern Time (Host): {preMeetingSlotDetails.timeRangeEt} (America/New_York)
+									</div>
+								</div>
+							</div>
+						) : (
+							<div class="p-4 rounded-xl border border-dashed border-border bg-card/70 flex flex-col gap-1.5">
+								<div class="flex items-center gap-2">
+									<span class="text-sm font-bold text-foreground">
+										No 15-Minute Pre-Meeting Currently Booked
+									</span>
+								</div>
+								<p class="text-xs text-muted-foreground leading-relaxed">
+									Most guests go straight into the 45-minute StreamYard recording (we spend the first 5 minutes doing a relaxed mic &amp; outline check before hitting record). If you want a separate 15-minute Google Meet alignment call beforehand, click below to book one in 1 click.
+								</p>
+							</div>
+						)}
+					</div>
+
+					<div class="flex flex-col gap-2 pt-1">
+						<div class="flex flex-wrap items-center gap-2">
+							{portalData.preMeetingMeetUrl ? (
+								<a
+									href={portalData.preMeetingMeetUrl}
+									target="_blank"
+									rel="noopener noreferrer"
+									class="flex-1 min-w-[180px] px-4 py-2.5 rounded-xl bg-emerald-600 text-white text-xs font-extrabold text-center hover:bg-emerald-500 transition-colors shadow-2xs"
+								>
+									📹 Join 15-Min Google Meet &nearr;
+								</a>
+							) : null}
+							<button
+								type="button"
+								data-open-rebook="15"
+								class="flex-1 min-w-[170px] px-4 py-2.5 rounded-xl border-2 border-primary/50 bg-background hover:bg-primary/10 text-primary text-xs font-extrabold text-center transition-colors cursor-pointer"
+							>
+								{preMeetingSlotDetails
+									? "🔄 Rebook 15-Min Pre-Meeting"
+									: "📅 Book 15-Min Pre-Meeting (Optional)"}
+							</button>
+						</div>
+						<div class="text-[11px] font-mono text-muted-foreground px-1">
+							Auto-generates an instant Google Meet room without changing your 45-min recording slot.
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<!-- INLINE 1-CLICK REBOOKING & LIVE CALENDAR DRAWER (Right inside the top card!) -->
+			<div
+				id="schedule-section"
+				class="hidden flex-col gap-4 p-5 rounded-2xl border-2 border-primary bg-background shadow-sm scroll-mt-24"
+			>
+				<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-border pb-3">
+					<div class="flex flex-col gap-1">
+						<div class="flex flex-wrap items-center gap-2">
+							<span
+								id="rebook-drawer-mode-badge"
+								class="text-xs font-mono uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-primary text-primary-foreground font-bold"
+							>
+								🎙️ Rescheduling: 45-Min StreamYard Recording
+							</span>
+							<span class="text-xs font-mono px-2 py-0.5 rounded bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 font-semibold">
+								{calendarLiveVerified ? "✓ Live Google Calendar FreeBusy Verified" : "8am–5pm PT / ET"}
+							</span>
+						</div>
+						<p id="rebook-drawer-subtitle" class="text-xs text-muted-foreground">
+							Pick a new conflict-free slot below. Confirming will automatically replace your previous calendar invite and email an updated Google Calendar invite to <strong class="text-foreground">{portalData.contactEmail || "your email"}</strong>.
+						</p>
+					</div>
+					<button
+						type="button"
+						id="btn-close-rebook-drawer"
+						class="self-start sm:self-center px-3 py-1.5 rounded-lg border border-border bg-card hover:bg-muted text-xs font-mono font-bold text-muted-foreground hover:text-foreground cursor-pointer"
+					>
+						✕ Close Picker
+					</button>
+				</div>
+
+				<!-- Session Type Switcher + Week Date Picker Row -->
+				<div class="grid grid-cols-1 lg:grid-cols-12 gap-4 items-end">
+					<div class="lg:col-span-8 flex flex-col gap-1.5">
+						<span class="text-xs font-bold uppercase tracking-wider text-primary">
+							1. Which Session Are You Booking / Rescheduling?
+						</span>
+						<div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5" role="group" aria-label="Select session duration">
+							<button
+								type="button"
+								data-portal-track={portalData.totalAmountCents === 0 ? "editorial" : "sponsored"}
+								data-portal-duration="45"
+								class="portal-track-btn p-3 rounded-xl border-2 border-primary bg-primary/10 ring-1 ring-primary text-left transition-all cursor-pointer flex flex-col gap-0.5"
+							>
+								<span class="text-xs font-extrabold text-foreground">
+									🎙️ 45-Min StreamYard Recording
+								</span>
+								<span class="text-[11px] text-muted-foreground">
+									{recordingSlotDetails
+										? `Current: ${recordingSlotDetails.shortSummaryEt}`
+										: "Main podcast & live demo session"}
+								</span>
+							</button>
+							<button
+								type="button"
+								data-portal-track="sponsor-kickoff"
+								data-portal-duration="15"
+								class="portal-track-btn p-3 rounded-xl border-2 border-border bg-card hover:bg-muted/50 text-left transition-all cursor-pointer flex flex-col gap-0.5"
+							>
+								<span class="text-xs font-extrabold text-foreground">
+									📹 15-Min Google Meet Pre-Meeting
+								</span>
+								<span class="text-[11px] text-muted-foreground">
+									{preMeetingSlotDetails
+										? `Current: ${preMeetingSlotDetails.shortSummaryEt}`
+										: "Optional alignment & mic check (keeps 45m slot intact)"}
+								</span>
+							</button>
+						</div>
+					</div>
+
+					<div class="lg:col-span-4 flex flex-col gap-1.5">
+						<label for="portal-rebook-date-picker" class="text-xs font-bold uppercase tracking-wider text-primary">
+							2. Jump to Specific Date / Week
+						</label>
+						<div class="flex items-center gap-2">
+							<input
+								type="date"
+								id="portal-rebook-date-picker"
+								min={new Date(Date.now() + 86400_000).toISOString().slice(0, 10)}
+								class="flex-1 rounded-xl border border-border bg-card px-3 py-2 text-xs font-mono font-semibold text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+							/>
+							<span id="portal-slots-loading-pill" class="hidden text-[11px] font-mono text-primary font-bold">
+								Syncing...
+							</span>
+						</div>
+					</div>
+				</div>
+
+				{!portalData.contactEmail && (
+					<div>
+						<label for="portal-booking-email" class="block text-xs font-semibold text-foreground mb-1">
+							Attendee Email for Calendar Invite <span class="text-destructive">*</span>
+						</label>
+						<input
+							type="email"
+							id="portal-booking-email"
+							placeholder="you@company.com"
+							class="w-full rounded-lg border border-border bg-card px-3 py-2 text-xs text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+						/>
+					</div>
+				)}
+
+				<!-- 15-Min Kickoff Slots Grid -->
+				<div class="flex flex-col gap-1.5">
+					<span class="text-xs font-bold uppercase tracking-wider text-primary">
+						3. Select an Available Conflict-Free Window
+					</span>
+					<div id="portal-slots-15" class="hidden grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5">
+						{
+							kickoffSlots.map((slot, index) => (
+								<button
+									type="button"
+									data-slot-start={slot.startAt}
+									data-slot-duration="15"
+									class={`portal-slot-btn-15 p-3 rounded-xl border text-left transition-all cursor-pointer flex flex-col gap-0.5 ${
+										index === 0
+											? "border-primary bg-primary/10 ring-1 ring-primary"
+											: "border-border bg-card hover:border-primary"
+									}`}
+								>
+									<span class="font-bold text-xs text-foreground" data-slot-date-label>{slot.displayDate}</span>
+									<span class="text-xs text-primary font-mono font-bold" data-slot-local-label>{slot.displayTime}</span>
+									<span class="text-[10px] text-muted-foreground font-mono" data-slot-et-label>{slot.displayTime}</span>
+								</button>
+							))
+						}
+					</div>
+
+					<!-- 45-Min Recording Slots Grid -->
+					<div id="portal-slots-45" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5">
+						{
+							recordingSlots.map((slot, index) => (
+								<button
+									type="button"
+									data-slot-start={slot.startAt}
+									data-slot-duration="45"
+									class={`portal-slot-btn-45 p-3 rounded-xl border text-left transition-all cursor-pointer flex flex-col gap-0.5 ${
+										index === 0
+											? "border-primary bg-primary/10 ring-1 ring-primary"
+											: "border-border bg-card hover:border-primary"
+									}`}
+								>
+									<span class="font-bold text-xs text-foreground" data-slot-date-label>{slot.displayDate}</span>
+									<span class="text-xs text-primary font-mono font-bold" data-slot-local-label>{slot.displayTime}</span>
+									<span class="text-[10px] text-muted-foreground font-mono" data-slot-et-label>{slot.displayTime}</span>
+								</button>
+							))
+						}
+					</div>
+				</div>
+
+				<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-1">
+					<a
+						href={`/book?track=${portalData.totalAmountCents === 0 ? "editorial" : "sponsored"}&portalToken=${encodeURIComponent(portalData.portalToken)}&company=${encodeURIComponent(portalData.companyName)}&name=${encodeURIComponent(portalData.contactName)}&email=${encodeURIComponent(portalData.contactEmail)}`}
+						class="text-xs font-mono font-semibold text-primary hover:underline"
+					>
+						Need to browse more weeks? Open Full Multi-Week Calendar Page &rarr;
+					</a>
+					<button
+						type="button"
+						id="btn-portal-book-slot"
+						class="px-5 py-2.5 rounded-xl bg-primary text-primary-foreground text-xs font-extrabold hover:bg-primary/90 transition-colors cursor-pointer shadow-xs"
+					>
+						Confirm New Recording Slot &amp; Update Calendar Invite &rarr;
+					</button>
+				</div>
+
+				<div
+					id="portal-booking-feedback"
+					class="hidden text-xs p-3.5 rounded-xl border border-border bg-muted/50"
+				></div>
+			</div>
+		</section>
 
 		<!-- PodMatch-Style Self-Serve Guest Readiness Checklist & Live Draft Preview Bar -->
 		<section class="flex flex-col gap-4 p-5 rounded-2xl border-2 border-primary/40 bg-card shadow-xs">
@@ -856,7 +1448,7 @@ const pageDescription = !portalFound
 					</div>
 					<p class="text-xs text-muted-foreground">
 						{portalData.hasSignedRelease
-							? `Signed ${portalData.signedAt ? new Date(portalData.signedAt).toLocaleDateString() : "on file"}`
+							? `Signed ${portalData.signedAt ? new Date(portalData.signedAt).toLocaleDateString("en-US", { timeZone: "America/New_York" }) : "on file"}`
 							: "10-second inline media & recording consent signature"}
 					</p>
 				</a>
@@ -886,114 +1478,33 @@ const pageDescription = !portalFound
 					</p>
 				</a>
 
-				<a
-					href={portalData.recordingUrl || "#schedule-section"}
-					target={portalData.recordingUrl ? "_blank" : undefined}
-					rel={portalData.recordingUrl ? "noopener noreferrer" : undefined}
-					class={`flex flex-col justify-between gap-1.5 p-3.5 rounded-xl border transition-colors ${
-						portalData.bookingStatus === "approved" || portalData.bookingStatus === "scheduled" || portalData.bookingStatus === "confirmed"
-							? "border-emerald-500/40 bg-emerald-500/10"
+				<button
+					type="button"
+					data-open-rebook="45"
+					class={`flex flex-col justify-between gap-1.5 p-3.5 rounded-xl border text-left transition-colors cursor-pointer ${
+						isRecordingApprovedStatus
+							? "border-emerald-500/40 bg-emerald-500/10 hover:bg-emerald-500/15"
 							: "border-primary/40 bg-primary/5 hover:bg-primary/10"
 					}`}
 				>
-					<div class="flex items-center justify-between">
+					<div class="flex items-center justify-between w-full">
 						<span class="text-[11px] font-mono font-bold uppercase tracking-wider text-foreground">
 							Step 4 &middot; Studio Slot
 						</span>
 						<span class="text-[11px] font-mono font-bold text-primary">
-							{portalData.bookingSlotStartAt ? "✓ Scheduled" : "Pick Window"}
+							{recordingSlotDetails ? "✓ Scheduled (Rebook)" : "Pick Window"}
 						</span>
 					</div>
-					<p class="text-xs text-muted-foreground">
-						{portalData.bookingSlotStartAt
-							? new Date(portalData.bookingSlotStartAt).toLocaleString("en-US", { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" })
+					<p
+						data-session-local-short
+						data-start-iso={recordingSlotDetails?.iso}
+						class="text-xs text-muted-foreground font-mono"
+					>
+						{recordingSlotDetails
+							? recordingSlotDetails.shortSummaryEt
 							: "Select 45-min StreamYard window"}
 					</p>
-				</a>
-			</div>
-		</section>
-
-		<!-- Live Recording Studio & Google Meet Pre-Call Status Strip -->
-		<section class="grid grid-cols-1 md:grid-cols-2 gap-4 p-5 rounded-2xl border border-primary/30 bg-primary/5">
-			<div class="flex flex-col justify-between gap-2 p-4 rounded-xl border border-border bg-card">
-				<div class="flex items-center justify-between">
-					<span class="text-xs font-mono uppercase tracking-wider text-primary font-bold">
-						🎙️ 45-Min Recording Studio (StreamYard)
-					</span>
-					<span class={`text-xs font-semibold px-2 py-0.5 rounded-full ${
-						portalData.bookingStatus === "approved" || portalData.bookingStatus === "scheduled" || portalData.bookingStatus === "confirmed"
-							? "bg-green-500/15 text-green-600 dark:text-green-400"
-							: "bg-amber-500/15 text-amber-600 dark:text-amber-300"
-					}`}>
-						{portalData.bookingStatus === "approved" || portalData.bookingStatus === "scheduled" || portalData.bookingStatus === "confirmed"
-							? "✓ Approved & Ready"
-							: "⏳ Calendar Hold (Pending Host Approval)"}
-					</span>
-				</div>
-				<p class="text-xs text-muted-foreground">
-					{portalData.bookingSlotStartAt
-						? `Held Window: ${new Date(portalData.bookingSlotStartAt).toLocaleString("en-US", { dateStyle: "full", timeStyle: "short" })}`
-						: "Select a 45-minute recording window below to block Alex's studio calendar."}
-				</p>
-				{portalData.bookingStatus === "approved" || portalData.bookingStatus === "scheduled" || portalData.bookingStatus === "confirmed" ? (
-					<div class="flex flex-wrap gap-2 mt-1">
-						<a
-							href={portalData.recordingUrl || "https://streamyard.com/c4kv26is93"}
-							target="_blank"
-							rel="noopener noreferrer"
-							class="flex-1 px-4 py-2 rounded-lg bg-primary text-primary-foreground text-xs font-bold text-center hover:bg-primary/90 transition-colors"
-						>
-							Enter StreamYard Studio &nearr;
-						</a>
-						<a
-							href="#schedule-section"
-							class="px-3 py-2 rounded-lg border border-primary/40 bg-primary/10 text-primary text-xs font-bold text-center hover:bg-primary/20 transition-colors"
-						>
-							Pick / Change Recording Slot &darr;
-						</a>
-					</div>
-				) : (
-					<span class="text-[11px] font-mono text-muted-foreground">
-						Your private StreamYard studio link unlocks automatically here as soon as Alex approves the recording hold.
-					</span>
-				)}
-			</div>
-
-			<div class="flex flex-col justify-between gap-2 p-4 rounded-xl border border-border bg-card">
-				<div class="flex items-center justify-between">
-					<span class="text-xs font-mono uppercase tracking-wider text-primary font-bold">
-						📹 15-Min Pre-Meeting / Tech Check (Google Meet)
-					</span>
-					<span class="text-xs font-semibold px-2 py-0.5 rounded-full bg-muted text-foreground">
-						{portalData.preMeetingStatus === "scheduled"
-							? "✓ Scheduled"
-							: portalData.preMeetingStatus === "bypassed"
-								? "Bypassed"
-								: "Optional / On-Demand"}
-					</span>
-				</div>
-				<p class="text-xs text-muted-foreground">
-					{portalData.preMeetingSlotStartAt
-						? `Pre-Call: ${new Date(portalData.preMeetingSlotStartAt).toLocaleString("en-US", { dateStyle: "full", timeStyle: "short" })}`
-						: "Need a quick 15-minute alignment or tech check before recording? Pick a 15-minute slot below to auto-generate a Google Meet room."}
-				</p>
-				{portalData.preMeetingMeetUrl ? (
-					<a
-						href={portalData.preMeetingMeetUrl}
-						target="_blank"
-						rel="noopener noreferrer"
-						class="mt-1 px-4 py-2 rounded-lg border border-primary bg-primary/10 text-primary text-xs font-bold text-center hover:bg-primary/20 transition-colors"
-					>
-						Join 15-Min Google Meet Pre-Call &nearr;
-					</a>
-				) : (
-					<a
-						href="#schedule-section"
-						class="text-xs font-semibold text-primary hover:underline"
-					>
-						Book a 15-Minute Google Meet Pre-Call Below &darr;
-					</a>
-				)}
+				</button>
 			</div>
 		</section>
 
@@ -1883,8 +2394,8 @@ const pageDescription = !portalFound
 				</div>
 			</section>
 
-			<!-- Calendar & Kickoff Card -->
-			<section id="schedule-section" class="flex flex-col justify-between gap-6 p-6 rounded-2xl border border-border bg-card shadow-xs">
+			<!-- Calendar & Kickoff Summary Card (Opens Top Rebook Drawer) -->
+			<section class="flex flex-col justify-between gap-6 p-6 rounded-2xl border border-border bg-card shadow-xs">
 				<div class="flex flex-col gap-4">
 					<div class="flex items-center justify-between gap-2">
 						<h2 class="text-xl font-bold tracking-tight">
@@ -1895,103 +2406,56 @@ const pageDescription = !portalFound
 						</span>
 					</div>
 					<p class="text-xs text-muted-foreground leading-relaxed">
-						Pick a conflict-free slot below to automatically book directly on Alex Patterson's Google Calendar and send a confirmed calendar invite to <strong class="text-foreground">{portalData.contactEmail || "your team"}</strong>.
+						Need to reschedule your 45-minute StreamYard recording or book an optional 15-minute Google Meet pre-call? Use the 1-click buttons below to open the live conflict-free slot picker at the top of this portal.
 					</p>
 
-					<!-- 1-Click Live Slot Picker -->
 					<div class="flex flex-col gap-3 p-4 rounded-xl border border-border bg-background">
-						<div class="flex flex-col gap-1.5">
-							<span class="text-xs font-semibold uppercase tracking-wider text-primary">
-								1-Click Live Calendar Booking
+						<div class="flex flex-col gap-1">
+							<span class="text-[11px] font-mono uppercase tracking-wider text-primary font-bold">
+								🎙️ 45-Min StreamYard Recording
 							</span>
-							<div class="grid grid-cols-2 gap-2" role="group" aria-label="Select session duration">
-								<button
-									type="button"
-									data-portal-track={portalData.totalAmountCents === 0 ? "editorial" : "sponsored"}
-									data-portal-duration="45"
-									class="portal-track-btn px-3 py-2 rounded-lg border border-primary bg-primary/5 ring-1 ring-primary text-left transition-all cursor-pointer flex flex-col"
-								>
-									<span class="text-xs font-bold text-foreground">45-Min Studio Recording</span>
-									<span class="text-[11px] text-muted-foreground">Podcast &amp; demo session</span>
-								</button>
-								<button
-									type="button"
-									data-portal-track="sponsor-kickoff"
-									data-portal-duration="15"
-									class="portal-track-btn px-3 py-2 rounded-lg border border-border bg-card hover:bg-muted/50 text-left transition-all cursor-pointer flex flex-col"
-								>
-									<span class="text-xs font-bold text-foreground">15-Min Pre-Call / Kickoff</span>
-									<span class="text-[11px] text-muted-foreground">Scoping &amp; architecture sync</span>
-								</button>
-							</div>
+							<span
+								data-session-local-time
+								data-start-iso={recordingSlotDetails?.iso}
+								data-duration="45"
+								class="text-xs font-mono font-bold text-foreground"
+							>
+								{recordingSlotDetails
+									? `${recordingSlotDetails.fullDateEt} · ${recordingSlotDetails.timeRangeEt}`
+									: "No recording slot selected yet"}
+							</span>
 						</div>
-
-						{!portalData.contactEmail && (
-							<div>
-								<label for="portal-booking-email" class="block text-xs font-semibold text-foreground mb-1">
-									Attendee Email for Calendar Invite <span class="text-destructive">*</span>
-								</label>
-								<input
-									type="email"
-									id="portal-booking-email"
-									placeholder="you@company.com"
-									class="w-full rounded-lg border border-border bg-card px-3 py-1.5 text-xs text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
-								/>
-							</div>
-						)}
-
-						<!-- 15-Min Kickoff Slots Grid -->
-						<div id="portal-slots-15" class="hidden grid-cols-1 sm:grid-cols-2 gap-2">
-							{
-								kickoffSlots.map((slot, index) => (
-									<button
-										type="button"
-										data-slot-start={slot.startAt}
-										class={`portal-slot-btn-15 p-2.5 rounded-lg border text-left transition-all cursor-pointer flex flex-col gap-0.5 ${
-											index === 0
-												? "border-primary bg-primary/5 ring-1 ring-primary"
-												: "border-border bg-card hover:border-primary"
-										}`}
-									>
-										<span class="font-semibold text-xs text-foreground">{slot.displayDate}</span>
-										<span class="text-[11px] text-muted-foreground font-mono">{slot.displayTime}</span>
-									</button>
-								))
-							}
+						<div class="flex flex-col gap-1 pt-2 border-t border-border">
+							<span class="text-[11px] font-mono uppercase tracking-wider text-muted-foreground font-bold">
+								📹 15-Min Google Meet Pre-Meeting
+							</span>
+							<span
+								data-session-local-time
+								data-start-iso={preMeetingSlotDetails?.iso}
+								data-duration="15"
+								class="text-xs font-mono font-bold text-foreground"
+							>
+								{preMeetingSlotDetails
+									? `${preMeetingSlotDetails.fullDateEt} · ${preMeetingSlotDetails.timeRangeEt}`
+									: "Optional — Not currently scheduled"}
+							</span>
 						</div>
-
-						<!-- 45-Min Recording Slots Grid -->
-						<div id="portal-slots-45" class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-							{
-								recordingSlots.map((slot, index) => (
-									<button
-										type="button"
-										data-slot-start={slot.startAt}
-										class={`portal-slot-btn-45 p-2.5 rounded-lg border text-left transition-all cursor-pointer flex flex-col gap-0.5 ${
-											index === 0
-												? "border-primary bg-primary/5 ring-1 ring-primary"
-												: "border-border bg-card hover:border-primary"
-										}`}
-									>
-										<span class="font-semibold text-xs text-foreground">{slot.displayDate}</span>
-										<span class="text-[11px] text-muted-foreground font-mono">{slot.displayTime}</span>
-									</button>
-								))
-							}
+						<div class="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-2">
+							<button
+								type="button"
+								data-open-rebook="45"
+								class="px-3.5 py-2.5 rounded-xl bg-primary text-primary-foreground text-xs font-extrabold hover:bg-primary/90 transition-colors cursor-pointer"
+							>
+								{recordingSlotDetails ? "🔄 Rebook 45-Min Recording" : "📅 Book 45-Min Recording"}
+							</button>
+							<button
+								type="button"
+								data-open-rebook="15"
+								class="px-3.5 py-2.5 rounded-xl border border-primary/50 bg-primary/10 text-primary text-xs font-extrabold hover:bg-primary/20 transition-colors cursor-pointer"
+							>
+								{preMeetingSlotDetails ? "🔄 Rebook 15-Min Pre-Call" : "📅 Book 15-Min Pre-Call"}
+							</button>
 						</div>
-
-						<button
-							type="button"
-							id="btn-portal-book-slot"
-							class="w-full px-4 py-2.5 rounded-lg bg-primary text-primary-foreground text-xs font-semibold hover:bg-primary/90 transition-colors cursor-pointer"
-						>
-							Confirm Slot &amp; Send Google Calendar Invite &rarr;
-						</button>
-
-						<div
-							id="portal-booking-feedback"
-							class="hidden text-xs p-3 rounded-lg border border-border bg-muted/50"
-						></div>
 					</div>
 
 					<a
@@ -2231,11 +2695,14 @@ const pageDescription = !portalFound
 	define:vars={{
 		portalToken: portalData.portalToken,
 		leadId: isPortalAuthorized ? portalData._id : "",
+		bookingDocId: isPortalAuthorized ? (portalData.bookingDocId || "") : "",
 		companyName: isPortalAuthorized ? portalData.companyName : "",
 		contactName: isPortalAuthorized ? portalData.contactName : "",
 		contactEmail: isPortalAuthorized ? portalData.contactEmail : "",
 		tierId: isPortalAuthorized ? portalData.rateCard : "",
 		isEditorialGuest: portalData.totalAmountCents === 0,
+		hasExistingRecording: Boolean(portalData.bookingSlotStartAt),
+		hasExistingPreMeeting: Boolean(portalData.preMeetingSlotStartAt),
 	}}
 >
 	// 0. Better-Auth Studio Portal Sign-In Gate (Email OTP, Magic Link, Google OAuth, Sign-Out)
@@ -2935,84 +3402,357 @@ const pageDescription = !portalFound
 		}
 	})();
 
-	// 1-Click Deal Room Calendar Booking
+	// 1-Click Deal Room Calendar Booking, Local Timezone Hydration & Inline Rebook Drawer
 	(function () {
+		// If arriving from an older Google Calendar invite link that had `#vault` appended,
+		// scroll to the top of the portal so the Scheduled Sessions & Studio Links card is visible first.
+		if (window.location.hash === "#vault") {
+			const ref = document.referrer || "";
+			if (!ref || !ref.includes(window.location.host)) {
+				window.scrollTo({ top: 0, behavior: "instant" });
+				try {
+					window.history.replaceState(
+						null,
+						"",
+						window.location.pathname + window.location.search,
+					);
+				} catch {
+					// Ignore history errors
+				}
+			}
+		}
+
+		// Hydrate all booked session cards & slot buttons with the visitor's local browser timezone
+		const visitorTz =
+			Intl.DateTimeFormat().resolvedOptions().timeZone || "America/New_York";
+		const tzPill = document.getElementById("visitor-timezone-pill");
+		if (tzPill && visitorTz) {
+			tzPill.textContent =
+				visitorTz === "America/New_York"
+					? "🕒 Times shown in US Eastern Time (America/New_York)"
+					: `🕒 Times shown in your timezone (${visitorTz}) + US Eastern (ET)`;
+		}
+
+		function formatLocalRange(isoStr, durationMin) {
+			const start = new Date(isoStr);
+			if (Number.isNaN(start.getTime())) return null;
+			const end = new Date(start.getTime() + durationMin * 60000);
+			const fullDate = start.toLocaleDateString("en-US", {
+				weekday: "long",
+				month: "long",
+				day: "numeric",
+				year: "numeric",
+			});
+			const shortDate = start.toLocaleDateString("en-US", {
+				weekday: "short",
+				month: "short",
+				day: "numeric",
+			});
+			const startLocal = start.toLocaleTimeString("en-US", {
+				hour: "numeric",
+				minute: "2-digit",
+			});
+			const endLocal = end.toLocaleTimeString("en-US", {
+				hour: "numeric",
+				minute: "2-digit",
+				timeZoneName: "short",
+			});
+			const startEt = start.toLocaleTimeString("en-US", {
+				hour: "numeric",
+				minute: "2-digit",
+				timeZone: "America/New_York",
+			});
+			const endEt = end.toLocaleTimeString("en-US", {
+				hour: "numeric",
+				minute: "2-digit",
+				timeZone: "America/New_York",
+				timeZoneName: "short",
+			});
+			return {
+				fullDate,
+				shortDate,
+				localRange: `${startLocal} – ${endLocal}`,
+				etRange: `${startEt} – ${endEt}`,
+				shortLocal: `${shortDate} · ${startLocal}`,
+				startMs: start.getTime(),
+				endMs: end.getTime(),
+			};
+		}
+
+		document.querySelectorAll("[data-session-local-date]").forEach((el) => {
+			const iso = el.getAttribute("data-start-iso");
+			if (!iso) return;
+			const info = formatLocalRange(iso, 45);
+			if (info) el.textContent = info.fullDate;
+		});
+
+		document.querySelectorAll("[data-session-local-time]").forEach((el) => {
+			const iso = el.getAttribute("data-start-iso");
+			const dur = Number(el.getAttribute("data-duration") || 45);
+			if (!iso) return;
+			const info = formatLocalRange(iso, dur);
+			if (info) {
+				el.textContent = `${info.localRange} (${dur} min)`;
+			}
+		});
+
+		document.querySelectorAll("[data-session-tz-note]").forEach((el) => {
+			const iso = el.getAttribute("data-start-iso");
+			const dur = Number(el.getAttribute("data-duration") || 45);
+			if (!iso) return;
+			const info = formatLocalRange(iso, dur);
+			if (!info) return;
+			if (visitorTz === "America/New_York") {
+				el.textContent = `Timezone: ${visitorTz}`;
+			} else {
+				el.textContent = `Your Timezone (${visitorTz}) · Host Time: ${info.etRange}`;
+			}
+		});
+
+		document.querySelectorAll("[data-session-local-short]").forEach((el) => {
+			const iso = el.getAttribute("data-start-iso");
+			if (!iso) return;
+			const info = formatLocalRange(iso, 45);
+			if (info) el.textContent = `${info.shortLocal} (${visitorTz})`;
+		});
+
+		document.querySelectorAll("[data-session-relative-badge]").forEach((el) => {
+			const iso = el.getAttribute("data-start-iso");
+			const dur = Number(el.getAttribute("data-duration") || 45);
+			if (!iso) return;
+			const info = formatLocalRange(iso, dur);
+			if (!info) return;
+			const now = Date.now();
+			const diffMs = info.startMs - now;
+			if (info.endMs < now) {
+				el.textContent = "⚠️ Past Slot — Click Rebook to Pick a New Window";
+			} else if (diffMs <= 0 && info.endMs >= now) {
+				el.textContent = "🔴 Live Now";
+			} else if (diffMs < 3600000 * 18) {
+				const hrs = Math.max(1, Math.round(diffMs / 3600000));
+				el.textContent = `🟢 Starting in ~${hrs}h`;
+			} else {
+				const days = Math.max(1, Math.round(diffMs / 86400000));
+				el.textContent = `📅 In ${days} day${days === 1 ? "" : "s"}`;
+			}
+		});
+
+		function hydrateSlotButtonLabels(container) {
+			const root = container || document;
+			root.querySelectorAll("[data-slot-start]").forEach((btn) => {
+				const iso = btn.getAttribute("data-slot-start");
+				const dur = Number(btn.getAttribute("data-slot-duration") || 45);
+				if (!iso) return;
+				const info = formatLocalRange(iso, dur);
+				if (!info) return;
+				const dateEl = btn.querySelector("[data-slot-date-label]");
+				const localEl = btn.querySelector("[data-slot-local-label]");
+				const etEl = btn.querySelector("[data-slot-et-label]");
+				if (dateEl) dateEl.textContent = info.shortDate;
+				if (localEl) localEl.textContent = `${info.localRange} (${dur}m)`;
+				if (etEl) {
+					etEl.textContent =
+						visitorTz === "America/New_York"
+							? "US Eastern Time (ET)"
+							: `Host: ${info.etRange}`;
+				}
+			});
+		}
+
+		hydrateSlotButtonLabels(document);
+
 		let activeTrack = isEditorialGuest ? "editorial" : "sponsored";
 		let activeDuration = 45;
 		let selectedSlot15 = "";
 		let selectedSlot45 = "";
 
+		const scheduleDrawer = document.getElementById("schedule-section");
+		const closeDrawerBtn = document.getElementById("btn-close-rebook-drawer");
+		const drawerModeBadge = document.getElementById("rebook-drawer-mode-badge");
+		const drawerSubtitle = document.getElementById("rebook-drawer-subtitle");
+		const datePicker = document.getElementById("portal-rebook-date-picker");
+		const loadingPill = document.getElementById("portal-slots-loading-pill");
 		const grid15 = document.getElementById("portal-slots-15");
 		const grid45 = document.getElementById("portal-slots-45");
-		const btns15 = document.querySelectorAll(".portal-slot-btn-15");
-		const btns45 = document.querySelectorAll(".portal-slot-btn-45");
 		const trackBtns = document.querySelectorAll(".portal-track-btn");
 		const bookBtn = document.getElementById("btn-portal-book-slot");
 		const bookingFeedback = document.getElementById("portal-booking-feedback");
 
-		if (btns15.length > 0) {
-			selectedSlot15 = btns15[0].getAttribute("data-slot-start") || "";
-		}
-		if (btns45.length > 0) {
-			selectedSlot45 = btns45[0].getAttribute("data-slot-start") || "";
+		function bindSlotClicks() {
+			const btns15 = document.querySelectorAll(".portal-slot-btn-15");
+			const btns45 = document.querySelectorAll(".portal-slot-btn-45");
+
+			if (btns15.length > 0 && !selectedSlot15) {
+				selectedSlot15 = btns15[0].getAttribute("data-slot-start") || "";
+			}
+			if (btns45.length > 0 && !selectedSlot45) {
+				selectedSlot45 = btns45[0].getAttribute("data-slot-start") || "";
+			}
+
+			btns15.forEach((btn) => {
+				btn.onclick = () => {
+					btns15.forEach((b) => {
+						b.classList.remove("border-primary", "bg-primary/10", "ring-1", "ring-primary");
+						b.classList.add("border-border", "bg-card");
+					});
+					btn.classList.add("border-primary", "bg-primary/10", "ring-1", "ring-primary");
+					btn.classList.remove("border-border", "bg-card");
+					selectedSlot15 = btn.getAttribute("data-slot-start") || "";
+				};
+			});
+
+			btns45.forEach((btn) => {
+				btn.onclick = () => {
+					btns45.forEach((b) => {
+						b.classList.remove("border-primary", "bg-primary/10", "ring-1", "ring-primary");
+						b.classList.add("border-border", "bg-card");
+					});
+					btn.classList.add("border-primary", "bg-primary/10", "ring-1", "ring-primary");
+					btn.classList.remove("border-border", "bg-card");
+					selectedSlot45 = btn.getAttribute("data-slot-start") || "";
+				};
+			});
 		}
 
-		btns15.forEach((btn) => {
-			btn.addEventListener("click", () => {
-				btns15.forEach((b) => {
-					b.classList.remove("border-primary", "bg-primary/5", "ring-1", "ring-primary");
+		bindSlotClicks();
+
+		function setRebookMode(duration) {
+			activeDuration = duration === 15 ? 15 : 45;
+			activeTrack =
+				activeDuration === 15
+					? "sponsor-kickoff"
+					: isEditorialGuest
+						? "editorial"
+						: "sponsored";
+
+			trackBtns.forEach((b) => {
+				const btnDur = Number(b.getAttribute("data-portal-duration")) || 45;
+				if (btnDur === activeDuration) {
+					b.classList.add("border-primary", "bg-primary/10", "ring-1", "ring-primary");
+					b.classList.remove("border-border", "bg-card");
+				} else {
+					b.classList.remove("border-primary", "bg-primary/10", "ring-1", "ring-primary");
 					b.classList.add("border-border", "bg-card");
-				});
-				btn.classList.add("border-primary", "bg-primary/5", "ring-1", "ring-primary");
-				btn.classList.remove("border-border", "bg-card");
-				selectedSlot15 = btn.getAttribute("data-slot-start") || "";
+				}
+			});
+
+			if (activeDuration === 15) {
+				if (grid15) {
+					grid15.classList.remove("hidden");
+					grid15.classList.add("grid");
+				}
+				if (grid45) {
+					grid45.classList.add("hidden");
+					grid45.classList.remove("grid");
+				}
+				if (drawerModeBadge) {
+					drawerModeBadge.textContent = hasExistingPreMeeting
+						? "📹 Rescheduling: 15-Min Google Meet Pre-Meeting"
+						: "📹 Booking: 15-Min Google Meet Pre-Meeting";
+				}
+				if (drawerSubtitle) {
+					drawerSubtitle.innerHTML =
+						"Pick a 15-minute slot below to auto-generate a Google Meet room with Alex. <strong>Your 45-minute StreamYard recording slot stays untouched.</strong>";
+				}
+				if (bookBtn) {
+					bookBtn.textContent = hasExistingPreMeeting
+						? "Confirm New 15-Min Pre-Meeting Time & Update Invite →"
+						: "Book 15-Min Google Meet Pre-Meeting & Send Invite →";
+				}
+			} else {
+				if (grid45) {
+					grid45.classList.remove("hidden");
+					grid45.classList.add("grid");
+				}
+				if (grid15) {
+					grid15.classList.add("hidden");
+					grid15.classList.remove("grid");
+				}
+				if (drawerModeBadge) {
+					drawerModeBadge.textContent = hasExistingRecording
+						? "🎙️ Rescheduling: 45-Min StreamYard Recording"
+						: "🎙️ Booking: 45-Min StreamYard Recording";
+				}
+				if (drawerSubtitle) {
+					drawerSubtitle.innerHTML =
+						"Pick a conflict-free 45-minute window below. Confirming automatically updates your Google Calendar invite and replaces your previous recording slot.";
+				}
+				if (bookBtn) {
+					bookBtn.textContent = hasExistingRecording
+						? "Confirm New 45-Min Recording Time & Update Calendar Invite →"
+						: "Confirm 45-Min Recording Slot & Send Calendar Invite →";
+				}
+			}
+		}
+
+		function openRebookDrawer(duration) {
+			setRebookMode(duration);
+			if (scheduleDrawer) {
+				scheduleDrawer.classList.remove("hidden");
+				scheduleDrawer.classList.add("flex");
+				scheduleDrawer.scrollIntoView({ behavior: "smooth", block: "nearest" });
+			}
+		}
+
+		document.querySelectorAll("[data-open-rebook]").forEach((btn) => {
+			btn.addEventListener("click", () => {
+				const dur = Number(btn.getAttribute("data-open-rebook")) || 45;
+				openRebookDrawer(dur);
 			});
 		});
 
-		btns45.forEach((btn) => {
-			btn.addEventListener("click", () => {
-				btns45.forEach((b) => {
-					b.classList.remove("border-primary", "bg-primary/5", "ring-1", "ring-primary");
-					b.classList.add("border-border", "bg-card");
-				});
-				btn.classList.add("border-primary", "bg-primary/5", "ring-1", "ring-primary");
-				btn.classList.remove("border-border", "bg-card");
-				selectedSlot45 = btn.getAttribute("data-slot-start") || "";
+		if (closeDrawerBtn && scheduleDrawer) {
+			closeDrawerBtn.addEventListener("click", () => {
+				scheduleDrawer.classList.add("hidden");
+				scheduleDrawer.classList.remove("flex");
 			});
-		});
+		}
 
 		trackBtns.forEach((btn) => {
 			btn.addEventListener("click", () => {
-				trackBtns.forEach((b) => {
-					b.classList.remove("border-primary", "bg-primary/5", "ring-1", "ring-primary");
-					b.classList.add("border-border", "bg-card");
-				});
-				btn.classList.add("border-primary", "bg-primary/5", "ring-1", "ring-primary");
-				btn.classList.remove("border-border", "bg-card");
-				activeTrack = btn.getAttribute("data-portal-track") || "sponsor-kickoff";
-				activeDuration = Number(btn.getAttribute("data-portal-duration")) || 15;
-
-				if (activeDuration === 15) {
-					if (grid15) {
-						grid15.classList.remove("hidden");
-						grid15.classList.add("grid");
-					}
-					if (grid45) {
-						grid45.classList.add("hidden");
-						grid45.classList.remove("grid");
-					}
-				} else {
-					if (grid45) {
-						grid45.classList.remove("hidden");
-						grid45.classList.add("grid");
-					}
-					if (grid15) {
-						grid15.classList.add("hidden");
-						grid15.classList.remove("grid");
-					}
-				}
+				const dur = Number(btn.getAttribute("data-portal-duration")) || 45;
+				setRebookMode(dur);
 			});
 		});
+
+		// Live Week / Date Picker inside Rebook Drawer
+		if (datePicker && datePicker instanceof HTMLInputElement) {
+			datePicker.addEventListener("change", async () => {
+				const startDate = datePicker.value;
+				if (!startDate) return;
+				if (loadingPill) loadingPill.classList.remove("hidden");
+				try {
+					const [res15, res45] = await Promise.all([
+						fetch(`/api/calendar/freebusy?limit=9&duration=15&startDate=${encodeURIComponent(startDate)}`),
+						fetch(`/api/calendar/freebusy?limit=9&duration=45&startDate=${encodeURIComponent(startDate)}`),
+					]);
+					const [data15, data45] = await Promise.all([res15.json(), res45.json()]);
+					if (data15?.slots && Array.isArray(data15.slots) && grid15) {
+						selectedSlot15 = data15.slots[0]?.startAt || "";
+						grid15.innerHTML = data15.slots
+							.map(
+								(s, idx) => `<button type="button" data-slot-start="${s.startAt}" data-slot-duration="15" class="portal-slot-btn-15 p-3 rounded-xl border text-left transition-all cursor-pointer flex flex-col gap-0.5 ${idx === 0 ? "border-primary bg-primary/10 ring-1 ring-primary" : "border-border bg-card hover:border-primary"}"><span class="font-bold text-xs text-foreground" data-slot-date-label>${s.displayDate}</span><span class="text-xs text-primary font-mono font-bold" data-slot-local-label>${s.displayTime}</span><span class="text-[10px] text-muted-foreground font-mono" data-slot-et-label>${s.displayTime}</span></button>`,
+							)
+							.join("");
+						hydrateSlotButtonLabels(grid15);
+					}
+					if (data45?.slots && Array.isArray(data45.slots) && grid45) {
+						selectedSlot45 = data45.slots[0]?.startAt || "";
+						grid45.innerHTML = data45.slots
+							.map(
+								(s, idx) => `<button type="button" data-slot-start="${s.startAt}" data-slot-duration="45" class="portal-slot-btn-45 p-3 rounded-xl border text-left transition-all cursor-pointer flex flex-col gap-0.5 ${idx === 0 ? "border-primary bg-primary/10 ring-1 ring-primary" : "border-border bg-card hover:border-primary"}"><span class="font-bold text-xs text-foreground" data-slot-date-label>${s.displayDate}</span><span class="text-xs text-primary font-mono font-bold" data-slot-local-label>${s.displayTime}</span><span class="text-[10px] text-muted-foreground font-mono" data-slot-et-label>${s.displayTime}</span></button>`,
+							)
+							.join("");
+						hydrateSlotButtonLabels(grid45);
+					}
+					bindSlotClicks();
+				} catch {
+					// Keep existing slots on network error
+				} finally {
+					if (loadingPill) loadingPill.classList.add("hidden");
+				}
+			});
+		}
 
 		if (bookBtn) {
 			bookBtn.addEventListener("click", async () => {
@@ -3038,7 +3778,7 @@ const pageDescription = !portalFound
 
 				const originalText = bookBtn.textContent;
 				bookBtn.setAttribute("disabled", "true");
-				bookBtn.textContent = "Booking on Google Calendar...";
+				bookBtn.textContent = "Updating Google Calendar & Studio Portal...";
 				if (bookingFeedback) bookingFeedback.classList.add("hidden");
 
 				try {
@@ -3047,6 +3787,9 @@ const pageDescription = !portalFound
 						headers: { "Content-Type": "application/json" },
 						body: JSON.stringify({
 							portalToken,
+							bookingId: bookingDocId || undefined,
+							preMeetingForBookingId:
+								activeDuration === 15 && bookingDocId ? bookingDocId : undefined,
 							guestName: contactName || companyName,
 							guestEmail: resolvedEmail,
 							company: companyName,
@@ -3055,18 +3798,18 @@ const pageDescription = !portalFound
 							slotStartAt,
 							topics:
 								activeDuration === 15
-									? `15-Min Sponsor Kickoff Call (${companyName})`
-									: `45-Min Sponsored Podcast Recording (${companyName})`,
+									? `15-Min Pre-Meeting / Tech Check (${companyName})`
+									: `45-Min Podcast Recording (${companyName})`,
 						}),
 					});
 					const data = await res.json();
 					if (res.ok && data.success) {
 						if (bookingFeedback) {
 							const calUrl = data.calendarEventUrl || data.addToCalendarUrl || "";
-							bookingFeedback.innerHTML = `<strong>✓ Confirmed!</strong> ${
+							bookingFeedback.innerHTML = `<strong>✓ Updated!</strong> ${
 								data.calendarInviteSent
-									? `A Google Calendar invite has been sent to <strong>${resolvedEmail}</strong>.`
-									: "Your session has been reserved."
+									? `An updated Google Calendar invite has been sent to <strong>${resolvedEmail}</strong>. Refreshing your session cards...`
+									: "Your session time has been updated. Refreshing..."
 							} ${
 								calUrl
 									? `<br><a href="${calUrl}" target="_blank" rel="noopener noreferrer" class="underline font-semibold text-primary">Open in Google Calendar &nearr;</a>`
@@ -3074,7 +3817,13 @@ const pageDescription = !portalFound
 							}`;
 							bookingFeedback.classList.remove("hidden");
 						}
-						bookBtn.textContent = "✓ Calendar Invite Sent";
+						bookBtn.textContent = "✓ Calendar Invite Updated!";
+						setTimeout(() => {
+							const nextUrl = new URL(window.location.href);
+							nextUrl.hash = "booked-sessions";
+							nextUrl.searchParams.set("bookedSlot", slotStartAt);
+							window.location.href = nextUrl.toString();
+						}, 900);
 						return;
 					}
 					if (bookingFeedback) {

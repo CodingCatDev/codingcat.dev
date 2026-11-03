@@ -40,7 +40,7 @@ async function syncPrivateShadowCalendarBlocks(opts: {
 			`Room: ${studioOrMeet}`,
 			`Guest: ${opts.guestName} (${opts.company})`,
 			...(opts.portalUrl
-				? [`Portal & Asset Vault: ${opts.portalUrl}#vault`]
+				? [`Guest Studio Portal: ${opts.portalUrl}`]
 				: []),
 		].join("\n"),
 		location: studioOrMeet,
@@ -606,7 +606,7 @@ export async function createGoogleCalendarBookingEvent(opts: {
 				? `Recording Studio (StreamYard): ${STREAMYARD_STUDIO_URL}`
 				: "Status: Calendar Hold Reserved. Once Alex confirms your session, this calendar invite will automatically update with your StreamYard studio link.",
 		...(opts.portalUrl
-			? [`Guest Portal & Sanity Media Vault: ${opts.portalUrl}#vault`]
+			? [`Guest Studio Portal & Reschedule Link: ${opts.portalUrl}`]
 			: []),
 	];
 	const description = descriptionLines.join("\n");
@@ -621,7 +621,7 @@ export async function createGoogleCalendarBookingEvent(opts: {
 					`CodingCat.dev Podcast Recording (${durationMinutes} min)`,
 					`Guest: ${opts.guestName} (${opts.company})`,
 					...(opts.portalUrl
-						? [`Deal Room & Asset Vault: ${opts.portalUrl}#vault`]
+						? [`Guest Studio Portal & Reschedule Link: ${opts.portalUrl}`]
 						: []),
 				].join("\n"),
 	});
@@ -684,7 +684,7 @@ export async function createGoogleCalendarBookingEvent(opts: {
 			: isApprovedRecording
 				? STREAMYARD_STUDIO_URL
 				: opts.portalUrl
-					? `${opts.portalUrl}#vault`
+					? opts.portalUrl
 					: "CodingCat.dev Studio (StreamYard link sent upon approval)",
 		start: { dateTime: start.toISOString() },
 		end: { dateTime: end.toISOString() },
@@ -811,7 +811,7 @@ export async function approveGoogleCalendarRecordingEvent(opts: {
 		`Company: ${opts.company}`,
 		`Topics: ${opts.topics}`,
 		...(opts.portalUrl
-			? [`Deal Room & Sanity Media Vault: ${opts.portalUrl}#vault`]
+			? [`Guest Studio Portal & Reschedule Link: ${opts.portalUrl}`]
 			: []),
 	].join("\n");
 

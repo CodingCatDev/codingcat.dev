@@ -7,6 +7,7 @@ import {
 	sendCodingCatEmailDetailed,
 } from "@/lib/email";
 import {
+	cancelGoogleCalendarBookingEvent,
 	createGoogleCalendarBookingEvent,
 	STREAMYARD_STUDIO_URL,
 } from "@/lib/google-calendar";
@@ -232,10 +233,34 @@ export const POST: APIRoute = async ({ request, url }) => {
 		}
 	}
 
+	const wasAlreadyApproved =
+		existingBookingDoc?.status === "approved" ||
+		existingBookingDoc?.status === "confirmed" ||
+		existingBookingDoc?.status === "scheduled";
+
+	// If rescheduling an existing 15m Pre-Meeting or 45m Recording, cancel the previous Google Calendar event first
+	// so the old time slot is freed and the guest receives a clean replacement invite.
+	if (isKickoff && existingBookingDoc?.preMeetingGoogleEventId) {
+		await cancelGoogleCalendarBookingEvent({
+			eventId: existingBookingDoc.preMeetingGoogleEventId,
+			startAt: existingBookingDoc.preMeetingSlotStartAt,
+			durationMinutes: 15,
+			guestName,
+		}).catch(() => null);
+	} else if (!isKickoff && existingBookingDoc?.googleCalendarEventId) {
+		await cancelGoogleCalendarBookingEvent({
+			eventId: existingBookingDoc.googleCalendarEventId,
+			startAt: existingBookingDoc.slotStartAt,
+			durationMinutes: 60,
+			guestName,
+		}).catch(() => null);
+	}
+
 	// Create live Google Calendar event:
 	// - 15m Pre-Meetings get a confirmed Google Meet invite immediately.
 	// - 45m Recording slots create an OPAQUE (Busy) placeholder hold on Alex's calendars
-	//   so nothing can jump them; StreamYard (https://streamyard.com/c4kv26is93) is revealed once approved.
+	//   so nothing can jump them; StreamYard (https://streamyard.com/c4kv26is93) is revealed once approved
+	//   (or kept revealed if rescheduling an already-approved recording).
 	const calendarEvent = await createGoogleCalendarBookingEvent({
 		guestName,
 		guestEmail,
@@ -246,7 +271,7 @@ export const POST: APIRoute = async ({ request, url }) => {
 		topics,
 		portalUrl,
 		isPreMeeting: isKickoff,
-		autoApproveRecording: false,
+		autoApproveRecording: !isKickoff && wasAlreadyApproved,
 	});
 
 	if (calendarEvent.conflictDetected) {
@@ -297,9 +322,14 @@ export const POST: APIRoute = async ({ request, url }) => {
 
 	if (canWrite) {
 		try {
-			if (data.preMeetingForBookingId && isKickoff) {
+			const targetPreMeetingDocId =
+				data.preMeetingForBookingId ||
+				(isKickoff && existingBookingDoc?._id
+					? existingBookingDoc._id
+					: undefined);
+			if (targetPreMeetingDocId && isKickoff) {
 				await client
-					.patch(data.preMeetingForBookingId)
+					.patch(targetPreMeetingDocId)
 					.set({
 						preMeetingStatus: "scheduled",
 						preMeetingSlotStartAt: slotStartAt,
@@ -321,7 +351,11 @@ export const POST: APIRoute = async ({ request, url }) => {
 						...(socialUrl ? { socialUrl } : {}),
 						track,
 						sessionType,
-						status: isKickoff ? "scheduled" : "pending",
+						status: isKickoff
+							? "scheduled"
+							: wasAlreadyApproved
+								? existingBookingDoc.status
+								: "pending",
 						slotStartAt,
 						recordingUrl: STREAMYARD_STUDIO_URL,
 						topics,
