@@ -199,7 +199,7 @@ const components = {
 		// until a visitor actually asks for it.
 		const play = target.closest("button");
 		const embed = play?.closest<HTMLElement>(".yt-embed");
-		if (!play || !embed) {
+		if (!play || !embed || embed.querySelector("iframe")) {
 			return;
 		}
 		const id = embed.dataset.yt;

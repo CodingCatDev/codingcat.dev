@@ -136,3 +136,32 @@ const alt = rawAlt && rawAlt.trim().length > 0 ? rawAlt : "";
 		</div>
 	)
 }
+
+<script>
+	if (!(window as unknown as { __ccYtEmbedInit?: boolean }).__ccYtEmbedInit) {
+		(window as unknown as { __ccYtEmbedInit?: boolean }).__ccYtEmbedInit = true;
+		document.addEventListener("click", (event) => {
+			const target = event.target;
+			if (!(target instanceof Element)) {
+				return;
+			}
+			const play = target.closest("button");
+			const embed = play?.closest<HTMLElement>(".yt-embed");
+			if (!play || !embed || embed.querySelector("iframe")) {
+				return;
+			}
+			const id = embed.dataset.yt;
+			if (!id) {
+				return;
+			}
+			const iframe = document.createElement("iframe");
+			iframe.src = `https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0&modestbranding=1&fs=0`;
+			iframe.allow =
+				"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share";
+			iframe.allowFullscreen = true;
+			iframe.title = "YouTube video player";
+			iframe.className = "absolute inset-0 size-full border-0";
+			embed.replaceChildren(iframe);
+		});
+	}
+</script>
