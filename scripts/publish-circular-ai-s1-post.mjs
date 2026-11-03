@@ -721,7 +721,7 @@ export async function buildCircularAiPost(assetRefs) {
     createRichBlock(
       [
         {
-          text: "As Solutions Engineers and full-stack developers, we often design multi-provider model routers assuming we are diversifying our vendor risk across Anthropic, Meta, Google, and Apple. In reality, when you trace a production request in TypeScript, your API call hits the exact same three cloud balance sheets and two hardware bottlenecks. Here is what a real-world enterprise router telemetry audit looks like when you account for the underlying cloud host, custom silicon, and marketplace cut disclosed in Anthropic's S-1:",
+          text: "As Solutions Architects and full-stack developers, we often design multi-provider model routers assuming we are diversifying our vendor risk across Anthropic, Meta, Google, and Apple. In reality, when you trace a production request in TypeScript, your API call hits the exact same three cloud balance sheets and two hardware bottlenecks. Here is what a real-world enterprise router telemetry audit looks like when you account for the underlying cloud host, custom silicon, and marketplace cut disclosed in Anthropic's S-1:",
         },
       ],
       { style: "normal", keySeed: "code_intro" }

@@ -123,6 +123,58 @@ const content = defineType({
 			],
 		}),
 		defineField({
+			name: "relatedVideo",
+			title: "Related Video Deep Dive",
+			description:
+				"Optional explicit video shown in the 'Watch the Related Video Deep Dive' card when this document does not have its own primary YouTube video. Reference an existing Sanity document (Post, Podcast, Course, or Lesson) OR provide a custom YouTube URL, title, and description. If left blank, the site dynamically matches the best published video by tags and topics.",
+			type: "object",
+			options: { collapsible: true, collapsed: true },
+			fields: [
+				defineField({
+					name: "reference",
+					title: "Referenced Sanity Document (Post, Podcast, Course, or Lesson)",
+					type: "reference",
+					to: [
+						{ type: "post" },
+						{ type: "podcast" },
+						{ type: "course" },
+						{ type: "lesson" },
+					],
+				}),
+				defineField({
+					name: "youtube",
+					title: "Custom YouTube URL Override",
+					description:
+						"Optional YouTube URL (used if no Sanity document is referenced, or to override the referenced document's YouTube link).",
+					type: "string",
+				}),
+				defineField({
+					name: "title",
+					title: "Custom Video Title Override",
+					type: "string",
+				}),
+				defineField({
+					name: "description",
+					title: "Custom Video Description Override",
+					type: "text",
+					rows: 2,
+				}),
+			],
+		}),
+		defineField({
+			name: "relatedContent",
+			title: "Curated Related Content (Posts, Podcasts & Courses)",
+			description:
+				"Optional curated related content items displayed at the bottom of the page. Any remaining slots are automatically filled using dynamic tag and topic matching.",
+			type: "array",
+			of: [
+				{
+					type: "reference",
+					to: [{ type: "post" }, { type: "podcast" }, { type: "course" }],
+				},
+			],
+		}),
+		defineField({
 			name: "syndications",
 			title: "Syndications",
 			type: "array",

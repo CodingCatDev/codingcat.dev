@@ -22,3 +22,7 @@
    - Section 7 (`Architecture Note`): Streaming server code block + tilted `#FEF08A` yellow sticky note (`AJ's Architecture Rule`).
 5. **Contained Sketch Footer (`Footer.astro`)**:
    - Contained `rounded-3xl p-8 md:p-12 hand-border shadow-sketch` card featuring CodingCat.dev brand bio, Explore & LLM links, and `The Purrfect Dispatch` newsletter card.
+6. **Chalkboard Tier List (`TierList.astro` & `PtTable.astro`)**:
+   - Modeled after classic `S / A / B / C / D` tier lists (`#FF7F7F` S-Tier, `#FFBF7F` A-Tier, `#FFDF7F` B-Tier, `#BFFF7F` C-Tier, `#7FFFFF` D-Tier) inside a `rounded-3xl border-2 border-[#2A1155] shadow-sketch` container.
+   - Always includes a tiny `<AjMascot pose="code-peek" fullBody={false} />` peeking over the top-right edge, blinking his eyes and tracking the cursor, paired with a `-rotate-2` `#FEF08A` sticky-note comment bubble.
+   - Automatically triggered in Portable Text (`PtTable.astro`) whenever a table's first header cell is `Tier` or `Tier Rank`.

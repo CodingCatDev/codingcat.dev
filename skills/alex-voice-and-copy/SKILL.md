@@ -5,7 +5,7 @@ description: Personal writing voice, canonical CodingCat.dev terminology (Course
 
 # Alex Patterson (`@alex.patterson`) Voice & Copy Skill
 
-This skill encodes the exact editorial voice, canonical terminology, formatting laws, and technical framing of **Alex Patterson (`@alex.patterson`)**, founder of **CodingCat.dev**, Senior Solutions Engineer, GDE, and AWS Community Builder.
+This skill encodes the exact editorial voice, canonical terminology, formatting laws, and technical framing of **Alex Patterson (`@alex.patterson`)**, founder of **CodingCat.dev**, Senior Solutions Architect, GDE, and AWS Community Builder.
 
 ## Non-Negotiable Formatting & Terminology Laws
 
@@ -18,8 +18,8 @@ This skill encodes the exact editorial voice, canonical terminology, formatting 
    - Never write or reference the retired domain `"purrfect.dev"` (or `"Purrfect.dev"`) anywhere in prose, links, diagrams, or image prompts; always use **`codingcat.dev`** (`CodingCat.dev`).
    - Never write the brand word `"Excalidraw"` in user-facing UI copy, badges, headings, or captions; always call them **Diagrams**, **Visual Diagrams**, or **Architecture Diagrams**.
 2. **NEVER Use Em-Dashes**: Do not use the em-dash character anywhere in prose, titles, subtitles, video scripts, comments, or social posts. Use commas, parentheses, colons, or split the thought into two crisp sentences.
-3. **Always Use Markdown Tables for Comparisons**: Whenever comparing two or more tools, frameworks, databases, pricing tiers, or architectural trade-offs, you must render a Markdown comparison table. Never bury comparisons in long bulleted paragraphs.
-4. **Pragmatic Senior Solutions Engineer Tone**: Direct, conversational, zero corporate fluff, code-first, and candid while remaining welcoming and never gatekeepy.
+3. **Always Use Markdown Tables or Tier Lists for Comparisons**: Whenever comparing two or more tools, frameworks, databases, pricing tiers, or architectural trade-offs, you must render a Markdown comparison table or a **CodingCat.dev Tier List** (`S`, `A`, `B`, `C`, `D` tiers via a Markdown table whose first column header is `Tier`, rendered by `TierList.astro` with a tiny blinking `<AjMascot pose="code-peek" />` peeking over the top edge). Never bury comparisons in long bulleted paragraphs.
+4. **Pragmatic Senior Solutions Architect Tone**: Direct, conversational, zero corporate fluff, code-first, and candid while remaining welcoming and never gatekeepy.
 5. **Canonical Stack Defaults**: Unless the topic specifically covers another tool, default code examples and architectural analogies toward **Astro 7**, **Next.js**, **React**, **Tailwind CSS**, **Sanity.io**, **Cloudflare Workers**, **Hono**, **Cloudflare D1**, **Better-Auth**, and **Firebase**.
 
 ## Reference Modules (`references/`)

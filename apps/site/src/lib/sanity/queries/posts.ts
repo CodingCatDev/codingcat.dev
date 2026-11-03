@@ -33,3 +33,24 @@ export const morePostQuery =
     ${personRefFields}
   }
 }`);
+
+/**
+ * Pool of recent published Posts, Podcasts, and Courses used to dynamically
+ * score and match the best Related Video Deep Dive and Related Content cards
+ * by tags and topic keywords whenever explicit references are not set.
+ */
+export const relatedCandidatesQuery =
+	defineQuery(`*[_type in ["post", "podcast", "course"] && _id != $skip && !(_id in path("drafts.**")) && defined(slug.current) && coalesce(archived, false) != true] | order(date desc, _updatedAt desc) [0...40] {
+  ${baseFieldsNoContent},
+  youtube,
+  tags[]{
+    label,
+    value
+  },
+  author[]->{
+    ${personRefFields}
+  },
+  guest[]->{
+    ${personRefFields}
+  }
+}`);

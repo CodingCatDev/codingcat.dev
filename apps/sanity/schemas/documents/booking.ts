@@ -161,6 +161,73 @@ export default defineType({
       type: 'string',
     }),
     defineField({
+      name: 'collaborationThread',
+      title: '2-Way Call Notes, Comments & File Drop Chat',
+      type: 'array',
+      description: 'Timestamped back-and-forth call notes, comments, and dropped files shared between Alex Patterson and the guest.',
+      of: [
+        {
+          type: 'object',
+          fields: [
+            defineField({name: 'authorName', title: 'Author Name', type: 'string'}),
+            defineField({
+              name: 'authorRole',
+              title: 'Author Role',
+              type: 'string',
+              options: {
+                list: [
+                  {title: 'Host (Alex Patterson)', value: 'host'},
+                  {title: 'Guest / Partner', value: 'guest'},
+                ],
+              },
+              initialValue: 'host',
+            }),
+            defineField({name: 'authorEmail', title: 'Author Email', type: 'string'}),
+            defineField({
+              name: 'noteType',
+              title: 'Note Type',
+              type: 'string',
+              options: {
+                list: [
+                  {title: 'Call Note / Pre-Call Summary', value: 'call_note'},
+                  {title: 'Comment / Question', value: 'comment'},
+                  {title: 'Run-of-Show Revision', value: 'ros_update'},
+                  {title: 'File / Asset Drop', value: 'file_drop'},
+                ],
+              },
+              initialValue: 'call_note',
+            }),
+            defineField({name: 'message', title: 'Message / Note Body', type: 'text'}),
+            defineField({name: 'createdAt', title: 'Created At', type: 'datetime'}),
+            defineField({
+              name: 'emailedToCounterpart',
+              title: 'Emailed to Counterpart',
+              type: 'boolean',
+              initialValue: false,
+            }),
+            defineField({
+              name: 'attachments',
+              title: 'Attached Files & Links',
+              type: 'array',
+              of: [
+                {
+                  type: 'object',
+                  fields: [
+                    defineField({name: 'title', title: 'Title / Filename', type: 'string'}),
+                    defineField({name: 'category', title: 'Category', type: 'string'}),
+                    defineField({name: 'assetId', title: 'Sanity Asset ID', type: 'string'}),
+                    defineField({name: 'mimeType', title: 'MIME Type', type: 'string'}),
+                    defineField({name: 'fileSize', title: 'File Size (Bytes)', type: 'number'}),
+                    defineField({name: 'externalUrl', title: 'Download / Open URL', type: 'url'}),
+                  ],
+                },
+              ],
+            }),
+          ],
+        },
+      ],
+    }),
+    defineField({
       name: 'legacyPortalToken',
       title: 'Legacy Short Portal Token Alias',
       type: 'string',

@@ -3,7 +3,7 @@
 ## Brand Identity
 - **Brand Name**: CodingCat.dev
 - **Tagline**: "Purrfect Web Tutorials"
-- **Founder & Host**: Alex Patterson (`@alex.patterson`), Senior Solutions Engineer, Google Developer Expert (GDE), and AWS Community Builder.
+- **Founder & Host**: Alex Patterson (`@alex.patterson`), Senior Solutions Architect, Google Developer Expert (GDE), and AWS Community Builder.
 - **Mascot**: **AJ the Cat**, an anthropomorphic black coding cat with large expressive Electric Lime Green (`#C5E86C`) eyes, a Soft Lavender (`#B4A7D6`) collar with a pastel rainbow hexagonal `"AJ"` tag, and over-ear Royal Purple/Lavender headphones (`"CodingCat.dev Podcast"` across the headband) that properly cover his ears.
 
 ## Aesthetic Philosophy

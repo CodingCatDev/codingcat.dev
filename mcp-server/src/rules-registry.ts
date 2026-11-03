@@ -231,7 +231,7 @@ export const CODINGCAT_RULES_REGISTRY: Record<CodingCatRuleCategory, CodingCatRu
     markdown: `# 01. Overview: Brand Ethos & Core Identity
 
 - **Brand**: CodingCat.dev ("Purrfect Web Tutorials").
-- **Founder / Host**: Alex Patterson (\`@alex.patterson\`), Senior Solutions Engineer, GDE, AWS Community Builder.
+- **Founder / Host**: Alex Patterson (\`@alex.patterson\`), Senior Solutions Architect, GDE, AWS Community Builder.
 - **Mascot**: AJ the Cat (anthropomorphic black coding cat standing upright on two legs, Electric Lime \`#C5E86C\` eyes, Soft Lavender \`#B4A7D6\` collar with hexagonal \`"AJ"\` tag, and over-ear \`"CodingCat.dev Podcast"\` Royal Purple/Lavender headphones covering his ears).
 - **Aesthetic Philosophy**: Dark-mode-first (\`#0F172A\` Canvas Obsidian, \`#1E293B\` Surface Slate), high-contrast developer ergonomics, mixing crisp Tailwind UI with dark-mode hand-drawn Excalidraw architecture diagrams and 2D/3D AJ mascot illustrations.
 - **When to use AJ vs. Alex**:
@@ -391,7 +391,7 @@ export const CODINGCAT_RULES_REGISTRY: Record<CodingCatRuleCategory, CodingCatRu
 
 1. **NEVER use em-dashes** anywhere in prose, titles, scripts, or social posts. Use commas, parentheses, colons, or separate sentences instead.
 2. **Always use Markdown tables for comparisons** whenever comparing tools, frameworks, architectures, pricing, or trade-offs.
-3. **Tone**: Pragmatic Senior Solutions Engineer / Developer Educator. Direct, conversational, zero fluff, code-first, slightly irreverent ("What the F*ck is..." series energy) without being gatekeepy.
+3. **Tone**: Pragmatic Senior Solutions Architect / Developer Educator. Direct, conversational, zero fluff, code-first, slightly irreverent ("What the F*ck is..." series energy) without being gatekeepy.
 4. **Tech Stack Context**: Default examples toward Astro 7, Next.js, React, Tailwind CSS, Sanity.io, Cloudflare Workers, Hono, D1, Better-Auth, and Firebase.`,
   },
   excalidraw: {

@@ -61,11 +61,44 @@ export const contentFields = `
   },
   devto,
   hashnode,
+  tags[]{
+    _key,
+    label,
+    value
+  },
   sponsor[]->{
     ${sponsorRefFields}
   },
   videoCloudinary,
   youtube,
+  relatedVideo{
+    title,
+    description,
+    youtube,
+    reference->{
+      _id,
+      _type,
+      "title": coalesce(title, "Untitled"),
+      "slug": slug.current,
+      excerpt,
+      coverImage,
+      youtube
+    }
+  },
+  relatedContent[]->{
+    ${baseFieldsNoContent},
+    youtube,
+    tags[]{
+      label,
+      value
+    },
+    author[]->{
+      ${personRefFields}
+    },
+    guest[]->{
+      ${personRefFields}
+    }
+  },
   transcript->{
     _id,
     title,

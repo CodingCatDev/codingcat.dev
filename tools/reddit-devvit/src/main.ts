@@ -3,7 +3,9 @@ import { Devvit, SettingScope } from "@devvit/public-api";
 Devvit.configure({
   redditAPI: true,
   redis: true,
-  http: true,
+  http: {
+    domains: ["hfh83o0w.apicdn.sanity.io", "hfh83o0w.api.sanity.io"],
+  },
 });
 
 Devvit.addSettings([

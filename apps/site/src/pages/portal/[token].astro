@@ -1971,7 +1971,7 @@ const pageDescription = !portalFound
 										? "📎 File Drop"
 										: item.noteType === "ros_update"
 											? "📝 Run-of-Show Update"
-											: item.noteType === "feedback"
+											: (item.noteType as string | undefined) === "feedback"
 												? `🛠️ Portal Feedback${(item as any).feedbackRating ? ` (${(item as any).feedbackRating}/5)` : ""}`
 												: "💬 Comment";
 							return (

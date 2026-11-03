@@ -181,8 +181,12 @@ export const POST: APIRoute = async ({ request, url }) => {
 	let updatedBy = "";
 	let authorRole: "host" | "guest" = "guest";
 	let authorEmail = "";
-	let noteType: "call_note" | "comment" | "ros_update" | "file_drop" | "feedback" =
-		"comment";
+	let noteType:
+		| "call_note"
+		| "comment"
+		| "ros_update"
+		| "file_drop"
+		| "feedback" = "comment";
 	let chatMessage = "";
 	let externalUrl = "";
 	let attachmentTitle = "";
@@ -239,7 +243,9 @@ export const POST: APIRoute = async ({ request, url }) => {
 					try {
 						const parsed = JSON.parse(rawTopics);
 						if (Array.isArray(parsed)) {
-							feedbackTopics = parsed.map((t) => String(t).trim()).filter(Boolean);
+							feedbackTopics = parsed
+								.map((t) => String(t).trim())
+								.filter(Boolean);
 						}
 					} catch {
 						feedbackTopics = rawTopics
@@ -316,11 +322,17 @@ export const POST: APIRoute = async ({ request, url }) => {
 			) {
 				noteType = body.noteType;
 			}
-			if (typeof body.feedbackRating === "number" && body.feedbackRating >= 1 && body.feedbackRating <= 5) {
+			if (
+				typeof body.feedbackRating === "number" &&
+				body.feedbackRating >= 1 &&
+				body.feedbackRating <= 5
+			) {
 				feedbackRating = body.feedbackRating;
 			}
 			if (Array.isArray(body.feedbackTopics)) {
-				feedbackTopics = body.feedbackTopics.map((t: unknown) => String(t).trim()).filter(Boolean);
+				feedbackTopics = body.feedbackTopics
+					.map((t: unknown) => String(t).trim())
+					.filter(Boolean);
 			}
 			if (body.feedbackMeta && typeof body.feedbackMeta === "object") {
 				feedbackMeta = body.feedbackMeta;
@@ -437,8 +449,10 @@ export const POST: APIRoute = async ({ request, url }) => {
 					_id: fallbackId,
 					_type: "booking",
 					portalToken: "book-page",
-					guestName: updatedBy || fallbackAuth.verifiedEmail || "Booking Page Visitor",
-					guestEmail: fallbackAuth.verifiedEmail || authorEmail || "alex@codingcat.dev",
+					guestName:
+						updatedBy || fallbackAuth.verifiedEmail || "Booking Page Visitor",
+					guestEmail:
+						fallbackAuth.verifiedEmail || authorEmail || "alex@codingcat.dev",
 					company: "CodingCat.dev Booking Feedback",
 					status: "feedback_inbox",
 					collaborationThread: [],
@@ -492,10 +506,8 @@ export const POST: APIRoute = async ({ request, url }) => {
 
 	const guestName =
 		primaryDoc?.guestName || primaryDoc?.contactName || "Podcast Guest";
-	const guestEmail =
-		primaryDoc?.guestEmail || primaryDoc?.contactEmail || "";
-	const company =
-		primaryDoc?.company || primaryDoc?.companyName || guestName;
+	const guestEmail = primaryDoc?.guestEmail || primaryDoc?.contactEmail || "";
+	const company = primaryDoc?.company || primaryDoc?.companyName || guestName;
 	const nowIso = new Date().toISOString();
 	const resolvedAuthorName =
 		updatedBy ||
@@ -848,7 +860,9 @@ export const POST: APIRoute = async ({ request, url }) => {
 					primaryCtaLabel: "Reply & Edit Notes in Studio Portal ->",
 					primaryCtaUrl: `${portalUrl}#run-of-show`,
 					secondaryCtaLabel:
-						newAttachments.length > 0 ? "Open Asset Vault (#vault) ->" : undefined,
+						newAttachments.length > 0
+							? "Open Asset Vault (#vault) ->"
+							: undefined,
 					secondaryCtaUrl:
 						newAttachments.length > 0 ? `${portalUrl}#vault` : undefined,
 					runOfShowLines:

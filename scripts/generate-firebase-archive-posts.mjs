@@ -853,7 +853,7 @@ export function buildSanityPostFromParsed(parsed, matchedVideoDoc, relatedFireba
     createRichBlock(
       [
         {
-          text: `As a Google Developer Expert (GDE) for Firebase and Senior Solutions Engineer at CodingCat.dev, I evaluate every Firebase update through one lens: does it reduce boilerplate while keeping our runtime security and cloud bills predictable? ${framing.mentalModel}`,
+          text: `As a Google Developer Expert (GDE) for Firebase and Senior Solutions Architect at CodingCat.dev, I evaluate every Firebase update through one lens: does it reduce boilerplate while keeping our runtime security and cloud bills predictable? ${framing.mentalModel}`,
         },
       ],
       { style: "normal", keySeed: `p_intro_${docId}` }

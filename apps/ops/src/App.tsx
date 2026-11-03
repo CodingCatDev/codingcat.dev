@@ -85,6 +85,28 @@ interface PassionfrootMessageItem {
 	createdAt?: string;
 }
 
+interface CollaborationAttachmentItem {
+	_key?: string;
+	title: string;
+	category: string;
+	assetId?: string;
+	mimeType?: string;
+	fileSize?: number;
+	externalUrl?: string;
+}
+
+interface CollaborationThreadItem {
+	_key?: string;
+	authorName: string;
+	authorRole: "host" | "guest";
+	authorEmail?: string;
+	noteType?: "call_note" | "comment" | "ros_update" | "file_drop";
+	message?: string;
+	createdAt: string;
+	emailedToCounterpart?: boolean;
+	attachments?: CollaborationAttachmentItem[];
+}
+
 interface SponsorLeadDoc {
 	_id: string;
 	companyName: string;
@@ -127,6 +149,7 @@ interface SponsorLeadDoc {
 	legacyPortalToken?: string;
 	deliverables?: DeliverableItem[];
 	sharedAssets?: SharedAssetItem[];
+	collaborationThread?: CollaborationThreadItem[];
 }
 
 interface BookingDoc {
@@ -162,7 +185,12 @@ interface BookingDoc {
 	signedAt?: string;
 	portalToken?: string;
 	legacyPortalToken?: string;
+	gmailThreadId?: string;
+	gmailDraftId?: string;
+	gmailMessageId?: string;
+	gmailSubject?: string;
 	sharedAssets?: SharedAssetItem[];
+	collaborationThread?: CollaborationThreadItem[];
 }
 
 interface SyndicatedContentItem {
@@ -322,6 +350,9 @@ export function App() {
 	const [expandedBookingId, setExpandedBookingId] = useState<string | null>(
 		null,
 	);
+	const [expandedScheduleBookingId, setExpandedScheduleBookingId] = useState<
+		string | null
+	>(null);
 	const [expandedLeadId, setExpandedLeadId] = useState<string | null>(null);
 	const [expandedCrmLeadId, setExpandedCrmLeadId] = useState<string | null>(
 		null,
@@ -360,6 +391,20 @@ export function App() {
 			}
 		>
 	>({});
+	const [chatDrafts, setChatDrafts] = useState<
+		Record<
+			string,
+			{
+				noteType: "call_note" | "comment" | "file_drop";
+				assetCategory: string;
+				message: string;
+				externalTitle: string;
+				externalUrl: string;
+				notifyCounterpart: boolean;
+			}
+		>
+	>({});
+	const [chatFiles, setChatFiles] = useState<Record<string, File[]>>({});
 	const [busyActionId, setBusyActionId] = useState<string | null>(null);
 
 	const showFlash = useCallback((msg: string) => {
@@ -556,11 +601,13 @@ export function App() {
 			runOfShowNotes: string;
 			guestQuestions: string;
 		},
+		notifyGuest = false,
+		token = "",
 	) => {
-		setBusyActionId(`${docId}:ros`);
+		setBusyActionId(notifyGuest ? `${docId}:ros_email` : `${docId}:ros`);
 		try {
 			const nowIso = new Date().toISOString();
-			const patchData = {
+			const patchData: Record<string, any> = {
 				preCallNotes: values.preCallNotes,
 				runOfShowNotes: values.runOfShowNotes,
 				guestQuestions: values.guestQuestions,
@@ -568,15 +615,147 @@ export function App() {
 				runOfShowUpdatedBy: "Alex Patterson (Ops App)",
 			};
 			await patchDocWithFallback(docId, patchData);
+
+			let emailedGuest = false;
+			try {
+				const res = await fetch(`${siteOrigin}/api/portal/notes`, {
+					method: "POST",
+					headers: { "Content-Type": "application/json" },
+					body: JSON.stringify({
+						ops: true,
+						docId,
+						token,
+						preCallNotes: values.preCallNotes,
+						runOfShowNotes: values.runOfShowNotes,
+						guestQuestions: values.guestQuestions,
+						updatedBy: "Alex Patterson",
+						authorRole: "host",
+						notifyCounterpart: notifyGuest,
+					}),
+				});
+				if (res.ok) {
+					const data = await res.json();
+					if (Array.isArray(data.collaborationThread)) {
+						patchData.collaborationThread = data.collaborationThread;
+					}
+					emailedGuest = Boolean(data.emailResult?.sent);
+				}
+			} catch {
+				// Best-effort sync to portal notes endpoint
+			}
+
 			setBookings((prev) =>
 				prev.map((b) => (b._id === docId ? { ...b, ...patchData } : b)),
 			);
 			setLeads((prev) =>
 				prev.map((l) => (l._id === docId ? { ...l, ...patchData } : l)),
 			);
-			showFlash("✓ Saved Run-of-Show & Pre-Call Notes to Sanity (live on Guest Portal)");
+			showFlash(
+				notifyGuest
+					? emailedGuest
+						? "✓ Saved Run-of-Show to Sanity & emailed updated outline to guest in canonical Gmail thread"
+						: "✓ Saved Run-of-Show to Sanity (email notification queued)"
+					: "✓ Saved Run-of-Show & Pre-Call Notes to Sanity (live on Guest Portal)",
+			);
 		} catch (err: any) {
 			showFlash(`Error saving Run-of-Show: ${err?.message || "Unknown error"}`);
+		} finally {
+			setBusyActionId(null);
+		}
+	};
+
+	const handlePostHostNote = async (b: BookingDoc) => {
+		const docId = b._id;
+		const token =
+			b.portalToken || b._id.replace(/^(private\.)?booking-/, "");
+		const draft = chatDrafts[docId] || {
+			noteType: "call_note",
+			assetCategory: "deck",
+			message: "",
+			externalTitle: "",
+			externalUrl: "",
+			notifyCounterpart: true,
+		};
+		const files = chatFiles[docId] || [];
+
+		if (!draft.message.trim() && files.length === 0 && !draft.externalUrl.trim()) {
+			showFlash("Write a call note, attach a file, or paste a link first.");
+			return;
+		}
+
+		setBusyActionId(`${docId}:post_note`);
+		try {
+			const fd = new FormData();
+			fd.append("ops", "true");
+			fd.append("docId", docId);
+			fd.append("token", token);
+			fd.append("authorRole", "host");
+			fd.append("updatedBy", "Alex Patterson");
+			fd.append(
+				"noteType",
+				files.length > 0 && draft.noteType === "comment"
+					? "file_drop"
+					: draft.noteType,
+			);
+			fd.append("assetCategory", draft.assetCategory || "deck");
+			fd.append("message", draft.message.trim());
+			fd.append("externalTitle", draft.externalTitle.trim());
+			fd.append("externalUrl", draft.externalUrl.trim());
+			fd.append("notifyCounterpart", draft.notifyCounterpart ? "true" : "false");
+
+			files.forEach((f) => {
+				fd.append("files", f);
+			});
+
+			const res = await fetch(`${siteOrigin}/api/portal/notes`, {
+				method: "POST",
+				body: fd,
+			});
+			const data = await res.json();
+			if (!res.ok || !data.ok) {
+				throw new Error(data.message || "Could not post note");
+			}
+
+			setBookings((prev) =>
+				prev.map((item) =>
+					item._id === docId
+						? {
+								...item,
+								collaborationThread: Array.isArray(data.collaborationThread)
+									? data.collaborationThread
+									: item.collaborationThread,
+								sharedAssets: Array.isArray(data.sharedAssets)
+									? data.sharedAssets
+									: item.sharedAssets,
+							}
+						: item,
+				),
+			);
+			setChatDrafts((prev) => ({
+				...prev,
+				[docId]: {
+					...draft,
+					message: "",
+					externalTitle: "",
+					externalUrl: "",
+				},
+			}));
+			setChatFiles((prev) => ({
+				...prev,
+				[docId]: [],
+			}));
+
+			const fileCount = Array.isArray(data.uploadedAttachments)
+				? data.uploadedAttachments.length
+				: 0;
+			const fileLabel =
+				fileCount > 0 ? ` + ${fileCount} file(s) synced to #vault` : "";
+			const emailLabel = data.emailResult?.sent
+				? ` & emailed ${b.guestName} in canonical thread`
+				: "";
+			showFlash(`✓ Posted note${fileLabel}${emailLabel}`);
+		} catch (err: any) {
+			showFlash(`Error posting note: ${err?.message || "Unknown error"}`);
 		} finally {
 			setBusyActionId(null);
 		}
@@ -1004,6 +1183,7 @@ export function App() {
 		alignItems: "center",
 		gap: 4,
 		whiteSpace: "nowrap",
+		maxWidth: "100%",
 	};
 
 	const primaryBtnStyle: React.CSSProperties = {
@@ -1013,16 +1193,1239 @@ export function App() {
 		color: "#fff",
 	};
 
+	const renderBookingDetailsPanel = (b: BookingDoc) => {
+		const isPf =
+			b.bookingSource === "passionfroot" ||
+			Boolean(b.passionfrootCollaborationId);
+		const token =
+			b.portalToken || b._id.replace(/^(private\.)?booking-/, "");
+		const portalUrl = `${siteOrigin}/portal/${token}`;
+		const vaultUrl = `${portalUrl}#vault`;
+		const assetCount = b.sharedAssets?.length || 0;
+		const currentRos = rosDrafts[b._id] || {
+			preCallNotes: b.preCallNotes || "",
+			runOfShowNotes: b.runOfShowNotes || "",
+			guestQuestions: b.guestQuestions || "",
+		};
+		const currentChat = chatDrafts[b._id] || {
+			noteType: "call_note" as const,
+			assetCategory: "deck",
+			message: "",
+			externalTitle: "",
+			externalUrl: "",
+			notifyCounterpart: true,
+		};
+		const stagedFiles = chatFiles[b._id] || [];
+		const threadItems = b.collaborationThread || [];
+
+		return (
+			<div style={{ width: "100%", maxWidth: "100%", overflowX: "hidden" }}>
+				{/* Shared 2-Way Run-of-Show & Pre-Call Notes Co-Editor (Placed First for Instant Mobile Access) */}
+				<div
+					style={{
+						padding: "clamp(12px, 3vw, 16px)",
+						borderRadius: 10,
+						background: "#fff",
+						border: "2px solid #c4b5fd",
+						marginBottom: 14,
+						width: "100%",
+					}}
+				>
+					<div
+						style={{
+							display: "flex",
+							justifyContent: "space-between",
+							alignItems: "flex-start",
+							flexWrap: "wrap",
+							gap: 10,
+							marginBottom: 12,
+						}}
+					>
+						<div style={{ minWidth: 0, flex: "1 1 220px" }}>
+							<h4
+								style={{
+									margin: 0,
+									fontSize: 14,
+									color: "#4B2E83",
+									lineHeight: 1.4,
+									overflowWrap: "anywhere",
+								}}
+							>
+								📝 2-Way Run-of-Show &amp; Pre-Call Coordination Notes
+							</h4>
+							<div
+								style={{
+									fontSize: 11,
+									color: "#6b7280",
+									marginTop: 4,
+									lineHeight: 1.45,
+									overflowWrap: "anywhere",
+								}}
+							>
+								Syncs live with{" "}
+								<a
+									href={`${portalUrl}#run-of-show`}
+									target="_blank"
+									rel="noreferrer"
+									style={{ color: "#4B2E83", fontWeight: 600 }}
+								>
+									{portalUrl}#run-of-show ↗
+								</a>
+								. Both you and <strong>{b.guestName}</strong> can edit these
+								notes before and during the session.
+								{b.runOfShowUpdatedAt
+									? ` Last saved ${formatDateTime(b.runOfShowUpdatedAt)} by ${b.runOfShowUpdatedBy || "Host"}.`
+									: ""}
+							</div>
+						</div>
+						<div
+							style={{
+								display: "flex",
+								gap: 6,
+								flexWrap: "wrap",
+								width: "100%",
+							}}
+						>
+							<button
+								type="button"
+								disabled={
+									busyActionId === `${b._id}:ros` ||
+									busyActionId === `${b._id}:ros_email`
+								}
+								onClick={() => handleSaveRunOfShow(b._id, currentRos, false, token)}
+								style={primaryBtnStyle}
+							>
+								{busyActionId === `${b._id}:ros`
+									? "Saving..."
+									: "💾 Save Run-of-Show to Sanity"}
+							</button>
+							<button
+								type="button"
+								disabled={
+									busyActionId === `${b._id}:ros` ||
+									busyActionId === `${b._id}:ros_email`
+								}
+								onClick={() => handleSaveRunOfShow(b._id, currentRos, true, token)}
+								style={{
+									...btnStyle,
+									background: "#059669",
+									borderColor: "#059669",
+									color: "#fff",
+								}}
+								title="Save Run-of-Show to Sanity AND email the updated outline to the guest in your canonical Gmail thread"
+							>
+								{busyActionId === `${b._id}:ros_email`
+									? "Saving & Emailing..."
+									: "📨 Save & Email Notes to Guest"}
+							</button>
+							<button
+								type="button"
+								onClick={() =>
+									handleCopy(`${portalUrl}#run-of-show`, `ros-link-${b._id}`)
+								}
+								style={btnStyle}
+							>
+								{copiedId === `ros-link-${b._id}`
+									? "✓ Copied #run-of-show URL"
+									: "Copy #run-of-show URL"}
+							</button>
+							<button
+								type="button"
+								onClick={() =>
+									setRosDrafts((prev) => ({
+										...prev,
+										[b._id]: {
+											preCallNotes:
+												currentRos.preCallNotes ||
+												[
+													`• Target Audience Takeaway: Practical mental model + live demo of ${b.company || b.guestName}`,
+													`• Screen-Share Check: 1080p editor/browser zoomed to 125%-150%`,
+													`• Audio/Video Check: Headphones on (no echo in StreamYard)`,
+												].join("\n"),
+											guestQuestions:
+												currentRos.guestQuestions ||
+												[
+													`• Must-Ask #1: What developer pain point sparked ${b.company || "this project"}?`,
+													`• Must-Ask #2: Walk us through the architecture & live code`,
+													`• Lower-Third Links: ${b.socialUrl || "https://codingcat.dev"}`,
+												].join("\n"),
+											runOfShowNotes: [
+												`00:00 - 03:00 | 1. Cold Open & Origin Story`,
+												`  • Welcome ${b.guestName} (${b.company || "Guest"}) to CodingCat.dev`,
+												`  • The 30-second elevator pitch: What problem were you tired of hitting in production?`,
+												``,
+												`03:00 - 12:00 | 2. Architecture Mental Model`,
+												`  • How developers used to wire this up vs. how ${b.company || b.guestName} approaches it`,
+												`  • Under-the-hood primitives, state flow, and developer ergonomics`,
+												``,
+												`12:00 - 28:00 | 3. Show Me the Code (Live Screen-Share / Demo)`,
+												`  • Step-by-step walkthrough in real code (zero slideware)`,
+												`  • Key workflows, CLI/UI ergonomics, and live inspection`,
+												``,
+												`28:00 - 38:00 | 4. Production Trade-Offs & Sharp Edges`,
+												`  • Where this shines vs. when teams should use something else`,
+												`  • Security, performance, and scaling gotchas`,
+												``,
+												`38:00 - 45:00 | 5. Verdict, Roadmap & Where to Try It`,
+												`  • What is shipping next on the roadmap`,
+												`  • Links to docs, GitHub repo, and starter templates`,
+											].join("\n"),
+										},
+									}))
+								}
+								style={btnStyle}
+							>
+								Load 5-Part Template
+							</button>
+						</div>
+					</div>
+
+					<div
+						style={{
+							display: "grid",
+							gridTemplateColumns:
+								"repeat(auto-fit, minmax(min(100%, 260px), 1fr))",
+							gap: 12,
+							width: "100%",
+						}}
+					>
+						<div style={{ minWidth: 0 }}>
+							<label
+								style={{
+									display: "block",
+									fontSize: 11,
+									fontWeight: 700,
+									color: "#374151",
+									marginBottom: 4,
+								}}
+							>
+								1. 45-Minute Episode Run-of-Show Outline (5-Part Arc):
+							</label>
+							<textarea
+								rows={12}
+								value={currentRos.runOfShowNotes}
+								onChange={(e) =>
+									setRosDrafts((prev) => ({
+										...prev,
+										[b._id]: {
+											...currentRos,
+											runOfShowNotes: e.target.value,
+										},
+									}))
+								}
+								placeholder="00:00 - 03:00 | 1. Cold Open & Origin Story..."
+								style={{
+									width: "100%",
+									boxSizing: "border-box",
+									padding: 10,
+									borderRadius: 6,
+									border: "1px solid #d1d5db",
+									fontFamily: "ui-monospace, SFMono-Regular, Menlo, monospace",
+									fontSize: 12,
+									lineHeight: 1.45,
+								}}
+							/>
+						</div>
+						<div
+							style={{
+								display: "flex",
+								flexDirection: "column",
+								gap: 10,
+								minWidth: 0,
+							}}
+						>
+							<div>
+								<label
+									style={{
+										display: "block",
+										fontSize: 11,
+										fontWeight: 700,
+										color: "#374151",
+										marginBottom: 4,
+									}}
+								>
+									2. Guest Prompts, Links &amp; Lower-Third Callouts:
+								</label>
+								<textarea
+									rows={6}
+									value={currentRos.guestQuestions}
+									onChange={(e) =>
+										setRosDrafts((prev) => ({
+											...prev,
+											[b._id]: {
+												...currentRos,
+												guestQuestions: e.target.value,
+											},
+										}))
+									}
+									placeholder="Must-ask questions, GitHub repo URL, docs links..."
+									style={{
+										width: "100%",
+										boxSizing: "border-box",
+										padding: 10,
+										borderRadius: 6,
+										border: "1px solid #d1d5db",
+										fontFamily:
+											"ui-monospace, SFMono-Regular, Menlo, monospace",
+										fontSize: 12,
+										lineHeight: 1.45,
+									}}
+								/>
+							</div>
+							<div>
+								<label
+									style={{
+										display: "block",
+										fontSize: 11,
+										fontWeight: 700,
+										color: "#374151",
+										marginBottom: 4,
+									}}
+								>
+									3. Pre-Call Alignment &amp; Tech Check Notes:
+								</label>
+								<textarea
+									rows={5}
+									value={currentRos.preCallNotes}
+									onChange={(e) =>
+										setRosDrafts((prev) => ({
+											...prev,
+											[b._id]: {
+												...currentRos,
+												preCallNotes: e.target.value,
+											},
+										}))
+									}
+									placeholder="Pre-call takeaways, screen-share setup, bio/pronunciation notes..."
+									style={{
+										width: "100%",
+										boxSizing: "border-box",
+										padding: 10,
+										borderRadius: 6,
+										border: "1px solid #d1d5db",
+										fontFamily:
+											"ui-monospace, SFMono-Regular, Menlo, monospace",
+										fontSize: 12,
+										lineHeight: 1.45,
+									}}
+								/>
+							</div>
+						</div>
+					</div>
+
+					{/* 2-Way Shared Call Notes, Back-and-Forth Comments & File Drop Chat */}
+					<div
+						style={{
+							marginTop: 14,
+							paddingTop: 14,
+							borderTop: "1px solid #e5e7eb",
+							width: "100%",
+							boxSizing: "border-box",
+						}}
+					>
+						<div
+							style={{
+								display: "flex",
+								justifyContent: "space-between",
+								alignItems: "center",
+								flexWrap: "wrap",
+								gap: 8,
+								marginBottom: 10,
+							}}
+						>
+							<div style={{ minWidth: 0 }}>
+								<h5
+									style={{
+										margin: 0,
+										fontSize: 13,
+										fontWeight: 700,
+										color: "#111827",
+										display: "flex",
+										alignItems: "center",
+										gap: 6,
+										flexWrap: "wrap",
+									}}
+								>
+									<span>💬 Shared Call Notes, Back-and-Forth Chat &amp; File Drop</span>
+									<span
+										style={{
+											fontSize: 11,
+											padding: "2px 8px",
+											borderRadius: 999,
+											background: "#ede9fe",
+											color: "#4B2E83",
+											fontWeight: 700,
+										}}
+									>
+										{threadItems.length} {threadItems.length === 1 ? "note" : "notes"}
+									</span>
+								</h5>
+								<div
+									style={{
+										fontSize: 11,
+										color: "#6b7280",
+										marginTop: 2,
+										lineHeight: 1.4,
+										overflowWrap: "anywhere",
+									}}
+								>
+									Post call takeaways, questions, or drop slides/diagrams/B-roll right into the chat. Attached files auto-upload to Sanity Media Library (<code style={{ fontSize: 10 }}>#vault</code>) and email <strong>{b.guestName}</strong> in your canonical Gmail thread.
+								</div>
+							</div>
+						</div>
+
+						{/* Thread History */}
+						<div
+							style={{
+								display: "flex",
+								flexDirection: "column",
+								gap: 8,
+								maxHeight: 280,
+								overflowY: "auto",
+								marginBottom: 12,
+							}}
+						>
+							{threadItems.length === 0 ? (
+								<div
+									style={{
+										padding: 10,
+										borderRadius: 8,
+										border: "1px dashed #d1d5db",
+										background: "#f9fafb",
+										fontSize: 11.5,
+										color: "#6b7280",
+										textAlign: "center",
+									}}
+								>
+									No call notes or back-and-forth comments yet. Add a call summary or drop files below!
+								</div>
+							) : (
+								threadItems.map((item, idx) => {
+									const isHost = item.authorRole === "host";
+									const badgeLabel =
+										item.noteType === "call_note"
+											? "📞 Call Note"
+											: item.noteType === "file_drop"
+												? "📎 File Drop"
+												: item.noteType === "ros_update"
+													? "📝 Run-of-Show Update"
+													: "💬 Comment";
+									return (
+										<div
+											key={item._key || idx}
+											style={{
+												padding: 10,
+												borderRadius: 8,
+												border: isHost
+													? "1px solid #c4b5fd"
+													: "1px solid #d1d5db",
+												background: isHost ? "#f5f3ff" : "#f9fafb",
+												fontSize: 12,
+												boxSizing: "border-box",
+											}}
+										>
+											<div
+												style={{
+													display: "flex",
+													justifyContent: "space-between",
+													alignItems: "center",
+													flexWrap: "wrap",
+													gap: 6,
+													marginBottom: 4,
+												}}
+											>
+												<div
+													style={{
+														display: "flex",
+														alignItems: "center",
+														gap: 6,
+														flexWrap: "wrap",
+													}}
+												>
+													<span
+														style={{
+															padding: "2px 6px",
+															borderRadius: 5,
+															background: isHost ? "#4B2E83" : "#111827",
+															color: "#fff",
+															fontSize: 11,
+															fontWeight: 700,
+														}}
+													>
+														{isHost ? "🐱 " : "🎙️ "}
+														{item.authorName}
+													</span>
+													<span
+														style={{
+															padding: "2px 6px",
+															borderRadius: 5,
+															background: "#e5e7eb",
+															color: "#374151",
+															fontSize: 10.5,
+															fontWeight: 600,
+														}}
+													>
+														{badgeLabel}
+													</span>
+													{item.emailedToCounterpart && (
+														<span
+															style={{
+																padding: "2px 6px",
+																borderRadius: 5,
+																background: "#dcfce7",
+																color: "#166534",
+																fontSize: 10,
+																fontWeight: 700,
+															}}
+														>
+															✓ Emailed in thread
+														</span>
+													)}
+												</div>
+												<span style={{ fontSize: 10.5, color: "#6b7280" }}>
+													{item.createdAt ? formatDateTime(item.createdAt) : ""}
+												</span>
+											</div>
+											{item.message && (
+												<div
+													style={{
+														whiteSpace: "pre-wrap",
+														overflowWrap: "anywhere",
+														lineHeight: 1.45,
+														color: "#111827",
+													}}
+												>
+													{item.message}
+												</div>
+											)}
+											{Array.isArray(item.attachments) &&
+												item.attachments.length > 0 && (
+													<div
+														style={{
+															display: "flex",
+															flexWrap: "wrap",
+															gap: 6,
+															marginTop: 6,
+														}}
+													>
+														{item.attachments.map((att, attIdx) => {
+															const href = att.assetId
+																? `${siteOrigin}/api/portal/assets?token=${encodeURIComponent(token)}&assetId=${encodeURIComponent(att.assetId)}`
+																: att.externalUrl || vaultUrl;
+															return (
+																<a
+																	key={att._key || attIdx}
+																	href={href}
+																	target="_blank"
+																	rel="noreferrer"
+																	style={{
+																		display: "inline-flex",
+																		alignItems: "center",
+																		gap: 4,
+																		padding: "4px 8px",
+																		borderRadius: 6,
+																		border: "1px solid #c4b5fd",
+																		background: "#fff",
+																		color: "#4B2E83",
+																		fontSize: 11,
+																		fontWeight: 600,
+																		textDecoration: "none",
+																	}}
+																>
+																	📎 {att.title} ({att.category}) ↗
+																</a>
+															);
+														})}
+													</div>
+												)}
+										</div>
+									);
+								})
+							)}
+						</div>
+
+						{/* Host Note & File Drop Composer */}
+						<div
+							style={{
+								padding: 12,
+								borderRadius: 8,
+								background: "#f9fafb",
+								border: "1px solid #e5e7eb",
+								display: "flex",
+								flexDirection: "column",
+								gap: 8,
+								boxSizing: "border-box",
+							}}
+						>
+							<div
+								style={{
+									display: "grid",
+									gridTemplateColumns:
+										"repeat(auto-fit, minmax(min(100%, 180px), 1fr))",
+									gap: 8,
+								}}
+							>
+								<div>
+									<label
+										style={{
+											display: "block",
+											fontSize: 10.5,
+											fontWeight: 700,
+											color: "#4b5563",
+											marginBottom: 3,
+										}}
+									>
+										Note Type:
+									</label>
+									<select
+										value={currentChat.noteType}
+										onChange={(e) =>
+											setChatDrafts((prev) => ({
+												...prev,
+												[b._id]: {
+													...currentChat,
+													noteType: e.target.value as
+														| "call_note"
+														| "comment"
+														| "file_drop",
+												},
+											}))
+										}
+										style={{
+											width: "100%",
+											boxSizing: "border-box",
+											padding: "6px 8px",
+											borderRadius: 6,
+											border: "1px solid #d1d5db",
+											fontSize: 12,
+											background: "#fff",
+										}}
+									>
+										<option value="call_note">
+											📞 Call Note / Pre-Interview Summary
+										</option>
+										<option value="comment">
+											💬 Back-and-Forth Comment / Question
+										</option>
+										<option value="file_drop">
+											📎 File / Diagram / Slide Drop
+										</option>
+									</select>
+								</div>
+								<div>
+									<label
+										style={{
+											display: "block",
+											fontSize: 10.5,
+											fontWeight: 700,
+											color: "#4b5563",
+											marginBottom: 3,
+										}}
+									>
+										Vault Category (if attaching files/links):
+									</label>
+									<select
+										value={currentChat.assetCategory}
+										onChange={(e) =>
+											setChatDrafts((prev) => ({
+												...prev,
+												[b._id]: {
+													...currentChat,
+													assetCategory: e.target.value,
+												},
+											}))
+										}
+										style={{
+											width: "100%",
+											boxSizing: "border-box",
+											padding: "6px 8px",
+											borderRadius: 6,
+											border: "1px solid #d1d5db",
+											fontSize: 12,
+											background: "#fff",
+										}}
+									>
+										<option value="deck">📊 Slides / Architecture Diagram</option>
+										<option value="broll">🎬 Demo Video / B-Roll Clip</option>
+										<option value="headshot">📸 Speaker Headshot</option>
+										<option value="logo">🎨 Brand Logo (SVG/PNG)</option>
+										<option value="other">📁 Other Reference Doc</option>
+									</select>
+								</div>
+							</div>
+
+							<textarea
+								rows={3}
+								value={currentChat.message}
+								onChange={(e) =>
+									setChatDrafts((prev) => ({
+										...prev,
+										[b._id]: {
+											...currentChat,
+											message: e.target.value,
+										},
+									}))
+								}
+								placeholder={`Write notes from your call with ${b.guestName}, ask a follow-up question, or describe the files you are dropping below...`}
+								style={{
+									width: "100%",
+									boxSizing: "border-box",
+									padding: 8,
+									borderRadius: 6,
+									border: "1px solid #d1d5db",
+									fontSize: 12,
+									lineHeight: 1.45,
+								}}
+							/>
+
+							<div
+								style={{
+									display: "grid",
+									gridTemplateColumns:
+										"repeat(auto-fit, minmax(min(100%, 200px), 1fr))",
+									gap: 8,
+									alignItems: "center",
+								}}
+							>
+								<label
+									onDragOver={(e) => {
+										e.preventDefault();
+										e.stopPropagation();
+									}}
+									onDrop={(e) => {
+										e.preventDefault();
+										e.stopPropagation();
+										if (e.dataTransfer?.files?.length) {
+											const dropped = Array.from(e.dataTransfer.files);
+											setChatFiles((prev) => ({
+												...prev,
+												[b._id]: dropped,
+											}));
+										}
+									}}
+									style={{
+										display: "flex",
+										flexDirection: "column",
+										alignItems: "center",
+										justifyContent: "center",
+										padding: "8px 10px",
+										borderRadius: 8,
+										border: "1.5px dashed #8b5cf6",
+										background: "#fff",
+										cursor: "pointer",
+										textAlign: "center",
+										fontSize: 11.5,
+										color: "#4B2E83",
+										fontWeight: 600,
+										boxSizing: "border-box",
+									}}
+								>
+									<span>
+										📥 Drag &amp; drop files into chat (or tap to attach)
+									</span>
+									{stagedFiles.length > 0 && (
+										<span
+											style={{
+												marginTop: 4,
+												fontSize: 10.5,
+												color: "#059669",
+												fontWeight: 700,
+												overflowWrap: "anywhere",
+											}}
+										>
+											📎 {stagedFiles.length} file(s):{" "}
+											{stagedFiles.map((f) => f.name).join(", ")}
+										</span>
+									)}
+									<input
+										type="file"
+										multiple
+										onChange={(e) => {
+											const list = e.target.files
+												? Array.from(e.target.files)
+												: [];
+											setChatFiles((prev) => ({
+												...prev,
+												[b._id]: list,
+											}));
+										}}
+										style={{ display: "none" }}
+									/>
+								</label>
+
+								<div
+									style={{
+										display: "flex",
+										flexDirection: "column",
+										gap: 6,
+										minWidth: 0,
+									}}
+								>
+									<input
+										value={currentChat.externalTitle}
+										onChange={(e) =>
+											setChatDrafts((prev) => ({
+												...prev,
+												[b._id]: {
+													...currentChat,
+													externalTitle: e.target.value,
+												},
+											}))
+										}
+										placeholder="Optional link title (e.g. Demo Repo / Diagram)"
+										style={{
+											width: "100%",
+											boxSizing: "border-box",
+											padding: "5px 8px",
+											borderRadius: 6,
+											border: "1px solid #d1d5db",
+											fontSize: 11.5,
+										}}
+									/>
+									<input
+										value={currentChat.externalUrl}
+										onChange={(e) =>
+											setChatDrafts((prev) => ({
+												...prev,
+												[b._id]: {
+													...currentChat,
+													externalUrl: e.target.value,
+												},
+											}))
+										}
+										placeholder="Optional link URL (https://...)"
+										style={{
+											width: "100%",
+											boxSizing: "border-box",
+											padding: "5px 8px",
+											borderRadius: 6,
+											border: "1px solid #d1d5db",
+											fontSize: 11.5,
+										}}
+									/>
+								</div>
+							</div>
+
+							<div
+								style={{
+									display: "flex",
+									justifyContent: "space-between",
+									alignItems: "center",
+									flexWrap: "wrap",
+									gap: 8,
+									marginTop: 2,
+								}}
+							>
+								<label
+									style={{
+										display: "inline-flex",
+										alignItems: "center",
+										gap: 6,
+										fontSize: 11.5,
+										color: "#374151",
+										cursor: "pointer",
+									}}
+								>
+									<input
+										type="checkbox"
+										checked={currentChat.notifyCounterpart}
+										onChange={(e) =>
+											setChatDrafts((prev) => ({
+												...prev,
+												[b._id]: {
+													...currentChat,
+													notifyCounterpart: e.target.checked,
+												},
+											}))
+										}
+									/>
+									<span>
+										Email this note &amp; attached files to{" "}
+										<strong>{b.guestName}</strong> (in canonical Gmail thread)
+									</span>
+								</label>
+
+								<button
+									type="button"
+									disabled={busyActionId === `${b._id}:post_note`}
+									onClick={() => handlePostHostNote(b)}
+									style={primaryBtnStyle}
+								>
+									{busyActionId === `${b._id}:post_note`
+										? "Uploading & Sending..."
+										: "📤 Post Note, Sync to #vault & Send"}
+								</button>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				{/* Secondary Row: Talking Points, E-SIGN Signature, and Sanity Media Library Vault */}
+				<div
+					style={{
+						display: "grid",
+						gridTemplateColumns:
+							"repeat(auto-fit, minmax(min(100%, 240px), 1fr))",
+						gap: 12,
+						width: "100%",
+					}}
+				>
+					<div style={{ minWidth: 0 }}>
+						<h4
+							style={{
+								margin: "0 0 8px",
+								fontSize: 13,
+								color: "#111827",
+							}}
+						>
+							Proposed Talking Points &amp; Studio Links:
+						</h4>
+						<pre
+							style={{
+								margin: 0,
+								whiteSpace: "pre-wrap",
+								overflowWrap: "anywhere",
+								fontFamily: "inherit",
+								fontSize: 12.5,
+								lineHeight: 1.5,
+								background: "#fff",
+								padding: 12,
+								borderRadius: 8,
+								border: "1px solid #e5e7eb",
+							}}
+						>
+							{b.topics || "No talking points provided."}
+						</pre>
+						<div
+							style={{
+								marginTop: 8,
+								padding: 10,
+								borderRadius: 8,
+								background: "#fff",
+								border: "1px solid #e5e7eb",
+								fontSize: 12,
+								overflowWrap: "anywhere",
+							}}
+						>
+							<div>
+								<strong>StreamYard Studio:</strong>{" "}
+								<a
+									href={b.recordingUrl || "https://streamyard.com/c4kv26is93"}
+									target="_blank"
+									rel="noreferrer"
+									style={{ color: "#2563eb" }}
+								>
+									{b.recordingUrl || "https://streamyard.com/c4kv26is93"} ↗
+								</a>
+							</div>
+							{b.preMeetingMeetUrl && (
+								<div style={{ marginTop: 4 }}>
+									<strong>15m Google Meet Pre-Call:</strong>{" "}
+									<a
+										href={b.preMeetingMeetUrl}
+										target="_blank"
+										rel="noreferrer"
+										style={{ color: "#059669" }}
+									>
+										{b.preMeetingMeetUrl} ↗
+									</a>{" "}
+									({formatDateTime(b.preMeetingSlotStartAt)})
+								</div>
+							)}
+						</div>
+					</div>
+
+					<div
+						style={{
+							background: "#fff",
+							padding: 12,
+							borderRadius: 8,
+							border: "1px solid #e5e7eb",
+							minWidth: 0,
+						}}
+					>
+						<div
+							style={{
+								display: "flex",
+								justifyContent: "space-between",
+								alignItems: "center",
+								flexWrap: "wrap",
+								gap: 6,
+								marginBottom: 8,
+							}}
+						>
+							<h4
+								style={{
+									margin: 0,
+									fontSize: 13,
+									color: "#111827",
+								}}
+							>
+								📁 Sanity Media Library Vault ({assetCount})
+							</h4>
+							<button
+								type="button"
+								onClick={() => handleCopy(vaultUrl, `book-vault-${b._id}`)}
+								style={btnStyle}
+							>
+								{copiedId === `book-vault-${b._id}`
+									? "✓ Copied"
+									: "Copy #vault URL"}
+							</button>
+						</div>
+						{assetCount === 0 ? (
+							<p
+								style={{
+									margin: "0 0 8px",
+									fontSize: 12,
+									color: "#6b7280",
+									overflowWrap: "anywhere",
+								}}
+							>
+								Guest can drop headshots, slides, or B-roll at{" "}
+								<code>{vaultUrl}</code>.
+							</p>
+						) : (
+							<ul
+								style={{
+									margin: "0 0 8px",
+									paddingLeft: 18,
+									fontSize: 12,
+									lineHeight: 1.6,
+								}}
+							>
+								{(b.sharedAssets || []).map((a, idx) => (
+									<li key={a._key || idx}>
+										<strong>{a.title}</strong> ({a.uploadedBy || "partner"})
+										{(a.externalUrl || a.fileUrl) && (
+											<>
+												{" · "}
+												<a
+													href={a.externalUrl || a.fileUrl}
+													target="_blank"
+													rel="noreferrer"
+													style={{ color: "#2563eb" }}
+												>
+													Open ↗
+												</a>
+											</>
+										)}
+									</li>
+								))}
+							</ul>
+						)}
+						<div
+							style={{
+								display: "flex",
+								gap: 6,
+								flexWrap: "wrap",
+							}}
+						>
+							<input
+								value={vaultTitleInput[b._id] || ""}
+								onChange={(e) =>
+									setVaultTitleInput((prev) => ({
+										...prev,
+										[b._id]: e.target.value,
+									}))
+								}
+								placeholder="Asset title..."
+								style={{
+									flex: "1 1 120px",
+									minWidth: 0,
+									padding: "6px 8px",
+									borderRadius: 6,
+									border: "1px solid #d1d5db",
+									fontSize: 12,
+								}}
+							/>
+							<input
+								value={vaultUrlInput[b._id] || ""}
+								onChange={(e) =>
+									setVaultUrlInput((prev) => ({
+										...prev,
+										[b._id]: e.target.value,
+									}))
+								}
+								placeholder="https://..."
+								style={{
+									flex: "1 1 140px",
+									minWidth: 0,
+									padding: "6px 8px",
+									borderRadius: 6,
+									border: "1px solid #d1d5db",
+									fontSize: 12,
+								}}
+							/>
+							<button
+								type="button"
+								disabled={busyActionId === `${b._id}:vault`}
+								onClick={() =>
+									handleAddSharedAssetLink(
+										b._id,
+										token,
+										isPf ? "passionfroot" : "direct",
+									)
+								}
+								style={btnStyle}
+							>
+								+ Add
+							</button>
+						</div>
+					</div>
+
+					<div style={{ minWidth: 0 }}>
+						<h4
+							style={{
+								margin: "0 0 8px",
+								fontSize: 13,
+								color: "#111827",
+							}}
+						>
+							E-SIGN Media Release Signature (
+							{b.signedAt ? formatDateTime(b.signedAt) : "Recorded"}):
+						</h4>
+						{b.signatureData?.startsWith("data:image/") ? (
+							<div
+								style={{
+									background: "#fff",
+									padding: 12,
+									borderRadius: 8,
+									border: "1px solid #e5e7eb",
+									display: "inline-block",
+									maxWidth: "100%",
+								}}
+							>
+								<img
+									src={b.signatureData}
+									alt={`${b.guestName} signature`}
+									style={{
+										maxHeight: 90,
+										maxWidth: "100%",
+									}}
+								/>
+							</div>
+						) : (
+							<div
+								style={{
+									background: "#fff",
+									padding: 12,
+									borderRadius: 8,
+									border: "1px solid #e5e7eb",
+									fontFamily: "serif",
+									fontSize: 20,
+									fontStyle: "italic",
+									overflowWrap: "anywhere",
+								}}
+							>
+								{b.signatureData || b.guestName}
+							</div>
+						)}
+					</div>
+				</div>
+			</div>
+		);
+	};
+
 	return (
 		<div
+			className="ops-shell"
 			style={{
-				padding: 24,
+				padding: "clamp(10px, 3vw, 24px)",
 				fontFamily: "system-ui, -apple-system, sans-serif",
 				maxWidth: 1320,
+				width: "100%",
 				margin: "0 auto",
 				color: "#111827",
+				boxSizing: "border-box",
+				overflowX: "hidden",
 			}}
 		>
+			<style>{`
+				.ops-shell, .ops-shell *, .ops-shell *::before, .ops-shell *::after {
+					box-sizing: border-box;
+				}
+				.ops-shell code, .ops-shell pre, .ops-shell a {
+					overflow-wrap: anywhere;
+					word-break: break-word;
+				}
+				.ops-table-wrap {
+					container-type: inline-size;
+					width: 100%;
+					max-width: 100%;
+					overflow-x: auto;
+				}
+				.ops-nav-tabs {
+					display: flex;
+					gap: 8px;
+					flex-wrap: wrap;
+					width: 100%;
+				}
+				@media (max-width: 780px) {
+					.ops-nav-tabs {
+						display: grid;
+						grid-template-columns: repeat(2, minmax(0, 1fr));
+						gap: 6px;
+					}
+					.ops-nav-tabs > button {
+						width: 100%;
+						justify-content: center;
+						text-align: center;
+						white-space: normal !important;
+						line-height: 1.25;
+						padding: 9px 8px !important;
+						font-size: 12px !important;
+					}
+					.ops-table-wrap {
+						overflow-x: visible;
+					}
+					.ops-table,
+					.ops-table tbody,
+					.ops-table tr,
+					.ops-table td {
+						display: block !important;
+						width: 100% !important;
+						max-width: 100% !important;
+						white-space: normal !important;
+					}
+					.ops-table thead {
+						display: none !important;
+					}
+					.ops-table tr.ops-data-row {
+						border: 1px solid #d1d5db !important;
+						border-radius: 10px !important;
+						padding: 12px !important;
+						margin-bottom: 12px !important;
+						box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+					}
+					.ops-table tr.ops-expanded-row {
+						border: 2px solid #8b5cf6 !important;
+						border-radius: 10px !important;
+						padding: 0 !important;
+						margin-top: -6px !important;
+						margin-bottom: 16px !important;
+						background: #f9fafb !important;
+					}
+					.ops-table td {
+						padding: 5px 0 !important;
+						border: none !important;
+						max-width: 100% !important;
+					}
+					.ops-table tr.ops-expanded-row > td {
+						padding: 10px !important;
+					}
+					.ops-table td[data-label]::before {
+						content: attr(data-label);
+						display: block;
+						font-size: 10px;
+						font-weight: 700;
+						text-transform: uppercase;
+						letter-spacing: 0.05em;
+						color: #6b7280;
+						margin-bottom: 2px;
+					}
+				}
+			`}</style>
 			{statusBanner && (
 				<div
 					style={{
@@ -1068,8 +2471,15 @@ export function App() {
 					paddingBottom: 16,
 				}}
 			>
-				<div>
-					<h1 style={{ margin: 0, fontSize: 26, fontWeight: 800 }}>
+				<div style={{ minWidth: 0 }}>
+					<h1
+						style={{
+							margin: 0,
+							fontSize: "clamp(18px, 4vw, 26px)",
+							fontWeight: 800,
+							lineHeight: 1.25,
+						}}
+					>
 						CodingCat.dev Revenue &amp; Booking OS ({envLabel})
 					</h1>
 					<p style={{ margin: "4px 0 0", color: "#4b5563", fontSize: 13 }}>
@@ -1094,7 +2504,7 @@ export function App() {
 					</p>
 				</div>
 
-				<div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+				<div className="ops-nav-tabs">
 					<button
 						type="button"
 						onClick={() => setActiveTab("schedule")}
@@ -1239,7 +2649,7 @@ export function App() {
 				<div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
 					<section
 						style={{
-							padding: 20,
+							padding: "clamp(12px, 3vw, 20px)",
 							border: "1px solid #e5e7eb",
 							borderRadius: 12,
 							background: "#fff",
@@ -1306,7 +2716,8 @@ export function App() {
 						<div
 							style={{
 								display: "grid",
-								gridTemplateColumns: "repeat(auto-fit, minmax(340px, 1fr))",
+								gridTemplateColumns:
+									"repeat(auto-fit, minmax(min(100%, 300px), 1fr))",
 								gap: 16,
 								marginBottom: 24,
 							}}
@@ -1314,10 +2725,11 @@ export function App() {
 							{/* Action Card 1: Unapproved Holds */}
 							<div
 								style={{
-									padding: 16,
+									padding: "clamp(12px, 3vw, 16px)",
 									borderRadius: 10,
 									border: "1px solid #fde68a",
 									background: "#fffbeb",
+									minWidth: 0,
 								}}
 							>
 								<h3 style={{ margin: "0 0 8px", fontSize: 15, color: "#92400e" }}>
@@ -1375,7 +2787,7 @@ export function App() {
 														flexWrap: "wrap",
 													}}
 												>
-													<div>
+													<div style={{ minWidth: 0 }}>
 														<div style={{ fontWeight: 700, fontSize: 13 }}>
 															{b.guestName} ({b.company || "Independent"})
 														</div>
@@ -1384,7 +2796,26 @@ export function App() {
 															{b.guestEmail}
 														</div>
 													</div>
-													<div style={{ display: "flex", gap: 6 }}>
+													<div
+														style={{
+															display: "flex",
+															gap: 6,
+															flexWrap: "wrap",
+														}}
+													>
+														<button
+															type="button"
+															onClick={() =>
+																setExpandedScheduleBookingId((prev) =>
+																	prev === b._id ? null : b._id,
+																)
+															}
+															style={primaryBtnStyle}
+														>
+															{expandedScheduleBookingId === b._id
+																? "Hide Run-of-Show"
+																: "📝 Run-of-Show"}
+														</button>
 														<button
 															type="button"
 															disabled={
@@ -1419,6 +2850,11 @@ export function App() {
 															✕ Cancel
 														</button>
 													</div>
+													{expandedScheduleBookingId === b._id && (
+														<div style={{ width: "100%", marginTop: 8 }}>
+															{renderBookingDetailsPanel(b)}
+														</div>
+													)}
 												</div>
 											))}
 									</div>
@@ -1428,10 +2864,11 @@ export function App() {
 							{/* Action Card 2: Active Deals Needing Action */}
 							<div
 								style={{
-									padding: 16,
+									padding: "clamp(12px, 3vw, 16px)",
 									borderRadius: 10,
 									border: "1px solid #bfdbfe",
 									background: "#eff6ff",
+									minWidth: 0,
 								}}
 							>
 								<h3 style={{ margin: "0 0 8px", fontSize: 15, color: "#1e40af" }}>
@@ -1477,7 +2914,7 @@ export function App() {
 														flexWrap: "wrap",
 													}}
 												>
-													<div>
+													<div style={{ minWidth: 0 }}>
 														<div style={{ fontWeight: 700, fontSize: 13 }}>
 															{lead.companyName}{" "}
 															<span
@@ -1500,7 +2937,13 @@ export function App() {
 															{lead.contactEmail}
 														</div>
 													</div>
-													<div style={{ display: "flex", gap: 6 }}>
+													<div
+														style={{
+															display: "flex",
+															gap: 6,
+															flexWrap: "wrap",
+														}}
+													>
 														<a
 															href={portalUrl}
 															target="_blank"
@@ -1551,8 +2994,9 @@ export function App() {
 							<h3 style={{ margin: "0 0 12px", fontSize: 16 }}>
 								📅 Ongoing Multi-Calendar Schedule (Next 45 Days)
 							</h3>
-							<div style={{ overflowX: "auto" }}>
+							<div className="ops-table-wrap">
 								<table
+									className="ops-table"
 									style={{
 										width: "100%",
 										borderCollapse: "collapse",
@@ -1660,159 +3104,260 @@ export function App() {
 													(b.status === "approved" ||
 														b.status === "scheduled" ||
 														b.status === "recorded");
+												const isExpandedInSchedule =
+													b && expandedScheduleBookingId === b._id;
+												const token = b
+													? b.portalToken ||
+														b._id.replace(/^(private\.)?booking-/, "")
+													: "";
+												const portalUrl = b
+													? `${siteOrigin}/portal/${token}`
+													: "";
+												const assetCount = b?.sharedAssets?.length || 0;
+												const gmailUrl = b
+													? b.gmailThreadId
+														? `https://mail.google.com/mail/u/0/#inbox/${b.gmailThreadId}`
+														: `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(b.guestEmail)}&su=${encodeURIComponent(b.gmailSubject || `CodingCat.dev Podcast: ${b.guestName} (${b.company || "Recording"}) | Studio Portal & Booking Details`)}`
+													: "";
+
 												return (
-													<tr
-														key={item.id}
-														style={{
-															borderBottom: "1px solid #f3f4f6",
-															background: b ? "#f5f3ff" : "#fff",
-														}}
-													>
-														<td
+													<>
+														<tr
+															key={item.id}
+															className="ops-data-row"
 															style={{
-																padding: "10px 8px",
-																whiteSpace: "nowrap",
-																fontWeight: 700,
+																borderBottom: "1px solid #f3f4f6",
+																background: b ? "#f5f3ff" : "#fff",
 															}}
 														>
-															{formatDateTime(item.startAt)}
-														</td>
-														<td style={{ padding: "10px 8px" }}>
-															<span
+															<td
+																data-label="Date & Time (ET)"
 																style={{
-																	padding: "2px 8px",
-																	borderRadius: 999,
-																	fontSize: 11,
+																	padding: "10px 8px",
+																	whiteSpace: "nowrap",
 																	fontWeight: 700,
-																	background: b ? "#ede9fe" : "#f3f4f6",
-																	color: b ? "#5b21b6" : "#374151",
 																}}
 															>
-																{item.calendarLabel}
-															</span>
-														</td>
-														<td style={{ padding: "10px 8px", fontWeight: 600 }}>
-															{item.title}
-															{b && (
-																<div
+																{formatDateTime(item.startAt)}
+															</td>
+															<td
+																data-label="Calendar / Source"
+																style={{ padding: "10px 8px" }}
+															>
+																<span
 																	style={{
+																		padding: "2px 8px",
+																		borderRadius: 999,
 																		fontSize: 11,
-																		color: "#6b7280",
-																		fontWeight: 400,
+																		fontWeight: 700,
+																		background: b ? "#ede9fe" : "#f3f4f6",
+																		color: b ? "#5b21b6" : "#374151",
+																		display: "inline-block",
 																	}}
 																>
-																	{b.guestEmail} ·{" "}
-																	{b.bookingSource === "passionfroot"
-																		? "🌱 Passionfroot"
-																		: "⚡ Direct Book"}
-																</div>
-															)}
-														</td>
-														<td style={{ padding: "10px 8px" }}>
-															{b ? (
-																<div>
-																	<span
+																	{item.calendarLabel}
+																</span>
+															</td>
+															<td
+																data-label="Event / Podcast Recording"
+																style={{ padding: "10px 8px", fontWeight: 600 }}
+															>
+																{item.title}
+																{b && (
+																	<div
 																		style={{
-																			padding: "2px 7px",
-																			borderRadius: 999,
 																			fontSize: 11,
-																			fontWeight: 700,
-																			background: isApproved
-																				? "#dcfce7"
-																				: "#fef3c7",
-																			color: isApproved ? "#065f46" : "#92400e",
+																			color: "#6b7280",
+																			fontWeight: 400,
 																		}}
 																	>
-																		{isApproved
-																			? "✓ Approved (StreamYard Sent)"
-																			: "⏳ Hold (Pending Approval)"}
-																	</span>
-																	<div style={{ marginTop: 4, fontSize: 11 }}>
-																		<a
-																			href="https://streamyard.com/c4kv26is93"
-																			target="_blank"
-																			rel="noreferrer"
+																		{b.guestEmail} ·{" "}
+																		{b.bookingSource === "passionfroot"
+																			? "🌱 Passionfroot"
+																			: "⚡ Direct Book"}
+																		{b.runOfShowUpdatedBy && (
+																			<>
+																				{" · "}
+																				<span
+																					style={{
+																						color: "#4B2E83",
+																						fontWeight: 600,
+																					}}
+																				>
+																					✓ RoS by {b.runOfShowUpdatedBy}
+																				</span>
+																			</>
+																		)}
+																	</div>
+																)}
+															</td>
+															<td
+																data-label="Status & Studio Link"
+																style={{ padding: "10px 8px" }}
+															>
+																{b ? (
+																	<div>
+																		<span
 																			style={{
-																				color: "#2563eb",
-																				fontWeight: 600,
+																				padding: "2px 7px",
+																				borderRadius: 999,
+																				fontSize: 11,
+																				fontWeight: 700,
+																				background: isApproved
+																					? "#dcfce7"
+																					: "#fef3c7",
+																				color: isApproved
+																					? "#065f46"
+																					: "#92400e",
+																				display: "inline-block",
 																			}}
 																		>
-																			StreamYard Studio ↗
-																		</a>
+																			{isApproved
+																				? "✓ Approved (StreamYard Sent)"
+																				: "⏳ Hold (Pending Approval)"}
+																		</span>
+																		<div style={{ marginTop: 4, fontSize: 11 }}>
+																			<a
+																				href={
+																					b.recordingUrl ||
+																					"https://streamyard.com/c4kv26is93"
+																				}
+																				target="_blank"
+																				rel="noreferrer"
+																				style={{
+																					color: "#2563eb",
+																					fontWeight: 600,
+																				}}
+																			>
+																				StreamYard Studio ↗
+																			</a>
+																		</div>
 																	</div>
-																</div>
-															) : (
-																<span
-																	style={{ fontSize: 12, color: "#6b7280" }}
-																>
-																	Calendar Busy Block
-																</span>
-															)}
-														</td>
-														<td style={{ padding: "10px 8px" }}>
-															{b ? (
-																<div
-																	style={{
-																		display: "flex",
-																		gap: 6,
-																		flexWrap: "wrap",
-																	}}
-																>
-																	{!isApproved && (
+																) : (
+																	<span
+																		style={{ fontSize: 12, color: "#6b7280" }}
+																	>
+																		Calendar Busy Block
+																	</span>
+																)}
+															</td>
+															<td
+																data-label="Quick Actions"
+																style={{ padding: "10px 8px" }}
+															>
+																{b ? (
+																	<div
+																		style={{
+																			display: "flex",
+																			gap: 6,
+																			flexWrap: "wrap",
+																		}}
+																	>
+																		<button
+																			type="button"
+																			onClick={() =>
+																				setExpandedScheduleBookingId(
+																					isExpandedInSchedule ? null : b._id,
+																				)
+																			}
+																			style={primaryBtnStyle}
+																			title="Open 2-Way Run-of-Show, Pre-Call Notes, Guest Questions & Sanity Media Vault"
+																		>
+																			{isExpandedInSchedule
+																				? "Hide Run-of-Show"
+																				: `📝 Run-of-Show & Vault (${assetCount})`}
+																		</button>
+																		<a
+																			href={`${portalUrl}#run-of-show`}
+																			target="_blank"
+																			rel="noreferrer"
+																			style={btnStyle}
+																			title="Open Guest Studio Portal directly at #run-of-show"
+																		>
+																			Portal ↗
+																		</a>
+																		{gmailUrl && (
+																			<a
+																				href={gmailUrl}
+																				target="_blank"
+																				rel="noreferrer"
+																				style={btnStyle}
+																				title="Open canonical guest email thread in Gmail"
+																			>
+																				Gmail ↗
+																			</a>
+																		)}
+																		{!isApproved && (
+																			<button
+																				type="button"
+																				disabled={
+																					busyActionId ===
+																					`${b._id}:approve_recording`
+																				}
+																				onClick={() =>
+																					handleBookingManage(
+																						b._id,
+																						"approve_recording",
+																					)
+																				}
+																				style={{
+																					...btnStyle,
+																					background: "#059669",
+																					borderColor: "#059669",
+																					color: "#fff",
+																				}}
+																			>
+																				✓ Approve
+																			</button>
+																		)}
 																		<button
 																			type="button"
 																			disabled={
 																				busyActionId ===
-																				`${b._id}:approve_recording`
+																				`${b._id}:cancel_booking`
 																			}
 																			onClick={() =>
 																				handleBookingManage(
 																					b._id,
-																					"approve_recording",
+																					"cancel_booking",
 																				)
 																			}
 																			style={{
 																				...btnStyle,
-																				background: "#059669",
-																				borderColor: "#059669",
-																				color: "#fff",
+																				color: "#b91c1c",
+																				borderColor: "#fca5a5",
 																			}}
 																		>
-																			✓ Approve
+																			✕ Cancel
 																		</button>
-																	)}
-																	<button
-																		type="button"
-																		disabled={
-																			busyActionId === `${b._id}:cancel_booking`
-																		}
-																		onClick={() =>
-																			handleBookingManage(
-																				b._id,
-																				"cancel_booking",
-																			)
-																		}
-																		style={{
-																			...btnStyle,
-																			color: "#b91c1c",
-																			borderColor: "#fca5a5",
-																		}}
+																	</div>
+																) : item.streamyardUrl ? (
+																	<a
+																		href={item.streamyardUrl}
+																		target="_blank"
+																		rel="noreferrer"
+																		style={btnStyle}
 																	>
-																		✕ Cancel
-																	</button>
-																</div>
-															) : item.streamyardUrl ? (
-																<a
-																	href={item.streamyardUrl}
-																	target="_blank"
-																	rel="noreferrer"
-																	style={btnStyle}
-																>
-																	Open in GCal ↗
-																</a>
-															) : null}
-														</td>
-													</tr>
+																		Open in GCal ↗
+																	</a>
+																) : null}
+															</td>
+														</tr>
+														{b && isExpandedInSchedule && (
+															<tr
+																key={`${item.id}-schedule-expanded`}
+																className="ops-expanded-row"
+																style={{
+																	background: "#f9fafb",
+																	borderBottom: "2px solid #e5e7eb",
+																}}
+															>
+																<td colSpan={5} style={{ padding: 14 }}>
+																	{renderBookingDetailsPanel(b)}
+																</td>
+															</tr>
+														)}
+													</>
 												);
 											});
 										})()}
@@ -2163,8 +3708,9 @@ export function App() {
 							</form>
 						)}
 
-						<div style={{ overflowX: "auto" }}>
+						<div className="ops-table-wrap" style={{ overflowX: "auto" }}>
 							<table
+								className="ops-table"
 								style={{
 									width: "100%",
 									borderCollapse: "collapse",
@@ -2211,9 +3757,10 @@ export function App() {
 											<>
 												<tr
 													key={lead._id}
+													className="ops-data-row"
 													style={{ borderBottom: "1px solid #f3f4f6" }}
 												>
-													<td style={{ padding: "10px 8px", fontWeight: 700 }}>
+													<td data-label="Company & Source" style={{ padding: "10px 8px", fontWeight: 700 }}>
 														<div>{lead.companyName}</div>
 														<div
 															style={{
@@ -2263,13 +3810,14 @@ export function App() {
 															)}
 														</div>
 													</td>
-													<td style={{ padding: "10px 8px" }}>
+													<td data-label="Contact" style={{ padding: "10px 8px" }}>
 														<a
 															href={`mailto:${lead.contactEmail}`}
 															style={{
 																color: "#2563eb",
 																textDecoration: "none",
 																fontWeight: 500,
+																overflowWrap: "anywhere",
 															}}
 														>
 															{lead.contactName
@@ -2277,7 +3825,7 @@ export function App() {
 																: lead.contactEmail}
 														</a>
 													</td>
-													<td style={{ padding: "10px 8px", maxWidth: 280 }}>
+													<td data-label="Package & Notes" style={{ padding: "10px 8px", maxWidth: 280 }}>
 														<div style={{ fontWeight: 600 }}>
 															{RATE_CARD_TIERS[lead.rateCard || ""]?.label ||
 																lead.rateCard ||
@@ -2296,6 +3844,7 @@ export function App() {
 														)}
 													</td>
 													<td
+														data-label="Total / Payout & Billing"
 														style={{
 															padding: "10px 8px",
 															whiteSpace: "nowrap",
@@ -2337,7 +3886,7 @@ export function App() {
 															</div>
 														)}
 													</td>
-													<td style={{ padding: "10px 8px" }}>
+													<td data-label="Stage (Editable)" style={{ padding: "10px 8px" }}>
 														<select
 															value={lead.status || "new"}
 															onChange={(e) =>
@@ -2365,7 +3914,7 @@ export function App() {
 															))}
 														</select>
 													</td>
-													<td style={{ padding: "10px 8px" }}>
+													<td data-label="Execute / Actions" style={{ padding: "10px 8px" }}>
 														<div
 															style={{
 																display: "flex",
@@ -2447,17 +3996,18 @@ export function App() {
 												{isExpanded && (
 													<tr
 														key={`${lead._id}-crm-expanded`}
+														className="ops-expanded-row"
 														style={{
 															background: "#f9fafb",
 															borderBottom: "2px solid #e5e7eb",
 														}}
 													>
-														<td colSpan={6} style={{ padding: 16 }}>
+														<td colSpan={6} style={{ padding: "clamp(10px, 2.5vw, 16px)" }}>
 															<div
 																style={{
 																	display: "grid",
 																	gridTemplateColumns:
-																		"repeat(auto-fit, minmax(320px, 1fr))",
+																		"repeat(auto-fit, minmax(min(100%, 280px), 1fr))",
 																	gap: 16,
 																}}
 															>
@@ -2671,6 +4221,8 @@ export function App() {
 																			justifyContent: "space-between",
 																			alignItems: "center",
 																			marginBottom: 8,
+																			flexWrap: "wrap",
+																			gap: 6,
 																		}}
 																	>
 																		<h4
@@ -2705,6 +4257,7 @@ export function App() {
 																				margin: "0 0 10px",
 																				fontSize: 12,
 																				color: "#6b7280",
+																				overflowWrap: "anywhere",
 																			}}
 																		>
 																			No shared assets yet. Share{" "}
@@ -2774,6 +4327,7 @@ export function App() {
 																				borderRadius: 6,
 																				border: "1px solid #d1d5db",
 																				fontSize: 12,
+																				boxSizing: "border-box",
 																			}}
 																		/>
 																		<input
@@ -2792,6 +4346,7 @@ export function App() {
 																				borderRadius: 6,
 																				border: "1px solid #d1d5db",
 																				fontSize: 12,
+																				boxSizing: "border-box",
 																			}}
 																		/>
 																		<button
@@ -2826,7 +4381,7 @@ export function App() {
 
 					<section
 						style={{
-							padding: 20,
+							padding: "clamp(12px, 3vw, 20px)",
 							border: "1px solid #e5e7eb",
 							borderRadius: 12,
 							background: "#fff",
@@ -2838,6 +4393,8 @@ export function App() {
 								justifyContent: "space-between",
 								alignItems: "center",
 								marginBottom: 16,
+								flexWrap: "wrap",
+								gap: 12,
 							}}
 						>
 							<div>
@@ -2877,6 +4434,8 @@ export function App() {
 											style={{
 												display: "flex",
 												justifyContent: "space-between",
+												flexWrap: "wrap",
+												gap: 8,
 											}}
 										>
 											<strong>
@@ -2910,7 +4469,7 @@ export function App() {
 				<div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
 					<section
 						style={{
-							padding: 20,
+							padding: "clamp(12px, 3vw, 20px)",
 							border: "1px solid #e5e7eb",
 							borderRadius: 12,
 							background: "#fff",
@@ -3055,8 +4614,9 @@ export function App() {
 							))}
 						</div>
 
-						<div style={{ overflowX: "auto" }}>
+						<div className="ops-table-wrap" style={{ overflowX: "auto" }}>
 							<table
+								className="ops-table"
 								style={{
 									width: "100%",
 									borderCollapse: "collapse",
@@ -3099,15 +4659,19 @@ export function App() {
 										const portalUrl = `${siteOrigin}/portal/${token}`;
 										const vaultUrl = `${portalUrl}#vault`;
 										const assetCount = b.sharedAssets?.length || 0;
-										const gmailComposeUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(b.guestEmail)}&su=${encodeURIComponent(`CodingCat.dev Podcast: ${b.guestName} (${b.company || "Recording"})`)}`;
+										const gmailComposeUrl = b.gmailThreadId
+											? `https://mail.google.com/mail/u/0/#inbox/${b.gmailThreadId}`
+											: `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(b.guestEmail)}&su=${encodeURIComponent(`CodingCat.dev Podcast: ${b.guestName} (${b.company || "Independent"}) | Studio Portal & Booking Details`)}`;
 
 										return (
 											<>
 												<tr
 													key={b._id}
+													className="ops-data-row"
 													style={{ borderBottom: "1px solid #f3f4f6" }}
 												>
 													<td
+														data-label="Slot & Pre-Meeting"
 														style={{
 															padding: "10px 8px",
 															whiteSpace: "nowrap",
@@ -3170,7 +4734,7 @@ export function App() {
 																)}
 														</div>
 													</td>
-													<td style={{ padding: "10px 8px" }}>
+													<td data-label="Guest, Company & Source" style={{ padding: "10px 8px" }}>
 														<div
 															style={{
 																display: "flex",
@@ -3195,7 +4759,7 @@ export function App() {
 																{isPf ? "🌱 Passionfroot" : "⚡ Direct Book"}
 															</span>
 														</div>
-														<div style={{ fontSize: 12, color: "#4b5563" }}>
+														<div style={{ fontSize: 12, color: "#4b5563", overflowWrap: "anywhere" }}>
 															{b.company || "Independent"} ·{" "}
 															<a
 																href={`mailto:${b.guestEmail}`}
@@ -3219,7 +4783,7 @@ export function App() {
 															)}
 														</div>
 													</td>
-													<td style={{ padding: "10px 8px" }}>
+													<td data-label="Track" style={{ padding: "10px 8px" }}>
 														<span
 															style={{
 																padding: "3px 8px",
@@ -3240,7 +4804,7 @@ export function App() {
 															{b.track || "editorial"}
 														</span>
 													</td>
-													<td style={{ padding: "10px 8px" }}>
+													<td data-label="E-SIGN & Studio" style={{ padding: "10px 8px" }}>
 														<div>
 															{b.signatureData ? (
 																<span
@@ -3301,7 +4865,7 @@ export function App() {
 															)}
 														</div>
 													</td>
-													<td style={{ padding: "10px 8px" }}>
+													<td data-label="Status (Editable)" style={{ padding: "10px 8px" }}>
 														<select
 															value={b.status || "pending"}
 															onChange={(e) =>
@@ -3332,7 +4896,7 @@ export function App() {
 															))}
 														</select>
 													</td>
-													<td style={{ padding: "10px 8px" }}>
+													<td data-label="Actions" style={{ padding: "10px 8px" }}>
 														<div
 															style={{
 																display: "flex",
@@ -3340,6 +4904,19 @@ export function App() {
 																flexWrap: "wrap",
 															}}
 														>
+															<button
+																type="button"
+																onClick={() =>
+																	setExpandedBookingId(
+																		isExpanded ? null : b._id,
+																	)
+																}
+																style={primaryBtnStyle}
+															>
+																{isExpanded
+																	? "Hide Run-of-Show"
+																	: `📝 Run-of-Show, E-SIGN & Vault (${assetCount})`}
+															</button>
 															{!isApproved && (
 																<button
 																	type="button"
@@ -3427,19 +5004,6 @@ export function App() {
 																	Skip Pre-Call
 																</button>
 															)}
-															<button
-																type="button"
-																onClick={() =>
-																	setExpandedBookingId(
-																		isExpanded ? null : b._id,
-																	)
-																}
-																style={primaryBtnStyle}
-															>
-																	{isExpanded
-																		? "Hide Details"
-																		: `Run-of-Show, E-SIGN & Vault (${assetCount})`}
-																</button>
 															<a
 																href={vaultUrl}
 																target="_blank"
@@ -3465,7 +5029,7 @@ export function App() {
 																rel="noreferrer"
 																style={btnStyle}
 															>
-																Email Guest ↗
+																{b.gmailThreadId ? "Gmail Thread ↗" : "Email Guest ↗"}
 															</a>
 															<button
 																type="button"
@@ -3500,561 +5064,14 @@ export function App() {
 												{isExpanded && (
 													<tr
 														key={`${b._id}-expanded`}
+														className="ops-expanded-row"
 														style={{
 															background: "#f9fafb",
 															borderBottom: "2px solid #e5e7eb",
 														}}
 													>
-														<td colSpan={6} style={{ padding: 16 }}>
-															<div
-																style={{
-																	display: "grid",
-																	gridTemplateColumns:
-																		"repeat(auto-fit, minmax(280px, 1fr))",
-																	gap: 16,
-																}}
-															>
-																<div>
-																	<h4
-																		style={{
-																			margin: "0 0 8px",
-																			fontSize: 13,
-																			color: "#111827",
-																		}}
-																	>
-																		Proposed Talking Points &amp; Session Goals:
-																	</h4>
-																	<pre
-																		style={{
-																			margin: 0,
-																			whiteSpace: "pre-wrap",
-																			fontFamily: "inherit",
-																			fontSize: 13,
-																			lineHeight: 1.5,
-																			background: "#fff",
-																			padding: 12,
-																			borderRadius: 8,
-																			border: "1px solid #e5e7eb",
-																		}}
-																	>
-																		{b.topics || "No talking points provided."}
-																	</pre>
-																	<div
-																		style={{
-																			marginTop: 10,
-																			padding: 10,
-																			borderRadius: 8,
-																			background: "#fff",
-																			border: "1px solid #e5e7eb",
-																			fontSize: 12,
-																		}}
-																	>
-																		<div>
-																			<strong>StreamYard Studio:</strong>{" "}
-																			<a
-																				href={
-																					b.recordingUrl ||
-																					"https://streamyard.com/c4kv26is93"
-																				}
-																				target="_blank"
-																				rel="noreferrer"
-																				style={{ color: "#2563eb" }}
-																			>
-																				{b.recordingUrl ||
-																					"https://streamyard.com/c4kv26is93"}{" "}
-																				↗
-																			</a>
-																		</div>
-																		{b.preMeetingMeetUrl && (
-																			<div style={{ marginTop: 4 }}>
-																				<strong>
-																					15m Google Meet Pre-Call:
-																				</strong>{" "}
-																				<a
-																					href={b.preMeetingMeetUrl}
-																					target="_blank"
-																					rel="noreferrer"
-																					style={{ color: "#059669" }}
-																				>
-																					{b.preMeetingMeetUrl} ↗
-																				</a>{" "}
-																				({formatDateTime(b.preMeetingSlotStartAt)})
-																			</div>
-																		)}
-																	</div>
-																</div>
-																<div>
-																	<h4
-																		style={{
-																			margin: "0 0 8px",
-																			fontSize: 13,
-																			color: "#111827",
-																		}}
-																	>
-																		E-SIGN Media Release Signature (
-																		{b.signedAt
-																			? formatDateTime(b.signedAt)
-																			: "Recorded"}
-																		):
-																	</h4>
-																	{b.signatureData?.startsWith("data:image/") ? (
-																		<div
-																			style={{
-																				background: "#fff",
-																				padding: 12,
-																				borderRadius: 8,
-																				border: "1px solid #e5e7eb",
-																				display: "inline-block",
-																			}}
-																		>
-																			<img
-																				src={b.signatureData}
-																				alt={`${b.guestName} signature`}
-																				style={{
-																					maxHeight: 90,
-																					maxWidth: "100%",
-																				}}
-																			/>
-																		</div>
-																	) : (
-																		<div
-																			style={{
-																				background: "#fff",
-																				padding: 12,
-																				borderRadius: 8,
-																				border: "1px solid #e5e7eb",
-																				fontFamily: "serif",
-																				fontSize: 20,
-																				fontStyle: "italic",
-																			}}
-																		>
-																			{b.signatureData || b.guestName}
-																		</div>
-																	)}
-																</div>
-																<div
-																	style={{
-																		background: "#fff",
-																		padding: 12,
-																		borderRadius: 8,
-																		border: "1px solid #e5e7eb",
-																	}}
-																>
-																	<div
-																		style={{
-																			display: "flex",
-																			justifyContent: "space-between",
-																			alignItems: "center",
-																			marginBottom: 8,
-																		}}
-																	>
-																		<h4
-																			style={{
-																				margin: 0,
-																				fontSize: 13,
-																				color: "#111827",
-																			}}
-																		>
-																			📁 Sanity Media Library Vault ({assetCount}
-																			)
-																		</h4>
-																		<button
-																			type="button"
-																			onClick={() =>
-																				handleCopy(
-																					vaultUrl,
-																					`book-vault-${b._id}`,
-																				)
-																			}
-																			style={btnStyle}
-																		>
-																			{copiedId === `book-vault-${b._id}`
-																				? "✓ Copied"
-																				: "Copy #vault URL"}
-																		</button>
-																	</div>
-																	{assetCount === 0 ? (
-																		<p
-																			style={{
-																				margin: "0 0 8px",
-																				fontSize: 12,
-																				color: "#6b7280",
-																			}}
-																		>
-																			Guest can drop headshots, slides, or B-roll
-																			at <code>{vaultUrl}</code>.
-																		</p>
-																	) : (
-																		<ul
-																			style={{
-																				margin: "0 0 8px",
-																				paddingLeft: 18,
-																				fontSize: 12,
-																				lineHeight: 1.6,
-																			}}
-																		>
-																			{(b.sharedAssets || []).map((a, idx) => (
-																				<li key={a._key || idx}>
-																					<strong>{a.title}</strong> (
-																					{a.uploadedBy || "partner"})
-																					{(a.externalUrl || a.fileUrl) && (
-																						<>
-																							{" · "}
-																							<a
-																								href={
-																									a.externalUrl || a.fileUrl
-																								}
-																								target="_blank"
-																								rel="noreferrer"
-																								style={{ color: "#2563eb" }}
-																							>
-																								Open ↗
-																							</a>
-																						</>
-																					)}
-																				</li>
-																			))}
-																		</ul>
-																	)}
-																	<div
-																		style={{
-																			display: "flex",
-																			gap: 6,
-																			flexWrap: "wrap",
-																		}}
-																	>
-																		<input
-																			value={vaultTitleInput[b._id] || ""}
-																			onChange={(e) =>
-																				setVaultTitleInput((prev) => ({
-																					...prev,
-																					[b._id]: e.target.value,
-																				}))
-																			}
-																			placeholder="Asset title..."
-																			style={{
-																				flex: 1,
-																				minWidth: 110,
-																				padding: "5px 8px",
-																				borderRadius: 6,
-																				border: "1px solid #d1d5db",
-																				fontSize: 12,
-																			}}
-																		/>
-																		<input
-																			value={vaultUrlInput[b._id] || ""}
-																			onChange={(e) =>
-																				setVaultUrlInput((prev) => ({
-																					...prev,
-																					[b._id]: e.target.value,
-																				}))
-																			}
-																			placeholder="https://..."
-																			style={{
-																				flex: 1,
-																				minWidth: 130,
-																				padding: "5px 8px",
-																				borderRadius: 6,
-																				border: "1px solid #d1d5db",
-																				fontSize: 12,
-																			}}
-																		/>
-																		<button
-																			type="button"
-																			disabled={
-																				busyActionId === `${b._id}:vault`
-																			}
-																			onClick={() =>
-																				handleAddSharedAssetLink(
-																					b._id,
-																					token,
-																					isPf ? "passionfroot" : "direct",
-																				)
-																			}
-																			style={btnStyle}
-																		>
-																			+ Add
-																		</button>
-																	</div>
-																</div>
-															</div>
-
-															{/* Shared 2-Way Run-of-Show & Pre-Call Notes Co-Editor */}
-															{(() => {
-																const currentRos = rosDrafts[b._id] || {
-																	preCallNotes: b.preCallNotes || "",
-																	runOfShowNotes: b.runOfShowNotes || "",
-																	guestQuestions: b.guestQuestions || "",
-																};
-																return (
-																	<div
-																		style={{
-																			marginTop: 16,
-																			padding: 16,
-																			borderRadius: 10,
-																			background: "#fff",
-																			border: "2px solid #c4b5fd",
-																		}}
-																	>
-																		<div
-																			style={{
-																				display: "flex",
-																				justifyContent: "space-between",
-																				alignItems: "center",
-																				flexWrap: "wrap",
-																				gap: 8,
-																				marginBottom: 12,
-																			}}
-																		>
-																			<div>
-																				<h4
-																					style={{
-																						margin: 0,
-																						fontSize: 14,
-																						color: "#4B2E83",
-																					}}
-																				>
-																					📝 2-Way Run-of-Show &amp; Pre-Call
-																					Coordination Notes (Syncs Live with{" "}
-																					<code>{portalUrl}#run-of-show</code>)
-																				</h4>
-																				<div
-																					style={{
-																						fontSize: 11,
-																						color: "#6b7280",
-																						marginTop: 2,
-																					}}
-																				>
-																					Both you and{" "}
-																					<strong>{b.guestName}</strong> can
-																					edit these notes before and during the
-																					session.
-																					{b.runOfShowUpdatedAt
-																						? ` Last saved ${formatDateTime(b.runOfShowUpdatedAt)} by ${b.runOfShowUpdatedBy || "Host"}.`
-																						: ""}
-																				</div>
-																			</div>
-																			<div
-																				style={{
-																					display: "flex",
-																					gap: 6,
-																					flexWrap: "wrap",
-																				}}
-																			>
-																				<button
-																					type="button"
-																					onClick={() =>
-																						setRosDrafts((prev) => ({
-																							...prev,
-																							[b._id]: {
-																								preCallNotes:
-																									currentRos.preCallNotes ||
-																									[
-																										`• Target Audience Takeaway: Practical mental model + live demo of ${b.company || b.guestName}`,
-																										`• Screen-Share Check: 1080p editor/browser zoomed to 125%-150%`,
-																										`• Audio/Video Check: Headphones on (no echo in StreamYard)`,
-																									].join("\n"),
-																								guestQuestions:
-																									currentRos.guestQuestions ||
-																									[
-																										`• Must-Ask #1: What developer pain point sparked ${b.company || "this project"}?`,
-																										`• Must-Ask #2: Walk us through the architecture & live code`,
-																										`• Lower-Third Links: ${b.socialUrl || "https://codingcat.dev"}`,
-																									].join("\n"),
-																								runOfShowNotes: [
-																									`00:00 - 03:00 | 1. Cold Open & Origin Story`,
-																									`  • Welcome ${b.guestName} (${b.company || "Guest"}) to CodingCat.dev`,
-																									`  • The 30-second elevator pitch: What problem were you tired of hitting in production?`,
-																									``,
-																									`03:00 - 12:00 | 2. Architecture Mental Model`,
-																									`  • How developers used to wire this up vs. how ${b.company || b.guestName} approaches it`,
-																									`  • Under-the-hood primitives, state flow, and developer ergonomics`,
-																									``,
-																									`12:00 - 28:00 | 3. Show Me the Code (Live Screen-Share / Demo)`,
-																									`  • Step-by-step walkthrough in real code (zero slideware)`,
-																									`  • Key workflows, CLI/UI ergonomics, and live inspection`,
-																									``,
-																									`28:00 - 38:00 | 4. Production Trade-Offs & Sharp Edges`,
-																									`  • Where this shines vs. when teams should use something else`,
-																									`  • Security, performance, and scaling gotchas`,
-																									``,
-																									`38:00 - 45:00 | 5. Verdict, Roadmap & Where to Try It`,
-																									`  • What is shipping next on the roadmap`,
-																									`  • Links to docs, GitHub repo, and starter templates`,
-																								].join("\n"),
-																							},
-																						}))
-																					}
-																					style={btnStyle}
-																				>
-																					Load 5-Part Episode Template
-																				</button>
-																				<button
-																					type="button"
-																					onClick={() =>
-																						handleCopy(
-																							`${portalUrl}#run-of-show`,
-																							`ros-link-${b._id}`,
-																						)
-																					}
-																					style={btnStyle}
-																				>
-																					{copiedId === `ros-link-${b._id}`
-																						? "✓ Copied #run-of-show URL"
-																						: "Copy #run-of-show URL"}
-																				</button>
-																				<button
-																					type="button"
-																					disabled={
-																						busyActionId === `${b._id}:ros`
-																					}
-																					onClick={() =>
-																						handleSaveRunOfShow(
-																							b._id,
-																							currentRos,
-																						)
-																					}
-																					style={primaryBtnStyle}
-																				>
-																					{busyActionId === `${b._id}:ros`
-																						? "Saving..."
-																						: "💾 Save Run-of-Show to Sanity"}
-																				</button>
-																			</div>
-																		</div>
-
-																		<div
-																			style={{
-																				display: "grid",
-																				gridTemplateColumns:
-																					"repeat(auto-fit, minmax(280px, 1fr))",
-																				gap: 12,
-																			}}
-																		>
-																			<div
-																				style={{
-																					display: "flex",
-																					flexDirection: "column",
-																					gap: 8,
-																				}}
-																			>
-																				<div>
-																					<label
-																						style={{
-																							display: "block",
-																							fontSize: 11,
-																							fontWeight: 700,
-																							color: "#374151",
-																							marginBottom: 4,
-																						}}
-																					>
-																						1. 15m Pre-Call Alignment &amp; Tech
-																						Check Notes:
-																					</label>
-																					<textarea
-																						rows={5}
-																						value={currentRos.preCallNotes}
-																						onChange={(e) =>
-																							setRosDrafts((prev) => ({
-																								...prev,
-																								[b._id]: {
-																									...currentRos,
-																									preCallNotes: e.target.value,
-																								},
-																							}))
-																						}
-																						placeholder="Pre-call takeaways, screen-share setup, bio/pronunciation notes..."
-																						style={{
-																							width: "100%",
-																							padding: 8,
-																							borderRadius: 6,
-																							border: "1px solid #d1d5db",
-																							fontFamily: "monospace",
-																							fontSize: 12,
-																							lineHeight: 1.4,
-																						}}
-																					/>
-																				</div>
-																				<div>
-																					<label
-																						style={{
-																							display: "block",
-																							fontSize: 11,
-																							fontWeight: 700,
-																							color: "#374151",
-																							marginBottom: 4,
-																						}}
-																					>
-																						2. Guest Prompts, Links &amp;
-																						Lower-Third Callouts:
-																					</label>
-																					<textarea
-																						rows={4}
-																						value={currentRos.guestQuestions}
-																						onChange={(e) =>
-																							setRosDrafts((prev) => ({
-																								...prev,
-																								[b._id]: {
-																									...currentRos,
-																									guestQuestions:
-																										e.target.value,
-																								},
-																							}))
-																						}
-																						placeholder="Must-ask questions, GitHub repo URL, docs links..."
-																						style={{
-																							width: "100%",
-																							padding: 8,
-																							borderRadius: 6,
-																							border: "1px solid #d1d5db",
-																							fontFamily: "monospace",
-																							fontSize: 12,
-																							lineHeight: 1.4,
-																						}}
-																					/>
-																				</div>
-																			</div>
-																			<div>
-																				<label
-																					style={{
-																						display: "block",
-																						fontSize: 11,
-																						fontWeight: 700,
-																						color: "#374151",
-																						marginBottom: 4,
-																					}}
-																				>
-																					3. 45-Minute Episode Run-of-Show
-																					Outline (5-Part Arc):
-																				</label>
-																				<textarea
-																					rows={11}
-																					value={currentRos.runOfShowNotes}
-																					onChange={(e) =>
-																						setRosDrafts((prev) => ({
-																							...prev,
-																							[b._id]: {
-																								...currentRos,
-																								runOfShowNotes: e.target.value,
-																							},
-																						}))
-																					}
-																					placeholder="00:00 - 03:00 | 1. Cold Open & Origin Story..."
-																					style={{
-																						width: "100%",
-																						padding: 8,
-																						borderRadius: 6,
-																						border: "1px solid #d1d5db",
-																						fontFamily: "monospace",
-																						fontSize: 12,
-																						lineHeight: 1.4,
-																					}}
-																				/>
-																			</div>
-																		</div>
-																	</div>
-																);
-															})()}
+														<td colSpan={6} style={{ padding: "clamp(10px, 2.5vw, 16px)" }}>
+															{renderBookingDetailsPanel(b)}
 														</td>
 													</tr>
 												)}
@@ -4073,7 +5090,7 @@ export function App() {
 				<div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
 					<section
 						style={{
-							padding: 20,
+							padding: "clamp(12px, 3vw, 20px)",
 							border: "1px solid #e5e7eb",
 							borderRadius: 12,
 							background: "#fff",
@@ -4092,8 +5109,9 @@ export function App() {
 							<strong>🌱 Passionfroot Managed Billing</strong>.
 						</p>
 
-						<div style={{ overflowX: "auto" }}>
+						<div className="ops-table-wrap" style={{ overflowX: "auto" }}>
 							<table
+								className="ops-table"
 								style={{
 									width: "100%",
 									borderCollapse: "collapse",
@@ -4145,15 +5163,17 @@ export function App() {
 											<>
 												<tr
 													key={lead._id}
+													className="ops-data-row"
 													style={{ borderBottom: "1px solid #f3f4f6" }}
 												>
-													<td style={{ padding: "10px 8px", fontWeight: 700 }}>
+													<td data-label="Company & Billing Provider" style={{ padding: "10px 8px", fontWeight: 700 }}>
 														<div>{lead.companyName}</div>
 														<div
 															style={{
 																display: "flex",
 																gap: 6,
 																alignItems: "center",
+																flexWrap: "wrap",
 																marginTop: 4,
 															}}
 														>
@@ -4176,16 +5196,17 @@ export function App() {
 																	fontSize: 11,
 																	color: "#6b7280",
 																	fontWeight: 400,
+																	overflowWrap: "anywhere",
 																}}
 															>
 																{lead.contactEmail}
 															</span>
 														</div>
 													</td>
-													<td style={{ padding: "10px 8px" }}>
+													<td data-label="Deal Room Token" style={{ padding: "10px 8px", overflowWrap: "anywhere" }}>
 														<code>{token}</code>
 													</td>
-													<td style={{ padding: "10px 8px" }}>
+													<td data-label="50% Upfront Deposit / PF Gross" style={{ padding: "10px 8px" }}>
 														{isPf ? (
 															<span
 																style={{
@@ -4212,7 +5233,7 @@ export function App() {
 															</span>
 														)}
 													</td>
-													<td style={{ padding: "10px 8px" }}>
+													<td data-label="50% Publish Balance / PF Net Payout" style={{ padding: "10px 8px" }}>
 														{isPf ? (
 															<span
 																style={{
@@ -4238,7 +5259,7 @@ export function App() {
 															</span>
 														)}
 													</td>
-													<td style={{ padding: "10px 8px" }}>
+													<td data-label="Billing Actions" style={{ padding: "10px 8px" }}>
 														<div
 															style={{
 																display: "flex",
@@ -4328,17 +5349,18 @@ export function App() {
 												{isExpanded && (
 													<tr
 														key={`${lead._id}-deliv`}
+														className="ops-expanded-row"
 														style={{
 															background: "#f9fafb",
 															borderBottom: "2px solid #e5e7eb",
 														}}
 													>
-														<td colSpan={5} style={{ padding: 14 }}>
+														<td colSpan={5} style={{ padding: "clamp(10px, 2.5vw, 14px)" }}>
 															<div
 																style={{
 																	display: "grid",
 																	gridTemplateColumns:
-																		"repeat(auto-fit, minmax(280px, 1fr))",
+																		"repeat(auto-fit, minmax(min(100%, 260px), 1fr))",
 																	gap: 16,
 																}}
 															>
@@ -4373,7 +5395,7 @@ export function App() {
 																							href={d.url}
 																							target="_blank"
 																							rel="noreferrer"
-																							style={{ color: "#2563eb" }}
+																							style={{ color: "#2563eb", overflowWrap: "anywhere" }}
 																						>
 																							{d.url} ↗
 																						</a>
@@ -4445,7 +5467,7 @@ export function App() {
 			{!loading && activeTab === "syndication" && (
 				<section
 					style={{
-						padding: 20,
+						padding: "clamp(12px, 3vw, 20px)",
 						border: "1px solid #e5e7eb",
 						borderRadius: 12,
 						background: "#fff",
@@ -4521,8 +5543,9 @@ export function App() {
 							</a>
 						</div>
 					</div>
-					<div style={{ overflowX: "auto" }}>
+					<div className="ops-table-wrap" style={{ overflowX: "auto" }}>
 						<table
+							className="ops-table"
 							style={{
 								width: "100%",
 								borderCollapse: "collapse",
@@ -4559,9 +5582,11 @@ export function App() {
 									return (
 										<tr
 											key={item._id}
+											className="ops-data-row"
 											style={{ borderBottom: "1px solid #f3f4f6" }}
 										>
 											<td
+												data-label="Date"
 												style={{
 													padding: "8px 6px",
 													whiteSpace: "nowrap",
@@ -4570,7 +5595,7 @@ export function App() {
 											>
 												{(item.date || "").slice(0, 10)}
 											</td>
-											<td style={{ padding: "8px 6px" }}>
+											<td data-label="Type" style={{ padding: "8px 6px" }}>
 												<span
 													style={{
 														fontSize: 11,
@@ -4583,7 +5608,7 @@ export function App() {
 													{item._type}
 												</span>
 											</td>
-											<td style={{ padding: "8px 6px", fontWeight: 600 }}>
+											<td data-label="Title (Canonical)" style={{ padding: "8px 6px", fontWeight: 600 }}>
 												<a
 													href={canonical}
 													target="_blank"
@@ -4593,7 +5618,7 @@ export function App() {
 													{item.title} ↗
 												</a>
 											</td>
-											<td style={{ padding: "8px 6px" }}>
+											<td data-label="YouTube" style={{ padding: "8px 6px" }}>
 												{item.youtube ? (
 													<a
 														href={item.youtube}
@@ -4607,7 +5632,7 @@ export function App() {
 													<span style={{ color: "#9ca3af" }}>-</span>
 												)}
 											</td>
-											<td style={{ padding: "8px 6px" }}>
+											<td data-label="daily.dev Squad" style={{ padding: "8px 6px" }}>
 												{item.dailydev ? (
 													<a
 														href={item.dailydev}
@@ -4621,7 +5646,7 @@ export function App() {
 													<span style={{ color: "#9ca3af" }}>-</span>
 												)}
 											</td>
-											<td style={{ padding: "8px 6px" }}>
+											<td data-label="Dev.to" style={{ padding: "8px 6px" }}>
 												{item.devto ? (
 													<a
 														href={item.devto}
@@ -4635,7 +5660,7 @@ export function App() {
 													<span style={{ color: "#9ca3af" }}>-</span>
 												)}
 											</td>
-											<td style={{ padding: "8px 6px" }}>
+											<td data-label="Hashnode" style={{ padding: "8px 6px" }}>
 												{hnUrl ? (
 													<a
 														href={hnUrl}
@@ -4649,7 +5674,7 @@ export function App() {
 													<span style={{ color: "#9ca3af" }}>-</span>
 												)}
 											</td>
-											<td style={{ padding: "8px 6px" }}>
+											<td data-label="AWS Builder" style={{ padding: "8px 6px" }}>
 												{item.awsbuilder ? (
 													<a
 														href={item.awsbuilder}
@@ -4663,7 +5688,7 @@ export function App() {
 													<span style={{ color: "#9ca3af" }}>-</span>
 												)}
 											</td>
-											<td style={{ padding: "8px 6px" }}>
+											<td data-label="Medium / Reddit" style={{ padding: "8px 6px" }}>
 												{item.medium && (
 													<a
 														href={item.medium}
@@ -4702,7 +5727,7 @@ export function App() {
 				<div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
 					<section
 						style={{
-							padding: 20,
+							padding: "clamp(12px, 3vw, 20px)",
 							border: "1px solid #e5e7eb",
 							borderRadius: 12,
 							background: "#fff",
@@ -4732,8 +5757,9 @@ export function App() {
 							</div>
 						</div>
 
-						<div style={{ overflowX: "auto" }}>
+						<div className="ops-table-wrap" style={{ overflowX: "auto" }}>
 							<table
+								className="ops-table"
 								style={{
 									width: "100%",
 									borderCollapse: "collapse",
@@ -4780,9 +5806,11 @@ export function App() {
 										return (
 											<tr
 												key={draft._id}
+												className="ops-data-row"
 												style={{ borderBottom: "1px solid #f3f4f6" }}
 											>
 												<td
+													data-label="Updated"
 													style={{
 														padding: "10px 6px",
 														whiteSpace: "nowrap",
@@ -4791,7 +5819,7 @@ export function App() {
 												>
 													{formatDateTime(draft._updatedAt || draft._createdAt)}
 												</td>
-												<td style={{ padding: "10px 6px" }}>
+												<td data-label="Type" style={{ padding: "10px 6px" }}>
 													<span
 														style={{
 															fontSize: 11,
@@ -4806,7 +5834,7 @@ export function App() {
 														{draft._type}
 													</span>
 												</td>
-												<td style={{ padding: "10px 6px" }}>
+												<td data-label="Draft ID & Title" style={{ padding: "10px 6px" }}>
 													<div style={{ fontWeight: 700 }}>
 														{draft.title || "(Untitled Draft)"}
 													</div>
@@ -4815,12 +5843,14 @@ export function App() {
 															fontSize: 11,
 															color: "#6b7280",
 															fontFamily: "monospace",
+															overflowWrap: "anywhere",
 														}}
 													>
 														{draft._id}
 													</div>
 												</td>
 												<td
+													data-label="Blocks / Cover"
 													style={{
 														padding: "10px 6px",
 														whiteSpace: "nowrap",
@@ -4840,6 +5870,7 @@ export function App() {
 													</span>
 												</td>
 												<td
+													data-label="Excerpt Preview"
 													style={{
 														padding: "10px 6px",
 														maxWidth: 320,
@@ -4849,7 +5880,7 @@ export function App() {
 												>
 													{draft.excerpt || "No excerpt set."}
 												</td>
-												<td style={{ padding: "10px 6px" }}>
+												<td data-label="Review & Actions" style={{ padding: "10px 6px" }}>
 													<div
 														style={{
 															display: "flex",
@@ -4911,7 +5942,7 @@ export function App() {
 
 					<section
 						style={{
-							padding: 20,
+							padding: "clamp(12px, 3vw, 20px)",
 							border: "1px solid #e5e7eb",
 							borderRadius: 12,
 							background: "#fff",
@@ -4940,8 +5971,9 @@ export function App() {
 							</div>
 						</div>
 
-						<div style={{ overflowX: "auto" }}>
+						<div className="ops-table-wrap" style={{ overflowX: "auto" }}>
 							<table
+								className="ops-table"
 								style={{
 									width: "100%",
 									borderCollapse: "collapse",
@@ -4970,9 +6002,11 @@ export function App() {
 											<>
 												<tr
 													key={trend._id}
+													className="ops-data-row"
 													style={{ borderBottom: "1px solid #f3f4f6" }}
 												>
 													<td
+														data-label="Score"
 														style={{
 															padding: "10px 6px",
 															fontWeight: 800,
@@ -4985,6 +6019,7 @@ export function App() {
 														{trend.score || 0}/100
 													</td>
 													<td
+														data-label="Source"
 														style={{
 															padding: "10px 6px",
 															whiteSpace: "nowrap",
@@ -4994,7 +6029,7 @@ export function App() {
 													>
 														{trend.source || "web"}
 													</td>
-													<td style={{ padding: "10px 6px", maxWidth: 440 }}>
+													<td data-label="Topic & Summary" style={{ padding: "10px 6px", maxWidth: 440 }}>
 														<div style={{ fontWeight: 700 }}>
 															{trend.sourceUrl ? (
 																<a
@@ -5022,7 +6057,7 @@ export function App() {
 															{trend.summary || trend.rawMetrics}
 														</div>
 													</td>
-													<td style={{ padding: "10px 6px" }}>
+													<td data-label="Status" style={{ padding: "10px 6px" }}>
 														<select
 															value={trend.status || "discovered"}
 															onChange={(e) =>
@@ -5045,7 +6080,7 @@ export function App() {
 															<option value="ignored">Ignored</option>
 														</select>
 													</td>
-													<td style={{ padding: "10px 6px" }}>
+													<td data-label="Review & Social Copy" style={{ padding: "10px 6px" }}>
 														<div
 															style={{
 																display: "flex",
@@ -5094,17 +6129,18 @@ export function App() {
 												{isExpanded && (
 													<tr
 														key={`${trend._id}-social`}
+														className="ops-expanded-row"
 														style={{
 															background: "#f9fafb",
 															borderBottom: "2px solid #e5e7eb",
 														}}
 													>
-														<td colSpan={5} style={{ padding: 16 }}>
+														<td colSpan={5} style={{ padding: "clamp(10px, 2.5vw, 16px)" }}>
 															<div
 																style={{
 																	display: "grid",
 																	gridTemplateColumns:
-																		"repeat(auto-fit, minmax(280px, 1fr))",
+																		"repeat(auto-fit, minmax(min(100%, 260px), 1fr))",
 																	gap: 12,
 																}}
 															>

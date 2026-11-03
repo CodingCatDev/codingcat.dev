@@ -8,12 +8,19 @@ import FormattedDate from "@/components/FormattedDate.astro";
 import PodcastListen from "@/components/PodcastListen.astro";
 import PodcastPicks from "@/components/PodcastPicks.astro";
 import PortableTextContent from "@/components/portable-text/PortableTextContent.astro";
+import PtYouTube from "@/components/portable-text/PtYouTube.astro";
 import SectionHeader from "@/components/SectionHeader.astro";
 import SponsorCard from "@/components/SponsorCard.astro";
 import TranscriptModal from "@/components/TranscriptModal.astro";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import type { ContentListItem } from "@/lib/content";
-import { morePodcastQuery, podcastQuery } from "@/lib/sanity/queries";
+import {
+	type ExplicitRelatedVideo,
+	type RelatedCandidate,
+	resolveRelatedContentList,
+	resolveRelatedVideo,
+} from "@/lib/related-content";
+import { podcastQuery, relatedCandidatesQuery } from "@/lib/sanity/queries";
 import {
 	articleSchema,
 	breadcrumbSchema,
@@ -32,11 +39,9 @@ if (!podcast?._id) {
 	return new Response(null, { status: 404 });
 }
 
-const more = await sanity.loadQuery(morePodcastQuery, {
+const candidates = ((await sanity.loadQuery(relatedCandidatesQuery, {
 	skip: podcast._id,
-	offset: 0,
-	limit: 2,
-});
+})) ?? []) as unknown as RelatedCandidate[];
 
 const path = `/podcast/${slug}`;
 const origin = Astro.locals.siteUrl.origin;
@@ -57,6 +62,19 @@ const transcriptText =
 const matchedTopics = matchTopicsForText(
 	`${podcast.title ?? ""} ${podcast.excerpt ?? ""}`,
 );
+const podcastWithRelated = podcast as typeof podcast & {
+	tags?: Array<{ label?: string | null; value?: string | null }> | null;
+	relatedVideo?: ExplicitRelatedVideo | null;
+	relatedContent?: RelatedCandidate[] | null;
+};
+const resolvedRelatedVideo = !podcast.youtube
+	? resolveRelatedVideo(podcastWithRelated, candidates, matchedTopics)
+	: null;
+const more = resolveRelatedContentList(podcastWithRelated, candidates, {
+	limit: 2,
+	preferSameType: true,
+	currentTopics: matchedTopics,
+});
 const videoSchema = podcast.youtube
 	? videoObjectSchema(
 			origin,
@@ -266,6 +284,47 @@ const faqNode = faqSchema(extractFaqsFromPortableText(podcast.content));
 			kind="podcast"
 			tags={guests.map((g) => g.title)}
 		/>
+
+		{
+			!podcast.youtube && resolvedRelatedVideo && (
+				<section class="my-10 rounded-3xl border-2 border-[#2A1155] bg-[#FAF9FC] p-6 shadow-sketch dark:border-white/25 dark:bg-[#131B2E]">
+					<div class="mb-4 flex flex-wrap items-start justify-between gap-3">
+						<div>
+							<div class="flex flex-wrap items-center gap-2">
+								<span class="inline-flex items-center gap-1.5 rounded-full border border-[#FF0000]/40 bg-[#FF0000]/10 px-3 py-0.5 font-mono text-[11px] font-extrabold uppercase tracking-wider text-[#DC2626] dark:border-[#FF0000]/50 dark:bg-[#FF0000]/20 dark:text-red-300">
+									▶ Watch on @CodingCatDev YouTube
+								</span>
+								{resolvedRelatedVideo.contentTypeLabel && (
+									<span class="inline-flex items-center rounded-full border border-[#7C3AED]/35 bg-[#EDE9FE] px-2.5 py-0.5 font-mono text-[11px] font-bold text-[#4C1D95] dark:border-purple-400/35 dark:bg-purple-950/70 dark:text-purple-200">
+										{resolvedRelatedVideo.contentTypeLabel}
+									</span>
+								)}
+							</div>
+							<h2 class="mt-2 font-display text-2xl font-black text-[#2A1155] dark:text-white">
+								Watch the Related Video Deep Dive: {resolvedRelatedVideo.title}
+							</h2>
+							<p class="mt-1 text-sm font-medium text-[#2A1155]/75 dark:text-slate-300">
+								{resolvedRelatedVideo.description}
+							</p>
+						</div>
+						{resolvedRelatedVideo.href && (
+							<a
+								href={resolvedRelatedVideo.href}
+								class="inline-flex shrink-0 items-center gap-1.5 rounded-xl border-2 border-[#2A1155] bg-white px-3.5 py-1.5 font-mono text-xs font-extrabold text-[#2A1155] shadow-sketch-sm transition hover:border-[#7C3AED] hover:bg-[#EDE9FE] hover:text-[#7C3AED] dark:border-white/25 dark:bg-[#0B1326] dark:text-white dark:hover:border-[#C084FC]"
+							>
+								<span>View Full Page →</span>
+							</a>
+						)}
+					</div>
+					<PtYouTube
+						node={{ _type: "youtube", youtube: resolvedRelatedVideo.youtube }}
+						coverImage={resolvedRelatedVideo.coverImage}
+						index={0}
+						isInline={false}
+					/>
+				</section>
+			)
+		}
 	</article>
 
 	<div class="mx-auto max-w-4xl">
@@ -276,7 +335,7 @@ const faqNode = faqSchema(extractFaqsFromPortableText(podcast.content));
 		more.length > 0 && (
 			<aside class="mb-24">
 				<SectionHeader
-					title="recent episodes"
+					title="related episodes"
 					href="/podcasts"
 					linkText="All Episodes"
 				/>

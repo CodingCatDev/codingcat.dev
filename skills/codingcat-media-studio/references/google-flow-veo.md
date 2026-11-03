@@ -22,7 +22,7 @@ When generating a 9:16 vertical Short or 16:9 talking-head clip of `@alex.patter
 Cinematic 9:16 vertical video, photorealistic, 4k resolution. Front-facing talking head shot of @alex.patterson speaking directly to the camera with audio and synchronized lip movement.
 
 Spoken Dialogue / Voiceover:
-"[Insert punchy 12-to-20 word spoken script here. Zero em-dashes. Direct, authoritative Senior Solutions Engineer delivery.]"
+"[Insert punchy 12-to-20 word spoken script here. Zero em-dashes. Direct, authoritative Senior Solutions Architect delivery.]"
 
 Subject appearance and likeness:
 A man in his mid-40s with short styled light-brown hair, warm blue-green eyes, and a neatly trimmed salt-and-pepper beard. Exact facial features, bone structure, and facial hair pattern matching the presenter from @codingcatthumbnails watermarked_img_7983427428736598214.jpg. He is wearing a clean black crew-neck t-shirt and a sleek round black smartwatch (Google Pixel Watch) on his left wrist. Both hands have no rings, and his right wrist is completely bare.

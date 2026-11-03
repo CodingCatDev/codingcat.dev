@@ -973,7 +973,11 @@ const RATING_OPTIONS = [
 					method: "POST",
 					body: fd,
 				});
-				const data = await res.json();
+				const data = (await res.json()) as {
+					ok?: boolean;
+					message?: string;
+					collaborationThread?: unknown;
+				};
 				if (!res.ok || !data.ok) {
 					throw new Error(data.message || "Failed to submit feedback");
 				}

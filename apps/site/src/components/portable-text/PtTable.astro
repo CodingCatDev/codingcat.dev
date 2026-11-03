@@ -1,8 +1,13 @@
 ---
+import { stegaClean } from "@sanity/client/stega";
 import type { Props as PtProps } from "astro-portabletext/types";
+import TierList from "@/components/TierList.astro";
 
 type TableNode = {
 	_type: "table";
+	title?: string;
+	subtitle?: string;
+	ajComment?: string;
 	rows?: Array<{ _key: string; cells?: string[] }>;
 };
 
@@ -10,46 +15,85 @@ type Props = PtProps<TableNode>;
 
 const { node } = Astro.props;
 
-/**
- * Cells render as plain text. The Next version ran every cell through
- * `react-markdown`; no table block exists in the production dataset, so that
- * dependency was never exercised. If authors do start writing markdown in
- * cells it shows as literal text rather than breaking — a visible prompt to
- * revisit this, and not an HTML injection point in the meantime.
- *
- * The first row becomes the header. The Next version emitted every row as
- * `<td>` inside a bare `<tbody>`, leaving the table without column headers
- * for screen readers.
- */
 const rows = node.rows ?? [];
 const [head, ...body] = rows;
+const headCells = (head?.cells ?? []).map((c) => stegaClean(c) ?? "");
+const bodyRows = body.map((row) =>
+	(row.cells ?? []).map((c) => stegaClean(c) ?? ""),
+);
+
+/**
+ * Automatic Tier List Detection:
+ * Whenever a Portable Text table's first column header is "Tier" or "Tier Rank"
+ * (and body rows use S / A / B / C / D tier ranks), render CodingCat.dev's
+ * signature Chalkboard `<TierList />` component with `<AjMascot pose="code-peek" />`
+ * peeking over the top edge and blinking his eyes.
+ */
+const firstHeaderClean = (headCells[0] ?? "").trim().toLowerCase();
+const isTierList =
+	(firstHeaderClean === "tier" ||
+		firstHeaderClean === "tier rank" ||
+		firstHeaderClean === "rank") &&
+	bodyRows.length > 0 &&
+	bodyRows.every((r) => /^[sabcd](\b|-|\s|$)/i.test((r[0] ?? "").trim()));
 ---
 
 {
-	rows.length > 0 && (
-		<div class="not-prose my-6 overflow-x-auto">
-			<table class="w-full border-collapse text-left text-sm">
-				{head && (
-					<thead>
-						<tr>
-							{(head.cells ?? []).map((cell) => (
-								<th class="border border-border bg-muted px-4 py-3 font-semibold">
-									{cell}
-								</th>
-							))}
-						</tr>
-					</thead>
-				)}
-				<tbody>
-					{body.map((row) => (
-						<tr>
-							{(row.cells ?? []).map((cell) => (
-								<td class="border border-border px-4 py-3">{cell}</td>
-							))}
-						</tr>
-					))}
-				</tbody>
-			</table>
-		</div>
-	)
+	rows.length > 0 &&
+		(isTierList ? (
+			<TierList
+				title={
+					stegaClean(node.title) ||
+					`Alex's Architectural Tier List (${bodyRows.length} Platforms Ranked)`
+				}
+				subtitle={
+					stegaClean(node.subtitle) ||
+					"Ranked from S-Tier (Purrfect Production Pick) to D-Tier across VM isolation, memory topology, MCP ecosystem, and real-world pricing."
+				}
+				ajComment={
+					stegaClean(node.ajComment) ||
+					"I ranked all of them! Watch out for shared VMs... 👀🐾"
+				}
+				headers={headCells}
+				rows={bodyRows}
+			/>
+		) : (
+			<div class="not-prose my-8 overflow-x-auto rounded-2xl border-2 border-[#2A1155] bg-[#FAF9FC] shadow-sketch dark:border-white/20 dark:bg-[#0B1326]">
+				<table class="w-full border-collapse text-left text-sm">
+					{head && (
+						<thead>
+							<tr class="border-b-2 border-[#2A1155] bg-[#EDE9FE] text-[#2A1155] dark:border-white/20 dark:bg-[#131B2E] dark:text-white">
+								{headCells.map((cell) => (
+									<th class="border-r border-[#2A1155]/20 px-4 py-3 font-display font-extrabold last:border-r-0 dark:border-white/15">
+										{cell}
+									</th>
+								))}
+							</tr>
+						</thead>
+					)}
+					<tbody class="divide-y divide-[#2A1155]/15 dark:divide-white/10">
+						{bodyRows.map((cells, rIdx) => (
+							<tr
+								class:list={[
+									"transition-colors hover:bg-[#EDE9FE]/40 dark:hover:bg-white/5",
+									rIdx % 2 === 1 && "bg-white/60 dark:bg-[#131B2E]/40",
+								]}
+							>
+								{cells.map((cell, cIdx) => (
+									<td
+										class:list={[
+											"border-r border-[#2A1155]/15 px-4 py-3 align-top last:border-r-0 dark:border-white/10",
+											cIdx === 0 &&
+												"font-display font-bold text-[#2A1155] dark:text-white",
+										]}
+									>
+										{cell}
+									</td>
+								))}
+							</tr>
+						))}
+					</tbody>
+				</table>
+			</div>
+		))
 }
