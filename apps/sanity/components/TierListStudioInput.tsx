@@ -207,10 +207,12 @@ export function serializeTierItemsToMarkdownTable(
 	return [headerLine, sepLine, ...bodyLines].join("\n");
 }
 
-export function TierListStudioInput(
-	props: ObjectInputProps<StudioTierListValue>,
-) {
-	const { value, onChange } = props;
+// `props: any` matches BlockEditor/YouTubePreview: pnpm resolves two copies of
+// sanity@6.20.0, so ObjectInputProps from this file is not assignable to the
+// one `components.input` expects.
+export function TierListStudioInput(props: any) {
+	const { onChange } = props as ObjectInputProps;
+	const value = props.value as StudioTierListValue | undefined;
 	const current: StudioTierListValue = value ?? { _type: "tierList" };
 	const items: StudioTierItem[] = Array.isArray(current.items)
 		? current.items
