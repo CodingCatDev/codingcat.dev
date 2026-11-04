@@ -15,6 +15,7 @@ import codesandbox from "../custom/codesandbox";
 import html from "../custom/html";
 import twitter from "../custom/twitter-embed";
 import quote from "../custom/quote";
+import tierList from "../custom/tierList";
 import youtube from "../custom/youtube";
 import youtubeShorts from "../custom/youtube-shorts";
 import socialEmbed, {
@@ -122,6 +123,7 @@ const baseType = defineType({
 				defineArrayMember(githubGistEmbed),
 				defineArrayMember(html),
 				defineArrayMember(quote),
+				defineArrayMember(tierList),
 				defineArrayMember({ type: "table" }),
 			],
 		}),
