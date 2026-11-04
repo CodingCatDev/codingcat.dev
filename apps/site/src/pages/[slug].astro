@@ -15,9 +15,11 @@ if (!page?._id) {
 
 const path = `/${slug}`;
 const origin = Astro.locals.siteUrl.origin;
-const ogImageOverride = page.ogImage
+const ogSocialImage = page.ogImage
 	? sanity.resolveOpenGraphImage(page.ogImage, 1200, 630)
-	: undefined;
+	: page.coverImage
+		? sanity.resolveOpenGraphImage(page.coverImage, 1200, 630)
+		: undefined;
 const ogCardImageUrl = sanity
 	.urlForImage(page.coverImage ?? undefined)
 	?.width(640)
@@ -29,7 +31,7 @@ const ogCardImageUrl = sanity
 <BaseLayout
 	title={page.title}
 	description={page.excerpt}
-	image={ogImageOverride}
+	image={ogSocialImage}
 	ogFallback={{
 		title: page.title,
 		subtitle: page.excerpt,
