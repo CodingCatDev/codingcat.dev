@@ -17,10 +17,36 @@ const prodClient = createClient({
   useCdn: false,
 });
 
-const imgBuilder = createImageUrlBuilder({ projectId, dataset: "production" });
+const DEFAULT_MEDIA_LIBRARY_ID =
+  process.env.SANITY_MEDIA_LIBRARY_ID ||
+  process.env.PUBLIC_SANITY_MEDIA_LIBRARY_ID ||
+  "mlttp0BZbCpV";
+const datasetImgBuilder = createImageUrlBuilder({ projectId, dataset: "production" });
+const mediaLibraryBuilders = new Map();
+const getMediaLibraryBuilder = (libraryId) => {
+  let b = mediaLibraryBuilders.get(libraryId);
+  if (!b) {
+    b = createImageUrlBuilder({ mediaLibraryId: libraryId });
+    mediaLibraryBuilders.set(libraryId, b);
+  }
+  return b;
+};
+const extractMediaLibraryId = (source) => {
+  if (!source || typeof source !== "object") return undefined;
+  const mediaRef = source?.media?._ref;
+  if (typeof mediaRef === "string" && mediaRef.startsWith("media-library:")) {
+    const [, libraryId] = mediaRef.split(":");
+    if (libraryId) return libraryId;
+  }
+  return undefined;
+};
 const urlForImage = (source) => {
   if (!source || !source.asset) return undefined;
-  return imgBuilder.image(source).auto("format").fit("max");
+  const mediaLibraryId = extractMediaLibraryId(source) || DEFAULT_MEDIA_LIBRARY_ID;
+  const builder = mediaLibraryId
+    ? getMediaLibraryBuilder(mediaLibraryId)
+    : datasetImgBuilder;
+  return builder.image(source).auto("format").fit("max");
 };
 
 function extractYouTubeId(url) {

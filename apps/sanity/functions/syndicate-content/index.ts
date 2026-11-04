@@ -73,10 +73,45 @@ export const handler = documentEventHandler<ContentDocument>(
 			? `https://codingcat.dev/${data._type}/${slug}`
 			: `https://dev.codingcat.dev/${data._type}/${slug}`;
 
-		const imgBuilder = createImageUrlBuilder({ projectId, dataset });
+		const DEFAULT_MEDIA_LIBRARY_ID =
+			process.env.SANITY_MEDIA_LIBRARY_ID ||
+			process.env.PUBLIC_SANITY_MEDIA_LIBRARY_ID ||
+			"mlttp0BZbCpV";
+		const datasetImgBuilder = createImageUrlBuilder({ projectId, dataset });
+		const mediaLibraryBuilders = new Map<
+			string,
+			ReturnType<typeof createImageUrlBuilder>
+		>();
+		const getMediaLibraryBuilder = (libraryId: string) => {
+			let b = mediaLibraryBuilders.get(libraryId);
+			if (!b) {
+				b = createImageUrlBuilder({
+					mediaLibraryId: libraryId,
+				} as unknown as { projectId: string; dataset: string });
+				mediaLibraryBuilders.set(libraryId, b);
+			}
+			return b;
+		};
+		const extractMediaLibraryId = (source: any): string | undefined => {
+			if (!source || typeof source !== "object") return undefined;
+			const mediaRef = source?.media?._ref;
+			if (
+				typeof mediaRef === "string" &&
+				mediaRef.startsWith("media-library:")
+			) {
+				const [, libraryId] = mediaRef.split(":");
+				if (libraryId) return libraryId;
+			}
+			return undefined;
+		};
 		const urlForImage = (source: any) => {
 			if (!source || !source.asset) return undefined;
-			return imgBuilder.image(source).auto("format").fit("max");
+			const mediaLibraryId =
+				extractMediaLibraryId(source) || DEFAULT_MEDIA_LIBRARY_ID;
+			const builder = mediaLibraryId
+				? getMediaLibraryBuilder(mediaLibraryId)
+				: datasetImgBuilder;
+			return builder.image(source).auto("format").fit("max");
 		};
 
 		const extractYouTubeId = (url: string | undefined): string | null => {
@@ -128,7 +163,40 @@ export const handler = documentEventHandler<ContentDocument>(
 							"```" + (value?.language || "") + "\n" + (value?.code || "") + "\n```",
 						image: ({ value }) => {
 							const url = urlForImage(value)?.url();
-							return url ? `![](${url})` : "";
+							const alt = (value?.alt || "").replace(/[\[\]\r\n]/g, " ").trim();
+							return url ? `![${alt}](${url})` : "";
+						},
+						table: ({ value }) => {
+							const rows = Array.isArray(value?.rows) ? value.rows : [];
+							if (rows.length === 0) return "";
+							const formatRow = (cells: any[]) =>
+								`| ${(Array.isArray(cells) ? cells : [])
+									.map((c) =>
+										String(c ?? "")
+											.replace(/\r?\n/g, " ")
+											.replace(/\|/g, "\\|")
+											.trim(),
+									)
+									.join(" | ")} |`;
+							const headerCells = Array.isArray(rows[0]?.cells)
+								? rows[0].cells
+								: [];
+							if (headerCells.length === 0) return "";
+							const headerLine = formatRow(headerCells);
+							const sepLine = `| ${headerCells.map(() => "---").join(" | ")} |`;
+							const bodyLines = rows
+								.slice(1)
+								.map((r: any) => formatRow(r?.cells || []));
+							const titlePrefix = value?.title ? `### ${value.title}\n\n` : "";
+							return `${titlePrefix}${[headerLine, sepLine, ...bodyLines].join("\n")}`;
+						},
+						htmlBlock: ({ value }) => {
+							const rawHtml = String(value?.html || "");
+							if (!rawHtml) return "";
+							if (/<style|<svg|<script/i.test(rawHtml)) {
+								return `*[Interactive diagram available in the full article on CodingCat.dev](${canonicalUrl})*`;
+							}
+							return rawHtml;
 						},
 						youtube: ({ value }) =>
 							formatYouTubeBlock(value?.youtube || value?.url || "", targetPlatform),
@@ -143,7 +211,21 @@ export const handler = documentEventHandler<ContentDocument>(
 							const id = value?.url?.split("https://codesandbox.io/p/sandbox/")?.at(-1);
 							return `{% codesandbox ${id || value?.url || ""} %}`;
 						},
-						twitter: ({ value }) => `{% twitter ${value?.id || ""} %}`,
+						twitter: ({ value }) => {
+							const id =
+								value?.id ||
+								value?.url?.match(/status(?:es)?\/(\d+)/i)?.[1] ||
+								"";
+							if (targetPlatform === "devto" && id) {
+								return `{% twitter ${id} %}`;
+							}
+							const url =
+								value?.url || (id ? `https://x.com/i/status/${id}` : "");
+							if (targetPlatform === "hashnode" && url) {
+								return `%[${url}]`;
+							}
+							return url ? `[View post on X](${url})` : "";
+						},
 						quote: ({ value }) => `> ${serializeContent(value?.content, targetPlatform)}`,
 					},
 				});

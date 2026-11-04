@@ -39,6 +39,8 @@ jobs:
         run: |
           if [ "$TARGET_DOCUMENT_ID" = "backfill-dailydev" ]; then
             node scripts/backfill-dailydev-and-links.mjs
+          elif [ "$TARGET_DOCUMENT_ID" = "backfill-devto-media-library" ]; then
+            node scripts/backfill-devto-media-library.mjs
           elif [ "$TARGET_DOCUMENT_ID" = "enrich-aeo-seo" ]; then
             SANITY_STUDIO_DATASET=production node scripts/enrich-all-posts-aeo-seo-links.mjs
             SANITY_STUDIO_DATASET=dev node scripts/enrich-all-posts-aeo-seo-links.mjs
