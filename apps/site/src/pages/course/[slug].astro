@@ -30,6 +30,7 @@ interface CourseDetail {
 	slug?: string | null;
 	excerpt?: string | null;
 	coverImage?: CoverImageType | null;
+	ogImage?: CoverImageType | null;
 	videoCloudinary?: { asset?: { _ref?: string } } | null;
 	youtube?: string | null;
 	content?: Array<{
@@ -56,6 +57,10 @@ const allLessons: CourseLesson[] = sections.flatMap((sec) =>
 );
 const firstLesson = allLessons[0] ?? null;
 
+const ogImageOverride = course.ogImage
+	? sanity.resolveOpenGraphImage(course.ogImage, 1200, 630)
+	: undefined;
+
 // Strip legacy blocks mentioning contacting @BrittneyPostma or @codercatdev
 const sanitizedContent = (course.content ?? []).filter((block) => {
 	const blockText = Array.isArray(block?.children)
@@ -68,6 +73,7 @@ const sanitizedContent = (course.content ?? []).filter((block) => {
 <BaseLayout
 	title={`${course.title} | CodingCat.dev Course`}
 	description={course.excerpt}
+	image={ogImageOverride}
 	ogFallback={{
 		title: course.title,
 		subtitle: course.excerpt,

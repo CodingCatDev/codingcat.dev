@@ -62,6 +62,9 @@ const origin = Astro.locals.siteUrl.origin;
 const coverThumbnail = sanity.resolveOpenGraphImage(
 	podcast.coverImage ?? undefined,
 );
+const ogImageOverride = podcast.ogImage
+	? sanity.resolveOpenGraphImage(podcast.ogImage, 1200, 630)
+	: undefined;
 const ogCardImageUrl = sanity
 	.urlForImage(podcast.coverImage ?? undefined)
 	?.width(640)
@@ -110,6 +113,7 @@ const faqNode = faqSchema(extractFaqsFromPortableText(podcast.content));
 <BaseLayout
 	title={podcast.title}
 	description={podcast.excerpt}
+	image={ogImageOverride}
 	ogFallback={{
 		title: podcast.title,
 		subtitle: podcast.excerpt,

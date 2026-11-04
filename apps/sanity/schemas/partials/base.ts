@@ -41,6 +41,14 @@ const baseType = defineType({
 			validation: (rule) => rule.required(),
 		}),
 		defineField({
+			name: "ogImage",
+			title: "Open Graph Override Image",
+			type: "image",
+			options: { hotspot: true },
+			description:
+				"Optional social share card image override. When empty, falls back to prewarmed OG cards or dynamically generated CodingCat.dev cards.",
+		}),
+		defineField({
 			name: "date",
 			title: "Publish Date",
 			type: "datetime",
