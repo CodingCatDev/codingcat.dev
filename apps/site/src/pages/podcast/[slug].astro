@@ -21,6 +21,7 @@ import {
 	resolveRelatedVideo,
 } from "@/lib/related-content";
 import { podcastQuery, relatedCandidatesQuery } from "@/lib/sanity/queries";
+import { getSanityServerClient } from "@/lib/sanity/write-client";
 import {
 	articleSchema,
 	breadcrumbSchema,
@@ -33,11 +34,24 @@ import { matchTopicsForText } from "@/lib/topics";
 
 const { sanity } = Astro.locals;
 const { slug } = Astro.params;
+const wantsDraftPreview =
+	sanity.preview.enabled ||
+	Astro.url.searchParams.get("sanity-preview-perspective") === "drafts";
 
-const podcast = slug ? await sanity.loadQuery(podcastQuery, { slug }) : null;
+let podcast = slug ? await sanity.loadQuery(podcastQuery, { slug }) : null;
+if (!podcast?._id && slug && wantsDraftPreview) {
+	try {
+		const { client } = getSanityServerClient();
+		podcast = (await client.fetch(podcastQuery, { slug })) as typeof podcast;
+	} catch {
+		// Fall through to 404 if draft fetch fails
+	}
+}
 if (!podcast?._id) {
 	return new Response(null, { status: 404 });
 }
+const isDraftPreview =
+	wantsDraftPreview || String(podcast._id).startsWith("drafts.");
 
 const candidates = ((await sanity.loadQuery(relatedCandidatesQuery, {
 	skip: podcast._id,
@@ -151,6 +165,28 @@ const faqNode = faqSchema(extractFaqsFromPortableText(podcast.content));
 	</div>
 
 	<article class="mx-auto min-w-0 max-w-4xl py-4">
+		{isDraftPreview && (
+			<div class="mb-6 flex flex-wrap items-center justify-between gap-3 rounded-2xl border-2 border-amber-500/40 bg-amber-500/10 px-5 py-3.5 text-xs">
+				<div class="flex flex-wrap items-center gap-2.5">
+					<span class="rounded-full bg-amber-500/20 px-2.5 py-0.5 font-mono text-[11px] font-bold uppercase tracking-wider text-amber-700 dark:text-amber-300">
+						👁️ Draft Episode Preview
+					</span>
+					<span class="font-semibold text-foreground">
+						Viewing unpublished Sanity draft ({(podcast as any).workflowStage || "in post-production"}). Review show notes, unlisted rough cut, and speaker links before release.
+					</span>
+				</div>
+				{podcast.youtube && (
+					<a
+						href={podcast.youtube}
+						target="_blank"
+						rel="noopener noreferrer"
+						class="inline-flex items-center gap-1.5 rounded-xl border border-amber-500/40 bg-card px-3 py-1.5 font-mono text-[11px] font-bold text-foreground hover:bg-muted transition-colors"
+					>
+						▶ Open Unlisted YouTube Video &nearr;
+					</a>
+				)}
+			</div>
+		)}
 		{/* Episode Badge & Matched Vendor / Topic Pills */}
 		<div class="mb-4 flex flex-wrap items-center gap-2">
 			<span class="inline-flex items-center gap-2 rounded-full border-2 border-[#2A1155] bg-[#EDE9FE] px-4 py-1 font-mono text-xs font-extrabold uppercase tracking-wider text-[#7C3AED] dark:border-purple-400/40 dark:bg-purple-950/60 dark:text-purple-200 hand-border shadow-sketch-sm">

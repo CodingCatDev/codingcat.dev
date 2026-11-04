@@ -32,6 +32,8 @@ interface ManageBookingPayload {
 		| "schedule_pre_meeting"
 		| "request_recording_slot"
 		| "bypass_pre_meeting"
+		| "mark_needs_reschedule"
+		| "advance_post_production"
 		| "reconcile_calendar_holds"
 		| "migrate_private_ids";
 	bookingId?: string;
@@ -44,6 +46,19 @@ interface ManageBookingPayload {
 	preMeetingSlotStartAt?: string;
 	topics?: string;
 	portalToken?: string;
+	rescheduleReason?: string;
+	isPostPreCall?: boolean;
+	sendEmail?: boolean;
+	emailHeadline?: string;
+	emailIntro?: string;
+	status?: string;
+	roughCutUrl?: string;
+	roughCutNotes?: string;
+	episodeTitle?: string;
+	episodeExcerpt?: string;
+	podcastSlug?: string;
+	targetPublishDate?: string;
+	notifyGuest?: boolean;
 	docs?: Array<Record<string, any>>;
 	patches?: Array<{ id: string; set: Record<string, any> }>;
 }
@@ -647,6 +662,412 @@ export const POST: APIRoute = async ({ request, url }) => {
 				action: "bypass_pre_meeting",
 				bookingId,
 				preMeetingStatus: "bypassed",
+			}),
+			{ status: 200, headers: CORS_HEADERS },
+		);
+	}
+
+	if (body.action === "mark_needs_reschedule") {
+		const isPostPreCall = Boolean(body.isPostPreCall);
+		const oldSlot = doc?.slotStartAt as string | undefined;
+		const reason =
+			body.rescheduleReason?.trim() ||
+			(isPostPreCall
+				? "15-minute pre-call completed: awaiting 60-minute StreamYard recording slot"
+				: "Session on hold: awaiting new 60-minute StreamYard recording slot");
+
+		if (googleCalendarEventId && !isPostPreCall) {
+			try {
+				await cancelGoogleCalendarBookingEvent({
+					eventId: googleCalendarEventId,
+					startAt: slotStartAt,
+					durationMinutes: 60,
+					guestName,
+				});
+			} catch {
+				// Non-fatal
+			}
+		}
+
+		const rescheduleBookUrl = `${portalUrl}#booked-sessions`;
+		const directBookUrl = `${siteUrl}/book?portalToken=${encodeURIComponent(portalToken)}&bookingId=${encodeURIComponent(bookingId)}`;
+
+		const reschedulePatch: Record<string, unknown> = {
+			status: "needs_reschedule",
+			rescheduleReason: reason,
+			portalToken,
+			gmailSubject: canonicalSubject,
+			...(oldSlot ? { previousSlotStartAt: oldSlot } : {}),
+			...(isPostPreCall
+				? {
+						preMeetingStatus: "completed",
+						preMeetingSlotStartAt:
+							body.preMeetingSlotStartAt ||
+							doc?.preMeetingSlotStartAt ||
+							oldSlot,
+					}
+				: {}),
+		};
+
+		if (body.sendEmail !== false && guestEmail) {
+			const headline =
+				body.emailHeadline ||
+				(isPostPreCall
+					? "Pre-Call Complete: Pick Your 60-Minute Podcast Recording Slot"
+					: "Whenever You Are Ready: Pick Your New Podcast Recording Slot");
+			const introParagraph =
+				body.emailIntro ||
+				(isPostPreCall
+					? "great chatting during our pre-call! I updated your Studio Portal to mark the 15-minute pre-call complete and cleared the old placeholder date. Whenever you are ready, click below to pick your 60-minute StreamYard recording slot in one click."
+					: "no rush at all and hope you are feeling much better! I cleared our previous calendar hold so your Studio Portal is open whenever you are ready to pick a new 60-minute recording date in one click.");
+
+			const card = buildPodcastPortalEmailCard({
+				guestName,
+				company,
+				statusBadge: isPostPreCall
+					? "CodingCat.dev Studio · Pre-Call Complete · Awaiting Recording Slot"
+					: "CodingCat.dev Studio · Reschedule Link Ready",
+				headline,
+				introParagraph,
+				slotSummary: reason,
+				portalUrl,
+				primaryCtaLabel: "1. Pick Your New Recording Slot in Portal ->",
+				primaryCtaUrl: rescheduleBookUrl,
+				secondaryCtaLabel: "2. Or Open Direct Calendar Picker ->",
+				secondaryCtaUrl: directBookUrl,
+				runOfShowLines,
+			});
+
+			const emailRes = await sendCodingCatEmailDetailed({
+				to: guestEmail,
+				cc: coordinatorEmails,
+				subject: existingThreadId
+					? `Re: ${canonicalSubject}`
+					: canonicalSubject,
+				text: card.text,
+				html: card.html,
+				...(existingThreadId ? { threadId: existingThreadId } : {}),
+				...(existingMessageId
+					? {
+							inReplyTo: existingMessageId,
+							references: existingMessageId,
+						}
+					: {}),
+			});
+
+			if (emailRes.threadId) {
+				reschedulePatch.gmailThreadId = emailRes.threadId;
+			}
+			if (emailRes.rfc822MessageId) {
+				reschedulePatch.gmailMessageId = emailRes.rfc822MessageId;
+			}
+		}
+
+		if (canWrite) {
+			try {
+				await client
+					.patch(bookingId)
+					.set(reschedulePatch)
+					.unset(["slotStartAt"])
+					.commit();
+			} catch {
+				// Non-fatal
+			}
+		}
+
+		return new Response(
+			JSON.stringify({
+				ok: true,
+				action: "mark_needs_reschedule",
+				bookingId,
+				status: "needs_reschedule",
+				rescheduleReason: reason,
+				previousSlotStartAt: oldSlot || null,
+				portalToken,
+				portalUrl,
+				rescheduleBookUrl,
+				gmailThreadId: reschedulePatch.gmailThreadId || existingThreadId,
+			}),
+			{ status: 200, headers: CORS_HEADERS },
+		);
+	}
+
+	if (body.action === "advance_post_production") {
+		const nextStage = (body.status || "editing").trim();
+		const roughCutUrl =
+			body.roughCutUrl !== undefined
+				? body.roughCutUrl.trim()
+				: (doc?.roughCutUrl as string | undefined) || "";
+		const roughCutNotes =
+			body.roughCutNotes !== undefined
+				? body.roughCutNotes.trim()
+				: (doc?.roughCutNotes as string | undefined) || "";
+
+		const rawTitle =
+			body.episodeTitle?.trim() ||
+			(topics && topics !== "CodingCat.dev Podcast Session"
+				? `${topics
+						.split("\n")[0]
+						.replace(/^Topic:\s*/i, "")
+						.trim()} with ${guestName}`
+				: `${company && company !== guestName ? `${company} Deep Dive` : "Engineering Deep Dive"} with ${guestName}`);
+
+		const slugify = (val: string) =>
+			val
+				.toLowerCase()
+				.replace(/[^a-z0-9]+/g, "-")
+				.replace(/^-+|-+$/g, "")
+				.slice(0, 80);
+
+		const podcastSlug =
+			body.podcastSlug?.trim() ||
+			(doc?.podcastSlug as string | undefined) ||
+			slugify(rawTitle);
+		const draftPodcastId =
+			(doc?.podcastDocId as string | undefined) ||
+			`drafts.podcast-${podcastSlug}`;
+		const publishedPodcastId = draftPodcastId.replace(/^drafts\./, "");
+
+		const recordingDateIso =
+			(doc?.slotStartAt as string | undefined) ||
+			(doc?.previousSlotStartAt as string | undefined) ||
+			new Date().toISOString();
+
+		let createdOrUpdatedPodcastId = draftPodcastId;
+
+		if (canWrite) {
+			try {
+				const existingPodcast = await client.fetch<Record<string, any> | null>(
+					"*[_id in [$draftId, $pubId]][0]",
+					{ draftId: draftPodcastId, pubId: publishedPodcastId },
+				);
+
+				let guestRefId = (doc?.guestDocId as string | undefined)?.replace(
+					/^drafts\./,
+					"",
+				);
+				if (!guestRefId && doc?.guestSlug) {
+					guestRefId = `guest-${doc.guestSlug}`;
+				}
+				if (!guestRefId) {
+					const foundGuest = await client.fetch<{ _id?: string } | null>(
+						`*[_type == "guest" && (slug.current == $slug || title match $name)][0]{ _id }`,
+						{
+							slug: slugify(guestName),
+							name: guestName,
+						},
+					);
+					if (foundGuest?._id) {
+						guestRefId = foundGuest._id.replace(/^drafts\./, "");
+					}
+				}
+
+				const latestEp = await client.fetch<{
+					season?: number;
+					episode?: number;
+				} | null>(
+					`*[_type == "podcast" && defined(season) && defined(episode)] | order(season desc, episode desc)[0]{ season, episode }`,
+				);
+				const defaultSeason = existingPodcast?.season ?? latestEp?.season ?? 6;
+				const defaultEpisode =
+					existingPodcast?.episode ?? (latestEp?.episode ?? 20) + 1;
+
+				const excerptText =
+					body.episodeExcerpt?.trim() ||
+					existingPodcast?.excerpt ||
+					`Alex Patterson sits down with ${guestName}${company && company !== guestName ? ` (${company})` : ""} to explore ${topics.split("\n")[0].trim()}.`;
+
+				const rosLines = (runOfShowLines || [topics]).filter(Boolean);
+				const defaultContentBlocks = [
+					{
+						_key: "intro-block",
+						_type: "block",
+						style: "normal",
+						markDefs: [],
+						children: [
+							{
+								_key: "intro-span",
+								_type: "span",
+								marks: [],
+								text: excerptText,
+							},
+						],
+					},
+					{
+						_key: "ros-heading",
+						_type: "block",
+						style: "h2",
+						markDefs: [],
+						children: [
+							{
+								_key: "ros-heading-span",
+								_type: "span",
+								marks: [],
+								text: "Episode Run-of-Show & Highlights",
+							},
+						],
+					},
+					...rosLines.map((line, idx) => ({
+						_key: `ros-line-${idx}`,
+						_type: "block",
+						style: "normal",
+						markDefs: [],
+						children: [
+							{
+								_key: `ros-span-${idx}`,
+								_type: "span",
+								marks: [],
+								text: line,
+							},
+						],
+					})),
+				];
+
+				const basePodcastDoc: Record<string, any> = {
+					...(existingPodcast || {}),
+					_id: draftPodcastId,
+					_type: "podcast",
+					title: existingPodcast?.title || rawTitle,
+					slug: existingPodcast?.slug || {
+						_type: "slug",
+						current: podcastSlug,
+					},
+					excerpt: excerptText,
+					workflowStage: nextStage,
+					bookingRef: bookingId,
+					season: defaultSeason,
+					episode: defaultEpisode,
+					recordingDate: existingPodcast?.recordingDate || recordingDateIso,
+					date:
+						body.targetPublishDate || existingPodcast?.date || recordingDateIso,
+					...(roughCutUrl
+						? { youtube: roughCutUrl }
+						: existingPodcast?.youtube
+							? { youtube: existingPodcast.youtube }
+							: {}),
+					...(roughCutNotes ? { roughCutNotes } : {}),
+					author: existingPodcast?.author || [
+						{
+							_key: "author-alex",
+							_type: "reference",
+							_ref: "RIgC5r4TJ0hCGOzxHszD1w",
+						},
+					],
+					...(guestRefId && !existingPodcast?.guest
+						? {
+								guest: [
+									{
+										_key: "guest-primary",
+										_type: "reference",
+										_ref: guestRefId,
+										_weak: true,
+									},
+								],
+							}
+						: {}),
+					content: existingPodcast?.content || defaultContentBlocks,
+				};
+
+				await client.createOrReplace(basePodcastDoc as any);
+				createdOrUpdatedPodcastId = draftPodcastId;
+			} catch {
+				// Non-fatal if draft creation encounters a schema reference issue
+			}
+		}
+
+		const draftEpisodePreviewUrl = `${siteUrl}/podcast/${podcastSlug}?sanity-preview-perspective=drafts`;
+		const portalReviewUrl = `${portalUrl}#post-production-review`;
+
+		const bookingPatch: Record<string, unknown> = {
+			status: nextStage,
+			podcastSlug,
+			podcastDocId: createdOrUpdatedPodcastId,
+			portalToken,
+			gmailSubject: canonicalSubject,
+			...(roughCutUrl ? { roughCutUrl } : {}),
+			...(body.targetPublishDate
+				? { targetPublishDate: body.targetPublishDate }
+				: {}),
+		};
+
+		if (body.notifyGuest && guestEmail) {
+			const stageLabelMap: Record<string, string> = {
+				recorded: "Recorded · Entering Post-Production",
+				editing: "In Editing & Post-Production",
+				guest_review: "Rough Cut & Draft Episode Ready for Review",
+				ready_to_publish: "Approved & Queued for Release",
+				published: "Episode Published Live",
+			};
+			const stageLabel = stageLabelMap[nextStage] || "Post-Production Update";
+
+			const card = buildPodcastPortalEmailCard({
+				guestName,
+				company,
+				statusBadge: `CodingCat.dev Studio · ${stageLabel}`,
+				headline:
+					nextStage === "guest_review" && roughCutUrl
+						? "Rough Cut & Draft Episode Page Ready for Your Review"
+						: `Episode Status Update: ${stageLabel}`,
+				introParagraph:
+					nextStage === "guest_review" && roughCutUrl
+						? "your CodingCat.dev Podcast rough cut and draft episode page are ready for review! You can watch the unlisted YouTube rough cut directly inside your Studio Portal, preview the drafted Sanity episode page, and drop any timestamped edit notes in our shared Call Notes chat."
+						: `thanks again for an awesome session! Your episode is now in ${stageLabel}. You can open your Studio Portal anytime to preview the drafted Sanity episode page, watch the unlisted YouTube rough cut once uploaded, or drop timestamped edit notes in our shared Call Notes chat.`,
+				slotSummary: roughCutUrl
+					? `Unlisted YouTube Rough Cut + Draft Page: /podcast/${podcastSlug}`
+					: `Draft Episode Page: /podcast/${podcastSlug}`,
+				portalUrl: portalReviewUrl,
+				primaryCtaLabel: "1. Open Post-Production Portal & Video Review ->",
+				primaryCtaUrl: portalReviewUrl,
+				secondaryCtaLabel: "2. Preview Draft Episode Page ->",
+				secondaryCtaUrl: draftEpisodePreviewUrl,
+				runOfShowLines,
+			});
+
+			const emailRes = await sendCodingCatEmailDetailed({
+				to: guestEmail,
+				cc: coordinatorEmails,
+				subject: existingThreadId
+					? `Re: ${canonicalSubject}`
+					: canonicalSubject,
+				text: card.text,
+				html: card.html,
+				...(existingThreadId ? { threadId: existingThreadId } : {}),
+				...(existingMessageId
+					? {
+							inReplyTo: existingMessageId,
+							references: existingMessageId,
+						}
+					: {}),
+			});
+
+			if (emailRes.threadId) {
+				bookingPatch.gmailThreadId = emailRes.threadId;
+			}
+			if (emailRes.rfc822MessageId) {
+				bookingPatch.gmailMessageId = emailRes.rfc822MessageId;
+			}
+		}
+
+		if (canWrite) {
+			try {
+				await client.patch(bookingId).set(bookingPatch).commit();
+			} catch {
+				// Non-fatal
+			}
+		}
+
+		return new Response(
+			JSON.stringify({
+				ok: true,
+				action: "advance_post_production",
+				bookingId,
+				status: nextStage,
+				podcastSlug,
+				podcastDocId: createdOrUpdatedPodcastId,
+				roughCutUrl: roughCutUrl || null,
+				draftEpisodePreviewUrl,
+				portalReviewUrl,
+				gmailThreadId: bookingPatch.gmailThreadId || existingThreadId,
 			}),
 			{ status: 200, headers: CORS_HEADERS },
 		);

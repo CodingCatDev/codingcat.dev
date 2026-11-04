@@ -23,6 +23,36 @@ export default defineType({
 	fields: [
 		...contentType.fields,
 		defineField({
+			name: "workflowStage",
+			title: "Post-Production Workflow Stage",
+			type: "string",
+			group: "podcast",
+			options: {
+				list: [
+					{ title: "Recorded (Raw Session)", value: "recorded" },
+					{ title: "In Editing / Post-Production", value: "editing" },
+					{ title: "Rough Cut / Guest Review", value: "guest_review" },
+					{ title: "Ready to Publish", value: "ready_to_publish" },
+					{ title: "Published", value: "published" },
+				],
+			},
+			initialValue: "editing",
+		}),
+		defineField({
+			name: "bookingRef",
+			title: "Linked Booking Document ID",
+			type: "string",
+			group: "podcast",
+			description: "Document ID of the originating booking (for example, private.booking-...).",
+		}),
+		defineField({
+			name: "roughCutNotes",
+			title: "Post-Production & Scrub Notes",
+			type: "text",
+			group: "podcast",
+			description: "Internal and guest/PR edit notes (such as visual cuts or PII checks) before publishing.",
+		}),
+		defineField({
 			name: "podcastType",
 			title: "Podcast Type",
 			type: "reference",

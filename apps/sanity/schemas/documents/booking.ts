@@ -71,15 +71,19 @@ export default defineType({
     }),
     defineField({
       name: 'status',
-      title: 'Booking Status',
+      title: 'Booking & Post-Production Workflow Status',
       type: 'string',
       options: {
         list: [
           {title: 'Pending Review / Calendar Hold (Opaque Busy)', value: 'pending'},
+          {title: 'Needs Reschedule / On Hold (Awaiting Slot)', value: 'needs_reschedule'},
           {title: 'Approved (StreamYard Sent)', value: 'approved'},
           {title: 'Scheduled on Google Calendar', value: 'scheduled'},
           {title: 'Confirmed', value: 'confirmed'},
-          {title: 'Recorded', value: 'recorded'},
+          {title: 'Recorded (Raw Session Complete)', value: 'recorded'},
+          {title: 'In Editing / Post-Production', value: 'editing'},
+          {title: 'Rough Cut / Guest Review', value: 'guest_review'},
+          {title: 'Ready to Publish', value: 'ready_to_publish'},
           {title: 'Published', value: 'published'},
           {title: 'Declined / Cancelled', value: 'cancelled'},
         ],
@@ -89,6 +93,41 @@ export default defineType({
     defineField({
       name: 'slotStartAt',
       title: 'Requested Recording Slot (UTC ISO)',
+      type: 'datetime',
+    }),
+    defineField({
+      name: 'previousSlotStartAt',
+      title: 'Previous / Missed Recording Slot (UTC ISO)',
+      type: 'datetime',
+      description: 'Archived timestamp when a booking is moved to Needs Reschedule or rebooked.',
+    }),
+    defineField({
+      name: 'rescheduleReason',
+      title: 'Reschedule / On-Hold Reason',
+      type: 'string',
+      description: 'Context shown in Ops App and Guest Portal when a booking needs a new slot.',
+    }),
+    defineField({
+      name: 'podcastSlug',
+      title: 'Linked Podcast Episode Slug',
+      type: 'string',
+      description: 'Slug of the linked draft or published podcast episode in Sanity.',
+    }),
+    defineField({
+      name: 'podcastDocId',
+      title: 'Linked Podcast Document ID',
+      type: 'string',
+      description: 'Document ID of the linked draft or published podcast episode (for example, drafts.podcast-slug).',
+    }),
+    defineField({
+      name: 'roughCutUrl',
+      title: 'Unlisted YouTube / Rough-Cut Review URL',
+      type: 'url',
+      description: 'Unlisted YouTube video URL (or Descript/Frame link) embedded in the Guest Studio Portal for rough-cut review.',
+    }),
+    defineField({
+      name: 'targetPublishDate',
+      title: 'Target Episode Publish Date (UTC ISO)',
       type: 'datetime',
     }),
     defineField({

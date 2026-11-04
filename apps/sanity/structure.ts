@@ -136,10 +136,38 @@ export const editorialStructure: StructureResolver = (S) =>
 										.schemaType("booking")
 										.apiVersion("2025-02-19")
 										.filter(
-											'_type == "booking" && status in ["approved", "scheduled"] && (_id in path("private.**") || _id in path("*"))',
+											'_type == "booking" && status in ["approved", "scheduled", "confirmed"] && (_id in path("private.**") || _id in path("*"))',
 										)
 										.defaultOrdering([
 											{ field: "slotStartAt", direction: "asc" },
+										]),
+								),
+							S.listItem()
+								.title("Needs Reschedule / On Hold")
+								.child(
+									S.documentList()
+										.title("Needs Reschedule / On Hold")
+										.schemaType("booking")
+										.apiVersion("2025-02-19")
+										.filter(
+											'_type == "booking" && status == "needs_reschedule" && (_id in path("private.**") || _id in path("*"))',
+										)
+										.defaultOrdering([
+											{ field: "_updatedAt", direction: "desc" },
+										]),
+								),
+							S.listItem()
+								.title("Post-Production Pipeline (Recorded / Editing / Guest Review)")
+								.child(
+									S.documentList()
+										.title("Post-Production Pipeline")
+										.schemaType("booking")
+										.apiVersion("2025-02-19")
+										.filter(
+											'_type == "booking" && status in ["recorded", "editing", "guest_review", "ready_to_publish"] && (_id in path("private.**") || _id in path("*"))',
+										)
+										.defaultOrdering([
+											{ field: "_updatedAt", direction: "desc" },
 										]),
 								),
 							S.divider(),
@@ -367,6 +395,45 @@ export const editorialStructure: StructureResolver = (S) =>
 										.schemaType("podcast")
 										.filter(
 											'_type == "podcast" && (_id in path("drafts.**") || _originalId in path("drafts.**"))',
+										)
+										.defaultOrdering([
+											{ field: "_updatedAt", direction: "desc" },
+										]),
+								),
+							S.listItem()
+								.title("Pipeline: In Editing / Post-Production")
+								.child(
+									S.documentList()
+										.title("In Editing / Post-Production")
+										.schemaType("podcast")
+										.filter(
+											'_type == "podcast" && workflowStage in ["recorded", "editing"]',
+										)
+										.defaultOrdering([
+											{ field: "_updatedAt", direction: "desc" },
+										]),
+								),
+							S.listItem()
+								.title("Pipeline: Rough Cut / Guest Review")
+								.child(
+									S.documentList()
+										.title("Rough Cut / Guest Review")
+										.schemaType("podcast")
+										.filter(
+											'_type == "podcast" && workflowStage == "guest_review"',
+										)
+										.defaultOrdering([
+											{ field: "_updatedAt", direction: "desc" },
+										]),
+								),
+							S.listItem()
+								.title("Pipeline: Ready to Publish")
+								.child(
+									S.documentList()
+										.title("Ready to Publish")
+										.schemaType("podcast")
+										.filter(
+											'_type == "podcast" && workflowStage == "ready_to_publish"',
 										)
 										.defaultOrdering([
 											{ field: "_updatedAt", direction: "desc" },

@@ -99,6 +99,16 @@ interface LeadPortalData {
 	bookingDocId?: string;
 	bookingStatus?: string;
 	bookingSlotStartAt?: string;
+	previousSlotStartAt?: string;
+	rescheduleReason?: string;
+	podcastSlug?: string;
+	podcastDocId?: string;
+	podcastTitle?: string;
+	podcastExcerpt?: string;
+	podcastWorkflowStage?: string;
+	roughCutUrl?: string;
+	roughCutNotes?: string;
+	targetPublishDate?: string;
 	appointmentScheduleUrl?: string;
 	recordingUrl?: string;
 	preMeetingStatus?: string;
@@ -383,10 +393,65 @@ try {
 			bookingDoc?.bookingSource === "passionfroot" ||
 			Boolean(token?.startsWith("spt_pf_"));
 		const resolvedBookingStatus = bookingDoc?.status;
+		const isPostProd = [
+			"recorded",
+			"editing",
+			"guest_review",
+			"ready_to_publish",
+			"published",
+		].includes(resolvedBookingStatus || "");
 		const isRecordingApproved =
 			resolvedBookingStatus === "approved" ||
 			resolvedBookingStatus === "scheduled" ||
-			resolvedBookingStatus === "confirmed";
+			resolvedBookingStatus === "confirmed" ||
+			isPostProd;
+
+		const candidatePodcastSlug =
+			bookingDoc?.podcastSlug ||
+			(bookingDoc?.topics
+				? slugifyGuestName(
+						`${String(bookingDoc.topics).split("\n")[0].replace(/^Topic:\s*/i, "")} with ${resolvedGuestName}`,
+					)
+				: "");
+		const linkedPodcastDoc =
+			isPostProd || bookingDoc?.podcastSlug || bookingDoc?.podcastDocId
+				? await client
+						.fetch<{
+							_id: string;
+							title?: string;
+							slug?: { current?: string };
+							excerpt?: string;
+							workflowStage?: string;
+							youtube?: string;
+							roughCutNotes?: string;
+							date?: string;
+						} | null>(
+							`*[_type == "podcast" && (
+								_id in [$docId, $draftId, $pubId] ||
+								slug.current == $podcastSlug ||
+								bookingRef == $bookingId
+							)] | order(_updatedAt desc)[0]{
+								_id,
+								title,
+								slug,
+								excerpt,
+								workflowStage,
+								youtube,
+								roughCutNotes,
+								date
+							}`,
+							{
+								docId:
+									bookingDoc?.podcastDocId ||
+									`drafts.podcast-${candidatePodcastSlug}`,
+								draftId: `drafts.podcast-${candidatePodcastSlug}`,
+								pubId: `podcast-${candidatePodcastSlug}`,
+								podcastSlug: candidatePodcastSlug,
+								bookingId: bookingDoc?._id || "",
+							},
+						)
+						.catch(() => null)
+				: null;
 
 		portalData = {
 			_id: doc?._id || bookingDoc?._id || `private.sponsorLead-${token}`,
@@ -441,6 +506,26 @@ try {
 			bookingDocId: bookingDoc?._id,
 			bookingStatus: resolvedBookingStatus,
 			bookingSlotStartAt: bookingDoc?.slotStartAt,
+			previousSlotStartAt: bookingDoc?.previousSlotStartAt,
+			rescheduleReason: bookingDoc?.rescheduleReason,
+			podcastSlug:
+				linkedPodcastDoc?.slug?.current ||
+				bookingDoc?.podcastSlug ||
+				(isPostProd ? candidatePodcastSlug : undefined),
+			podcastDocId: linkedPodcastDoc?._id || bookingDoc?.podcastDocId,
+			podcastTitle:
+				linkedPodcastDoc?.title ||
+				(bookingDoc?.topics
+					? `${String(bookingDoc.topics).split("\n")[0].replace(/^Topic:\s*/i, "").trim()} with ${resolvedGuestName}`
+					: undefined),
+			podcastExcerpt: linkedPodcastDoc?.excerpt,
+			podcastWorkflowStage:
+				linkedPodcastDoc?.workflowStage || resolvedBookingStatus,
+			roughCutUrl: bookingDoc?.roughCutUrl || linkedPodcastDoc?.youtube,
+			roughCutNotes:
+				linkedPodcastDoc?.roughCutNotes || bookingDoc?.roughCutNotes,
+			targetPublishDate:
+				bookingDoc?.targetPublishDate || linkedPodcastDoc?.date,
 			appointmentScheduleUrl: bookingDoc?.appointmentScheduleUrl,
 			recordingUrl: isRecordingApproved
 				? bookingDoc?.recordingUrl || "https://streamyard.com/c4kv26is93"
@@ -579,14 +664,73 @@ const recordingSlotDetails = formatSessionDetails(
 	portalData.bookingSlotStartAt,
 	45,
 );
+const previousRecordingSlotDetails = formatSessionDetails(
+	portalData.previousSlotStartAt,
+	45,
+);
 const preMeetingSlotDetails = formatSessionDetails(
 	portalData.preMeetingSlotStartAt,
 	15,
 );
+const isNeedsRescheduleStatus =
+	portalData.bookingStatus === "needs_reschedule";
+const isPostProductionStatus = [
+	"recorded",
+	"editing",
+	"guest_review",
+	"ready_to_publish",
+	"published",
+].includes(portalData.bookingStatus || "");
 const isRecordingApprovedStatus =
 	portalData.bookingStatus === "approved" ||
 	portalData.bookingStatus === "scheduled" ||
-	portalData.bookingStatus === "confirmed";
+	portalData.bookingStatus === "confirmed" ||
+	isPostProductionStatus;
+const isPreMeetingCompleted =
+	portalData.preMeetingStatus === "completed" ||
+	(Boolean(preMeetingSlotDetails?.isPast) &&
+		portalData.preMeetingStatus === "scheduled");
+
+const recordingCardBadgeLabel = isNeedsRescheduleStatus
+	? "🔄 Needs Reschedule · Pick New Time"
+	: portalData.bookingStatus === "recorded"
+		? "🎬 Recorded · Entering Post-Production"
+		: portalData.bookingStatus === "editing"
+			? "✂️ In Editing / Post-Production"
+			: portalData.bookingStatus === "guest_review"
+				? "👀 Rough Cut Ready for Review"
+				: portalData.bookingStatus === "ready_to_publish"
+					? "🚀 Approved & Queued for Release"
+					: portalData.bookingStatus === "published"
+						? "✅ Episode Published"
+						: !recordingSlotDetails
+							? "⚠️ No Slot Selected"
+							: isRecordingApprovedStatus
+								? "✓ Confirmed & Approved"
+								: "⏳ Hold Reserved (Pending Approval)";
+
+function getYouTubeEmbedUrl(rawUrl?: string | null): string | null {
+	if (!rawUrl) return null;
+	const m = rawUrl.match(
+		/(?:youtube\.com\/(?:watch\?v=|embed\/|live\/|shorts\/)|youtu\.be\/)([A-Za-z0-9_-]{11})/,
+	);
+	return m?.[1] ? `https://www.youtube.com/embed/${m[1]}` : null;
+}
+
+const roughCutEmbedUrl = getYouTubeEmbedUrl(portalData.roughCutUrl);
+const postProductionStages = [
+	{ id: "recorded", label: "1. Recorded", icon: "🎬" },
+	{ id: "editing", label: "2. In Editing", icon: "✂️" },
+	{ id: "guest_review", label: "3. Rough-Cut Review", icon: "👀" },
+	{ id: "ready_to_publish", label: "4. Ready to Publish", icon: "🚀" },
+	{ id: "published", label: "5. Published", icon: "✅" },
+] as const;
+const activeStageId =
+	portalData.podcastWorkflowStage || portalData.bookingStatus || "recorded";
+const currentStageIndex = Math.max(
+	0,
+	postProductionStages.findIndex((s) => s.id === activeStageId),
+);
 
 const pageTitle = !portalFound
 	? "Studio Portal Not Found | CodingCat.dev"
@@ -914,20 +1058,53 @@ const pageDescription = !portalFound
 				</div>
 			</div>
 
+			{isNeedsRescheduleStatus && (
+				<div class="p-4 sm:p-5 rounded-2xl border-2 border-amber-500/60 bg-amber-500/10 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+					<div class="flex flex-col gap-1.5">
+						<div class="flex flex-wrap items-center gap-2">
+							<span class="px-2.5 py-0.5 rounded-full text-[11px] font-mono uppercase tracking-wider bg-amber-500/20 text-amber-800 dark:text-amber-200 font-extrabold">
+								🔄 Action Needed &middot; Pick Your New Recording Slot
+							</span>
+							{previousRecordingSlotDetails && (
+								<span class="text-[11px] font-mono text-muted-foreground">
+									Previous slot cleared: {previousRecordingSlotDetails.shortSummaryEt}
+								</span>
+							)}
+						</div>
+						<p class="text-xs sm:text-sm font-bold text-foreground">
+							{portalData.rescheduleReason ||
+								"Whenever you are ready, pick a new conflict-free 45-minute StreamYard recording slot below."}
+						</p>
+						<p class="text-xs text-muted-foreground">
+							Selecting a new time below automatically updates our studio calendar and sends a fresh Google Calendar invite with your StreamYard link.
+						</p>
+					</div>
+					<button
+						type="button"
+						data-open-rebook="45"
+						class="px-4 py-2.5 rounded-xl bg-primary text-primary-foreground text-xs font-extrabold hover:bg-primary/90 transition-colors cursor-pointer shrink-0 shadow-xs"
+					>
+						📅 Pick New 45-Min Recording Slot &darr;
+					</button>
+				</div>
+			)}
+
 			<div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
 				<!-- CARD 1: 45-Min Podcast Recording (StreamYard Studio) -->
 				<div
 					class={`flex flex-col justify-between gap-4 p-5 rounded-2xl border-2 ${
-						recordingSlotDetails && isRecordingApprovedStatus
-							? "border-emerald-500/50 bg-emerald-500/[0.04]"
-							: "border-primary/40 bg-primary/[0.03]"
+						isPostProductionStatus
+							? "border-purple-500/60 bg-purple-500/[0.05]"
+							: recordingSlotDetails && isRecordingApprovedStatus
+								? "border-emerald-500/50 bg-emerald-500/[0.04]"
+								: "border-primary/40 bg-primary/[0.03]"
 					}`}
 				>
 					<div class="flex flex-col gap-3.5">
 						<div class="flex flex-wrap items-center justify-between gap-2">
 							<div class="flex items-center gap-2">
 								<span class="inline-flex size-8 items-center justify-center rounded-lg bg-primary text-primary-foreground text-sm font-bold">
-									🎙️
+									{isPostProductionStatus ? "🎬" : "🎙️"}
 								</span>
 								<div class="flex flex-col">
 									<span class="text-[11px] font-mono uppercase tracking-wider text-primary font-bold">
@@ -940,18 +1117,16 @@ const pageDescription = !portalFound
 							</div>
 							<span
 								class={`text-xs font-mono font-bold px-3 py-1 rounded-full border ${
-									!recordingSlotDetails
-										? "border-amber-500/40 bg-amber-500/15 text-amber-700 dark:text-amber-300"
-										: isRecordingApprovedStatus
-											? "border-emerald-500/40 bg-emerald-500/15 text-emerald-700 dark:text-emerald-300"
-											: "border-amber-500/40 bg-amber-500/15 text-amber-700 dark:text-amber-300"
+									isPostProductionStatus
+										? "border-purple-500/40 bg-purple-500/15 text-purple-700 dark:text-purple-300"
+										: !recordingSlotDetails || isNeedsRescheduleStatus
+											? "border-amber-500/40 bg-amber-500/15 text-amber-700 dark:text-amber-300"
+											: isRecordingApprovedStatus
+												? "border-emerald-500/40 bg-emerald-500/15 text-emerald-700 dark:text-emerald-300"
+												: "border-amber-500/40 bg-amber-500/15 text-amber-700 dark:text-amber-300"
 								}`}
 							>
-								{!recordingSlotDetails
-									? "⚠️ No Slot Selected"
-									: isRecordingApprovedStatus
-										? "✓ Confirmed & Approved"
-										: "⏳ Hold Reserved (Pending Approval)"}
+								{recordingCardBadgeLabel}
 							</span>
 						</div>
 
@@ -974,19 +1149,26 @@ const pageDescription = !portalFound
 								<div class="flex flex-col justify-center gap-1 min-w-0 flex-1">
 									<div class="flex flex-wrap items-center gap-2">
 										<span class="text-xs font-mono font-bold uppercase tracking-wider text-muted-foreground">
-											Current Booked Recording Time
+											{isPostProductionStatus ? "Recorded Session Time" : "Current Booked Recording Time"}
 										</span>
 										<span
 											data-session-relative-badge
+											data-skip-relative-override={isPostProductionStatus ? "true" : "false"}
 											data-start-iso={recordingSlotDetails.iso}
 											data-duration="45"
 											class={`text-[10px] font-mono font-bold px-2 py-0.5 rounded ${
-												recordingSlotDetails.isPast
-													? "bg-amber-500/15 text-amber-700 dark:text-amber-300"
-													: "bg-emerald-500/15 text-emerald-700 dark:text-emerald-300"
+												isPostProductionStatus
+													? "bg-purple-500/15 text-purple-700 dark:text-purple-300"
+													: recordingSlotDetails.isPast
+														? "bg-amber-500/15 text-amber-700 dark:text-amber-300"
+														: "bg-emerald-500/15 text-emerald-700 dark:text-emerald-300"
 											}`}
 										>
-											{recordingSlotDetails.isPast ? "⚠️ Past Slot — Rebook If Needed" : "📅 Scheduled"}
+											{isPostProductionStatus
+												? "✓ Session Recorded · In Post-Production"
+												: recordingSlotDetails.isPast
+													? "⚠️ Past Slot · Rebook If Needed"
+													: "📅 Scheduled"}
 										</span>
 									</div>
 									<div
@@ -1018,10 +1200,14 @@ const pageDescription = !portalFound
 						) : (
 							<div class="p-4 rounded-xl border-2 border-dashed border-amber-500/40 bg-amber-500/5 flex flex-col gap-1.5">
 								<span class="text-sm font-bold text-foreground">
-									No 45-Minute Recording Slot Selected Yet
+									{isNeedsRescheduleStatus
+										? "Ready to Reschedule: Pick Your New 45-Minute Recording Slot"
+										: "No 45-Minute Recording Slot Selected Yet"}
 								</span>
 								<p class="text-xs text-muted-foreground">
-									Click <strong>Select Recording Time</strong> below to pick a conflict-free 45-minute window on Alex Patterson's studio calendar.
+									{portalData.rescheduleReason
+										? `${portalData.rescheduleReason}. Click Select Recording Time below to choose a conflict-free 45-minute window on Alex Patterson's studio calendar.`
+										: "Click Select Recording Time below to pick a conflict-free 45-minute window on Alex Patterson's studio calendar."}
 								</p>
 							</div>
 						)}
@@ -1029,23 +1215,46 @@ const pageDescription = !portalFound
 
 					<div class="flex flex-col gap-2 pt-1">
 						<div class="flex flex-wrap items-center gap-2">
-							{isRecordingApprovedStatus ? (
-								<a
-									href={portalData.recordingUrl || "https://streamyard.com/c4kv26is93"}
-									target="_blank"
-									rel="noopener noreferrer"
-									class="flex-1 min-w-[180px] px-4 py-2.5 rounded-xl bg-primary text-primary-foreground text-xs font-extrabold text-center hover:bg-primary/90 transition-colors shadow-2xs"
-								>
-									🎙️ Enter StreamYard Studio &nearr;
-								</a>
-							) : null}
-							<button
-								type="button"
-								data-open-rebook="45"
-								class="flex-1 min-w-[170px] px-4 py-2.5 rounded-xl border-2 border-primary bg-background hover:bg-primary/10 text-primary text-xs font-extrabold text-center transition-colors cursor-pointer"
-							>
-								{recordingSlotDetails ? "🔄 Rebook / Change Time" : "📅 Select Recording Time"}
-							</button>
+							{isPostProductionStatus ? (
+								<>
+									<a
+										href="#post-production-review"
+										class="flex-1 min-w-[180px] px-4 py-2.5 rounded-xl bg-primary text-primary-foreground text-xs font-extrabold text-center hover:bg-primary/90 transition-colors shadow-2xs"
+									>
+										🎬 Open Post-Production &amp; Rough-Cut Review &darr;
+									</a>
+									{portalData.podcastSlug && (
+										<a
+											href={`/podcast/${portalData.podcastSlug}?sanity-preview-perspective=drafts`}
+											target="_blank"
+											rel="noopener noreferrer"
+											class="flex-1 min-w-[170px] px-4 py-2.5 rounded-xl border-2 border-primary bg-background hover:bg-primary/10 text-primary text-xs font-extrabold text-center transition-colors"
+										>
+											👁️ Preview Draft Episode &nearr;
+										</a>
+									)}
+								</>
+							) : (
+								<>
+									{isRecordingApprovedStatus && recordingSlotDetails ? (
+										<a
+											href={portalData.recordingUrl || "https://streamyard.com/c4kv26is93"}
+											target="_blank"
+											rel="noopener noreferrer"
+											class="flex-1 min-w-[180px] px-4 py-2.5 rounded-xl bg-primary text-primary-foreground text-xs font-extrabold text-center hover:bg-primary/90 transition-colors shadow-2xs"
+										>
+											🎙️ Enter StreamYard Studio &nearr;
+										</a>
+									) : null}
+									<button
+										type="button"
+										data-open-rebook="45"
+										class="flex-1 min-w-[170px] px-4 py-2.5 rounded-xl border-2 border-primary bg-background hover:bg-primary/10 text-primary text-xs font-extrabold text-center transition-colors cursor-pointer"
+									>
+										{recordingSlotDetails ? "🔄 Rebook / Change Time" : "📅 Select Recording Time"}
+									</button>
+								</>
+							)}
 						</div>
 						<div class="flex flex-wrap items-center justify-between gap-2 text-[11px] font-mono text-muted-foreground px-1">
 							<span>
@@ -1068,7 +1277,7 @@ const pageDescription = !portalFound
 				<!-- CARD 2: 15-Min Pre-Meeting / Tech Check (Google Meet) -->
 				<div
 					class={`flex flex-col justify-between gap-4 p-5 rounded-2xl border-2 ${
-						preMeetingSlotDetails
+						preMeetingSlotDetails || isPreMeetingCompleted
 							? "border-emerald-500/50 bg-emerald-500/[0.04]"
 							: "border-border bg-background/60"
 					}`}
@@ -1090,14 +1299,16 @@ const pageDescription = !portalFound
 							</div>
 							<span
 								class={`text-xs font-mono font-bold px-3 py-1 rounded-full border ${
-									preMeetingSlotDetails
+									preMeetingSlotDetails || isPreMeetingCompleted
 										? "border-emerald-500/40 bg-emerald-500/15 text-emerald-700 dark:text-emerald-300"
 										: "border-border bg-muted text-muted-foreground"
 								}`}
 							>
-								{preMeetingSlotDetails
-									? "✓ Scheduled on Google Meet"
-									: "Optional · Not Booked"}
+								{isPreMeetingCompleted
+									? "✓ Pre-Call Completed"
+									: preMeetingSlotDetails
+										? "✓ Scheduled on Google Meet"
+										: "Optional · Not Booked"}
 							</span>
 						</div>
 
@@ -1120,19 +1331,26 @@ const pageDescription = !portalFound
 								<div class="flex flex-col justify-center gap-1 min-w-0 flex-1">
 									<div class="flex flex-wrap items-center gap-2">
 										<span class="text-xs font-mono font-bold uppercase tracking-wider text-muted-foreground">
-											Current Booked Pre-Meeting Time
+											{isPreMeetingCompleted ? "Completed Pre-Meeting Time" : "Current Booked Pre-Meeting Time"}
 										</span>
 										<span
 											data-session-relative-badge
+											data-skip-relative-override={isPreMeetingCompleted ? "true" : "false"}
 											data-start-iso={preMeetingSlotDetails.iso}
 											data-duration="15"
 											class={`text-[10px] font-mono font-bold px-2 py-0.5 rounded ${
-												preMeetingSlotDetails.isPast
-													? "bg-amber-500/15 text-amber-700 dark:text-amber-300"
-													: "bg-emerald-500/15 text-emerald-700 dark:text-emerald-300"
+												isPreMeetingCompleted
+													? "bg-emerald-500/15 text-emerald-700 dark:text-emerald-300"
+													: preMeetingSlotDetails.isPast
+														? "bg-amber-500/15 text-amber-700 dark:text-amber-300"
+														: "bg-emerald-500/15 text-emerald-700 dark:text-emerald-300"
 											}`}
 										>
-											{preMeetingSlotDetails.isPast ? "⚠️ Past Slot" : "📅 Scheduled"}
+											{isPreMeetingCompleted
+												? "✓ Completed"
+												: preMeetingSlotDetails.isPast
+													? "⚠️ Past Slot"
+													: "📅 Scheduled"}
 										</span>
 									</div>
 									<div
@@ -1165,11 +1383,15 @@ const pageDescription = !portalFound
 							<div class="p-4 rounded-xl border border-dashed border-border bg-card/70 flex flex-col gap-1.5">
 								<div class="flex items-center gap-2">
 									<span class="text-sm font-bold text-foreground">
-										No 15-Minute Pre-Meeting Currently Booked
+										{isPreMeetingCompleted
+											? "✓ 15-Minute Pre-Call Completed"
+											: "No 15-Minute Pre-Meeting Currently Booked"}
 									</span>
 								</div>
 								<p class="text-xs text-muted-foreground leading-relaxed">
-									Most guests go straight into the 45-minute StreamYard recording (we spend the first 5 minutes doing a relaxed mic &amp; outline check before hitting record). If you want a separate 15-minute Google Meet alignment call beforehand, click below to book one in 1 click.
+									{isPreMeetingCompleted
+										? "Our 15-minute alignment pre-call is complete! You can review our shared pre-call notes below and pick your 45-minute StreamYard recording window on the left card."
+										: "Most guests go straight into the 45-minute StreamYard recording (we spend the first 5 minutes doing a relaxed mic & outline check before hitting record). If you want a separate 15-minute Google Meet alignment call beforehand, click below to book one in 1 click."}
 								</p>
 							</div>
 						)}
@@ -1177,7 +1399,7 @@ const pageDescription = !portalFound
 
 					<div class="flex flex-col gap-2 pt-1">
 						<div class="flex flex-wrap items-center gap-2">
-							{portalData.preMeetingMeetUrl ? (
+							{portalData.preMeetingMeetUrl && !isPreMeetingCompleted ? (
 								<a
 									href={portalData.preMeetingMeetUrl}
 									target="_blank"
@@ -1207,7 +1429,7 @@ const pageDescription = !portalFound
 			<!-- INLINE 1-CLICK REBOOKING & LIVE CALENDAR DRAWER (Right inside the top card!) -->
 			<div
 				id="schedule-section"
-				class="hidden flex-col gap-4 p-5 rounded-2xl border-2 border-primary bg-background shadow-sm scroll-mt-24"
+				class={`${isNeedsRescheduleStatus ? "flex" : "hidden"} flex-col gap-4 p-5 rounded-2xl border-2 border-primary bg-background shadow-sm scroll-mt-24`}
 			>
 				<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-border pb-3">
 					<div class="flex flex-col gap-1">
@@ -1378,6 +1600,190 @@ const pageDescription = !portalFound
 				></div>
 			</div>
 		</section>
+
+		{(isPostProductionStatus || portalData.roughCutUrl || portalData.podcastSlug) && (
+			<section
+				id="post-production-review"
+				class="flex flex-col gap-5 p-5 sm:p-6 rounded-2xl border-2 border-purple-500/60 bg-purple-500/[0.04] shadow-xs scroll-mt-20"
+			>
+				<div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b border-border pb-4">
+					<div class="flex flex-col gap-1.5">
+						<div class="flex flex-wrap items-center gap-2">
+							<span class="px-2.5 py-0.5 rounded-full text-[11px] font-mono uppercase tracking-wider bg-purple-500/20 text-purple-800 dark:text-purple-200 font-extrabold">
+								🎬 Post-Production &amp; Episode Scrub Pipeline
+							</span>
+							<span class="text-xs font-mono px-2.5 py-0.5 rounded-full bg-card border border-border text-foreground font-semibold">
+								{recordingCardBadgeLabel}
+							</span>
+						</div>
+						<h2 class="text-xl sm:text-2xl font-extrabold tracking-tight text-foreground">
+							{portalData.podcastTitle || `${portalData.companyName} x CodingCat.dev Episode`}
+						</h2>
+						<p class="text-xs sm:text-sm text-muted-foreground">
+							Preview the unlisted YouTube rough cut and drafted Sanity episode page below. Need any visual cuts, timestamp edits, or PII scrubbed before we publish? Drop a note in the <a href="#run-of-show" class="underline font-bold text-primary">2-Way Call Notes &amp; Chat</a> below!
+						</p>
+					</div>
+					<div class="flex flex-wrap items-center gap-2 shrink-0">
+						{portalData.podcastSlug && (
+							<a
+								href={`/podcast/${portalData.podcastSlug}?sanity-preview-perspective=drafts`}
+								target="_blank"
+								rel="noopener noreferrer"
+								class="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-primary text-primary-foreground text-xs font-extrabold hover:bg-primary/90 transition-colors shadow-xs"
+							>
+								👁️ Preview Draft Episode Page &nearr;
+							</a>
+						)}
+						{portalData.roughCutUrl && (
+							<a
+								href={portalData.roughCutUrl}
+								target="_blank"
+								rel="noopener noreferrer"
+								class="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl border-2 border-primary bg-background hover:bg-primary/10 text-primary text-xs font-extrabold transition-colors"
+							>
+								▶ Open Unlisted Video &nearr;
+							</a>
+						)}
+					</div>
+				</div>
+
+				<!-- 5-Stage Post-Production Progress Bar -->
+				<div class="grid grid-cols-2 sm:grid-cols-5 gap-2.5">
+					{postProductionStages.map((stage, idx) => {
+						const isCompleted = idx < currentStageIndex;
+						const isCurrent = idx === currentStageIndex;
+						return (
+							<div
+								class={`flex items-center gap-2 p-3 rounded-xl border text-xs font-bold transition-all ${
+									isCurrent
+										? "border-2 border-primary bg-primary/15 text-foreground shadow-2xs"
+										: isCompleted
+											? "border-emerald-500/40 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300"
+											: "border-border bg-card/60 text-muted-foreground"
+								}`}
+							>
+								<span class="text-base">{isCompleted ? "✓" : stage.icon}</span>
+								<div class="flex flex-col min-w-0">
+									<span class="truncate font-mono text-[11px] uppercase tracking-wider">
+										{stage.label}
+									</span>
+									<span class="text-[10px] font-normal text-muted-foreground">
+										{isCurrent ? "Current Stage" : isCompleted ? "Complete" : "Upcoming"}
+									</span>
+								</div>
+							</div>
+						);
+					})}
+				</div>
+
+				<!-- Unlisted YouTube Player + Draft Sanity Episode Card -->
+				<div class="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
+					<div class="lg:col-span-7 flex flex-col gap-3 p-4 rounded-xl border border-border bg-card">
+						<div class="flex flex-wrap items-center justify-between gap-2">
+							<span class="text-xs font-mono font-bold uppercase tracking-wider text-primary">
+								▶ Unlisted YouTube / Rough-Cut Video Preview
+							</span>
+							{portalData.roughCutUrl ? (
+								<span class="text-[11px] font-mono px-2 py-0.5 rounded bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 font-semibold">
+									✓ Video Link Attached
+								</span>
+							) : (
+								<span class="text-[11px] font-mono px-2 py-0.5 rounded bg-amber-500/15 text-amber-700 dark:text-amber-300 font-semibold">
+									✂️ Video Cut in Progress
+								</span>
+							)}
+						</div>
+
+						{roughCutEmbedUrl ? (
+							<div class="relative w-full overflow-hidden rounded-xl border border-border bg-black aspect-video">
+								<iframe
+									src={roughCutEmbedUrl}
+									title={portalData.podcastTitle || "Unlisted Rough Cut Preview"}
+									class="absolute inset-0 size-full"
+									allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+									allowfullscreen
+								></iframe>
+							</div>
+						) : portalData.roughCutUrl ? (
+							<div class="p-5 rounded-xl border border-primary/30 bg-primary/5 flex flex-col gap-3">
+								<p class="text-xs sm:text-sm font-semibold text-foreground">
+									Your rough-cut video review link is ready:
+								</p>
+								<a
+									href={portalData.roughCutUrl}
+									target="_blank"
+									rel="noopener noreferrer"
+									class="inline-flex items-center justify-center px-4 py-2.5 rounded-xl bg-primary text-primary-foreground text-xs font-extrabold hover:bg-primary/90 transition-colors self-start"
+								>
+									▶ Watch Rough-Cut Video &nearr;
+								</a>
+							</div>
+						) : (
+							<div class="p-5 rounded-xl border border-dashed border-border bg-muted/30 flex flex-col gap-2">
+								<span class="text-sm font-bold text-foreground">
+									✂️ Rough Cut Currently in Editing
+								</span>
+								<p class="text-xs text-muted-foreground leading-relaxed">
+									Alex is currently editing the StreamYard recording and applying any requested visual cuts. As soon as the unlisted YouTube rough cut is uploaded, the video player will appear right here for your review.
+								</p>
+							</div>
+						)}
+					</div>
+
+					<div class="lg:col-span-5 flex flex-col gap-3.5 p-4 rounded-xl border border-border bg-card">
+						<div class="flex flex-wrap items-center justify-between gap-2">
+							<span class="text-xs font-mono font-bold uppercase tracking-wider text-primary">
+								📄 Sanity Draft Episode (`{portalData.podcastDocId || `drafts.podcast-${portalData.podcastSlug}`}`)
+							</span>
+							<span class="text-[11px] font-mono px-2 py-0.5 rounded bg-primary/15 text-primary font-semibold">
+								Live Draft Preview
+							</span>
+						</div>
+
+						<div class="flex flex-col gap-1.5">
+							<h3 class="text-sm sm:text-base font-extrabold text-foreground">
+								{portalData.podcastTitle || `${portalData.companyName} Podcast Episode`}
+							</h3>
+							{portalData.podcastExcerpt && (
+								<p class="text-xs text-muted-foreground leading-relaxed">
+									{portalData.podcastExcerpt}
+								</p>
+							)}
+						</div>
+
+						{portalData.roughCutNotes && (
+							<div class="p-3 rounded-xl border border-amber-500/40 bg-amber-500/10 flex flex-col gap-1">
+								<span class="text-[11px] font-mono font-bold uppercase tracking-wider text-amber-800 dark:text-amber-200">
+									📌 Active Edit &amp; Scrub Checklist
+								</span>
+								<p class="text-xs text-foreground whitespace-pre-wrap leading-relaxed">
+									{portalData.roughCutNotes}
+								</p>
+							</div>
+						)}
+
+						<div class="flex flex-col gap-2 pt-1">
+							{portalData.podcastSlug && (
+								<a
+									href={`/podcast/${portalData.podcastSlug}?sanity-preview-perspective=drafts`}
+									target="_blank"
+									rel="noopener noreferrer"
+									class="w-full px-4 py-2.5 rounded-xl bg-primary text-primary-foreground text-xs font-extrabold text-center hover:bg-primary/90 transition-colors shadow-2xs"
+								>
+									👁️ Open Draft Episode Page (/podcast/{portalData.podcastSlug}) &nearr;
+								</a>
+							)}
+							<a
+								href="#run-of-show"
+								class="w-full px-4 py-2.5 rounded-xl border border-border bg-background hover:bg-muted text-foreground text-xs font-bold text-center transition-colors"
+							>
+								💬 Post Edit / Scrub Timestamps in Call Notes &darr;
+							</a>
+						</div>
+					</div>
+				</div>
+			</section>
+		)}
 
 		<!-- PodMatch-Style Self-Serve Guest Readiness Checklist & Live Draft Preview Bar -->
 		<section class="flex flex-col gap-4 p-5 rounded-2xl border-2 border-primary/40 bg-card shadow-xs">
@@ -3545,6 +3951,7 @@ const pageDescription = !portalFound
 		});
 
 		document.querySelectorAll("[data-session-relative-badge]").forEach((el) => {
+			if (el.getAttribute("data-skip-relative-override") === "true") return;
 			const iso = el.getAttribute("data-start-iso");
 			const dur = Number(el.getAttribute("data-duration") || 45);
 			if (!iso) return;
@@ -3553,7 +3960,7 @@ const pageDescription = !portalFound
 			const now = Date.now();
 			const diffMs = info.startMs - now;
 			if (info.endMs < now) {
-				el.textContent = "⚠️ Past Slot — Click Rebook to Pick a New Window";
+				el.textContent = "⚠️ Past Slot · Click Rebook to Pick a New Window";
 			} else if (diffMs <= 0 && info.endMs >= now) {
 				el.textContent = "🔴 Live Now";
 			} else if (diffMs < 3600000 * 18) {

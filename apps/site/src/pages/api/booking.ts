@@ -236,7 +236,8 @@ export const POST: APIRoute = async ({ request, url }) => {
 	const wasAlreadyApproved =
 		existingBookingDoc?.status === "approved" ||
 		existingBookingDoc?.status === "confirmed" ||
-		existingBookingDoc?.status === "scheduled";
+		existingBookingDoc?.status === "scheduled" ||
+		existingBookingDoc?.status === "needs_reschedule";
 
 	// If rescheduling an existing 15m Pre-Meeting or 45m Recording, cancel the previous Google Calendar event first
 	// so the old time slot is freed and the guest receives a clean replacement invite.
@@ -354,7 +355,9 @@ export const POST: APIRoute = async ({ request, url }) => {
 						status: isKickoff
 							? "scheduled"
 							: wasAlreadyApproved
-								? existingBookingDoc.status
+								? existingBookingDoc.status === "needs_reschedule"
+									? "approved"
+									: existingBookingDoc.status
 								: "pending",
 						slotStartAt,
 						recordingUrl: STREAMYARD_STUDIO_URL,
