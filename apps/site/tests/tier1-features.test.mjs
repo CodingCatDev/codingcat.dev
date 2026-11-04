@@ -1006,6 +1006,29 @@ describe("Tier 1 - Feature Coverage", () => {
 			});
 			assert.equal(resDisablePostJson.headers.get("Location"), "/");
 		});
+
+		it("6.9 BaseLayout configures @sanity/visual-editing-standalone with history adapter and onPerspectiveChange", () => {
+			const baseLayoutSrc = fs.readFileSync(
+				path.resolve(SRC_DIR, "layouts/BaseLayout.astro"),
+				"utf-8",
+			);
+			assert.ok(
+				baseLayoutSrc.includes("@sanity/visual-editing-standalone/styles.css"),
+				"BaseLayout must import visual editing styles",
+			);
+			assert.ok(
+				baseLayoutSrc.includes("history:"),
+				"enableVisualEditing must configure history adapter for Presentation iframe navigation",
+			);
+			assert.ok(
+				baseLayoutSrc.includes("window.location.replace(nextUrl.toString())"),
+				"history.update must perform full MPA navigation on replace updates from Sanity Presentation",
+			);
+			assert.ok(
+				baseLayoutSrc.includes("onPerspectiveChange:"),
+				"enableVisualEditing must handle perspective changes from Sanity Presentation",
+			);
+		});
 	});
 
 	// ── 7. Agent Readiness & Autonomous Discovery Endpoints ───────────────

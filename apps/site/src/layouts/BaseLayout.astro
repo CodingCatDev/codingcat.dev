@@ -320,6 +320,7 @@ const graph = buildGraph([
 		</div>
 		{preview && <DraftModeToggle />}
 		<script>
+			import "@sanity/visual-editing-standalone/styles.css";
 			import { enableVisualEditing } from "@sanity/visual-editing-standalone";
 
 			if (
@@ -327,6 +328,55 @@ const graph = buildGraph([
 				document.querySelector("[data-sanity-preview]")
 			) {
 				enableVisualEditing({
+					history: {
+						subscribe: (navigate) => {
+							const onPopState = () => {
+								navigate({ type: "pop", url: window.location.href });
+							};
+							window.addEventListener("popstate", onPopState);
+							return () => window.removeEventListener("popstate", onPopState);
+						},
+						update: (update) => {
+							if (update.type === "push" || update.type === "replace") {
+								const nextUrl = new URL(update.url, window.location.origin);
+								const currentPerspective = new URLSearchParams(
+									window.location.search,
+								).get("sanity-preview-perspective");
+								if (
+									currentPerspective &&
+									!nextUrl.searchParams.has("sanity-preview-perspective")
+								) {
+									nextUrl.searchParams.set(
+										"sanity-preview-perspective",
+										currentPerspective,
+									);
+								}
+								if (update.type === "replace") {
+									window.location.replace(nextUrl.toString());
+								} else {
+									window.location.assign(nextUrl.toString());
+								}
+							} else if (update.type === "pop") {
+								window.history.back();
+							}
+						},
+					},
+					onPerspectiveChange: (perspective) => {
+						const serialized = Array.isArray(perspective)
+							? perspective.join(",")
+							: String(perspective);
+						const nextUrl = new URL(window.location.href);
+						if (
+							nextUrl.searchParams.get("sanity-preview-perspective") !==
+							serialized
+						) {
+							nextUrl.searchParams.set(
+								"sanity-preview-perspective",
+								serialized,
+							);
+							window.location.replace(nextUrl.toString());
+						}
+					},
 					refresh: (payload) => {
 						if (payload.source === "mutation" || payload.source === "manual") {
 							window.location.reload();

@@ -89,13 +89,24 @@ const localPreviewOrigin = "http://localhost:4321";
 
 // ── Shared helpers ───────────────────────────────────────────────────
 function resolveHref(type: string, slug?: string): string | undefined {
+	if (!slug) {
+		return undefined;
+	}
 	switch (type) {
 		case "post":
-			return slug ? `/post/${slug}` : undefined;
+			return `/post/${slug}`;
 		case "podcast":
-			return slug ? `/podcast/${slug}` : undefined;
+			return `/podcast/${slug}`;
+		case "course":
+			return `/course/${slug}`;
+		case "author":
+			return `/author/${slug}`;
+		case "guest":
+			return `/guest/${slug}`;
+		case "sponsor":
+			return `/sponsor/${slug}`;
 		case "page":
-			return slug ? `/${slug}` : undefined;
+			return `/${slug}`;
 		default:
 			return undefined;
 	}
@@ -104,6 +115,21 @@ function resolveHref(type: string, slug?: string): string | undefined {
 const homeLocation = {
 	title: "Home",
 	href: "/",
+} satisfies DocumentLocation;
+
+const blogLocation = {
+	title: "Blog",
+	href: "/blog",
+} satisfies DocumentLocation;
+
+const podcastsLocation = {
+	title: "Podcasts",
+	href: "/podcasts",
+} satisfies DocumentLocation;
+
+const coursesLocation = {
+	title: "Courses",
+	href: "/courses",
 } satisfies DocumentLocation;
 
 // ── Shared schema types ──────────────────────────────────────────────
@@ -148,6 +174,26 @@ function buildPlugins(previewUrl: string): PluginOptions[] {
 									route: "/podcast/:slug",
 									filter: `_type == "podcast" && slug.current == $slug`,
 								},
+								{
+									route: "/course/:slug",
+									filter: `_type == "course" && slug.current == $slug`,
+								},
+								{
+									route: "/author/:slug",
+									filter: `_type == "author" && slug.current == $slug`,
+								},
+								{
+									route: "/guest/:slug",
+									filter: `_type == "guest" && slug.current == $slug`,
+								},
+								{
+									route: "/sponsor/:slug",
+									filter: `_type == "sponsor" && slug.current == $slug`,
+								},
+								{
+									route: "/:slug",
+									filter: `_type == "page" && slug.current == $slug`,
+								},
 							]),
 							locations: {
 								settings: defineLocations({
@@ -160,32 +206,145 @@ function buildPlugins(previewUrl: string): PluginOptions[] {
 										title: "title",
 										slug: "slug.current",
 									},
-									resolve: (doc) => ({
-										locations: [
-											{
-												title: doc?.title || "Untitled",
-												// biome-ignore lint/style/noNonNullAssertion: resolveHref returns string for known types
-												href: resolveHref("post", doc?.slug)!,
-											},
-											homeLocation,
-										],
-									}),
+									resolve: (doc) => {
+										const href = resolveHref("post", doc?.slug);
+										return {
+											locations: [
+												...(href
+													? [
+															{
+																title: doc?.title || "Untitled",
+																href,
+															},
+														]
+													: []),
+												blogLocation,
+												homeLocation,
+											],
+										};
+									},
 								}),
 								podcast: defineLocations({
 									select: {
 										title: "title",
 										slug: "slug.current",
 									},
-									resolve: (doc) => ({
-										locations: [
-											{
-												title: doc?.title || "Untitled",
-												// biome-ignore lint/style/noNonNullAssertion: resolveHref returns string for known types
-												href: resolveHref("podcast", doc?.slug)!,
-											},
-											homeLocation,
-										],
-									}),
+									resolve: (doc) => {
+										const href = resolveHref("podcast", doc?.slug);
+										return {
+											locations: [
+												...(href
+													? [
+															{
+																title: doc?.title || "Untitled",
+																href,
+															},
+														]
+													: []),
+												podcastsLocation,
+												homeLocation,
+											],
+										};
+									},
+								}),
+								course: defineLocations({
+									select: {
+										title: "title",
+										slug: "slug.current",
+									},
+									resolve: (doc) => {
+										const href = resolveHref("course", doc?.slug);
+										return {
+											locations: [
+												...(href
+													? [
+															{
+																title: doc?.title || "Untitled",
+																href,
+															},
+														]
+													: []),
+												coursesLocation,
+												homeLocation,
+											],
+										};
+									},
+								}),
+								page: defineLocations({
+									select: {
+										title: "title",
+										slug: "slug.current",
+									},
+									resolve: (doc) => {
+										const href = resolveHref("page", doc?.slug);
+										return {
+											locations: href
+												? [
+														{
+															title: doc?.title || "Untitled",
+															href,
+														},
+													]
+												: [],
+										};
+									},
+								}),
+								author: defineLocations({
+									select: {
+										title: "title",
+										slug: "slug.current",
+									},
+									resolve: (doc) => {
+										const href = resolveHref("author", doc?.slug);
+										return {
+											locations: href
+												? [
+														{
+															title: doc?.title || "Untitled",
+															href,
+														},
+													]
+												: [],
+										};
+									},
+								}),
+								guest: defineLocations({
+									select: {
+										title: "title",
+										slug: "slug.current",
+									},
+									resolve: (doc) => {
+										const href = resolveHref("guest", doc?.slug);
+										return {
+											locations: href
+												? [
+														{
+															title: doc?.title || "Untitled",
+															href,
+														},
+													]
+												: [],
+										};
+									},
+								}),
+								sponsor: defineLocations({
+									select: {
+										title: "title",
+										slug: "slug.current",
+									},
+									resolve: (doc) => {
+										const href = resolveHref("sponsor", doc?.slug);
+										return {
+											locations: href
+												? [
+														{
+															title: doc?.title || "Untitled",
+															href,
+														},
+													]
+												: [],
+										};
+									},
 								}),
 							},
 						},
