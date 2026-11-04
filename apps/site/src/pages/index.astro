@@ -3,7 +3,6 @@ import AjYarnTrail from "@/components/AjYarnTrail.astro";
 import AnimatedHero from "@/components/AnimatedHero.astro";
 import CoverImage from "@/components/CoverImage.astro";
 import HomeSection from "@/components/HomeSection.astro";
-import TopicFilterStrip from "@/components/TopicFilterStrip.astro";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import type { ContentListItem } from "@/lib/content";
 import { coursesQuery, homePageQuery } from "@/lib/sanity/queries";
@@ -48,11 +47,6 @@ const spotlightHref = spotlightPodcast
 >
 	{/* Section 1: Dual-Theme Video-First Chalkboard Hero ("free. fun. purrfect.") */}
 	<AnimatedHero />
-
-	{/* Official Vendor & Topic Hub Strip */}
-	<div class="mx-auto max-w-7xl px-4 pb-4 sm:px-6">
-		<TopicFilterStrip label="Explore Official Vendor & Topic Hubs:" />
-	</div>
 
 	<AjYarnTrail variant="left-to-right" />
 
