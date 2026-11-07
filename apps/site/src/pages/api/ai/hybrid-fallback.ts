@@ -1,6 +1,4 @@
 import { env } from "cloudflare:workers";
-import { createOpenRouter } from "@openrouter/ai-sdk-provider";
-import { generateText } from "ai";
 import type { APIRoute } from "astro";
 
 export const prerender = false;
@@ -14,6 +12,9 @@ export interface HybridFallbackRequest {
 	mode?: HybridInferenceMode;
 	systemPrompt?: string;
 }
+
+const PRIMARY_CF_MODEL_ID = "@cf/meta/llama-3.1-8b-instruct-fp8";
+const FALLBACK_CF_MODEL_ID = "@cf/meta/llama-3.2-3b-instruct";
 
 const DEFAULT_SYSTEM_BY_TASK: Record<HybridTaskType, string> = {
 	prompt:
@@ -63,66 +64,37 @@ export const POST: APIRoute = async ({ request }) => {
 				: DEFAULT_SYSTEM_BY_TASK[task];
 
 		const cfEnv = (env as unknown as Record<string, unknown> | undefined) || {};
-
-		const openRouterApiKey =
-			(cfEnv.OPENROUTER_API_KEY as string | undefined) ||
-			process.env.OPENROUTER_API_KEY;
 		const aiBinding = cfEnv.AI;
 
 		let generatedText = "";
-		let provider = "firebase-ai-logic-edge-fallback";
-		let modelName = "gemini-flash";
+		let provider = "cloudflare-workers-ai";
+		let modelName = PRIMARY_CF_MODEL_ID;
 
-		if (openRouterApiKey) {
-			try {
-				const openrouter = createOpenRouter({ apiKey: openRouterApiKey });
-				const model = openrouter("google/gemini-2.0-flash-001");
-				const res = await generateText({
-					model,
-					system: systemPrompt,
-					prompt: rawPrompt,
-					maxOutputTokens: 450,
-				});
-				generatedText = sanitizeEmDashes(res.text.trim());
-				provider = "firebase-ai-logic / gemini-edge-gateway";
-				modelName = "gemini-flash";
-			} catch (err) {
-				console.warn(
-					"[Hybrid Fallback Gemini OpenRouter warning, trying Workers AI]",
-					err,
-				);
-			}
-		}
-
-		if (
-			!generatedText &&
-			aiBinding &&
-			typeof (aiBinding as any).run === "function"
-		) {
-			try {
-				const cfRes = await (aiBinding as any).run(
-					"@cf/meta/llama-3.1-8b-instruct",
-					{
+		if (aiBinding && typeof (aiBinding as any).run === "function") {
+			for (const cfModel of [PRIMARY_CF_MODEL_ID, FALLBACK_CF_MODEL_ID]) {
+				try {
+					const cfRes = await (aiBinding as any).run(cfModel, {
 						messages: [
 							{ role: "system", content: systemPrompt },
 							{ role: "user", content: rawPrompt },
 						],
 						max_tokens: 450,
-					},
-				);
-				const rawText =
-					typeof cfRes?.response === "string"
-						? cfRes.response
-						: typeof cfRes?.result?.response === "string"
-							? cfRes.result.response
-							: "";
-				if (rawText.trim()) {
-					generatedText = sanitizeEmDashes(rawText.trim());
-					provider = "firebase-ai-logic / cloudflare-edge-ai";
-					modelName = "gemini-flash (edge-hybrid-fallback)";
+					});
+					const rawText =
+						typeof cfRes?.response === "string"
+							? cfRes.response
+							: typeof cfRes?.result?.response === "string"
+								? cfRes.result.response
+								: "";
+					if (rawText.trim()) {
+						generatedText = sanitizeEmDashes(rawText.trim());
+						provider = "cloudflare-workers-ai";
+						modelName = cfModel;
+						break;
+					}
+				} catch (err) {
+					console.warn(`[Hybrid Fallback Workers AI ${cfModel} warning]`, err);
 				}
-			} catch (err) {
-				console.warn("[Hybrid Fallback direct aiBinding.run warning]", err);
 			}
 		}
 

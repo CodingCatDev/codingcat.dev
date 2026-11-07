@@ -9,6 +9,25 @@ const FORBIDDEN_GROQ_IDENTIFIERS = [
 	"distributionConfig",
 	"trendSignal",
 	"syndication",
+	"opsDigestState",
+	"pluginSecrets",
+	"secrets.",
+	"sponsorshipRequest",
+	"gcsConfig",
+	"remotionConfig",
+	"contentConfig",
+	"pipelineConfig",
+	"previewSession",
+	"previewUrlSecret",
+	"sanity.fileAsset",
+	"fileAsset",
+	"sanity.imageAsset",
+	"imageAsset",
+	"sanity.videoAsset",
+	"videoAsset",
+	"media.tag",
+	"private-vault",
+	"collaborationThread",
 	"private.",
 	"drafts.",
 	"versions.",
@@ -17,6 +36,8 @@ const FORBIDDEN_GROQ_IDENTIFIERS = [
 	"signatureData",
 	"guestEmail",
 	"contactEmail",
+	"coordinatorEmail",
+	"allowedEmails",
 	"stripeDeposit",
 	"stripeBalance",
 	"passionfroot",
@@ -24,11 +45,26 @@ const FORBIDDEN_GROQ_IDENTIFIERS = [
 	"preCallNotes",
 	"runOfShowNotes",
 	"guestQuestions",
+	"roughCutUrl",
+	"recordingUrl",
+	"gmailThreadId",
+	"gmailMessageId",
+	"gmailDraftId",
+	"automatedVideo",
+	"contentIdea",
+	'"short"',
+	"'short'",
+	"short-",
+	"headshot",
+	"speakingEvent",
+	"talkAbstract",
+	'"settings"',
+	"'settings'",
 ];
 
 /**
  * Blocks any GROQ query from Agent AJ / MCP that references private CRM, booking,
- * trendSignal, draft, or system documents/fields.
+ * trendSignal, draft, asset, or system documents/fields.
  */
 export function isForbiddenPrivateQuery(query: string): boolean {
 	if (!query || typeof query !== "string") {
@@ -43,24 +79,57 @@ export function isForbiddenPrivateQuery(query: string): boolean {
 	return false;
 }
 
+export const PUBLIC_MCP_DOCUMENT_TYPES = [
+	"post",
+	"podcast",
+	"course",
+	"lesson",
+	"transcript",
+	"author",
+	"guest",
+	"sponsor",
+	"newsletter",
+	"page",
+	"podcastType",
+] as const;
+
 /**
- * Blocks any document ID in `array_field_reader` that is in a non-public path
- * (`private.*`, `drafts.*`, `trend.*`, `versions.*`, `_.**`).
+ * Enforces an AST-level public document allowlist on raw GROQ queries (`*` and `*[...]`)
+ * so even wildcard queries (`*[true]`, `*[!(_type == "post")]`) cannot access non-public
+ * or `private.*` documents.
  */
+export function enforcePublicGroqFilter(query: string): string {
+	const allowedTypesJson = JSON.stringify(PUBLIC_MCP_DOCUMENT_TYPES);
+	const guard = `_type in ${allowedTypesJson} && !(_id in path("private.**")) && !(_id in path("drafts.**"))`;
+	return query.replace(/\*\s*\[/g, `*[${guard} && `);
+}
 export function isForbiddenDocumentId(documentId: string): boolean {
 	if (!documentId || typeof documentId !== "string") {
 		return true;
 	}
 	const id = documentId.trim().toLowerCase();
 	return (
+		id === "settings" ||
 		id.startsWith("private.") ||
 		id.startsWith("drafts.") ||
 		id.startsWith("trend.") ||
 		id.startsWith("versions.") ||
 		id.startsWith("_.") ||
+		id.startsWith("secrets.") ||
+		id.startsWith("file-") ||
+		id.startsWith("image-") ||
 		id.startsWith("booking-") ||
 		id.startsWith("sponsorlead-") ||
-		id.startsWith("sponsorpool-")
+		id.startsWith("sponsorpool-") ||
+		id.startsWith("opsdigest") ||
+		id.startsWith("sponsorshiprequest") ||
+		id.startsWith("previewsession") ||
+		id.startsWith("short-") ||
+		id.startsWith("event-") ||
+		id.startsWith("talk-") ||
+		id.startsWith("headshot-") ||
+		id.startsWith("automatedvideo-") ||
+		id.startsWith("contentidea-")
 	);
 }
 

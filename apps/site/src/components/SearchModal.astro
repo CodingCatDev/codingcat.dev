@@ -1,5 +1,5 @@
 ---
-// SearchModal.astro — Command-palette search modal with "Ask agent" as first item, Recently Asked, Recently Viewed, and Sanity Semantic Search
+// SearchModal.astro: Command-palette search modal with "Ask agent" as first item, Recently Asked, Recently Viewed, and Sanity Semantic Search
 ---
 
 <dialog
@@ -132,6 +132,13 @@
 				<button
 					type="button"
 					class="modal-filter-pill rounded-full px-2.5 py-0.5 text-[11px] font-medium border border-border bg-card text-foreground hover:bg-accent transition-colors cursor-pointer"
+					data-type="course"
+				>
+					Courses
+				</button>
+				<button
+					type="button"
+					class="modal-filter-pill rounded-full px-2.5 py-0.5 text-[11px] font-medium border border-border bg-card text-foreground hover:bg-accent transition-colors cursor-pointer"
 					data-type="post"
 				>
 					Posts
@@ -142,6 +149,13 @@
 					data-type="podcast"
 				>
 					Podcasts
+				</button>
+				<button
+					type="button"
+					class="modal-filter-pill rounded-full px-2.5 py-0.5 text-[11px] font-medium border border-border bg-card text-foreground hover:bg-accent transition-colors cursor-pointer"
+					data-type="youtube"
+				>
+					YouTube
 				</button>
 				<button
 					type="button"
@@ -255,6 +269,11 @@
 		href: string;
 		excerpt?: string;
 		date?: string;
+		youtubeUrl?: string;
+		youtubeId?: string;
+		thumbnailUrl?: string;
+		duration?: string;
+		viewCount?: number;
 	}
 
 	interface ClairicExtractionInfo {
@@ -527,6 +546,18 @@
 
 	function getBadgeClasses(type: string): { label: string; badgeClass: string } {
 		switch (type) {
+			case "course":
+				return {
+					label: "Course",
+					badgeClass:
+						"bg-violet-500/10 text-violet-600 dark:text-violet-400 border-violet-500/20",
+				};
+			case "lesson":
+				return {
+					label: "Lesson",
+					badgeClass:
+						"bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border-indigo-500/20",
+				};
 			case "post":
 				return {
 					label: "Post",
@@ -538,6 +569,25 @@
 					label: "Podcast",
 					badgeClass:
 						"bg-purple-500/10 text-purple-600 dark:text-purple-400 border-purple-500/20",
+				};
+			case "youtube":
+			case "transcript":
+				return {
+					label: "YouTube",
+					badgeClass:
+						"bg-red-500/10 text-red-600 dark:text-red-400 border-red-500/20",
+				};
+			case "newsletter":
+				return {
+					label: "Newsletter",
+					badgeClass:
+						"bg-pink-500/10 text-pink-600 dark:text-pink-400 border-pink-500/20",
+				};
+			case "sponsor":
+				return {
+					label: "Sponsor",
+					badgeClass:
+						"bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20",
 				};
 			case "author":
 				return {
@@ -589,20 +639,37 @@
 			const li = document.createElement("li");
 			li.setAttribute("role", "option");
 			li.id = `search-item-${idx}`;
+			const isExternal = hit.href.startsWith("http");
+
+			const thumbHtml = hit.thumbnailUrl
+				? `
+				<div class="relative shrink-0 w-16 aspect-video rounded overflow-hidden border border-border bg-black">
+					<img src="${escapeHtml(hit.thumbnailUrl)}" alt="" loading="lazy" class="h-full w-full object-cover" />
+					${hit.duration ? `<span class="absolute bottom-0.5 right-0.5 rounded bg-black/80 px-1 text-[9px] font-mono text-white">${escapeHtml(hit.duration)}</span>` : ""}
+				</div>
+			`
+				: "";
 
 			li.innerHTML = `
 				<a
 					href="${hit.href}"
+					${isExternal ? 'target="_blank" rel="noopener noreferrer"' : ""}
 					data-index="${idx + 1}"
-					class="search-result-item flex flex-col gap-1 rounded-lg px-3 py-2.5 hover:bg-accent transition-colors focus:bg-accent focus:outline-none cursor-pointer border border-transparent"
+					class="search-result-item flex items-center gap-3 rounded-lg px-3 py-2.5 hover:bg-accent transition-colors focus:bg-accent focus:outline-none cursor-pointer border border-transparent"
 				>
-					<div class="flex items-center justify-between gap-2">
-						<span class="font-medium text-sm line-clamp-1 text-foreground">${escapeHtml(hit.title)}</span>
-						<span class="inline-flex shrink-0 items-center rounded-full border px-2 py-0.5 text-[10px] font-semibold ${badge.badgeClass}">
-							${badge.label}
-						</span>
+					${thumbHtml}
+					<div class="flex min-w-0 flex-1 flex-col gap-1">
+						<div class="flex items-center justify-between gap-2">
+							<span class="font-medium text-sm line-clamp-1 text-foreground">${escapeHtml(hit.title)}</span>
+							<div class="flex shrink-0 items-center gap-1.5">
+								${hit.youtubeUrl && hit.type !== "youtube" ? `<span class="inline-flex items-center rounded-full border border-red-500/20 bg-red-500/10 px-1.5 py-0.5 text-[9px] font-mono font-semibold text-red-600 dark:text-red-400">▶ YT</span>` : ""}
+								<span class="inline-flex shrink-0 items-center rounded-full border px-2 py-0.5 text-[10px] font-semibold ${badge.badgeClass}">
+									${badge.label}
+								</span>
+							</div>
+						</div>
+						${hit.excerpt ? `<p class="text-xs text-muted-foreground line-clamp-1">${escapeHtml(hit.excerpt)}</p>` : ""}
 					</div>
-					${hit.excerpt ? `<p class="text-xs text-muted-foreground line-clamp-1">${escapeHtml(hit.excerpt)}</p>` : ""}
 				</a>
 			`;
 

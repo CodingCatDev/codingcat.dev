@@ -1,10 +1,12 @@
 import { env } from "cloudflare:workers";
 import { createMCPClient } from "@ai-sdk/mcp";
-import { createOpenRouter } from "@openrouter/ai-sdk-provider";
 import { isStepCount, jsonSchema, streamText, tool } from "ai";
 import type { APIRoute } from "astro";
 import { createWorkersAI } from "workers-ai-provider";
-import { isForbiddenPrivateQuery } from "@/lib/portal-security";
+import {
+	enforcePublicGroqFilter,
+	isForbiddenPrivateQuery,
+} from "@/lib/portal-security";
 import { createResilientClient } from "@/lib/sanity/client";
 import {
 	semanticSearchQuery,
@@ -14,6 +16,8 @@ import {
 export const prerender = false;
 
 export const CLAIRIC_MODEL_ID = "@cf/cloudflare/clairic";
+export const PRIMARY_CF_MODEL_ID = "@cf/meta/llama-3.1-8b-instruct-fp8";
+export const FALLBACK_CF_MODEL_ID = "@cf/meta/llama-3.2-3b-instruct";
 
 export type ExtractedChatIntent =
 	| "recent_content"
@@ -22,9 +26,22 @@ export type ExtractedChatIntent =
 	| "author_lookup"
 	| "joke_or_kb";
 
+export type ExtractedContentType =
+	| "all"
+	| "course"
+	| "lesson"
+	| "podcast"
+	| "post"
+	| "youtube"
+	| "transcript"
+	| "author"
+	| "guest"
+	| "sponsor"
+	| "newsletter";
+
 export interface ClairicExtractedParameters {
 	intent: ExtractedChatIntent;
-	contentType: "all" | "podcast" | "post" | "author" | "guest";
+	contentType: ExtractedContentType;
 	searchQuery: string | null;
 	limit: number;
 	confidence: number;
@@ -32,6 +49,10 @@ export interface ClairicExtractedParameters {
 	source: "clairic" | "fastpath";
 	latencyMs: number;
 	clairicError?: string;
+}
+
+function sanitizeEmDashes(input: string): string {
+	return input.replace(/[\u2014\u2013]/g, ", ");
 }
 
 const SANITY_CONTEXT_MCP_URL =
@@ -63,13 +84,25 @@ function unwrapClairicField(
 function normalizeContentType(
 	raw: unknown,
 	promptLower: string,
-): "all" | "podcast" | "post" | "author" | "guest" {
+): ExtractedContentType {
 	const val = typeof raw === "string" ? raw.toLowerCase().trim() : "";
+	if (val.includes("course")) {
+		return "course";
+	}
+	if (val.includes("lesson")) {
+		return "lesson";
+	}
 	if (val.includes("podcast") || val.includes("episode")) {
 		return "podcast";
 	}
 	if (val.includes("post") || val.includes("blog") || val.includes("article")) {
 		return "post";
+	}
+	if (val.includes("youtube") || val.includes("video")) {
+		return "youtube";
+	}
+	if (val.includes("transcript")) {
+		return "transcript";
 	}
 	if (val.includes("author") || val.includes("host")) {
 		return "author";
@@ -77,7 +110,19 @@ function normalizeContentType(
 	if (val.includes("guest")) {
 		return "guest";
 	}
+	if (val.includes("sponsor")) {
+		return "sponsor";
+	}
+	if (val.includes("newsletter")) {
+		return "newsletter";
+	}
 
+	if (/\b(?:course|courses)\b/.test(promptLower)) {
+		return "course";
+	}
+	if (/\b(?:lesson|lessons)\b/.test(promptLower)) {
+		return "lesson";
+	}
 	if (/\b(?:podcast|podcasts|episode|episodes)\b/.test(promptLower)) {
 		return "podcast";
 	}
@@ -88,11 +133,23 @@ function normalizeContentType(
 	) {
 		return "post";
 	}
+	if (/\b(?:youtube|video|videos)\b/.test(promptLower)) {
+		return "youtube";
+	}
+	if (/\b(?:transcript|transcripts)\b/.test(promptLower)) {
+		return "transcript";
+	}
 	if (/\b(?:author|authors|host|hosts)\b/.test(promptLower)) {
 		return "author";
 	}
 	if (/\b(?:guest|guests)\b/.test(promptLower)) {
 		return "guest";
+	}
+	if (/\b(?:sponsor|sponsors)\b/.test(promptLower)) {
+		return "sponsor";
+	}
+	if (/\b(?:newsletter|newsletters)\b/.test(promptLower)) {
+		return "newsletter";
 	}
 	return "all";
 }
@@ -106,9 +163,12 @@ function normalizeIntent(
 		return "joke_or_kb";
 	}
 	if (
-		/\b(?:top video|top videos|popular video|popular videos|most viewed|youtube video|youtube videos)\b/.test(
+		/\b(?:top video|top videos|popular video|popular videos|most viewed)\b/.test(
 			promptLower,
-		)
+		) ||
+		(/\b(?:youtube video|youtube videos)\b/.test(promptLower) &&
+			!searchQuery &&
+			!extractFallbackTopicQuery(promptLower))
 	) {
 		return "top_videos";
 	}
@@ -116,10 +176,15 @@ function normalizeIntent(
 		(/^(?:the\s+)?(?:latest|newest|most\s+recent|recent|what'?s\s+new)[?!.]*$/i.test(
 			promptLower,
 		) ||
-			(/\b(?:latest|newest|most recent|recent)\b/.test(promptLower) &&
-				/\b(?:podcast|podcasts|episode|episodes|blog|post|posts|article|articles|content|show|shows)\b/.test(
+			(/\b(?:latest|newest|most recent|recent|available|all)\b/.test(
+				promptLower,
+			) &&
+				/\b(?:course|courses|lesson|lessons|podcast|podcasts|episode|episodes|blog|post|posts|article|articles|content|show|shows|video|videos|youtube|newsletter|newsletters)\b/.test(
 					promptLower,
-				))) &&
+				)) ||
+			/^(?:what|which|do you have(?:\s+any)?|are(?:\s+there)?(?:\s+any)?|list(?:\s+all|\s+your)?|show(?:\s+me)?(?:\s+your)?)\s+(?:courses|lessons)(?:\s+are)?(?:\s+available|\s+on\s+codingcat(?:\.dev)?)?[?!.]*$/i.test(
+				promptLower,
+			)) &&
 		!searchQuery
 	) {
 		return "recent_content";
@@ -149,11 +214,11 @@ function normalizeIntent(
 function extractFallbackTopicQuery(prompt: string): string | null {
 	const cleaned = prompt
 		.replace(
-			/^(?:what|which|do you have|can you find|find|search|show me|list|recommend|tell me about|are there|any)\s+/i,
+			/^(?:what|which|do you have(?:\s+any)?|can you find(?:\s+me)?|find(?:\s+me)?|search(?:\s+for)?|show(?:\s+me)?|list(?:\s+all)?|recommend|tell me about|are there(?:\s+any)?|are|any)\s+/i,
 			"",
 		)
 		.replace(
-			/\b(?:podcasts?|episodes?|blog\s+posts?|posts?|articles?|tutorials?|videos?|on\s+codingcat(?:\.dev)?|codingcat(?:\.dev)?|about|on|for|with|featuring|by)\b/gi,
+			/\b(?:any|all|some|the|courses?|lessons?|podcasts?|episodes?|blog\s+posts?|posts?|articles?|tutorials?|youtube|videos?|transcripts?|sponsors?|newsletters?|available|on\s+codingcat(?:\.dev)?|codingcat(?:\.dev)?|about|on|for|with|featuring|by)\b/gi,
 			" ",
 		)
 		.replace(/[?!.,;:"']/g, " ")
@@ -183,17 +248,17 @@ export async function extractIntentWithClairic(
 					intent: {
 						type: "text",
 						instructions:
-							"Classify user intent as exactly one of: 'recent_content' (asking for latest, newest, or recent podcasts, episodes, blog posts, or articles), 'top_videos' (asking for top videos or popular YouTube episodes), 'joke_or_kb' (asking for a joke, programming dad joke, Git joke, SQL joke, Jeff Dean fact, or knowledge base entry), 'author_lookup' (searching for an author profile), or 'topic_search' (searching for podcasts, posts, tutorials, or guests about a specific topic, technology, or person).",
+							"Classify user intent as exactly one of: 'recent_content' (asking for latest, newest, recent, or available courses, lessons, podcasts, episodes, blog posts, or articles), 'top_videos' (asking for top videos or popular YouTube episodes), 'joke_or_kb' (asking for a joke, programming dad joke, Git joke, SQL joke, Jeff Dean fact, or knowledge base entry), 'author_lookup' (searching for an author profile), or 'topic_search' (searching for courses, lessons, podcasts, posts, tutorials, YouTube videos, transcripts, or guests about a specific topic, technology, or person).",
 					},
 					content_type: {
 						type: "text",
 						instructions:
-							"Content type filter if specified by the user: 'podcast', 'post', 'author', 'guest', or 'all'.",
+							"Content type filter if specified by the user: 'course', 'lesson', 'podcast', 'post', 'youtube', 'transcript', 'author', 'guest', 'sponsor', 'newsletter', or 'all'.",
 					},
 					search_query: {
 						type: "text",
 						instructions:
-							"The specific topic, technology, framework, guest name, or keywords to search for (e.g. 'Sanity', 'SvelteKit', 'Guillermo Rauch', 'Next.js'). Leave null if asking only for latest/recent content, top videos, or a random joke.",
+							"The specific topic, technology, framework, guest name, or keywords to search for (e.g. 'Sanity', 'SvelteKit', 'Guillermo Rauch', 'Next.js', 'MCP'). Leave null if asking only for latest/recent content, available courses, top videos, or a random joke.",
 					},
 					limit: {
 						type: "number",
@@ -461,7 +526,8 @@ export const GET: APIRoute = async ({ request }) => {
 		JSON.stringify({
 			status: "ready",
 			name: "Agent AJ",
-			model: "@cf/meta/llama-3.3-70b-instruct-fp8-fast",
+			model: PRIMARY_CF_MODEL_ID,
+			fallbackModel: FALLBACK_CF_MODEL_ID,
 			extractionModel: CLAIRIC_MODEL_ID,
 			cascadeArchitecture: "extract-route-synthesize",
 			mcp: SANITY_CONTEXT_MCP_URL,
@@ -572,17 +638,41 @@ export const POST: APIRoute = async ({ request }) => {
 							? item.slug
 							: typeof item.slug?.current === "string"
 								? item.slug.current
-								: undefined;
+								: typeof item.parentSlug === "string"
+									? item.parentSlug
+									: undefined;
 					const itemType = item.type || item._type || "podcast";
-					const url =
-						item.url ||
-						(slugStr
-							? `/${itemType === "podcast" ? "podcast" : itemType === "post" ? "post" : itemType}/${slugStr}`
-							: undefined);
+					const parentType =
+						typeof item.parentType === "string" ? item.parentType : undefined;
+					const courseSlugStr =
+						typeof item.courseSlug === "string"
+							? item.courseSlug
+							: typeof item.parentCourseSlug === "string"
+								? item.parentCourseSlug
+								: undefined;
 					const rawLinks = item.listenLinks || {};
 					const spotifyLink =
 						rawLinks.spotify || item.spotifyLink || item.spotify?.link;
-					const youtubeLink = item.youtube || rawLinks.youtube || undefined;
+					const youtubeLink =
+						item.youtube ||
+						item.youtubeUrl ||
+						rawLinks.youtube ||
+						(typeof item.youtubeId === "string"
+							? `https://www.youtube.com/watch?v=${item.youtubeId}`
+							: undefined);
+					const routeType =
+						itemType === "transcript" && parentType ? parentType : itemType;
+					const url =
+						item.url ||
+						(slugStr
+							? routeType === "lesson" && courseSlugStr
+								? `/course/${courseSlugStr}/lesson/${slugStr}`
+								: routeType === "lesson"
+									? "/courses"
+									: routeType === "transcript"
+										? youtubeLink
+										: `/${routeType === "podcast" ? "podcast" : routeType === "post" ? "post" : routeType}/${slugStr}`
+							: youtubeLink);
 					const hasAudioOrLinks = Boolean(
 						spotifyLink ||
 							rawLinks.apple ||
@@ -591,7 +681,7 @@ export const POST: APIRoute = async ({ request }) => {
 							rawLinks.castro,
 					);
 					const listenLinks =
-						itemType === "podcast"
+						routeType === "podcast"
 							? {
 									...(youtubeLink ? { youtube: youtubeLink } : {}),
 									...(spotifyLink ? { spotify: spotifyLink } : {}),
@@ -626,7 +716,12 @@ export const POST: APIRoute = async ({ request }) => {
 						slug: slugStr,
 						url,
 						date: item.date || item.publishedAt,
-						excerpt: item.excerpt || item.transcriptSummary || "",
+						excerpt:
+							item.excerpt ||
+							item.summary ||
+							item.description ||
+							item.transcriptSummary ||
+							"",
 						youtube: youtubeLink,
 						listenLinks:
 							listenLinks && Object.keys(listenLinks).length > 0
@@ -660,37 +755,74 @@ export const POST: APIRoute = async ({ request }) => {
 			const count = Math.min(Math.max(Number(extracted.limit) || 5, 1), 10);
 			try {
 				if (extracted.intent === "recent_content") {
-					const types =
-						extracted.contentType === "podcast"
-							? ["podcast"]
-							: extracted.contentType === "post"
-								? ["post"]
-								: ["podcast", "post"];
-					const recent = await sanityClient.fetch(
-						`*[_type in $types && defined(slug.current)] | order(date desc, _createdAt desc)[0...$limit]{
-							title,
-							_type,
-							"slug": slug.current,
-							date,
-							excerpt,
-							youtube,
-							listenLinks,
-							"spotifyLink": spotify.link
-						}`,
-						{ types, limit: count },
-					);
-					if (Array.isArray(recent) && recent.length > 0) {
-						normalizeAndCollectItems(recent);
+					if (
+						extracted.contentType === "youtube" ||
+						extracted.contentType === "transcript"
+					) {
+						const recentYoutube = await sanityClient.fetch(
+							`*[_type == "transcript" && (!defined(contentRef) || contentRef->_type in ["post", "podcast", "course", "lesson"])] | order(coalesce(publishedAt, _createdAt) desc)[0...$limit]{
+								title,
+								_type,
+								"slug": contentRef->slug.current,
+								"parentType": contentRef->_type,
+								"parentSlug": contentRef->slug.current,
+								"parentCourseSlug": select(contentRef->_type == "lesson" => *[_type == "course" && references(^.contentRef._ref)][0].slug.current, null),
+								"date": coalesce(publishedAt, _createdAt),
+								"excerpt": coalesce(summary, description),
+								"youtube": youtubeUrl,
+								youtubeId
+							}`,
+							{ limit: count },
+						);
+						if (Array.isArray(recentYoutube) && recentYoutube.length > 0) {
+							normalizeAndCollectItems(recentYoutube);
+						}
+					} else {
+						const types =
+							extracted.contentType === "podcast"
+								? ["podcast"]
+								: extracted.contentType === "post"
+									? ["post"]
+									: extracted.contentType === "course"
+										? ["course"]
+										: extracted.contentType === "lesson"
+											? ["lesson"]
+											: extracted.contentType === "newsletter"
+												? ["newsletter"]
+												: extracted.contentType === "sponsor"
+													? ["sponsor"]
+													: ["course", "podcast", "post", "newsletter"];
+						const recent = await sanityClient.fetch(
+							`*[_type in $types && defined(slug.current) && coalesce(archived, false) != true] | order(date desc, _createdAt desc)[0...$limit]{
+								title,
+								_type,
+								"slug": slug.current,
+								"courseSlug": select(_type == "lesson" => *[_type == "course" && references(^._id)][0].slug.current, null),
+								date,
+								excerpt,
+								"youtube": coalesce(youtube, listenLinks.youtube, transcript->youtubeUrl),
+								listenLinks,
+								"spotifyLink": spotify.link
+							}`,
+							{ types, limit: count },
+						);
+						if (Array.isArray(recent) && recent.length > 0) {
+							normalizeAndCollectItems(recent);
+						}
 					}
 				} else if (extracted.intent === "top_videos") {
 					const topVideos = await sanityClient.fetch(
-						`*[_type in ["podcast", "post"] && defined(slug.current) && defined(youtube)] | order(coalesce(statistics.youtube.viewCount, 0) desc, date desc)[0...$limit]{
+						`*[_type in ["podcast", "post", "course", "lesson", "transcript"] && (defined(slug.current) || _type == "transcript") && (defined(youtube) || defined(youtubeUrl)) && (_type != "transcript" || !defined(contentRef) || contentRef->_type in ["post", "podcast", "course", "lesson"])] | order(coalesce(statistics.viewCount, statistics.youtube.viewCount, transcript->statistics.viewCount, 0) desc, coalesce(date, publishedAt, _createdAt) desc)[0...$limit]{
 							title,
 							_type,
-							"slug": slug.current,
-							date,
-							excerpt,
-							youtube,
+							"slug": coalesce(slug.current, contentRef->slug.current),
+							"parentType": contentRef->_type,
+							"parentSlug": contentRef->slug.current,
+							"parentCourseSlug": select(_type == "lesson" => *[_type == "course" && references(^._id)][0].slug.current, contentRef->_type == "lesson" => *[_type == "course" && references(^.contentRef._ref)][0].slug.current, null),
+							"date": coalesce(date, publishedAt, _createdAt),
+							"excerpt": coalesce(excerpt, summary, description),
+							"youtube": coalesce(youtube, youtubeUrl, listenLinks.youtube, transcript->youtubeUrl),
+							youtubeId,
 							listenLinks,
 							"spotifyLink": spotify.link
 						}`,
@@ -706,7 +838,9 @@ export const POST: APIRoute = async ({ request }) => {
 				) {
 					const filterType =
 						extracted.contentType && extracted.contentType !== "all"
-							? extracted.contentType
+							? extracted.contentType === "transcript"
+								? "youtube"
+								: extracted.contentType
 							: null;
 					let searchResults: any[] = [];
 					try {
@@ -741,46 +875,36 @@ export const POST: APIRoute = async ({ request }) => {
 			}
 		}
 
-		// Setup AI Model (prefer OpenRouter when configured, fallback to Workers AI)
-		const openRouterApiKey =
-			(cfEnv?.OPENROUTER_API_KEY as string | undefined) ||
-			process.env.OPENROUTER_API_KEY;
-
-		let model: any;
-		if (openRouterApiKey) {
-			const openrouter = createOpenRouter({
-				apiKey: openRouterApiKey,
-			});
-			model = openrouter("meta-llama/llama-3.3-70b-instruct");
-		} else {
-			const aiBinding = cfEnv?.AI;
-			if (!aiBinding) {
-				return new Response(
-					JSON.stringify({
-						error:
-							"Neither OPENROUTER_API_KEY nor Cloudflare Workers AI binding is configured.",
-					}),
-					{
-						status: 500,
-						headers: {
-							"content-type": "application/json; charset=utf-8",
-							"access-control-allow-origin": "*",
-						},
-					},
-				);
-			}
-			const workersai = createWorkersAI({ binding: aiBinding as any });
-			model = workersai("@cf/meta/llama-3.1-8b-instruct");
-		}
+		// Setup Cloudflare Workers AI Free-Tier Model Cascade
+		const aiBinding = cfEnv?.AI;
+		const workersai = aiBinding
+			? createWorkersAI({ binding: aiBinding as any })
+			: null;
+		const model = workersai ? workersai(PRIMARY_CF_MODEL_ID as any) : null;
+		const fallbackModel = workersai
+			? workersai(FALLBACK_CF_MODEL_ID as any)
+			: null;
 
 		const collectedMcpOutputs: Array<{ toolName: string; text: string }> = [];
 		const useFastPathSynthesis =
 			collectedToolItems.length > 0 && extracted?.intent !== "joke_or_kb";
-		const cascadeMode = useFastPathSynthesis ? "clairic-fastpath" : "tool-loop";
+		const cascadeMode = !model
+			? "deterministic-fallback"
+			: useFastPathSynthesis
+				? "clairic-fastpath"
+				: "tool-loop";
 
-		let result: ReturnType<typeof streamText>;
+		let result: ReturnType<typeof streamText> | null = null;
+		const fastPathSystemPrompt =
+			"You are Agent AJ, the CodingCat.dev mascot and intelligent AI assistant. " +
+			"Cloudflare's Clairic extraction model (@cf/cloudflare/clairic) has already extracted the user's query parameters and retrieved the matching CodingCat.dev content below. " +
+			"Synthesize these retrieved items into a concise, engaging, helpful response. " +
+			"NEVER use the em-dash character anywhere in your response; use commas, parentheses, or colons instead. " +
+			"For courses, lessons, podcasts, and posts, list the relevant titles, brief descriptions, and markdown links using relative paths (e.g. [Course Title](/course/slug), [Lesson Title](/course/course-slug/lesson/slug), [Episode Title](/podcast/slug), or [Post Title](/post/slug)). " +
+			"When an exact YouTube URL is present in the retrieved items (item.youtube), include that exact URL on its own line (e.g. https://www.youtube.com/watch?v=VIDEO_ID or https://youtu.be/VIDEO_ID). " +
+			'NEVER invent placeholder strings like "https://www.youtube.com/watch?v=VIDEO_ID", localhost URLs, or malformed URL brackets.';
 
-		if (useFastPathSynthesis) {
+		if (useFastPathSynthesis && model) {
 			// Single-pass tool-free synthesis: skips remote MCP connection and tool-calling loops
 			const preFetchedJson = JSON.stringify(
 				collectedToolItems.slice(0, 8),
@@ -789,13 +913,7 @@ export const POST: APIRoute = async ({ request }) => {
 			);
 			result = streamText({
 				model,
-				system:
-					"You are Agent AJ, the CodingCat.dev mascot and intelligent AI assistant. " +
-					"Cloudflare's Clairic extraction model (@cf/cloudflare/clairic) has already extracted the user's query parameters and retrieved the matching CodingCat.dev content below. " +
-					"Synthesize these retrieved items into a concise, engaging, helpful response. " +
-					"For podcasts and posts, list the relevant titles, brief descriptions, and markdown links using relative paths (e.g. [Episode Title](/podcast/slug) or [Post Title](/post/slug)). " +
-					"When an exact YouTube URL is present in the retrieved items (item.youtube), include that exact URL on its own line (e.g. https://www.youtube.com/watch?v=VIDEO_ID or https://youtu.be/VIDEO_ID). " +
-					'NEVER invent placeholder strings like "https://www.youtube.com/watch?v=VIDEO_ID", localhost URLs, or malformed URL brackets.',
+				system: fastPathSystemPrompt,
 				messages: [
 					...coreMessages,
 					{
@@ -813,7 +931,7 @@ export const POST: APIRoute = async ({ request }) => {
 					console.error("[StreamText Clairic Fastpath Error]", error);
 				},
 			});
-		} else {
+		} else if (!useFastPathSynthesis) {
 			// Connect to Sanity Context MCP only when needed (e.g. knowledge_base_read for jokes or complex multi-tool queries)
 			const { client: connectedMcpClient, tools: rawMcpTools } =
 				await connectSanityContextMcp(cfEnv);
@@ -834,6 +952,25 @@ export const POST: APIRoute = async ({ request }) => {
 						initCtxErr,
 					);
 				}
+			}
+
+			if (
+				!model &&
+				typeof rawMcpTools.knowledge_base_read?.execute === "function"
+			) {
+				try {
+					const kbRes = await rawMcpTools.knowledge_base_read.execute(
+						{},
+						{} as any,
+					);
+					const kbText = extractMcpText(kbRes);
+					if (kbText) {
+						collectedMcpOutputs.push({
+							toolName: "knowledge_base_read",
+							text: kbText,
+						});
+					}
+				} catch {}
 			}
 
 			const ALLOWED_REMOTE_MCP_TOOLS = new Set([
@@ -875,29 +1012,57 @@ export const POST: APIRoute = async ({ request }) => {
 				...wrappedMcpTools,
 				search_content: tool({
 					description:
-						"Search CodingCat.dev articles, podcast episodes, authors, and transcripts using hybrid semantic search and keyword ranking. ALWAYS use this tool first when asked to find, recommend, or query podcasts, articles, or topics (e.g. 'Sanity', 'Firebase', 'Next.js', 'AI', 'web dev').",
+						"Search CodingCat.dev courses, lessons, articles, podcast episodes, authors, sponsors, newsletters, and YouTube transcripts using hybrid semantic search and keyword ranking. ALWAYS use this tool first when asked to find, recommend, or query courses, lessons, podcasts, articles, YouTube videos, or topics (e.g. 'Sanity', 'Firebase', 'Next.js', 'AI', 'MCP', 'web dev').",
 					inputSchema: jsonSchema<{
 						query: string;
-						type?: "all" | "podcast" | "post" | "author" | "guest";
+						type?:
+							| "all"
+							| "course"
+							| "lesson"
+							| "podcast"
+							| "post"
+							| "youtube"
+							| "transcript"
+							| "author"
+							| "guest"
+							| "sponsor"
+							| "newsletter";
 					}>({
 						type: "object",
 						properties: {
 							query: {
 								type: "string",
 								description:
-									"Search terms, topic, or question (e.g. 'Sanity', 'SvelteKit', 'AI SaaS').",
+									"Search terms, topic, or question (e.g. 'Sanity', 'SvelteKit', 'AI SaaS', 'MCP').",
 							},
 							type: {
 								type: "string",
 								description:
-									"Optional content type filter: 'all', 'podcast', 'post', 'author', 'guest'. Defaults to 'all'.",
-								enum: ["all", "podcast", "post", "author", "guest"],
+									"Optional content type filter: 'all', 'course', 'lesson', 'podcast', 'post', 'youtube', 'transcript', 'author', 'guest', 'sponsor', 'newsletter'. Defaults to 'all'.",
+								enum: [
+									"all",
+									"course",
+									"lesson",
+									"podcast",
+									"post",
+									"youtube",
+									"transcript",
+									"author",
+									"guest",
+									"sponsor",
+									"newsletter",
+								],
 							},
 						},
 						required: ["query"],
 					}),
 					execute: async ({ query, type }) => {
-						const filterType = type && type !== "all" ? type : null;
+						const filterType =
+							type && type !== "all"
+								? type === "transcript"
+									? "youtube"
+									: type
+								: null;
 						let results: any[] = [];
 						try {
 							const res = await sanityClient.fetch(semanticSearchQuery, {
@@ -936,9 +1101,16 @@ export const POST: APIRoute = async ({ request }) => {
 				}),
 				get_recent_content: tool({
 					description:
-						"Retrieve the most recently published podcast episodes or blog articles on CodingCat.dev. ALWAYS use this tool first when asked for 'latest podcast', 'recent episodes', 'latest blog post', or 'new articles'.",
+						"Retrieve the most recently published courses, lessons, podcast episodes, blog posts, newsletters, or YouTube videos on CodingCat.dev. ALWAYS use this tool first when asked for 'available courses', 'latest courses', 'latest podcast', 'recent episodes', 'latest blog post', 'new articles', or 'latest YouTube videos'.",
 					inputSchema: jsonSchema<{
-						type?: "all" | "podcast" | "post";
+						type?:
+							| "all"
+							| "course"
+							| "lesson"
+							| "podcast"
+							| "post"
+							| "youtube"
+							| "newsletter";
 						limit?: number;
 					}>({
 						type: "object",
@@ -946,8 +1118,16 @@ export const POST: APIRoute = async ({ request }) => {
 							type: {
 								type: "string",
 								description:
-									"Filter by content type: 'all', 'podcast', or 'post'. Defaults to 'all'.",
-								enum: ["all", "podcast", "post"],
+									"Filter by content type: 'all', 'course', 'lesson', 'podcast', 'post', 'youtube', or 'newsletter'. Defaults to 'all'.",
+								enum: [
+									"all",
+									"course",
+									"lesson",
+									"podcast",
+									"post",
+									"youtube",
+									"newsletter",
+								],
 							},
 							limit: {
 								type: "integer",
@@ -957,24 +1137,53 @@ export const POST: APIRoute = async ({ request }) => {
 					}),
 					execute: async ({ type, limit }) => {
 						const rawType = type ? String(type).toLowerCase() : "all";
-						const types =
-							rawType.includes("podcast") || rawType.includes("episode")
-								? ["podcast"]
-								: rawType.includes("post") ||
-										rawType.includes("article") ||
-										rawType.includes("blog")
-									? ["post"]
-									: ["podcast", "post"];
 						const count = Math.min(Math.max(Number(limit) || 5, 1), 10);
+						if (rawType.includes("youtube") || rawType.includes("video")) {
+							try {
+								const recentYt = await sanityClient.fetch(
+									`*[_type == "transcript" && (!defined(contentRef) || contentRef->_type in ["post", "podcast", "course", "lesson"])] | order(coalesce(publishedAt, _createdAt) desc)[0...$limit]{
+										title,
+										_type,
+										"slug": contentRef->slug.current,
+										"parentType": contentRef->_type,
+										"parentSlug": contentRef->slug.current,
+										"parentCourseSlug": select(contentRef->_type == "lesson" => *[_type == "course" && references(^.contentRef._ref)][0].slug.current, null),
+										"date": coalesce(publishedAt, _createdAt),
+										"excerpt": coalesce(summary, description),
+										"youtube": youtubeUrl,
+										youtubeId
+									}`,
+									{ limit: count },
+								);
+								return normalizeAndCollectItems(recentYt || []);
+							} catch (err) {
+								console.error("[get_recent_content youtube error]", err);
+								return [];
+							}
+						}
+						const types = rawType.includes("course")
+							? ["course"]
+							: rawType.includes("lesson")
+								? ["lesson"]
+								: rawType.includes("podcast") || rawType.includes("episode")
+									? ["podcast"]
+									: rawType.includes("post") ||
+											rawType.includes("article") ||
+											rawType.includes("blog")
+										? ["post"]
+										: rawType.includes("newsletter")
+											? ["newsletter"]
+											: ["course", "podcast", "post", "newsletter"];
 						try {
 							const recent = await sanityClient.fetch(
-								`*[_type in $types && defined(slug.current)] | order(date desc, _createdAt desc)[0...$limit]{
+								`*[_type in $types && defined(slug.current) && coalesce(archived, false) != true] | order(date desc, _createdAt desc)[0...$limit]{
 									title,
 									_type,
 									"slug": slug.current,
+									"courseSlug": select(_type == "lesson" => *[_type == "course" && references(^._id)][0].slug.current, null),
 									date,
 									excerpt,
-									youtube,
+									"youtube": coalesce(youtube, listenLinks.youtube, transcript->youtubeUrl),
 									listenLinks,
 									"spotifyLink": spotify.link
 								}`,
@@ -989,14 +1198,14 @@ export const POST: APIRoute = async ({ request }) => {
 				}),
 				groq_query: tool({
 					description:
-						"Execute a read-only GROQ query against the CodingCat.dev Sanity dataset. Document types are 'podcast', 'post', 'author', 'guest', and 'sponsor'. Content documents use 'date' (NOT 'publishedAt'), 'title', '\"slug\": slug.current', 'excerpt', and 'youtube'.",
+						"Execute a read-only GROQ query against the CodingCat.dev Sanity dataset. Public document types are 'course', 'lesson', 'podcast', 'post', 'transcript', 'author', 'guest', 'sponsor', 'newsletter', 'page', and 'podcastType'. Content documents use 'date', 'title', '\"slug\": slug.current', 'excerpt', and 'youtube'.",
 					inputSchema: jsonSchema<{ query: string }>({
 						type: "object",
 						properties: {
 							query: {
 								type: "string",
 								description:
-									"Valid GROQ query (e.g. *[_type == 'podcast' && defined(slug.current)] | order(date desc)[0...5]{title, _type, 'slug': slug.current, date, excerpt, youtube}).",
+									"Valid GROQ query (e.g. *[_type == 'course' && defined(slug.current)] | order(date desc)[0...5]{title, _type, 'slug': slug.current, date, excerpt, youtube}).",
 							},
 						},
 						required: ["query"],
@@ -1005,7 +1214,7 @@ export const POST: APIRoute = async ({ request }) => {
 						if (isForbiddenPrivateQuery(query)) {
 							return {
 								error:
-									"Access denied: Agent AJ only queries public content types (podcast, post, course, lesson, author, guest, sponsor).",
+									"Access denied: Agent AJ only queries public content types (podcast, post, course, lesson, transcript, author, guest, sponsor, newsletter, page, podcastType).",
 							};
 						}
 						let cleanQuery = query.trim();
@@ -1023,7 +1232,9 @@ export const POST: APIRoute = async ({ request }) => {
 							.replace(
 								/(_type\s*==\s*["'])(?:article|articles|blog|blogPost|posts)(["'])/gi,
 								"$1post$2",
-							);
+							)
+							.replace(/(_type\s*==\s*["'])(?:courses)(["'])/gi, "$1course$2")
+							.replace(/(_type\s*==\s*["'])(?:lessons)(["'])/gi, "$1lesson$2");
 						cleanQuery = cleanQuery.replace(/\bpublishedAt\b/g, "date");
 						cleanQuery = cleanQuery.replace(
 							/\[([a-zA-Z0-9_]+),\s*([a-zA-Z0-9_]+)\]\s+match\s+([^)]+\))/g,
@@ -1034,6 +1245,7 @@ export const POST: APIRoute = async ({ request }) => {
 							"$1*$2*$1",
 						);
 						cleanQuery = cleanQuery.replace(/\[_score\s*>\s*0\]/g, "");
+						cleanQuery = enforcePublicGroqFilter(cleanQuery);
 
 						try {
 							const directResult = await sanityClient.fetch(cleanQuery);
@@ -1117,78 +1329,145 @@ export const POST: APIRoute = async ({ request }) => {
 			};
 
 			const systemPrompt =
-				"You are Agent AJ, the CodingCat.dev mascot and intelligent AI assistant. Answer user queries about CodingCat.dev podcasts, tutorials, articles, authors, transcripts, and our Sanity Context Knowledge Base (including AJ Knowledge Jokes).\n\n" +
+				"You are Agent AJ, the CodingCat.dev mascot and intelligent AI assistant. Answer user queries about CodingCat.dev courses, lessons, podcasts, tutorials, blog posts, authors, sponsors, newsletters, YouTube transcripts, and our Sanity Context Knowledge Base (including AJ Knowledge Jokes).\n\n" +
 				"SEARCH & TOOL INSTRUCTIONS:\n" +
+				"- NEVER use the em-dash character anywhere in your response; use commas, parentheses, or colons instead.\n" +
 				"- KNOWLEDGE BASE & JOKES (`knowledge_base_read` / `initial_context`): When asked for a joke, programming dad joke, Git joke, SQL/database joke, Jeff Dean fact, legendary software engineering story, or coding culture humor, ALWAYS use the `knowledge_base_read` tool (and `initial_context` first if you need to see the knowledge base ID and entry paths) to read the actual entries from the Sanity Context Knowledge Base (`AJ Knowlege Jokes`) and share the real jokes/entries retrieved from it!\n" +
-				"- RECENT CONTENT (`get_recent_content`): ALWAYS use the `get_recent_content` tool first when asked for 'latest podcast', 'recent episodes', 'latest blog post', or 'new articles'.\n" +
-				"- TOPIC SEARCH (`search_content`): ALWAYS use the `search_content` tool when asked to find, recommend, or query podcasts, posts, or articles on any topic, technology, or question (e.g. 'Sanity', 'Firebase', 'Next.js', 'AI', 'web dev'). It performs hybrid semantic and keyword search across all episodes, posts, and transcripts.\n" +
+				"- RECENT CONTENT & AVAILABLE COURSES (`get_recent_content`): ALWAYS use the `get_recent_content` tool first when asked for 'available courses', 'latest courses', 'latest podcast', 'recent episodes', 'latest blog post', 'new articles', or 'latest YouTube videos'.\n" +
+				"- TOPIC SEARCH (`search_content`): ALWAYS use the `search_content` tool when asked to find, recommend, or query courses, lessons, podcasts, posts, YouTube videos, or articles on any topic, technology, or question (e.g. 'Sanity', 'Firebase', 'Next.js', 'AI', 'MCP', 'web dev'). It performs hybrid semantic and keyword search across all courses, lessons, episodes, posts, and transcripts.\n" +
 				"- TOP VIDEOS: When asked for 'top videos' or popular video podcasts, search for high-profile episodes with video recordings (e.g. episodes featuring Guillermo Rauch, Rich Harris, Lee Robinson, or recent GenAI/MCP video podcasts) and provide their YouTube links alongside CodingCat.dev episode links.\n" +
 				"- PRECISE GROQ (`groq_query`): Use `groq_query` only for precise lookups when searching for specific author profiles (e.g. *[_type == 'author' && title match '*Alex*']).\n" +
 				"- CRITICAL: ALWAYS execute tools by invoking them via function calls. NEVER output raw JSON or code blocks in your text describing tool calls instead of executing them.\n" +
-				'- Once you have retrieved the final content (either from `knowledge_base_read` for knowledge base entries or from `search_content`/`get_recent_content` for episodes and posts), synthesize it into an engaging, helpful response. For podcasts and posts, list the relevant titles, brief descriptions, and markdown links using relative paths (e.g. [Episode Title](/podcast/slug) or [Post Title](/post/slug)). When an exact YouTube URL is present in the tool results (e.g. item.youtube), include that exact URL on its own line (e.g. https://www.youtube.com/watch?v=VIDEO_ID or https://youtu.be/VIDEO_ID). NEVER invent placeholder strings like "https://www.youtube.com/watch?v=VIDEO_ID", localhost URLs, or malformed URL brackets like ["/slug"](http://localhost:3000/slug).' +
+				'- Once you have retrieved the final content (either from `knowledge_base_read` for knowledge base entries or from `search_content`/`get_recent_content` for courses, lessons, episodes, and posts), synthesize it into an engaging, helpful response. For courses, lessons, podcasts, and posts, list the relevant titles, brief descriptions, and markdown links using relative paths (e.g. [Course Title](/course/slug), [Lesson Title](/course/course-slug/lesson/slug), [Episode Title](/podcast/slug), or [Post Title](/post/slug)). When an exact YouTube URL is present in the tool results (e.g. item.youtube), include that exact URL on its own line (e.g. https://www.youtube.com/watch?v=VIDEO_ID or https://youtu.be/VIDEO_ID). NEVER invent placeholder strings like "https://www.youtube.com/watch?v=VIDEO_ID", localhost URLs, or malformed URL brackets like ["/slug"](http://localhost:3000/slug).' +
 				(initialContextOutline
 					? `\n\nSANITY CONTEXT MCP INITIAL CONTEXT OUTLINE:\n${initialContextOutline}`
 					: "");
 
-			result = streamText({
-				model,
-				system: systemPrompt,
-				messages: coreMessages,
-				tools,
-				stopWhen: isStepCount(8),
-				onError: ({ error }) => {
-					console.error("[StreamText Internal Error]", error);
-				},
-			});
+			if (model) {
+				result = streamText({
+					model,
+					system: systemPrompt,
+					messages: coreMessages,
+					tools,
+					stopWhen: isStepCount(8),
+					onError: ({ error }) => {
+						console.error("[StreamText Internal Error]", error);
+					},
+				});
+			}
 		}
 
-		// Pipe text stream through TransformStream with explicit error surface
+		// Pipe text stream through TransformStream with multi-tier Cloudflare Workers AI + deterministic fallback
 		const transformStream = new TransformStream();
 		const writer = transformStream.writable.getWriter();
 		const encoder = new TextEncoder();
 
+		const formatDeterministicItems = (items: typeof collectedToolItems) => {
+			const formatted = items
+				.slice(0, 5)
+				.map((item) => {
+					const link = item.url
+						? `[${item.title}](${item.url})`
+						: `**${item.title}**`;
+					const desc = item.excerpt
+						? `\n${sanitizeEmDashes(item.excerpt.trim())}`
+						: "";
+					const yt = item.youtube ? `\n${item.youtube}` : "";
+					return `- ${link}${desc}${yt}`;
+				})
+				.join("\n\n");
+			return `Here is what I found on CodingCat.dev:\n\n${formatted}`;
+		};
+
 		(async () => {
 			try {
 				let hasOutput = false;
-				for await (const part of result.stream) {
-					if (part.type === "text-delta") {
-						hasOutput = true;
-						await writer.write(encoder.encode(part.text));
-					} else if (part.type === "error") {
-						console.error("[Stream Part Error]", (part as any).error);
-						const errMsg =
-							(part as any).error instanceof Error
-								? (part as any).error.message
-								: JSON.stringify((part as any).error);
-						if (errMsg.includes("4006") || errMsg.includes("neurons")) {
-							await writer.write(
-								encoder.encode(
-									"Cloudflare Workers AI daily free neuron allocation (10,000 neurons) has been reached. To continue chatting, upgrade to Cloudflare Workers Paid ($5/mo) or provide an AI API key.",
-								),
-							);
-						} else {
-							await writer.write(encoder.encode(`\n\n[Error: ${errMsg}]`));
+				let streamErrorMsg: string | null = null;
+
+				if (result) {
+					try {
+						for await (const part of result.stream) {
+							if (part.type === "text-delta" && part.text) {
+								hasOutput = true;
+								await writer.write(encoder.encode(sanitizeEmDashes(part.text)));
+							} else if (part.type === "error") {
+								console.error("[Stream Part Error]", (part as any).error);
+								streamErrorMsg =
+									(part as any).error instanceof Error
+										? (part as any).error.message
+										: JSON.stringify((part as any).error);
+							}
 						}
+					} catch (primaryStreamErr) {
+						console.warn(
+							"[Primary Stream Iteration Warning]",
+							primaryStreamErr,
+						);
+						streamErrorMsg =
+							primaryStreamErr instanceof Error
+								? primaryStreamErr.message
+								: String(primaryStreamErr);
 					}
 				}
-				if (!hasOutput) {
-					// Check all steps to see if text was produced across steps
-					const steps = await result.steps;
-					const allText = steps
-						.map((s) => s.text)
-						.filter(Boolean)
-						.join("\n\n");
-					if (allText) {
-						await writer.write(encoder.encode(allText));
-					} else if (collectedMcpOutputs.length > 0) {
+
+				if (!hasOutput && result) {
+					try {
+						const steps = await result.steps;
+						const allText = steps
+							.map((s) => s.text)
+							.filter(Boolean)
+							.join("\n\n");
+						if (allText) {
+							hasOutput = true;
+							await writer.write(encoder.encode(sanitizeEmDashes(allText)));
+						}
+					} catch (stepsErr) {
 						console.warn(
-							"[Chat API Synthesizing Fallback from MCP Tool Results]",
-							{
-								stepCount: steps.length,
-								mcpToolsCalled: collectedMcpOutputs.map((o) => o.toolName),
-							},
+							"[Result steps resolution skipped after stream error]",
+							stepsErr,
 						);
-						// Prefer non-initial_context outputs (e.g. knowledge_base_read) when available
+					}
+				}
+
+				// Tier 2 Fallback: Retry synthesis with secondary Cloudflare free model (@cf/meta/llama-3.2-3b-instruct)
+				if (
+					!hasOutput &&
+					fallbackModel &&
+					(collectedToolItems.length > 0 || collectedMcpOutputs.length > 0)
+				) {
+					try {
+						const fallbackContext =
+							collectedMcpOutputs.length > 0
+								? collectedMcpOutputs.map((o) => o.text).join("\n\n")
+								: JSON.stringify(collectedToolItems.slice(0, 6), null, 2);
+						const fallbackSynth = streamText({
+							model: fallbackModel,
+							system: fastPathSystemPrompt,
+							messages: [
+								...coreMessages,
+								{
+									role: "user",
+									content: `Retrieved CodingCat.dev Content:\n${fallbackContext}\n\nPlease answer the user's request directly using this retrieved content.`,
+								},
+							],
+						});
+						for await (const part of fallbackSynth.stream) {
+							if (part.type === "text-delta" && part.text) {
+								hasOutput = true;
+								await writer.write(encoder.encode(sanitizeEmDashes(part.text)));
+							}
+						}
+					} catch (fallbackModelErr) {
+						console.warn(
+							"[Secondary Cloudflare Model Fallback Warning]",
+							fallbackModelErr,
+						);
+					}
+				}
+
+				// Tier 3 Fallback: Deterministic Markdown Synthesis (zero neuron cost, never fails)
+				if (!hasOutput) {
+					if (collectedMcpOutputs.length > 0) {
 						const primaryMcpOutputs = collectedMcpOutputs.filter(
 							(o) => o.toolName !== "initial_context",
 						);
@@ -1197,64 +1476,29 @@ export const POST: APIRoute = async ({ request }) => {
 								? primaryMcpOutputs
 								: collectedMcpOutputs
 						)
-							.map((o) => o.text)
+							.map((o) => sanitizeEmDashes(o.text))
 							.join("\n\n");
-
-						let synthesized = false;
-						try {
-							const synthResult = streamText({
-								model,
-								system:
-									"You are Agent AJ, the CodingCat.dev mascot. Answer the user's request directly and enthusiastically using the retrieved Sanity Context Knowledge Base content below.",
-								messages: [
-									...coreMessages,
-									{
-										role: "user",
-										content: `Retrieved Knowledge Base Content:\n\n${mcpContextText}\n\nPlease answer the user's request based on this content.`,
-									},
-								],
-							});
-							for await (const part of synthResult.stream) {
-								if (part.type === "text-delta" && part.text) {
-									synthesized = true;
-									await writer.write(encoder.encode(part.text));
-								}
-							}
-						} catch (synthErr) {
-							console.warn("[Chat API MCP synthesis error]", synthErr);
-						}
-						if (!synthesized) {
-							await writer.write(encoder.encode(mcpContextText));
-						}
+						hasOutput = true;
+						await writer.write(encoder.encode(mcpContextText));
 					} else if (collectedToolItems.length > 0) {
-						console.warn("[Chat API Synthesizing Fallback from Tool Results]", {
-							stepCount: steps.length,
-							itemCount: collectedToolItems.length,
-						});
-						const formatted = collectedToolItems
-							.slice(0, 5)
-							.map((item) => {
-								const link = item.url
-									? `[${item.title}](${item.url})`
-									: `**${item.title}**`;
-								const desc = item.excerpt ? `\n${item.excerpt.trim()}` : "";
-								const yt = item.youtube ? `\n${item.youtube}` : "";
-								return `- ${link}${desc}${yt}`;
-							})
-							.join("\n\n");
+						hasOutput = true;
+						await writer.write(
+							encoder.encode(formatDeterministicItems(collectedToolItems)),
+						);
+					} else if (
+						streamErrorMsg &&
+						(streamErrorMsg.includes("4006") ||
+							streamErrorMsg.includes("neurons"))
+					) {
 						await writer.write(
 							encoder.encode(
-								`Here is what I found on CodingCat.dev:\n\n${formatted}`,
+								"Cloudflare Workers AI daily free neuron allocation has been reached for open-ended generation, and no direct Sanity matches were found for that query. Try searching for a specific CodingCat.dev topic like Sanity, Astro, Cloudflare, or MCP.",
 							),
 						);
 					} else {
-						console.warn("[Chat API Empty Text Stream]", {
-							stepCount: steps.length,
-							finishReasons: steps.map((s) => s.finishReason),
-						});
 						await writer.write(
 							encoder.encode(
-								"I searched the CodingCat.dev Sanity content lake for your query, but could not find relevant content.",
+								"I searched the CodingCat.dev Sanity content lake for your query, but could not find matching courses, episodes, or posts.",
 							),
 						);
 					}
@@ -1279,11 +1523,17 @@ export const POST: APIRoute = async ({ request }) => {
 				}
 			} catch (streamErr) {
 				console.error("[StreamText Stream Loop Error]", streamErr);
-				const errMsg =
-					streamErr instanceof Error ? streamErr.message : String(streamErr);
-				await writer.write(
-					encoder.encode(`\n\n[Error generating response: ${errMsg}]`),
-				);
+				if (collectedToolItems.length > 0) {
+					await writer.write(
+						encoder.encode(formatDeterministicItems(collectedToolItems)),
+					);
+				} else {
+					await writer.write(
+						encoder.encode(
+							"I encountered a temporary issue connecting to Cloudflare Workers AI. Please try your question again or use the search bar above.",
+						),
+					);
+				}
 			} finally {
 				await writer.close();
 				if (mcpClient) {

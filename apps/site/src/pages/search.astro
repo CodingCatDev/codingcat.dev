@@ -149,6 +149,13 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
 			<button
 				type="button"
 				class="filter-pill cursor-pointer rounded-full border-2 border-[#2A1155] bg-white px-4 py-1.5 font-display text-xs font-black text-[#2A1155] shadow-sketch-sm transition-colors hover:bg-[#EDE9FE] dark:border-white/25 dark:bg-[#131B2E] dark:text-white"
+				data-type="course"
+			>
+				Courses
+			</button>
+			<button
+				type="button"
+				class="filter-pill cursor-pointer rounded-full border-2 border-[#2A1155] bg-white px-4 py-1.5 font-display text-xs font-black text-[#2A1155] shadow-sketch-sm transition-colors hover:bg-[#EDE9FE] dark:border-white/25 dark:bg-[#131B2E] dark:text-white"
 				data-type="post"
 			>
 				Blog Posts
@@ -159,6 +166,13 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
 				data-type="podcast"
 			>
 				Podcasts
+			</button>
+			<button
+				type="button"
+				class="filter-pill cursor-pointer rounded-full border-2 border-[#2A1155] bg-white px-4 py-1.5 font-display text-xs font-black text-[#2A1155] shadow-sketch-sm transition-colors hover:bg-[#EDE9FE] dark:border-white/25 dark:bg-[#131B2E] dark:text-white"
+				data-type="youtube"
+			>
+				YouTube
 			</button>
 			<button
 				type="button"
@@ -316,6 +330,11 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
 		href: string;
 		excerpt?: string;
 		date?: string;
+		youtubeUrl?: string;
+		youtubeId?: string;
+		thumbnailUrl?: string;
+		duration?: string;
+		viewCount?: number;
 	}
 
 	interface ApiResponse {
@@ -371,6 +390,16 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
 
 	function getBadgeInfo(type: string): { label: string; badgeClass: string } {
 		switch (type) {
+			case "course":
+				return {
+					label: "🎓 Course",
+					badgeClass: "bg-[#DDD6FE] text-[#4C1D95] dark:bg-purple-900/80 dark:text-purple-100",
+				};
+			case "lesson":
+				return {
+					label: "📚 Lesson",
+					badgeClass: "bg-[#E0E7FF] text-[#3730A3] dark:bg-indigo-950/80 dark:text-indigo-200",
+				};
 			case "post":
 				return {
 					label: "✏️ Blog Post",
@@ -381,9 +410,25 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
 					label: "🎧 Podcast Episode",
 					badgeClass: "bg-[#FEF08A] text-[#713F12]",
 				};
+			case "youtube":
+			case "transcript":
+				return {
+					label: "▶️ YouTube Video",
+					badgeClass: "bg-[#FEE2E2] text-[#991B1B] dark:bg-red-950/80 dark:text-red-200",
+				};
+			case "newsletter":
+				return {
+					label: "📬 Newsletter",
+					badgeClass: "bg-[#FCE7F3] text-[#9D174D] dark:bg-pink-950/80 dark:text-pink-200",
+				};
+			case "sponsor":
+				return {
+					label: "🤝 Sponsor",
+					badgeClass: "bg-[#FEF3C7] text-[#92400E] dark:bg-amber-950/80 dark:text-amber-200",
+				};
 			case "author":
 				return {
-					label: "🐾 Author",
+					label: "👤 Author",
 					badgeClass: "bg-[#BAE6FD] text-[#0369A1]",
 				};
 			case "guest":
@@ -409,23 +454,48 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
 			const title = hit.title || "Untitled";
 			const excerpt = hit.excerpt || "";
 			const badge = getBadgeInfo(type);
+			const isExternal = href.startsWith("http");
 
 			const card = document.createElement("article");
 			card.className =
-				"duo-card hand-border group relative flex flex-col gap-2 p-5 transition-all hover:-translate-y-1 hover:border-[#7C3AED] dark:hover:border-[#C084FC]";
+				"duo-card hand-border group relative flex flex-col sm:flex-row gap-4 p-5 transition-all hover:-translate-y-1 hover:border-[#7C3AED] dark:hover:border-[#C084FC]";
+
+			const thumbHtml = hit.thumbnailUrl
+				? `
+				<a href="${hit.youtubeUrl || href}" ${hit.youtubeUrl || isExternal ? 'target="_blank" rel="noopener noreferrer"' : ""} class="relative shrink-0 w-full sm:w-44 aspect-video rounded-xl overflow-hidden border-2 border-[#2A1155] bg-[#0B1326] shadow-sketch-sm group/thumb">
+					<img src="${hit.thumbnailUrl}" alt="${title.replace(/"/g, "&quot;")}" loading="lazy" class="h-full w-full object-cover transition-transform duration-200 group-hover/thumb:scale-105" />
+					<span class="absolute inset-0 flex items-center justify-center bg-black/25 opacity-0 transition-opacity group-hover/thumb:opacity-100">
+						<span class="flex size-9 items-center justify-center rounded-full bg-red-600 text-white shadow-md">▶</span>
+					</span>
+					${hit.duration ? `<span class="absolute bottom-1.5 right-1.5 rounded bg-black/85 px-1.5 py-0.5 font-mono text-[10px] font-bold text-white">${hit.duration}</span>` : ""}
+				</a>
+			`
+				: "";
+
+			const ytActionHtml = hit.youtubeUrl
+				? `
+				<a href="${hit.youtubeUrl}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 rounded-full border border-red-500/30 bg-red-500/10 px-2.5 py-0.5 font-mono text-[11px] font-bold text-red-700 hover:bg-red-500/20 dark:text-red-300 transition-colors">
+					▶ Watch on YouTube${typeof hit.viewCount === "number" && hit.viewCount > 0 ? ` · ${hit.viewCount.toLocaleString()} views` : ""}
+				</a>
+			`
+				: "";
 
 			card.innerHTML = `
-				<div class="flex items-center justify-between gap-2">
-					<span class="inline-flex items-center gap-1.5 rounded-full border border-[#2A1155]/30 px-3 py-0.5 font-mono text-xs font-extrabold uppercase tracking-wider ${badge.badgeClass}">
-						${badge.label}
-					</span>
+				${thumbHtml}
+				<div class="flex min-w-0 flex-1 flex-col gap-2">
+					<div class="flex flex-wrap items-center justify-between gap-2">
+						<span class="inline-flex items-center gap-1.5 rounded-full border border-[#2A1155]/30 px-3 py-0.5 font-mono text-xs font-extrabold uppercase tracking-wider ${badge.badgeClass}">
+							${badge.label}
+						</span>
+						${ytActionHtml}
+					</div>
+					<h2 class="font-display text-xl font-black text-[#2A1155] group-hover:text-[#7C3AED] dark:text-white dark:group-hover:text-[#C084FC] transition-colors">
+						<a href="${href}" ${isExternal ? 'target="_blank" rel="noopener noreferrer"' : ""} class="hover:underline">
+							${title}
+						</a>
+					</h2>
+					${excerpt ? `<p class="text-sm font-medium text-[#2A1155]/75 dark:text-slate-300 line-clamp-2 leading-relaxed">${excerpt}</p>` : ""}
 				</div>
-				<h2 class="font-display text-xl font-black text-[#2A1155] group-hover:text-[#7C3AED] dark:text-white dark:group-hover:text-[#C084FC] transition-colors">
-					<a href="${href}" class="hover:underline">
-						${title}
-					</a>
-				</h2>
-				${excerpt ? `<p class="text-sm font-medium text-[#2A1155]/75 dark:text-slate-300 line-clamp-2 leading-relaxed">${excerpt}</p>` : ""}
 			`;
 
 			resultsList.appendChild(card);

@@ -166,12 +166,20 @@ describe("Tier 1 - Feature Coverage", () => {
 			assert.ok(searchFile.includes("search-input"), "Must have search input");
 			assert.ok(searchFile.includes("/api/search"), "Must query /api/search");
 			assert.ok(
+				searchFile.includes('data-type="course"'),
+				"Must have course filter",
+			);
+			assert.ok(
 				searchFile.includes('data-type="post"'),
 				"Must have post filter",
 			);
 			assert.ok(
 				searchFile.includes('data-type="podcast"'),
 				"Must have podcast filter",
+			);
+			assert.ok(
+				searchFile.includes('data-type="youtube"'),
+				"Must have youtube filter",
 			);
 			assert.ok(
 				searchFile.includes('data-type="author"'),
@@ -188,6 +196,10 @@ describe("Tier 1 - Feature Coverage", () => {
 			assert.ok(
 				modalFile.includes("search-modal"),
 				"SearchModal must define modal dialog",
+			);
+			assert.ok(
+				modalFile.includes('data-type="youtube"'),
+				"SearchModal must have youtube filter",
 			);
 			assert.ok(
 				apiFile.includes("semanticSearchQuery"),
@@ -1845,17 +1857,27 @@ describe("Tier 1 - Feature Coverage", () => {
 			);
 		});
 
-		it("7.20 Agent AJ /api/chat integrates Cloudflare Clairic (@cf/cloudflare/clairic) extraction cascade and fastpath fallback", async () => {
+		it("7.20 Agent AJ /api/chat integrates Cloudflare Clairic (@cf/cloudflare/clairic) extraction cascade and Cloudflare free model cascade", async () => {
 			const chatModule = loadModule("src/pages/api/chat.ts");
 			assert.equal(chatModule.CLAIRIC_MODEL_ID, "@cf/cloudflare/clairic");
+			assert.equal(
+				chatModule.PRIMARY_CF_MODEL_ID,
+				"@cf/meta/llama-3.1-8b-instruct-fp8",
+			);
+			assert.equal(
+				chatModule.FALLBACK_CF_MODEL_ID,
+				"@cf/meta/llama-3.2-3b-instruct",
+			);
 			assert.equal(typeof chatModule.extractIntentWithClairic, "function");
 
-			// 1. Verify GET /api/chat advertises Clairic extraction model
+			// 1. Verify GET /api/chat advertises Clairic extraction model and Cloudflare free models
 			const statusRes = await chatModule.GET({
 				request: new Request("https://codingcat.dev/api/chat"),
 			});
 			assert.equal(statusRes.status, 200);
 			const statusData = await statusRes.json();
+			assert.equal(statusData.model, "@cf/meta/llama-3.1-8b-instruct-fp8");
+			assert.equal(statusData.fallbackModel, "@cf/meta/llama-3.2-3b-instruct");
 			assert.equal(statusData.extractionModel, "@cf/cloudflare/clairic");
 			assert.equal(statusData.cascadeArchitecture, "extract-route-synthesize");
 
@@ -2298,6 +2320,13 @@ describe("Tier 1 - Feature Coverage", () => {
 				"*[defined(roughCutUrl)]",
 				'*[_id in path("drafts.**")]',
 				'*[_id in path("versions.**")]',
+				'*[_type == "automatedVideo"]',
+				'*[_type == "contentIdea"]',
+				'*[_type == "short"]',
+				'*[_type == "headshot"]',
+				'*[_type == "speakingEvent"]',
+				'*[_type == "talkAbstract"]',
+				'*[_type == "settings"]',
 			];
 			for (const q of forbiddenQueries) {
 				assert.equal(
@@ -2320,6 +2349,11 @@ describe("Tier 1 - Feature Coverage", () => {
 				"booking-1234",
 				"sponsorlead-1234",
 				"_.listeners",
+				"settings",
+				"short-yt-123",
+				"event-devnexus-2026",
+				"talk-mcp-101",
+				"headshot-alex-1",
 			];
 			for (const id of forbiddenIds) {
 				assert.equal(
@@ -2432,8 +2466,20 @@ describe("Tier 1 - Feature Coverage", () => {
 				"get_recent_content type enum must include course and lesson",
 			);
 
-			// 2. schema_explorer returns course and lesson schemas
-			for (const schemaType of ["course", "lesson"]) {
+			// 2. schema_explorer returns all 11 public document schemas
+			for (const schemaType of [
+				"course",
+				"lesson",
+				"podcast",
+				"post",
+				"transcript",
+				"author",
+				"guest",
+				"sponsor",
+				"newsletter",
+				"page",
+				"podcastType",
+			]) {
 				const schemaReq = new Request("https://codingcat.dev/mcp", {
 					method: "POST",
 					headers: { "Content-Type": "application/json" },
@@ -2454,7 +2500,7 @@ describe("Tier 1 - Feature Coverage", () => {
 				assert.equal(parsedSchema.name, schemaType);
 			}
 
-			// 3. Clairic fastpath extraction handles course queries cleanly
+			// 3. Clairic fastpath extraction handles course and YouTube queries cleanly
 			const courseAvail = await chatModule.extractIntentWithClairic(
 				"What courses are available on CodingCat.dev?",
 			);
@@ -2467,6 +2513,13 @@ describe("Tier 1 - Feature Coverage", () => {
 			assert.equal(courseTopic.intent, "topic_search");
 			assert.equal(courseTopic.contentType, "course");
 			assert.equal(courseTopic.searchQuery, "MCP");
+
+			const youtubeTopic = await chatModule.extractIntentWithClairic(
+				"Find YouTube videos about Cloudflare Workers",
+			);
+			assert.equal(youtubeTopic.intent, "topic_search");
+			assert.equal(youtubeTopic.contentType, "youtube");
+			assert.equal(youtubeTopic.searchQuery, "Cloudflare Workers");
 		});
 	});
 
