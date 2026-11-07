@@ -109,6 +109,9 @@ export function extractPortalAllowedEmails(
 			doc.coordinatorEmail,
 			...(Array.isArray(doc.coordinatorEmails) ? doc.coordinatorEmails : []),
 			...(Array.isArray(doc.allowedEmails) ? doc.allowedEmails : []),
+			...(Array.isArray(doc.guests)
+				? doc.guests.map((g: { email?: string }) => g?.email)
+				: []),
 		];
 		for (const item of rawStrings) {
 			if (typeof item !== "string") {
@@ -123,6 +126,10 @@ export function extractPortalAllowedEmails(
 		}
 	}
 	return Array.from(out);
+}
+
+export function isHostEmail(email?: string | null): boolean {
+	return HOST_ADMIN_EMAILS.has((email || "").trim().toLowerCase());
 }
 
 /**

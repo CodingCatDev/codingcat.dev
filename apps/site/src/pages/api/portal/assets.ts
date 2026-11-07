@@ -82,6 +82,7 @@ export const GET: APIRoute = async ({ request, url }) => {
 			coordinatorEmail,
 			coordinatorEmails,
 			allowedEmails,
+			guests,
 			sharedAssets
 		}`,
 		{ token } as Record<string, any>,
@@ -302,6 +303,7 @@ export const POST: APIRoute = async ({ request, url }) => {
 			coordinatorEmail,
 			coordinatorEmails,
 			allowedEmails,
+			guests,
 			source,
 			bookingSource
 		}`,

@@ -6,7 +6,14 @@ import {
 	sanitizePortableTextBlocks,
 } from "@/lib/guest-portal";
 import {
+	findGuestByEmail,
+	hasGuestList,
+	type PortalGuest,
+	resolvePortalGuests,
+} from "@/lib/portal-guests";
+import {
 	extractPortalAllowedEmails,
+	isHostEmail,
 	verifyPortalRequestAuth,
 } from "@/lib/portal-security";
 import { uploadAndLinkMediaLibraryAsset } from "@/lib/sanity/media-library";
@@ -46,6 +53,7 @@ export const POST: APIRoute = async ({ request, url }) => {
 	try {
 		const body = (await request.json()) as {
 			token?: string;
+			guestKey?: string;
 			guestSlug?: string;
 			title?: string;
 			websiteUrl?: string;
@@ -95,6 +103,7 @@ export const POST: APIRoute = async ({ request, url }) => {
 				coordinatorEmail,
 				coordinatorEmails,
 				allowedEmails,
+				guests,
 				company,
 				companyName,
 				guestSlug,
@@ -133,14 +142,37 @@ export const POST: APIRoute = async ({ request, url }) => {
 			);
 		}
 
+		const isHost = isHostEmail(auth.verifiedEmail);
+		const multiGuestBooking = targetDocs.find(
+			(d) => d._type === "booking" && hasGuestList(d),
+		);
+		let targetGuest: PortalGuest | undefined;
+		if (multiGuestBooking) {
+			const guests = resolvePortalGuests(multiGuestBooking);
+			targetGuest = isHost
+				? (guests.find((g) => g._key === body.guestKey) ?? guests[0])
+				: findGuestByEmail(guests, auth.verifiedEmail);
+			if (!targetGuest) {
+				return new Response(
+					JSON.stringify({
+						ok: false,
+						error:
+							"Each guest edits their own speaker profile. Sign in with the email you were invited with.",
+					}),
+					{ status: 403, headers: CORS_HEADERS },
+				);
+			}
+		}
+
 		const resolvedTitle =
 			(body.title || "").trim() ||
+			targetGuest?.name ||
 			primaryDoc?.guestName ||
 			primaryDoc?.contactName ||
 			"Podcast Guest";
 		const resolvedSlug =
-			(body.guestSlug || "").trim() ||
-			primaryDoc?.guestSlug ||
+			(isHost ? (body.guestSlug || "").trim() : "") ||
+			(targetGuest ? targetGuest.guestSlug : primaryDoc?.guestSlug) ||
 			slugifyName(resolvedTitle) ||
 			`guest-${canonicalToken.slice(0, 12)}`;
 
@@ -349,19 +381,31 @@ export const POST: APIRoute = async ({ request, url }) => {
 
 		// Sync guestSlug & guestDocId onto the booking / sponsorLead record(s)
 		const finalSlug = existingGuest?.slug?.current || resolvedSlug;
-		await Promise.all(
-			targetDocs.map((d) =>
-				client
-					.patch(d._id)
-					.set({
-						guestSlug: finalSlug,
-						guestDocId: draftDocId,
-						...(d._type === "booking" ? { guestName: resolvedTitle } : {}),
-					})
-					.commit()
-					.catch(() => {}),
-			),
-		);
+		if (multiGuestBooking && targetGuest) {
+			const prefix = `guests[_key=="${targetGuest._key}"]`;
+			await client
+				.patch(multiGuestBooking._id)
+				.set({
+					[`${prefix}.guestSlug`]: finalSlug,
+					[`${prefix}.guestDocId`]: draftDocId,
+				})
+				.commit()
+				.catch(() => {});
+		} else {
+			await Promise.all(
+				targetDocs.map((d) =>
+					client
+						.patch(d._id)
+						.set({
+							guestSlug: finalSlug,
+							guestDocId: draftDocId,
+							...(d._type === "booking" ? { guestName: resolvedTitle } : {}),
+						})
+						.commit()
+						.catch(() => {}),
+				),
+			);
+		}
 
 		return new Response(
 			JSON.stringify({

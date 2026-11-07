@@ -9,6 +9,7 @@ import PortableTextContent from "@/components/portable-text/PortableTextContent.
 import PtYouTube from "@/components/portable-text/PtYouTube.astro";
 import SectionHeader from "@/components/SectionHeader.astro";
 import SponsorCard from "@/components/SponsorCard.astro";
+import TagPills from "@/components/TagPills.astro";
 import TranscriptModal from "@/components/TranscriptModal.astro";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import type { ContentListItem } from "@/lib/content";
@@ -45,6 +46,11 @@ const origin = Astro.locals.siteUrl.origin;
 const coverThumbnail = sanity.resolveOpenGraphImage(
 	post.coverImage ?? undefined,
 );
+const ogSocialImage = post.ogImage
+	? sanity.resolveOpenGraphImage(post.ogImage, 1200, 630)
+	: post.coverImage
+		? sanity.resolveOpenGraphImage(post.coverImage, 1200, 630)
+		: undefined;
 const ogCardImageUrl = sanity
 	.urlForImage(post.coverImage ?? undefined)
 	?.width(640)
@@ -91,6 +97,7 @@ const faqNode = faqSchema(extractFaqsFromPortableText(post.content));
 <BaseLayout
 	title={post.title}
 	description={post.excerpt}
+	image={ogSocialImage}
 	ogFallback={{
 		title: post.title,
 		subtitle: post.excerpt,
@@ -139,30 +146,12 @@ const faqNode = faqSchema(extractFaqsFromPortableText(post.content));
 					<FormattedDate dateString={post.date} />
 				</span>
 			)}
-			{matchedTopics.map((topic) => (
-				<a
-					href={`/topic/${topic.slug}`}
-					class="inline-flex items-center gap-2 rounded-full border-2 border-[#2A1155] bg-white px-3.5 py-1 font-display text-xs font-black text-[#2A1155] transition-all hover:-translate-y-0.5 hover:bg-[#EDE9FE] hover:text-[#7C3AED] dark:border-white/25 dark:bg-[#131B2E] dark:text-white dark:hover:bg-purple-950/60 shadow-sketch-sm"
-				>
-					{topic.symbolLight && (
-						<img
-							src={topic.symbolLight}
-							alt=""
-							aria-hidden="true"
-							class="h-3.5 w-auto object-contain dark:hidden"
-						/>
-					)}
-					{topic.symbolDark && (
-						<img
-							src={topic.symbolDark}
-							alt=""
-							aria-hidden="true"
-							class="hidden h-3.5 w-auto object-contain dark:block"
-						/>
-					)}
-					<span>{topic.title}</span>
-				</a>
-			))}
+			<TagPills
+				title={post.title}
+				excerpt={post.excerpt}
+				tags={postWithRelated.tags}
+				size="md"
+			/>
 		</div>
 
 		<h1 class="mb-8 break-words font-display text-3xl font-black leading-tight tracking-tight text-balance text-[#2A1155] dark:text-white sm:text-4xl md:text-6xl">

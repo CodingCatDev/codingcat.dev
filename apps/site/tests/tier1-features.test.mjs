@@ -733,13 +733,15 @@ describe("Tier 1 - Feature Coverage", () => {
 			assert.equal(ogUtils.TYPE_COLORS.Author, "#ec4899");
 		});
 
-		it("5.3 titleFontSize dynamically scales for lengths: <=40 (56), 41-60 (48), >60 (42)", () => {
+		it("5.3 titleFontSize dynamically scales for lengths: <=30 (56), 31-50 (50), 51-70 (44), >70 (38)", () => {
 			assert.equal(ogUtils.titleFontSize("Short Title"), 56);
-			assert.equal(ogUtils.titleFontSize("A".repeat(40)), 56);
-			assert.equal(ogUtils.titleFontSize("A".repeat(41)), 48);
-			assert.equal(ogUtils.titleFontSize("A".repeat(60)), 48);
-			assert.equal(ogUtils.titleFontSize("A".repeat(61)), 42);
-			assert.equal(ogUtils.titleFontSize("A".repeat(120)), 42);
+			assert.equal(ogUtils.titleFontSize("A".repeat(30)), 56);
+			assert.equal(ogUtils.titleFontSize("A".repeat(31)), 50);
+			assert.equal(ogUtils.titleFontSize("A".repeat(50)), 50);
+			assert.equal(ogUtils.titleFontSize("A".repeat(51)), 44);
+			assert.equal(ogUtils.titleFontSize("A".repeat(70)), 44);
+			assert.equal(ogUtils.titleFontSize("A".repeat(71)), 38);
+			assert.equal(ogUtils.titleFontSize("A".repeat(120)), 38);
 		});
 
 		it("5.4 All 4 OG image endpoints exist and export GET handler with parameter parsing", () => {

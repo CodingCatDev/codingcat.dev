@@ -90,11 +90,14 @@ export function loadFonts() {
 
 // ── Adaptive title font size ─────────────────────────────────────────
 export function titleFontSize(title: string): number {
-	if (title.length > 60) {
-		return 42;
+	if (title.length > 70) {
+		return 38;
 	}
-	if (title.length > 40) {
-		return 48;
+	if (title.length > 50) {
+		return 44;
+	}
+	if (title.length > 30) {
+		return 50;
 	}
 	return 56;
 }
@@ -464,9 +467,10 @@ function coverShowcaseElement({
 				alignItems: "center",
 				justifyContent: "center",
 				padding: "6px",
-				borderRadius: "18px",
-				background: `linear-gradient(145deg, ${accentColor}38 0%, rgba(124, 58, 237, 0.18) 100%)`,
-				border: "2px solid rgba(196, 181, 253, 0.42)",
+				borderRadius: "22px",
+				background: `linear-gradient(145deg, ${accentColor}38 0%, rgba(124, 58, 237, 0.22) 100%)`,
+				border: "2px solid rgba(196, 181, 253, 0.45)",
+				boxShadow: "0 12px 32px rgba(0, 0, 0, 0.5)",
 				flexShrink: 0,
 			},
 		},
@@ -475,21 +479,21 @@ function coverShowcaseElement({
 			{
 				style: {
 					display: "flex",
-					width: "208px",
-					height: "117px",
-					borderRadius: "12px",
+					width: "440px",
+					height: "248px",
+					borderRadius: "16px",
 					overflow: "hidden",
 					background: "#090514",
 				},
 			},
 			h("img", {
 				src: imageUrl,
-				width: 208,
-				height: 117,
+				width: 440,
+				height: 248,
 				style: {
-					width: "208px",
-					height: "117px",
-					borderRadius: "12px",
+					width: "440px",
+					height: "248px",
+					borderRadius: "16px",
 					objectFit: "cover",
 				},
 			}),
@@ -513,11 +517,11 @@ function mascotShowcaseElement({
 				display: "flex",
 				alignItems: "center",
 				justifyContent: "center",
-				width: "168px",
-				height: "168px",
-				borderRadius: "84px",
-				background: `radial-gradient(circle, ${accentColor}35 0%, rgba(124, 58, 237, 0.14) 68%, rgba(0, 0, 0, 0) 100%)`,
-				border: "1.5px solid rgba(167, 139, 250, 0.28)",
+				width: "240px",
+				height: "240px",
+				borderRadius: "120px",
+				background: `radial-gradient(circle, ${accentColor}35 0%, rgba(124, 58, 237, 0.18) 68%, rgba(0, 0, 0, 0) 100%)`,
+				border: "2px solid rgba(167, 139, 250, 0.38)",
 				flexShrink: 0,
 			},
 		},
@@ -528,33 +532,33 @@ function mascotShowcaseElement({
 					display: "flex",
 					alignItems: "center",
 					justifyContent: "center",
-					width: "144px",
-					height: "144px",
-					borderRadius: "72px",
+					width: "210px",
+					height: "210px",
+					borderRadius: "105px",
 					background: BRAND.medallionGradient,
-					border: "2.5px solid rgba(196, 181, 253, 0.5)",
+					border: "3px solid rgba(196, 181, 253, 0.55)",
 					overflow: "hidden",
 				},
 			},
 			avatarUrl
 				? h("img", {
 						src: avatarUrl,
-						width: 144,
-						height: 144,
+						width: 210,
+						height: 210,
 						style: {
-							width: "144px",
-							height: "144px",
-							borderRadius: "72px",
+							width: "210px",
+							height: "210px",
+							borderRadius: "105px",
 							objectFit: "cover",
 						},
 					})
 				: h("img", {
 						src: mascotUri,
-						width: 122,
-						height: 122,
+						width: 175,
+						height: 175,
 						style: {
-							width: "122px",
-							height: "122px",
+							width: "175px",
+							height: "175px",
 						},
 					}),
 		),
@@ -562,17 +566,12 @@ function mascotShowcaseElement({
 }
 
 /**
- * Full-bleed 1200x630 canvas with a 588px centered safe zone (x = 306px..894px).
- * - Fits 100% inside Slack's 1:1 square center crop (630x630 -> x = 285px..915px)
- *   so neither text nor AJ/cover is ever clipped in compact link cards.
- * - Looks like a full-bleed dark poster in 1.91:1 large cards (X, LinkedIn, Bluesky, Discord, Slack hover).
- * - Keeps bottom-left (x < 280px, y > 540px) completely clear of text for X.com's domain overlay pill.
+ * Full-bleed 1200x630 canvas with expansive layout.
+ * - Uses the full 1200x630 canvas with comfortable outer padding (44px 56px).
+ * - Massive readable typography, large cover artwork (440x248) or 210px mascot medallion.
+ * - Top full-bleed gradient accent stripe.
  */
-function cardShell(
-	accentBarGradient: string,
-	leftContent: any,
-	rightShowcase: any,
-) {
+function cardShell(accentBarGradient: string, content: any) {
 	return h(
 		"div",
 		{
@@ -582,7 +581,7 @@ function cardShell(
 				width: "1200px",
 				height: "630px",
 				background:
-					"radial-gradient(circle at 50% 50%, #1E293B 0%, #0F172A 58%, #050811 100%)",
+					"radial-gradient(circle at 50% 40%, #1E293B 0%, #0F172A 60%, #060913 100%)",
 				fontFamily: "'Inter', sans-serif",
 			},
 		},
@@ -595,7 +594,7 @@ function cardShell(
 				background: accentBarGradient,
 			},
 		}),
-		// Full-bleed stage with centered 588px safe-zone column
+		// Full-bleed stage filling entire 1200x620 area
 		h(
 			"div",
 			{
@@ -603,76 +602,12 @@ function cardShell(
 					display: "flex",
 					flex: 1,
 					width: "1200px",
-					alignItems: "center",
-					justifyContent: "center",
-					padding: "34px 0 38px 0",
+					height: "620px",
+					padding: "36px 52px 40px 52px",
+					boxSizing: "border-box",
 				},
 			},
-			// Left ambient decorative wing (outside 630x630 center crop, keeps bottom-left clear for X.com pill)
-			h(
-				"div",
-				{
-					style: {
-						display: "flex",
-						width: "260px",
-						height: "100%",
-						alignItems: "center",
-						justifyContent: "center",
-						opacity: 0.35,
-					},
-				},
-				h("div", {
-					style: {
-						display: "flex",
-						width: "140px",
-						height: "140px",
-						borderRadius: "70px",
-						border: "1.5px dashed rgba(196, 181, 253, 0.25)",
-					},
-				}),
-			),
-			// Center 588px safe-zone card (x = 306px..894px, 100% inside 630x630 square crop)
-			h(
-				"div",
-				{
-					style: {
-						display: "flex",
-						flexDirection: "column",
-						width: "588px",
-						height: "100%",
-						background: BRAND.cardGradient,
-						border: "1.5px solid rgba(196, 181, 253, 0.28)",
-						borderRadius: "26px",
-						padding: "30px 32px",
-						justifyContent: "space-between",
-					},
-				},
-				leftContent,
-				rightShowcase,
-			),
-			// Right ambient decorative wing
-			h(
-				"div",
-				{
-					style: {
-						display: "flex",
-						width: "260px",
-						height: "100%",
-						alignItems: "center",
-						justifyContent: "center",
-						opacity: 0.35,
-					},
-				},
-				h("div", {
-					style: {
-						display: "flex",
-						width: "140px",
-						height: "140px",
-						borderRadius: "70px",
-						border: "1.5px dashed rgba(197, 232, 108, 0.22)",
-					},
-				}),
-			),
+			content,
 		),
 	);
 }
@@ -704,14 +639,8 @@ export function buildOgElement({
 }: OgElementOptions): any {
 	const typeColor = TYPE_COLORS[type] || BRAND.typeBlog;
 	const cleanTitle = stripSiteSuffix(title) || title;
-	const displayTitle = clampText(cleanTitle, 85) || "CodingCat.dev";
-	const baseFontSize = titleFontSize(displayTitle);
-	const fontSize =
-		displayTitle.length > 60
-			? 28
-			: displayTitle.length > 40
-				? 32
-				: Math.min(baseFontSize, 38);
+	const displayTitle = clampText(cleanTitle, 80) || "CodingCat.dev";
+	const fontSize = titleFontSize(displayTitle);
 	const isPersonCard =
 		type === "Author" || type === "Guest" || type === "Sponsor";
 
@@ -725,7 +654,7 @@ export function buildOgElement({
 					: undefined;
 
 	const cleanSubtitle =
-		clampText(subtitle, image ? 90 : 105) ||
+		clampText(subtitle, image ? 100 : 130) ||
 		(isPersonCard ? defaultPersonSubtitle : undefined);
 
 	const mascotUri =
@@ -739,9 +668,9 @@ export function buildOgElement({
 			{
 				style: {
 					fontSize: `${fontSize}px`,
-					fontWeight: 700,
+					fontWeight: 800,
 					lineHeight: 1.15,
-					letterSpacing: "-0.02em",
+					letterSpacing: "-0.025em",
 					color: BRAND.text,
 					maxWidth: "100%",
 					overflow: "hidden",
@@ -751,17 +680,17 @@ export function buildOgElement({
 		),
 	];
 
-	if (cleanSubtitle && displayTitle.length <= 75) {
+	if (cleanSubtitle) {
 		middleChildren.push(
 			h(
 				"div",
 				{
 					style: {
-						fontSize: "16px",
+						fontSize: "18px",
 						fontWeight: 400,
 						color: BRAND.textSecondary,
-						marginTop: "12px",
-						lineHeight: 1.38,
+						marginTop: "14px",
+						lineHeight: 1.4,
 					},
 				},
 				cleanSubtitle,
@@ -790,6 +719,7 @@ export function buildOgElement({
 				flex: 1,
 				justifyContent: "space-between",
 				width: "100%",
+				height: "100%",
 			},
 		},
 		// Top row: logo + badge
@@ -800,12 +730,13 @@ export function buildOgElement({
 					display: "flex",
 					alignItems: "center",
 					justifyContent: "space-between",
+					width: "100%",
 				},
 			},
 			logoElement(),
 			badgeElement(type, typeColor, episodeNumber),
 		),
-		// Middle row: title/subtitle + right showcase inside the 588px safe zone
+		// Middle row: generous two-column layout (Text on left, Massive Visual Showcase on right)
 		h(
 			"div",
 			{
@@ -813,9 +744,10 @@ export function buildOgElement({
 					display: "flex",
 					alignItems: "center",
 					justifyContent: "space-between",
-					gap: "20px",
+					gap: "36px",
 					flex: 1,
-					padding: "14px 0",
+					width: "100%",
+					padding: "16px 0",
 				},
 			},
 			h(
@@ -840,6 +772,7 @@ export function buildOgElement({
 					display: "flex",
 					alignItems: "center",
 					justifyContent: "space-between",
+					width: "100%",
 				},
 			},
 			isPersonCard ? personRoleFooter(type) : authorElement(author),
@@ -850,7 +783,6 @@ export function buildOgElement({
 	return cardShell(
 		`linear-gradient(90deg, ${BRAND.primary} 0%, ${typeColor} 50%, ${BRAND.primaryLight} 100%)`,
 		mainBody,
-		null,
 	);
 }
 
@@ -981,6 +913,7 @@ export function buildDefaultOgElement({
 				flex: 1,
 				justifyContent: "space-between",
 				width: "100%",
+				height: "100%",
 			},
 		},
 		// Top row: logo
@@ -991,12 +924,13 @@ export function buildDefaultOgElement({
 					display: "flex",
 					alignItems: "center",
 					justifyContent: "space-between",
+					width: "100%",
 				},
 			},
 			logoElement(),
 			badgeElement("Studio", BRAND.primary),
 		),
-		// Middle row: title + subtitle + pills alongside mascot/cover
+		// Middle row: generous two-column layout
 		h(
 			"div",
 			{
@@ -1004,9 +938,10 @@ export function buildDefaultOgElement({
 					display: "flex",
 					alignItems: "center",
 					justifyContent: "space-between",
-					gap: "20px",
+					gap: "36px",
 					flex: 1,
-					padding: "14px 0",
+					width: "100%",
+					padding: "16px 0",
 				},
 			},
 			h(
@@ -1031,6 +966,7 @@ export function buildDefaultOgElement({
 					display: "flex",
 					alignItems: "center",
 					justifyContent: "space-between",
+					width: "100%",
 				},
 			},
 			authorElement("CodingCat.dev"),
@@ -1041,6 +977,5 @@ export function buildDefaultOgElement({
 	return cardShell(
 		`linear-gradient(90deg, ${BRAND.primary} 0%, #ec4899 50%, #f59e0b 100%)`,
 		mainBody,
-		null,
 	);
 }

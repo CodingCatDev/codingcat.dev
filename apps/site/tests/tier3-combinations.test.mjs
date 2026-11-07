@@ -219,28 +219,28 @@ describe("Tier 3 - Cross-Feature Combinations", () => {
 	describe("Dynamic OG Fallback Scaling & Long Titles", () => {
 		const ogUtils = loadModule("src/lib/og-utils.ts");
 
-		it("3.1 Short title (<= 40 chars) receives 56px font size", () => {
+		it("3.1 Short title (<= 30 chars) receives 56px font size", () => {
 			const title = "Astro vs Next.js";
-			assert.equal(title.length < 40, true);
+			assert.ok(title.length <= 30);
 			assert.equal(ogUtils.titleFontSize(title), 56);
 		});
 
-		it("3.2 Medium title (41-60 chars) receives 48px font size", () => {
+		it("3.2 Medium-long title (51-70 chars) receives 44px font size", () => {
 			const title = "Complete Guide to Cloudflare Workers with Astro SSR";
-			assert.ok(title.length >= 41 && title.length <= 60);
-			assert.equal(ogUtils.titleFontSize(title), 48);
+			assert.ok(title.length >= 51 && title.length <= 70);
+			assert.equal(ogUtils.titleFontSize(title), 44);
 		});
 
-		it("3.3 Long title (> 60 chars) receives 42px font size", () => {
+		it("3.3 Long title (> 70 chars) receives 38px font size", () => {
 			const title =
 				"Why We Are Absolutely Obsessed With Sticker Mule's Holographic Stickers";
-			assert.ok(title.length > 60);
-			assert.equal(ogUtils.titleFontSize(title), 42);
+			assert.ok(title.length > 70);
+			assert.equal(ogUtils.titleFontSize(title), 38);
 		});
 
-		it("3.4 Extreme long title (> 120 chars) remains stable at 42px", () => {
+		it("3.4 Extreme long title (> 120 chars) remains stable at 38px", () => {
 			const title = "A".repeat(150);
-			assert.equal(ogUtils.titleFontSize(title), 42);
+			assert.equal(ogUtils.titleFontSize(title), 38);
 		});
 
 		it("3.5 fallbackOgImage safely generates OG image URL with query params and stega cleaning", () => {

@@ -15,6 +15,7 @@ export const baseFieldsNoContent = `
   "slug": slug.current,
   excerpt,
   coverImage,
+  ogImage,
   "date": coalesce(date, _createdAt)
 `;
 

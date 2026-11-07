@@ -89,6 +89,7 @@ export const GET: APIRoute = async ({ request, url }) => {
 			coordinatorEmail,
 			coordinatorEmails,
 			allowedEmails,
+			guests,
 			preCallNotes,
 			runOfShowNotes,
 			guestQuestions,
@@ -428,6 +429,7 @@ export const POST: APIRoute = async ({ request, url }) => {
 			coordinatorEmail,
 			coordinatorEmails,
 			allowedEmails,
+			guests,
 			source,
 			bookingSource,
 			collaborationThread

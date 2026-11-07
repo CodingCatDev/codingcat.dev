@@ -1,0 +1,104 @@
+---
+/**
+ * `TagPills.astro` | Clickable Brand Logo Tag Pills for Cards & Detail Headers.
+ *
+ * Resolves a document's Sanity `tags[]` + title/excerpt matches into canonical
+ * `TopicDefinition` entries with Light Mode (`symbolLight`) and Dark Mode (`symbolDark`)
+ * brand SVG icons.
+ */
+import { resolveItemTopics, type SanityTagItem } from "@/lib/topics";
+
+interface Props {
+	title?: string | null;
+	excerpt?: string | null;
+	tags?: SanityTagItem[] | null;
+	/** Maximum number of logo tag pills to render (omit on detail pages to show all). */
+	maxCount?: number;
+	size?: "sm" | "md";
+	/** Optional href for the "+N more" overflow pill on cards. */
+	overflowHref?: string;
+	/** Optional data attribute so in-page filter scripts can intercept clicks if desired. */
+	inPageFilter?: boolean;
+	/** Render as "span" when placed inside an outer <a> element to avoid nested links. */
+	as?: "a" | "span";
+}
+
+const {
+	title,
+	excerpt,
+	tags,
+	maxCount,
+	size = "sm",
+	overflowHref,
+	inPageFilter = false,
+	as: TagEl = "a",
+} = Astro.props;
+
+const { visible, remainingCount } = resolveItemTopics(
+	{ title, excerpt, tags },
+	maxCount,
+);
+
+const isSmall = size === "sm";
+---
+
+{
+	visible.length > 0 && (
+		<>
+			{visible.map((topic) => (
+				<TagEl
+					href={TagEl === "a" ? `/topic/${topic.slug}` : undefined}
+					data-tag-pill={inPageFilter ? topic.slug : undefined}
+					data-tag-title={inPageFilter ? topic.title : undefined}
+					class:list={[
+						"inline-flex items-center rounded-full border border-[#2A1155] bg-white font-mono font-bold text-[#2A1155] transition-all hover:bg-[#EDE9FE] hover:text-[#7C3AED] dark:border-white/25 dark:bg-[#0B1326] dark:text-slate-100 dark:hover:bg-purple-950/60 dark:hover:text-[#C084FC]",
+						TagEl === "a" && "hover:-translate-y-0.5",
+						isSmall
+							? "gap-1.5 px-2.5 py-0.5 text-[11px]"
+							: "gap-2 border-2 px-3.5 py-1 font-display text-xs font-black shadow-sketch-sm",
+					]}
+				>
+					{topic.symbolLight && (
+						<img
+							src={topic.symbolLight}
+							alt=""
+							aria-hidden="true"
+							class:list={[
+								"w-auto shrink-0 object-contain dark:hidden",
+								isSmall ? "h-3" : "h-3.5",
+							]}
+							loading="lazy"
+							decoding="async"
+						/>
+					)}
+					{topic.symbolDark && (
+						<img
+							src={topic.symbolDark}
+							alt=""
+							aria-hidden="true"
+							class:list={[
+								"hidden w-auto shrink-0 object-contain dark:block",
+								isSmall ? "h-3" : "h-3.5",
+							]}
+							loading="lazy"
+							decoding="async"
+						/>
+					)}
+					<span>{topic.title}</span>
+				</TagEl>
+			))}
+			{remainingCount > 0 && (
+				<TagEl
+					href={TagEl === "a" ? overflowHref || "/topics" : undefined}
+					class:list={[
+						"inline-flex items-center rounded-full border border-dashed border-[#2A1155]/40 bg-[#EDE9FE] font-mono font-extrabold text-[#7C3AED] transition-colors hover:bg-[#DDD6FE] dark:border-purple-400/40 dark:bg-purple-950/70 dark:text-purple-200",
+						isSmall ? "px-2 py-0.5 text-[10px]" : "px-3 py-1 text-xs",
+					]}
+					title={`${remainingCount} more ${remainingCount === 1 ? "tag" : "tags"}`}
+				>
+					+{remainingCount}
+				</TagEl>
+			)}
+		</>
+	)
+}

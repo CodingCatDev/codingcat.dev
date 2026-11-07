@@ -56,7 +56,7 @@ if (token) {
 
 if (isValid && verification.payload) {
 	const linkedPortalMatch = await client.fetch<{ portalToken?: string } | null>(
-		`*[_type in ["booking", "sponsorLead"] && defined(portalToken) && (guestSlug == $slug || guestDocId == $id || guestDocId == "drafts." + $id)][0]{ portalToken }`,
+		`*[_type in ["booking", "sponsorLead"] && defined(portalToken) && (guestSlug == $slug || guestDocId == $id || guestDocId == "drafts." + $id || $slug in guests[].guestSlug || $id in guests[].guestDocId || "drafts." + $id in guests[].guestDocId)][0]{ portalToken }`,
 		{ id: verification.payload.id, slug: verification.payload.slug },
 	);
 	if (linkedPortalMatch?.portalToken) {

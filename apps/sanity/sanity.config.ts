@@ -39,6 +39,10 @@ import sponsorLead from "./schemas/documents/sponsorLead";
 import sponsorPool from "./schemas/documents/sponsorPool";
 import booking from "./schemas/documents/booking";
 import tableSchema, { rowType } from "./schemas/custom/table";
+import tierListSchema, {
+	tierDetailType,
+	tierItemType,
+} from "./schemas/custom/tierList";
 import syndication from "./schemas/documents/syndication";
 import transcript from "./schemas/documents/transcript";
 import trendSignal from "./schemas/documents/trendSignal";
@@ -134,9 +138,12 @@ const coursesLocation = {
 
 // ── Shared schema types ──────────────────────────────────────────────
 const schemaTypes = [
-	// Portable text block types (table)
+	// Portable text block types (table & tierList)
 	tableSchema,
 	rowType,
+	tierListSchema,
+	tierItemType,
+	tierDetailType,
 	// Singletons
 	settings,
 	sponsorConfig,

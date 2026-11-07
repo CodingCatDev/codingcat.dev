@@ -3,12 +3,21 @@
  * `/course/[slug]/lesson/[lessonSlug]` | Interactive Course Lesson Player & Tutorial Page.
  */
 import Breadcrumbs from "@/components/Breadcrumbs.astro";
+import ContentGrid from "@/components/ContentGrid.astro";
 import CoverMedia from "@/components/CoverMedia.astro";
 import ExcalidrawBlueprintCard from "@/components/ExcalidrawBlueprintCard.astro";
 import PortableTextContent from "@/components/portable-text/PortableTextContent.astro";
+import SectionHeader from "@/components/SectionHeader.astro";
+import TagPills from "@/components/TagPills.astro";
 import BaseLayout from "@/layouts/BaseLayout.astro";
-import { courseQuery } from "@/lib/sanity/queries";
+import type { ContentListItem } from "@/lib/content";
+import {
+	type RelatedCandidate,
+	resolveRelatedContentList,
+} from "@/lib/related-content";
+import { courseQuery, relatedCandidatesQuery } from "@/lib/sanity/queries";
 import type { CoverImage as CoverImageType } from "@/lib/sanity/types.gen";
+import { matchTopicsForText } from "@/lib/topics";
 
 interface CourseLesson {
 	_id?: string;
@@ -18,6 +27,8 @@ interface CourseLesson {
 	coverImage?: CoverImageType | null;
 	videoCloudinary?: { asset?: { _ref?: string } } | null;
 	youtube?: string | null;
+	tags?: Array<{ label?: string | null; value?: string | null }> | null;
+	relatedContent?: RelatedCandidate[] | null;
 	content?: Array<{
 		_type: string;
 		children?: Array<{ text?: string }>;
@@ -38,6 +49,8 @@ interface CourseDetail {
 	coverImage?: CoverImageType | null;
 	videoCloudinary?: { asset?: { _ref?: string } } | null;
 	youtube?: string | null;
+	tags?: Array<{ label?: string | null; value?: string | null }> | null;
+	relatedContent?: RelatedCandidate[] | null;
 	content?: Array<{
 		_type: string;
 		children?: Array<{ text?: string }>;
@@ -110,11 +123,38 @@ const lessonTitle =
 	currentLesson.title ||
 	`Lesson ${currentEntry.sectionIndex}.${currentEntry.lessonIndex}`;
 const lessonDescription = currentLesson.excerpt || course.excerpt || "";
+const candidates = ((await sanity.loadQuery(relatedCandidatesQuery, {
+	skip: course._id,
+})) ?? []) as unknown as RelatedCandidate[];
+const matchedTopics = matchTopicsForText(
+	`${lessonTitle} ${lessonDescription} ${course.title ?? ""}`,
+);
+const more = resolveRelatedContentList(
+	{
+		_id: currentLesson._id || course._id,
+		title: lessonTitle,
+		excerpt: lessonDescription,
+		tags: currentLesson.tags ?? course.tags,
+		relatedContent: currentLesson.relatedContent ?? course.relatedContent,
+	},
+	candidates,
+	{
+		limit: 2,
+		preferSameType: false,
+		currentTopics: matchedTopics,
+	},
+);
+
+const lessonCover = currentLesson.coverImage ?? course.coverImage;
+const ogSocialImage = lessonCover
+	? sanity.resolveOpenGraphImage(lessonCover, 1200, 630)
+	: undefined;
 ---
 
 <BaseLayout
 	title={`${lessonTitle} | ${course.title} | CodingCat.dev Course`}
 	description={lessonDescription}
+	image={ogSocialImage}
 	ogFallback={{
 		title: lessonTitle,
 		subtitle: `${course.title} · Lesson ${currentEntry.globalIndex} of ${indexedLessons.length}`,
@@ -143,6 +183,12 @@ const lessonDescription = currentLesson.excerpt || course.excerpt || "";
 				<span class="rounded-full border-2 border-[#2A1155]/30 bg-white/80 px-3 py-1 font-mono text-xs font-bold text-[#2A1155] dark:border-white/20 dark:bg-[#131B2E] dark:text-slate-200">
 					Section {currentEntry.sectionIndex}.{currentEntry.lessonIndex} · Lesson {currentEntry.globalIndex} of {indexedLessons.length}
 				</span>
+				<TagPills
+					title={`${lessonTitle} ${course.title ?? ""}`}
+					excerpt={lessonDescription}
+					tags={currentLesson.tags ?? course.tags}
+					size="md"
+				/>
 			</div>
 
 			<div class="flex items-center gap-2">
@@ -268,6 +314,16 @@ const lessonDescription = currentLesson.excerpt || course.excerpt || "";
 						)
 					}
 				</nav>
+
+				{
+					more.length > 0 && (
+						<div class="mt-12">
+							<hr class="my-8 border-t-2 border-dashed border-[#2A1155]/25 dark:border-white/15" />
+							<SectionHeader title="related deep dives" href="/blog" />
+							<ContentGrid items={more as unknown as ContentListItem[]} />
+						</div>
+					)
+				}
 			</div>
 
 			<!-- Sticky Course Lessons Sidebar -->
