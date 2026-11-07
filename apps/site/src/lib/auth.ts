@@ -2,7 +2,7 @@ import { env } from "cloudflare:workers";
 import { mcp } from "@better-auth/mcp";
 import { betterAuth } from "better-auth";
 import { emailOTP, jwt, magicLink } from "better-auth/plugins";
-import { sendCodingCatEmail } from "@/lib/email";
+import { sendCodingCatAuthEmail } from "@/lib/email";
 
 export const BETTER_AUTH_SECRET =
 	(env as unknown as { BETTER_AUTH_SECRET?: string })?.BETTER_AUTH_SECRET ||
@@ -211,7 +211,7 @@ function buildPortalAuthPlugins() {
 					</div>
 				`;
 
-				await sendCodingCatEmail({
+				await sendCodingCatAuthEmail({
 					to: email,
 					subject,
 					text,
@@ -260,7 +260,7 @@ function buildPortalAuthPlugins() {
 					</div>
 				`;
 
-				await sendCodingCatEmail({
+				await sendCodingCatAuthEmail({
 					to: email,
 					subject,
 					text,

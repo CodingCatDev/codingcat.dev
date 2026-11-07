@@ -424,6 +424,37 @@ export async function sendCodingCatEmailDetailed(
 	};
 }
 
+/**
+ * Sign-in codes and magic links are the one exception to the disabled
+ * automated sending above: nobody can sign in without them. They go through
+ * Cloudflare Email Sending, which requires `from` on the onboarded
+ * codingcat.dev domain.
+ */
+export async function sendCodingCatAuthEmail(opts: {
+	to: string;
+	subject: string;
+	text: string;
+	html: string;
+}): Promise<void> {
+	const workerEnv = (env ?? {}) as unknown as { EMAIL?: SendEmailBinding };
+	if (!workerEnv.EMAIL) {
+		throw new Error("EMAIL binding is not configured");
+	}
+	try {
+		await workerEnv.EMAIL.send({
+			to: opts.to,
+			from: { email: "noreply@codingcat.dev", name: "CodingCat.dev" },
+			subject: opts.subject,
+			text: opts.text,
+			html: opts.html,
+		});
+	} catch (error) {
+		const code = (error as { code?: string })?.code ?? "unknown";
+		console.error(`Sign-in email failed: ${code}`);
+		throw error;
+	}
+}
+
 export async function sendCodingCatEmail(
 	opts: CodingCatEmailOptions,
 ): Promise<boolean> {
