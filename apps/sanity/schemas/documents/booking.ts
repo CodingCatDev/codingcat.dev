@@ -20,6 +20,74 @@ export default defineType({
       validation: (Rule) => Rule.required().email(),
     }),
     defineField({
+      name: 'guests',
+      title: 'Guests on This Episode',
+      description:
+        'Everyone appearing on the episode. Each guest signs in with their own email, edits their own speaker profile, and signs their own media release. Leave empty for a single-guest booking (Guest Full Legal Name / Guest Email are used).',
+      type: 'array',
+      of: [
+        {
+          type: 'object',
+          name: 'bookingGuest',
+          fields: [
+            defineField({
+              name: 'name',
+              title: 'Full Legal Name',
+              type: 'string',
+              validation: (Rule) => Rule.required(),
+            }),
+            defineField({
+              name: 'email',
+              title: 'Email',
+              type: 'string',
+              validation: (Rule) => Rule.required().email(),
+            }),
+            defineField({name: 'guestSlug', title: 'Linked Guest Slug', type: 'string'}),
+            defineField({name: 'guestDocId', title: 'Linked Guest Document ID', type: 'string'}),
+            defineField({
+              name: 'signatureMode',
+              title: 'E-SIGN Signature Mode',
+              type: 'string',
+              options: {
+                list: [
+                  {title: 'Drawn Canvas Signature', value: 'draw'},
+                  {title: 'Typed Legal Signature', value: 'type'},
+                ],
+              },
+            }),
+            defineField({
+              name: 'signatureData',
+              title: 'E-SIGN Signature Data (Typed Name or Base64 PNG)',
+              type: 'text',
+            }),
+            defineField({name: 'signedAt', title: 'E-SIGN Executed At', type: 'datetime'}),
+            defineField({
+              name: 'consentRecording',
+              title: 'Consent: Recording & Distribution',
+              type: 'boolean',
+            }),
+            defineField({
+              name: 'consentCommercial',
+              title: 'Consent: Commercial & Sponsorship Use',
+              type: 'boolean',
+            }),
+            defineField({
+              name: 'consentLikeness',
+              title: 'Consent: Likeness & Social Clips',
+              type: 'boolean',
+            }),
+          ],
+          preview: {
+            select: {title: 'name', subtitle: 'email', signedAt: 'signedAt'},
+            prepare: ({title, subtitle, signedAt}) => ({
+              title,
+              subtitle: `${subtitle || ''}${signedAt ? ' · release signed' : ' · release pending'}`,
+            }),
+          },
+        },
+      ],
+    }),
+    defineField({
       name: 'company',
       title: 'Company / Flagship Project',
       type: 'string',

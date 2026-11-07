@@ -5,7 +5,14 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
 import { getMultiCalendarAvailableSlots } from "@/lib/google-calendar";
 import { portableTextToHtml } from "@/lib/guest-portal";
 import {
+	findGuestByEmail,
+	hasGuestList,
+	type PortalGuest,
+	resolvePortalGuests,
+} from "@/lib/portal-guests";
+import {
 	extractPortalAllowedEmails,
+	isHostEmail,
 	maskEmailAddress,
 	verifyPortalRequestAuth,
 } from "@/lib/portal-security";
@@ -244,6 +251,13 @@ let isPortalAuthenticated = false;
 let authReason: string | undefined;
 let maskedEmailHint = "your invited email address";
 let verifiedPortalEmail = "";
+let isMultiGuest = false;
+let isPortalHost = false;
+let portalGuests: PortalGuest[] = [];
+let activeGuest: PortalGuest | undefined;
+let signedInGuestKey = "";
+let canEditGuestProfile = true;
+let canSignRelease = true;
 
 let portalData: LeadPortalData = {
 	_id: `private.sponsorLead-${token}`,
@@ -308,13 +322,32 @@ try {
 		authReason = authResult.reason;
 		verifiedPortalEmail = authResult.verifiedEmail || "";
 
-		const resolvedGuestName =
-			bookingDoc?.guestName || doc?.contactName || fallbackName;
-		const candidateSlug =
-			bookingDoc?.guestSlug ||
-			doc?.guestSlug ||
-			slugifyGuestName(resolvedGuestName) ||
-			canonicalToken;
+		isMultiGuest = hasGuestList(bookingDoc);
+		portalGuests = resolvePortalGuests(bookingDoc, doc);
+		isPortalHost = isHostEmail(verifiedPortalEmail);
+		const signedInGuest = findGuestByEmail(portalGuests, verifiedPortalEmail);
+		activeGuest = isPortalHost
+			? (portalGuests.find((g) => g._key === searchParams.get("guest")) ??
+				portalGuests[0])
+			: (signedInGuest ?? (isMultiGuest ? undefined : portalGuests[0]));
+		signedInGuestKey = signedInGuest?._key || "";
+		canEditGuestProfile = !isMultiGuest || Boolean(activeGuest);
+		canSignRelease = !isMultiGuest || Boolean(signedInGuest);
+
+		const resolvedGuestName = isMultiGuest
+			? activeGuest?.name || ""
+			: bookingDoc?.guestName || doc?.contactName || fallbackName;
+		const candidateSlug = isMultiGuest
+			? activeGuest?.guestSlug ||
+				slugifyGuestName(resolvedGuestName) ||
+				canonicalToken
+			: bookingDoc?.guestSlug ||
+				doc?.guestSlug ||
+				slugifyGuestName(resolvedGuestName) ||
+				canonicalToken;
+		const candidateDocId = isMultiGuest
+			? activeGuest?.guestDocId
+			: bookingDoc?.guestDocId;
 		const guestProfileDoc = await client
 			.fetch<{
 				_id: string;
@@ -344,7 +377,7 @@ try {
 				}`,
 				{
 					slug: candidateSlug,
-					docId: bookingDoc?.guestDocId || `drafts.guest-${candidateSlug}`,
+					docId: candidateDocId || `drafts.guest-${candidateSlug}`,
 					draftId: `drafts.guest-${candidateSlug}`,
 					pubId: `guest-${candidateSlug}`,
 					guestName: resolvedGuestName,
@@ -541,13 +574,21 @@ try {
 				bookingDoc?.runOfShowUpdatedAt || doc?.runOfShowUpdatedAt,
 			runOfShowUpdatedBy:
 				bookingDoc?.runOfShowUpdatedBy || doc?.runOfShowUpdatedBy,
-			hasSignedRelease: Boolean(bookingDoc?.signatureData),
-			signedAt: bookingDoc?.signedAt,
-			signatureMode: bookingDoc?.signatureMode,
+			hasSignedRelease: isMultiGuest
+				? Boolean(activeGuest?.signatureData)
+				: Boolean(bookingDoc?.signatureData),
+			signedAt: isMultiGuest ? activeGuest?.signedAt : bookingDoc?.signedAt,
+			signatureMode: isMultiGuest
+				? activeGuest?.signatureMode
+				: bookingDoc?.signatureMode,
+			signatureData: isMultiGuest
+				? activeGuest?.signatureData
+				: bookingDoc?.signatureData,
 			guestProfileExists: Boolean(guestProfileDoc?._id),
 			guestSlug: guestProfileDoc?.slug?.current || candidateSlug,
 			guestTitle:
 				guestProfileDoc?.title ||
+				(isMultiGuest ? resolvedGuestName : "") ||
 				bookingDoc?.guestName ||
 				doc?.contactName ||
 				fallbackName,
@@ -556,7 +597,7 @@ try {
 				guestProfileDoc?.excerpt &&
 				guestProfileDoc.excerpt.trim().toLowerCase() !== "fix me"
 					? guestProfileDoc.excerpt.trim()
-					: `${bookingDoc?.guestName || doc?.contactName || fallbackName} (${bookingDoc?.company || doc?.companyName || fallbackCompany})`,
+					: `${(isMultiGuest ? resolvedGuestName : "") || bookingDoc?.guestName || doc?.contactName || fallbackName} (${bookingDoc?.company || doc?.companyName || fallbackCompany})`,
 			guestAboutHtml: portableTextToHtml(guestProfileDoc?.content),
 			guestWebsiteUrl:
 				guestProfileDoc?.websites?.[0]?.link?.href ||
@@ -1785,6 +1826,60 @@ const pageDescription = !portalFound
 			</section>
 		)}
 
+		{isMultiGuest && (
+			<section id="episode-guests" class="flex flex-col gap-4 p-5 rounded-2xl border border-border bg-card shadow-xs">
+				<div class="flex flex-col gap-1">
+					<h2 class="text-xl font-bold tracking-tight">
+						Guests on This Episode ({portalGuests.length})
+					</h2>
+					<p class="text-xs text-muted-foreground">
+						Each guest signs in with their own email, completes their own speaker profile, and signs their own media release.
+					</p>
+				</div>
+				<ul class="flex flex-col gap-2">
+					{portalGuests.map((g) => (
+						<li class={`flex flex-col sm:flex-row sm:items-center justify-between gap-2 p-3.5 rounded-xl border ${
+							g._key === activeGuest?._key ? "border-primary/50 bg-primary/5" : "border-border bg-background"
+						}`}>
+							<div class="flex flex-col gap-0.5">
+								<span class="text-sm font-bold text-foreground">
+									{g.name}
+									{g._key === signedInGuestKey && (
+										<span class="ml-1.5 text-[11px] font-mono px-2 py-0.5 rounded-full bg-primary/15 text-primary font-semibold">You</span>
+									)}
+								</span>
+								<span class="text-[11px] font-mono text-muted-foreground">{g.email}</span>
+							</div>
+							<div class="flex flex-wrap items-center gap-2">
+								<span class={`text-[11px] font-mono font-bold px-2 py-0.5 rounded-full ${
+									g.guestSlug
+										? "bg-emerald-500/15 text-emerald-700 dark:text-emerald-300"
+										: "bg-amber-500/15 text-amber-700 dark:text-amber-300"
+								}`}>
+									{g.guestSlug ? "✓ Profile Started" : "Profile Needed"}
+								</span>
+								<span class={`text-[11px] font-mono font-bold px-2 py-0.5 rounded-full ${
+									g.signatureData
+										? "bg-emerald-500/15 text-emerald-700 dark:text-emerald-300"
+										: "bg-amber-500/15 text-amber-700 dark:text-amber-300"
+								}`}>
+									{g.signatureData ? "✓ Release Signed" : "Release Pending"}
+								</span>
+								{isPortalHost && g._key !== activeGuest?._key && (
+									<a
+										href={`?guest=${encodeURIComponent(g._key)}#guest-profile`}
+										class="text-[11px] font-bold px-2.5 py-1 rounded-lg border border-primary text-primary hover:bg-primary/10 transition-colors"
+									>
+										View / Edit Profile
+									</a>
+								)}
+							</div>
+						</li>
+					))}
+				</ul>
+			</section>
+		)}
+
 		<!-- PodMatch-Style Self-Serve Guest Readiness Checklist & Live Draft Preview Bar -->
 		<section class="flex flex-col gap-4 p-5 rounded-2xl border-2 border-primary/40 bg-card shadow-xs">
 			<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
@@ -1930,6 +2025,7 @@ const pageDescription = !portalFound
 					<div class="flex flex-wrap items-center gap-2">
 						<h2 class="text-xl font-bold tracking-tight">
 							Speaker Bio, Headshot &amp; 14 Social Links
+							{isMultiGuest && activeGuest && ` · ${activeGuest.name}`}
 						</h2>
 						<span class="text-xs font-mono px-2.5 py-0.5 rounded-full bg-primary/15 text-primary font-semibold">
 							🎙️ Saves to `drafts.guest-{portalData.guestSlug}`
@@ -1952,6 +2048,7 @@ const pageDescription = !portalFound
 				)}
 			</div>
 
+			{canEditGuestProfile ? (
 			<form id="guest-profile-form" class="flex flex-col gap-6">
 				<div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
 					<!-- Headshot Upload & 512x512 Crop Column -->
@@ -2126,6 +2223,11 @@ const pageDescription = !portalFound
 					</div>
 				</div>
 			</form>
+			) : (
+				<p class="p-4 rounded-xl border border-border bg-background text-xs text-muted-foreground">
+					Each guest edits their own speaker profile. Sign in with the email you were invited with to edit yours.
+				</p>
+			)}
 		</section>
 
 		<!-- Inline E-SIGN Media & Recording Release Card -->
@@ -2135,6 +2237,7 @@ const pageDescription = !portalFound
 					<div class="flex flex-wrap items-center gap-2">
 						<h2 class="text-xl font-bold tracking-tight">
 							Media &amp; Podcast Recording Release (E-SIGN)
+							{isMultiGuest && activeGuest && ` · ${activeGuest.name}`}
 						</h2>
 						<span class={`text-xs font-mono px-2.5 py-0.5 rounded-full font-semibold ${
 							portalData.hasSignedRelease
@@ -2166,6 +2269,10 @@ const pageDescription = !portalFound
 						</span>
 					)}
 				</div>
+			) : !canSignRelease ? (
+				<p class="p-4 rounded-xl border border-border bg-background text-xs text-muted-foreground">
+					Each guest signs their own media release. {activeGuest ? `${activeGuest.name} has not signed yet.` : "Sign in with the email you were invited with to sign yours."}
+				</p>
 			) : (
 				<form id="portal-esign-form" class="flex flex-col gap-4 p-4 rounded-xl border border-border bg-background">
 					<div class="text-xs text-muted-foreground leading-relaxed space-y-1.5">
@@ -2192,7 +2299,7 @@ const pageDescription = !portalFound
 								type="text"
 								id="esign-typed-name"
 								required
-								value={portalData.contactName || portalData.guestTitle}
+								value={isMultiGuest ? activeGuest?.name : portalData.contactName || portalData.guestTitle}
 								placeholder="Full Legal Name"
 								class="rounded-xl border border-border bg-card px-3.5 py-2 font-serif italic text-base text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
 							/>
@@ -3120,6 +3227,7 @@ const pageDescription = !portalFound
 	define:vars={{
 		portalToken: portalData.portalToken,
 		leadId: isPortalAuthorized ? portalData._id : "",
+		activeGuestKey: isPortalAuthorized ? activeGuest?._key || "" : "",
 		bookingDocId: isPortalAuthorized ? (portalData.bookingDocId || "") : "",
 		companyName: isPortalAuthorized ? portalData.companyName : "",
 		contactName: isPortalAuthorized ? portalData.contactName : "",
@@ -4575,6 +4683,7 @@ const pageDescription = !portalFound
 						headers: { "Content-Type": "application/json" },
 						body: JSON.stringify({
 							token: portalToken,
+							guestKey: activeGuestKey || undefined,
 							title,
 							excerpt,
 							rawBio,

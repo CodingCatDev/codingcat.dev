@@ -696,7 +696,8 @@ const RAW_TOPICS: RawTopicSeed[] = [
 		slug: "launchdarkly",
 		title: "LaunchDarkly",
 		category: "vendors",
-		tagline: "Enterprise Feature Management, Progressive Rollouts & Kill Switches",
+		tagline:
+			"Enterprise Feature Management, Progressive Rollouts & Kill Switches",
 		keywords: ["launchdarkly", "feature flags"],
 		diagramSteps: [
 			"Flag Targeting Rules",
@@ -1092,7 +1093,8 @@ const RAW_TOPICS: RawTopicSeed[] = [
 		slug: "vite",
 		title: "Vite",
 		category: "frameworks",
-		tagline: "Instant ESM Dev Server, Rollup/Rolldown Bundling & Environment API",
+		tagline:
+			"Instant ESM Dev Server, Rollup/Rolldown Bundling & Environment API",
 		keywords: ["vite", "vitejs", "rolldown"],
 		diagramSteps: [
 			"Native Browser ESM",
@@ -1232,7 +1234,8 @@ const RAW_TOPICS: RawTopicSeed[] = [
 		slug: "bun",
 		title: "Bun",
 		category: "languages",
-		tagline: "All-in-One JavaScript Runtime, Bundler, Test Runner & Package Manager",
+		tagline:
+			"All-in-One JavaScript Runtime, Bundler, Test Runner & Package Manager",
 		keywords: ["bun", "bun.sh"],
 		diagramSteps: [
 			"bun install & bun test",
@@ -1294,7 +1297,8 @@ const RAW_TOPICS: RawTopicSeed[] = [
 		title: "Go",
 		category: "languages",
 		aliases: ["golang"],
-		tagline: "Goroutines, Channels, Cloud-Native CLI Tools & High-Throughput Services",
+		tagline:
+			"Goroutines, Channels, Cloud-Native CLI Tools & High-Throughput Services",
 		keywords: ["golang", "go routines"],
 		diagramSteps: [
 			"Goroutines & Channels",
@@ -1341,7 +1345,8 @@ const RAW_TOPICS: RawTopicSeed[] = [
 		slug: "zod",
 		title: "Zod",
 		category: "languages",
-		tagline: "TypeScript-First Schema Validation, z.infer & Runtime Boundary Safety",
+		tagline:
+			"TypeScript-First Schema Validation, z.infer & Runtime Boundary Safety",
 		keywords: ["zod", "zvalidator", "z.object", "z.infer"],
 		diagramSteps: [
 			"Untrusted JSON Input",
@@ -1362,7 +1367,8 @@ const RAW_TOPICS: RawTopicSeed[] = [
 		category: "data",
 		featured: true,
 		aliases: ["cloudflare-d1"],
-		tagline: "Serverless Edge SQLite, Read Replication & Zero-Cold-Start Queries",
+		tagline:
+			"Serverless Edge SQLite, Read Replication & Zero-Cold-Start Queries",
 		keywords: ["cloudflare d1", "env.db", "d1 database"],
 		diagramSteps: [
 			"Drizzle SQL Migrations",
@@ -1377,7 +1383,8 @@ const RAW_TOPICS: RawTopicSeed[] = [
 		slug: "durable-objects",
 		title: "Durable Objects",
 		category: "data",
-		tagline: "Single-Threaded Edge Actors, Embedded SQLite & WebSocket Hibernation",
+		tagline:
+			"Single-Threaded Edge Actors, Embedded SQLite & WebSocket Hibernation",
 		keywords: ["durable objects", "ctx.storage.sql", "websocket hibernation"],
 		diagramSteps: [
 			"Unique Actor ID",
@@ -1409,7 +1416,8 @@ const RAW_TOPICS: RawTopicSeed[] = [
 		slug: "prisma",
 		title: "Prisma",
 		category: "data",
-		tagline: "Declarative Data Modeling, Prisma Migrate & Type-Safe Database Client",
+		tagline:
+			"Declarative Data Modeling, Prisma Migrate & Type-Safe Database Client",
 		keywords: ["prisma", "schema.prisma"],
 		diagramSteps: [
 			"schema.prisma",
@@ -1425,7 +1433,8 @@ const RAW_TOPICS: RawTopicSeed[] = [
 		title: "PostgreSQL",
 		category: "data",
 		aliases: ["postgres"],
-		tagline: "ACID Relational Database, JSONB, pgvector & Indexing Architecture",
+		tagline:
+			"ACID Relational Database, JSONB, pgvector & Indexing Architecture",
 		keywords: ["postgres", "postgresql", "jsonb", "pgvector"],
 		diagramSteps: [
 			"Relational + JSONB",
@@ -1533,7 +1542,8 @@ const RAW_TOPICS: RawTopicSeed[] = [
 		title: "Better-Auth",
 		category: "data",
 		featured: true,
-		tagline: "TypeScript-Native Authentication, OAuth 2.1, Passkeys & D1 Sessions",
+		tagline:
+			"TypeScript-Native Authentication, OAuth 2.1, Passkeys & D1 Sessions",
 		keywords: ["better-auth", "better auth"],
 		diagramSteps: [
 			"OAuth / Passkey Login",
@@ -1548,7 +1558,8 @@ const RAW_TOPICS: RawTopicSeed[] = [
 		slug: "clerk",
 		title: "Clerk",
 		category: "data",
-		tagline: "Drop-In Authentication UI, Multi-Tenant Organizations & Session JWTs",
+		tagline:
+			"Drop-In Authentication UI, Multi-Tenant Organizations & Session JWTs",
 		keywords: ["clerk", "clerk.com", "clerk.dev"],
 		diagramSteps: [
 			"<SignIn /> Component",
@@ -1579,7 +1590,8 @@ const RAW_TOPICS: RawTopicSeed[] = [
 		title: "AuthZed",
 		category: "data",
 		aliases: ["spicedb"],
-		tagline: "Google Zanzibar Relationship-Based Access Control (ReBAC) & SpiceDB",
+		tagline:
+			"Google Zanzibar Relationship-Based Access Control (ReBAC) & SpiceDB",
 		keywords: ["authzed", "spicedb", "zanzibar", "rebac"],
 		diagramSteps: [
 			"Permission Schema",
@@ -1594,7 +1606,8 @@ const RAW_TOPICS: RawTopicSeed[] = [
 		slug: "cms",
 		title: "Headless CMS",
 		category: "data",
-		tagline: "Structured Content Modeling, Visual Editing & Omnichannel Delivery",
+		tagline:
+			"Structured Content Modeling, Visual Editing & Omnichannel Delivery",
 		keywords: ["headless cms", "cms", "content modeling"],
 		diagramSteps: [
 			"Structured Content Types",
@@ -1629,7 +1642,8 @@ const RAW_TOPICS: RawTopicSeed[] = [
 		title: "AI & Agents",
 		category: "ai",
 		featured: true,
-		tagline: "Autonomous AI Agents, Tool Calling, Structured Outputs & Eval Loops",
+		tagline:
+			"Autonomous AI Agents, Tool Calling, Structured Outputs & Eval Loops",
 		description:
 			"Architect production AI coding agents, Model Context Protocol (MCP) servers, WebMCP tools, and Answer Engine Optimization (AEO).",
 		badge: "🤖 AI & Agentic Web Hub",
@@ -1698,7 +1712,8 @@ const RAW_TOPICS: RawTopicSeed[] = [
 		slug: "webmcp",
 		title: "WebMCP",
 		category: "ai",
-		tagline: "navigator.modelContext Browser Tool Registration for In-Page AI Agents",
+		tagline:
+			"navigator.modelContext Browser Tool Registration for In-Page AI Agents",
 		keywords: ["webmcp", "navigator.modelcontext"],
 		diagramSteps: [
 			"navigator.modelContext",
@@ -1728,7 +1743,8 @@ const RAW_TOPICS: RawTopicSeed[] = [
 		slug: "webgpu",
 		title: "WebGPU",
 		category: "ai",
-		tagline: "Next-Gen Browser GPU Compute Shaders, WGSL & Local LLM Acceleration",
+		tagline:
+			"Next-Gen Browser GPU Compute Shaders, WGSL & Local LLM Acceleration",
 		keywords: ["webgpu", "wgsl", "compute shaders"],
 		diagramSteps: [
 			"navigator.gpu Adapter",
@@ -1775,7 +1791,8 @@ const RAW_TOPICS: RawTopicSeed[] = [
 		title: "Google Gemini",
 		category: "ai",
 		aliases: ["google-gemini"],
-		tagline: "Multimodal Context Windows, Google Antigravity & Agentic Workflows",
+		tagline:
+			"Multimodal Context Windows, Google Antigravity & Agentic Workflows",
 		keywords: ["gemini", "google gemini", "antigravity"],
 		diagramSteps: [
 			"Multimodal Input",
@@ -1805,7 +1822,8 @@ const RAW_TOPICS: RawTopicSeed[] = [
 		slug: "chrome-built-in-ai",
 		title: "Chrome Built-in AI",
 		category: "ai",
-		tagline: "W3C Web Machine Learning Prompt, Summarizer, Writer & Translator APIs",
+		tagline:
+			"W3C Web Machine Learning Prompt, Summarizer, Writer & Translator APIs",
 		keywords: ["chrome built-in ai", "chrome-built-in-ai", "prompt api"],
 		diagramSteps: [
 			"Feature Detection Gate",
@@ -1836,7 +1854,12 @@ const RAW_TOPICS: RawTopicSeed[] = [
 		title: "RAG",
 		category: "ai",
 		tagline: "Hybrid Semantic + Keyword Search, Vector Embeddings & Reranking",
-		keywords: ["rag", "retrieval augmented generation", "vector database", "embeddings"],
+		keywords: [
+			"rag",
+			"retrieval augmented generation",
+			"vector database",
+			"embeddings",
+		],
 		diagramSteps: [
 			"Chunking + Embeddings",
 			"Vector + BM25 Index",
@@ -1870,7 +1893,8 @@ const RAW_TOPICS: RawTopicSeed[] = [
 		title: "GitHub",
 		category: "devops",
 		featured: true,
-		tagline: "GitHub Actions CI/CD, Pull Request Workflows, Copilot & Open Source",
+		tagline:
+			"GitHub Actions CI/CD, Pull Request Workflows, Copilot & Open Source",
 		keywords: ["github", "github actions", "github copilot", "pull request"],
 		diagramSteps: [
 			"Pull Request Branch",
@@ -1901,7 +1925,8 @@ const RAW_TOPICS: RawTopicSeed[] = [
 		slug: "playwright",
 		title: "Playwright",
 		category: "devops",
-		tagline: "Deterministic End-to-End Browser Testing, Trace Viewer & Network Mocks",
+		tagline:
+			"Deterministic End-to-End Browser Testing, Trace Viewer & Network Mocks",
 		keywords: ["playwright", "e2e testing"],
 		diagramSteps: [
 			"getByRole() Locators",
@@ -1917,7 +1942,8 @@ const RAW_TOPICS: RawTopicSeed[] = [
 		title: "Testing",
 		category: "devops",
 		aliases: ["vitest", "tdd"],
-		tagline: "Test-Driven Development (TDD), Vitest, Dependency Injection & CI Gates",
+		tagline:
+			"Test-Driven Development (TDD), Vitest, Dependency Injection & CI Gates",
 		keywords: ["testing", "vitest", "jest", "tdd", "unit testing"],
 		diagramSteps: [
 			"Red: Failing Spec",
@@ -1957,7 +1983,8 @@ const RAW_TOPICS: RawTopicSeed[] = [
 		slug: "serverless",
 		title: "Serverless",
 		category: "devops",
-		tagline: "Edge Functions, Scale-to-Zero Compute & Event-Driven Architectures",
+		tagline:
+			"Edge Functions, Scale-to-Zero Compute & Event-Driven Architectures",
 		keywords: ["serverless", "jamstack", "edge functions"],
 		diagramSteps: [
 			"Incoming HTTP / Event",
@@ -1988,7 +2015,8 @@ const RAW_TOPICS: RawTopicSeed[] = [
 		title: "Accessibility",
 		category: "devops",
 		aliases: ["accessibility", "wcag"],
-		tagline: "WCAG 2.2 AA, Semantic ARIA, Keyboard Focus Rings & Screen Readers",
+		tagline:
+			"WCAG 2.2 AA, Semantic ARIA, Keyboard Focus Rings & Screen Readers",
 		keywords: ["accessibility", "a11y", "wcag", "aria", "screen reader"],
 		diagramSteps: [
 			"Semantic HTML Elements",
@@ -2004,7 +2032,8 @@ const RAW_TOPICS: RawTopicSeed[] = [
 		title: "Design",
 		category: "devops",
 		aliases: ["design-systems", "figma"],
-		tagline: "W3C Design Tokens, Dual-Theme UI Systems, Figma & Component Libraries",
+		tagline:
+			"W3C Design Tokens, Dual-Theme UI Systems, Figma & Component Libraries",
 		keywords: ["design", "design system", "figma", "ui/ux", "design tokens"],
 		diagramSteps: [
 			"W3C tokens.json",
@@ -2019,7 +2048,8 @@ const RAW_TOPICS: RawTopicSeed[] = [
 		slug: "architecture",
 		title: "Architecture",
 		category: "devops",
-		tagline: "Distributed Systems, Trade-Off Matrices & Visual Architecture Diagrams",
+		tagline:
+			"Distributed Systems, Trade-Off Matrices & Visual Architecture Diagrams",
 		keywords: ["architecture", "system design", "distributed systems"],
 		diagramSteps: [
 			" SLA & Cost Constraints",
@@ -2034,8 +2064,15 @@ const RAW_TOPICS: RawTopicSeed[] = [
 		slug: "career",
 		title: "Career",
 		category: "devops",
-		tagline: "Engineering Portfolios, System Design Interviews, DevRel & Leadership",
-		keywords: ["career", "devrel", "developer relations", "getting hired", "interviews"],
+		tagline:
+			"Engineering Portfolios, System Design Interviews, DevRel & Leadership",
+		keywords: [
+			"career",
+			"devrel",
+			"developer relations",
+			"getting hired",
+			"interviews",
+		],
 		diagramSteps: [
 			"Shipped Production App",
 			"Live URL + E2E + Auth",
@@ -2050,7 +2087,8 @@ const RAW_TOPICS: RawTopicSeed[] = [
 		title: "WebDev",
 		category: "devops",
 		aliases: ["web-dev", "web dev"],
-		tagline: "Full-Stack Web Engineering, Core Web Vitals & Modern Browser APIs",
+		tagline:
+			"Full-Stack Web Engineering, Core Web Vitals & Modern Browser APIs",
 		keywords: ["webdev", "web development", "full-stack", "core web vitals"],
 		diagramSteps: [
 			"Semantic HTML & CSS",
@@ -2081,7 +2119,8 @@ const RAW_TOPICS: RawTopicSeed[] = [
 		slug: "ffmpeg",
 		title: "FFmpeg",
 		category: "devops",
-		tagline: "Hardware-Accelerated Video Encoding, Filtergraphs & Audio Mastering",
+		tagline:
+			"Hardware-Accelerated Video Encoding, Filtergraphs & Audio Mastering",
 		keywords: ["ffmpeg", "nvenc", "libx264"],
 		diagramSteps: [
 			"Raw Video + WAV Stems",
@@ -2158,7 +2197,8 @@ const RAW_TOPICS: RawTopicSeed[] = [
 		title: "Mental Health",
 		category: "devops",
 		aliases: ["mental health"],
-		tagline: "Sustainable Engineering Pace, Preventing Burnout & Developer Wellness",
+		tagline:
+			"Sustainable Engineering Pace, Preventing Burnout & Developer Wellness",
 		keywords: ["mental health", "burnout", "work-life balance"],
 		diagramSteps: [
 			"Healthy Boundaries",
@@ -2272,7 +2312,9 @@ for (const t of TOPICS) {
 export function getTopicBySlug(
 	slugOrLabel: string | null | undefined,
 ): TopicDefinition | undefined {
-	if (!slugOrLabel) return undefined;
+	if (!slugOrLabel) {
+		return undefined;
+	}
 	const normalized = slugOrLabel.trim().toLowerCase();
 	if (TOPICS_BY_SLUG[normalized]) {
 		return TOPICS_BY_SLUG[normalized];
@@ -2296,8 +2338,7 @@ export function itemMatchesTopic(
 ): boolean {
 	if (Array.isArray(tags) && tags.length > 0) {
 		for (const t of tags) {
-			const resolved =
-				getTopicBySlug(t?.value) || getTopicBySlug(t?.label);
+			const resolved = getTopicBySlug(t?.value) || getTopicBySlug(t?.label);
 			if (resolved?.slug === topic.slug) {
 				return true;
 			}
@@ -2316,8 +2357,7 @@ export function matchTopicsForText(
 
 	if (Array.isArray(tags)) {
 		for (const t of tags) {
-			const resolved =
-				getTopicBySlug(t?.value) || getTopicBySlug(t?.label);
+			const resolved = getTopicBySlug(t?.value) || getTopicBySlug(t?.label);
 			if (resolved && !matched.has(resolved.slug)) {
 				matched.set(resolved.slug, resolved);
 			}
@@ -2326,7 +2366,9 @@ export function matchTopicsForText(
 
 	const hay = `${textOrTitle ?? ""} ${excerpt ?? ""}`.toLowerCase();
 	for (const topic of TOPICS) {
-		if (matched.has(topic.slug)) continue;
+		if (matched.has(topic.slug)) {
+			continue;
+		}
 		if (topic.keywords.some((kw) => hay.includes(kw.toLowerCase()))) {
 			matched.set(topic.slug, topic);
 		}
