@@ -330,8 +330,18 @@ const graph = buildGraph([
 				enableVisualEditing({
 					history: {
 						subscribe: (navigate) => {
+							// Immediately report the current URL on initial mount so Sanity
+							// Presentation sets frameStateRef.current.url — otherwise
+							// useNavigatePreviewFrame ignores subsequent location clicks.
+							navigate({
+								type: "replace",
+								url: `${window.location.pathname}${window.location.search}${window.location.hash}`,
+							});
 							const onPopState = () => {
-								navigate({ type: "pop", url: window.location.href });
+								navigate({
+									type: "pop",
+									url: `${window.location.pathname}${window.location.search}${window.location.hash}`,
+								});
 							};
 							window.addEventListener("popstate", onPopState);
 							return () => window.removeEventListener("popstate", onPopState);
@@ -351,10 +361,12 @@ const graph = buildGraph([
 										currentPerspective,
 									);
 								}
-								if (update.type === "replace") {
-									window.location.replace(nextUrl.toString());
-								} else {
-									window.location.assign(nextUrl.toString());
+								if (nextUrl.href !== window.location.href) {
+									if (update.type === "replace") {
+										window.location.replace(nextUrl.toString());
+									} else {
+										window.location.assign(nextUrl.toString());
+									}
 								}
 							} else if (update.type === "pop") {
 								window.history.back();

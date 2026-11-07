@@ -50,7 +50,11 @@ export function resolvePreview({
 		return { enabled: false };
 	}
 
-	const token = env?.SANITY_API_READ_TOKEN;
+	const token =
+		env?.SANITY_API_READ_TOKEN ||
+		env?.SANITY_API_WRITE_TOKEN ||
+		env?.SANITY_AUTH_TOKEN ||
+		env?.SANITY_WRITE_TOKEN;
 	if (!token) {
 		return { enabled: false };
 	}

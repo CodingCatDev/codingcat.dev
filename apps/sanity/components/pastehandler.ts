@@ -167,6 +167,80 @@ function deserializeTableElement(
 		};
 	});
 
+	if (rows.length >= 2) {
+		const headCells = (rows[0].cells ?? []).map((c) => (c || "").trim());
+		const bodyRows = rows.slice(1);
+		const firstHeader = (headCells[0] ?? "").toLowerCase();
+		const isTierTable =
+			(firstHeader === "tier" ||
+				firstHeader === "tier rank" ||
+				firstHeader === "rank") &&
+			bodyRows.every((r) =>
+				/^[sabcd](\b|-|\s|$)/i.test(((r.cells ?? [])[0] ?? "").trim()),
+			);
+
+		if (isTierTable) {
+			const verdictIdx = headCells.findIndex((h) =>
+				/verdict|why|summary|notes/i.test(h),
+			);
+			const pricingIdx = headCells.findIndex((h) =>
+				/price|pricing|cost|quota/i.test(h),
+			);
+
+			const items = bodyRows.map((row, rIdx) => {
+				const cells = (row.cells ?? []).map((c) => (c || "").trim());
+				const rawTier = (cells[0] ?? "B").toUpperCase().charAt(0);
+				const tier =
+					rawTier === "S" ||
+					rawTier === "A" ||
+					rawTier === "B" ||
+					rawTier === "C" ||
+					rawTier === "D"
+						? rawTier
+						: "B";
+				const name = cells[1] || `Platform ${rIdx + 1}`;
+				const category = cells[2] || "";
+				const summary =
+					verdictIdx >= 3 && cells[verdictIdx]
+						? cells[verdictIdx]
+						: cells[3] || "";
+
+				const details = [];
+				for (let cIdx = 3; cIdx < cells.length; cIdx++) {
+					const val = cells[cIdx];
+					if (!val || val === summary) continue;
+					details.push({
+						_type: "tierDetail",
+						label: headCells[cIdx] || `Spec ${cIdx - 2}`,
+						value: val,
+					});
+				}
+
+				const badge =
+					pricingIdx >= 2 && cells[pricingIdx] ? cells[pricingIdx] : undefined;
+
+				return {
+					_type: "tierItem",
+					tier,
+					name,
+					...(category ? { category } : {}),
+					...(summary ? { summary } : {}),
+					...(badge ? { badge } : {}),
+					details,
+				};
+			});
+
+			return block({
+				_type: "tierList",
+				title: `Alex's Architectural Tier List (${items.length} Platforms Ranked)`,
+				subtitle:
+					"Ranked from S-Tier (Purrfect Production Pick) to D-Tier based on security boundaries, memory architecture, and real-world DX.",
+				ajComment: "I ranked all of them! Watch out for shared VMs... 👀🐾",
+				items,
+			});
+		}
+	}
+
 	return block({
 		_type: "table",
 		rows,

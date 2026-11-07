@@ -2,13 +2,23 @@
 /**
  * `/course/[slug]` | Individual Course Detail & Lessons Page.
  */
+import Avatar from "@/components/Avatar.astro";
 import Breadcrumbs from "@/components/Breadcrumbs.astro";
+import ContentGrid from "@/components/ContentGrid.astro";
 import CoverMedia from "@/components/CoverMedia.astro";
 import ExcalidrawBlueprintCard from "@/components/ExcalidrawBlueprintCard.astro";
 import PortableTextContent from "@/components/portable-text/PortableTextContent.astro";
+import SectionHeader from "@/components/SectionHeader.astro";
+import TagPills from "@/components/TagPills.astro";
 import BaseLayout from "@/layouts/BaseLayout.astro";
-import { courseQuery } from "@/lib/sanity/queries";
+import type { ContentListItem } from "@/lib/content";
+import {
+	type RelatedCandidate,
+	resolveRelatedContentList,
+} from "@/lib/related-content";
+import { courseQuery, relatedCandidatesQuery } from "@/lib/sanity/queries";
 import type { CoverImage as CoverImageType } from "@/lib/sanity/types.gen";
+import { matchTopicsForText } from "@/lib/topics";
 
 interface CourseLesson {
 	_id?: string;
@@ -17,6 +27,7 @@ interface CourseLesson {
 	excerpt?: string | null;
 	youtube?: string | null;
 	videoCloudinary?: { asset?: { _ref?: string } } | null;
+	tags?: Array<{ label?: string | null; value?: string | null }> | null;
 }
 
 interface CourseSection {
@@ -30,8 +41,17 @@ interface CourseDetail {
 	slug?: string | null;
 	excerpt?: string | null;
 	coverImage?: CoverImageType | null;
+	ogImage?: CoverImageType | null;
 	videoCloudinary?: { asset?: { _ref?: string } } | null;
 	youtube?: string | null;
+	author?: Array<{
+		_id: string;
+		title: string;
+		slug?: string | null;
+		coverImage?: CoverImageType | null;
+	}> | null;
+	tags?: Array<{ label?: string | null; value?: string | null }> | null;
+	relatedContent?: RelatedCandidate[] | null;
 	content?: Array<{
 		_type: string;
 		children?: Array<{ text?: string }>;
@@ -50,11 +70,30 @@ if (!course?._id) {
 	return new Response(null, { status: 404 });
 }
 
+const candidates = ((await sanity.loadQuery(relatedCandidatesQuery, {
+	skip: course._id,
+})) ?? []) as unknown as RelatedCandidate[];
+const matchedTopics = matchTopicsForText(
+	`${course.title ?? ""} ${course.excerpt ?? ""}`,
+);
+const more = resolveRelatedContentList(course, candidates, {
+	limit: 2,
+	preferSameType: false,
+	currentTopics: matchedTopics,
+});
+const authors = course.author ?? [];
+
 const sections: CourseSection[] = course.sections ?? [];
 const allLessons: CourseLesson[] = sections.flatMap((sec) =>
 	(sec?.lesson ?? []).filter((l): l is CourseLesson => Boolean(l?.slug)),
 );
 const firstLesson = allLessons[0] ?? null;
+
+const ogSocialImage = course.ogImage
+	? sanity.resolveOpenGraphImage(course.ogImage, 1200, 630)
+	: course.coverImage
+		? sanity.resolveOpenGraphImage(course.coverImage, 1200, 630)
+		: undefined;
 
 // Strip legacy blocks mentioning contacting @BrittneyPostma or @codercatdev
 const sanitizedContent = (course.content ?? []).filter((block) => {
@@ -68,6 +107,7 @@ const sanitizedContent = (course.content ?? []).filter((block) => {
 <BaseLayout
 	title={`${course.title} | CodingCat.dev Course`}
 	description={course.excerpt}
+	image={ogSocialImage}
 	ogFallback={{
 		title: course.title,
 		subtitle: course.excerpt,
@@ -97,6 +137,12 @@ const sanitizedContent = (course.content ?? []).filter((block) => {
 						</span>
 					)
 				}
+				<TagPills
+					title={course.title}
+					excerpt={course.excerpt}
+					tags={course.tags}
+					size="md"
+				/>
 			</div>
 			<div class="flex flex-wrap items-center gap-2.5">
 				<a
@@ -135,6 +181,20 @@ const sanitizedContent = (course.content ?? []).filter((block) => {
 				youtube={course.youtube}
 			/>
 		</div>
+
+		{
+			authors.length > 0 && (
+				<div class="mb-8 flex flex-wrap gap-2.5">
+					{authors.map((author) => (
+						<Avatar
+							name={author.title}
+							href={author.slug ? `/author/${author.slug}` : undefined}
+							coverImage={author.coverImage}
+						/>
+					))}
+				</div>
+			)
+		}
 
 		{
 			sanitizedContent.length > 0 && (
@@ -193,6 +253,16 @@ const sanitizedContent = (course.content ?? []).filter((block) => {
 																			{lesson.excerpt}
 																		</p>
 																	)}
+																	<div class="mt-2 flex flex-wrap items-center gap-1">
+																		<TagPills
+																			as="span"
+																			title={lesson?.title}
+																			excerpt={lesson?.excerpt}
+																			tags={lesson?.tags}
+																			maxCount={3}
+																			size="sm"
+																		/>
+																	</div>
 																</div>
 															</div>
 															<div class="flex items-center justify-between border-t border-[#2A1155]/10 pt-2.5 font-mono text-[11px] font-bold text-[#7C3AED] dark:border-white/10 dark:text-[#C084FC]">
@@ -232,4 +302,14 @@ const sanitizedContent = (course.content ?? []).filter((block) => {
 			tags={sections.map((s) => s?.title)}
 		/>
 	</article>
+
+	{
+		more.length > 0 && (
+			<aside class="mx-auto max-w-4xl">
+				<hr class="my-12 border-t-2 border-dashed border-[#2A1155]/25 dark:border-white/15" />
+				<SectionHeader title="related deep dives" href="/blog" />
+				<ContentGrid items={more as unknown as ContentListItem[]} />
+			</aside>
+		)
+	}
 </BaseLayout>

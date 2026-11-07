@@ -164,6 +164,13 @@ interface BookingDoc {
 	sessionType?: "recording" | "pre_meeting";
 	status?: string;
 	slotStartAt?: string;
+	previousSlotStartAt?: string;
+	rescheduleReason?: string;
+	podcastSlug?: string;
+	podcastDocId?: string;
+	roughCutUrl?: string;
+	roughCutNotes?: string;
+	targetPublishDate?: string;
 	recordingUrl?: string;
 	preMeetingStatus?: "none" | "requested" | "scheduled" | "completed" | "bypassed";
 	preMeetingSlotStartAt?: string;
@@ -254,13 +261,92 @@ const LEAD_STATUS_OPTIONS = [
 ];
 
 const BOOKING_STATUS_OPTIONS = [
-	{ value: "pending", label: "Pending Review (Hold)" },
-	{ value: "approved", label: "Approved" },
-	{ value: "scheduled", label: "Confirmed on Calendar" },
-	{ value: "recorded", label: "Recorded" },
-	{ value: "published", label: "Published (Archive)" },
-	{ value: "cancelled", label: "Declined / Cancelled (Archive)" },
+	{ value: "pending", label: "⏳ Pending Review (Hold)" },
+	{ value: "needs_reschedule", label: "🔄 Needs Reschedule / On Hold" },
+	{ value: "approved", label: "✓ Approved (StreamYard Sent)" },
+	{ value: "scheduled", label: "📅 Confirmed on Calendar" },
+	{ value: "recorded", label: "🎬 Recorded (Raw)" },
+	{ value: "editing", label: "✂️ In Editing / Post-Production" },
+	{ value: "guest_review", label: "👀 Rough Cut / Guest Review" },
+	{ value: "ready_to_publish", label: "🚀 Ready to Publish" },
+	{ value: "published", label: "✅ Published (Archive)" },
+	{ value: "cancelled", label: "✕ Declined / Cancelled (Archive)" },
 ];
+
+function isPostProductionBookingStatus(status?: string): boolean {
+	return (
+		status === "recorded" ||
+		status === "editing" ||
+		status === "guest_review" ||
+		status === "ready_to_publish" ||
+		status === "published"
+	);
+}
+
+function getBookingStatusBadge(status?: string): {
+	label: string;
+	bg: string;
+	color: string;
+} {
+	switch (status) {
+		case "needs_reschedule":
+			return {
+				label: "🔄 Needs Reschedule / Awaiting Slot",
+				bg: "#fef3c7",
+				color: "#92400e",
+			};
+		case "approved":
+		case "scheduled":
+		case "confirmed":
+			return {
+				label: "✓ Approved (StreamYard Sent)",
+				bg: "#dcfce7",
+				color: "#065f46",
+			};
+		case "recorded":
+			return {
+				label: "🎬 Recorded (Entering Edit)",
+				bg: "#ede9fe",
+				color: "#5b21b6",
+			};
+		case "editing":
+			return {
+				label: "✂️ In Editing / Post-Production",
+				bg: "#f3e8ff",
+				color: "#6b21a8",
+			};
+		case "guest_review":
+			return {
+				label: "👀 Rough Cut / Guest Review",
+				bg: "#dbeafe",
+				color: "#1e40af",
+			};
+		case "ready_to_publish":
+			return {
+				label: "🚀 Ready to Publish",
+				bg: "#d1fae5",
+				color: "#065f46",
+			};
+		case "published":
+			return {
+				label: "✅ Published",
+				bg: "#dcfce7",
+				color: "#166534",
+			};
+		case "cancelled":
+			return {
+				label: "✕ Cancelled",
+				bg: "#fee2e2",
+				color: "#991b1b",
+			};
+		default:
+			return {
+				label: "⏳ Hold (Pending Approval)",
+				bg: "#fef3c7",
+				color: "#92400e",
+			};
+	}
+}
 
 function isArchivedLeadStatus(status?: string): boolean {
 	return (
@@ -375,6 +461,12 @@ export function App() {
 		}
 	});
 	const [pfChatInput, setPfChatInput] = useState<Record<string, string>>({});
+	const [roughCutUrlInput, setRoughCutUrlInput] = useState<
+		Record<string, string>
+	>({});
+	const [rescheduleReasonInput, setRescheduleReasonInput] = useState<
+		Record<string, string>
+	>({});
 	const [vaultTitleInput, setVaultTitleInput] = useState<Record<string, string>>(
 		{},
 	);
@@ -837,6 +929,10 @@ export function App() {
 			);
 			if (newStatus === "approved" || newStatus === "scheduled") {
 				await handleBookingManage(bookingId, "approve_recording");
+			} else if (newStatus === "needs_reschedule") {
+				await handleBookingManage(bookingId, "mark_needs_reschedule");
+			} else if (isPostProductionBookingStatus(newStatus)) {
+				await handleAdvancePostProduction(bookingId, newStatus, false);
 			} else if (newStatus === "cancelled") {
 				await handleBookingManage(bookingId, "cancel_booking");
 			} else {
@@ -847,6 +943,45 @@ export function App() {
 		}
 	};
 
+	const handleAdvancePostProduction = async (
+		bookingId: string,
+		stage: string,
+		notifyGuest: boolean,
+	) => {
+		const actionKey = `${bookingId}:postprod:${stage}:${notifyGuest}`;
+		setBusyActionId(actionKey);
+		try {
+			const booking = bookings.find((b) => b._id === bookingId);
+			const roughCutUrl =
+				roughCutUrlInput[bookingId] !== undefined
+					? roughCutUrlInput[bookingId]
+					: booking?.roughCutUrl || "";
+			const res = await fetch(`${siteOrigin}/api/book/manage`, {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({
+					bookingId,
+					action: "advance_post_production",
+					status: stage,
+					roughCutUrl,
+					notifyGuest,
+				}),
+			});
+			const data = await res.json();
+			if (!res.ok) {
+				throw new Error(data.message || data.error || "Failed to update stage");
+			}
+			await fetchAllData();
+			showFlash(
+				`Updated ${booking?.guestName || "episode"} to "${stage}"${data.podcastDocId ? ` (synced ${data.podcastDocId})` : ""}${notifyGuest ? " and emailed guest in canonical thread!" : "."}`,
+			);
+		} catch (err: any) {
+			showFlash(`Post-production error: ${err?.message || "Unknown error"}`);
+		} finally {
+			setBusyActionId(null);
+		}
+	};
+
 	const handleBookingManage = async (
 		bookingId: string,
 		action:
@@ -854,14 +989,21 @@ export function App() {
 			| "cancel_booking"
 			| "request_pre_meeting"
 			| "request_recording_slot"
-			| "bypass_pre_meeting",
+			| "bypass_pre_meeting"
+			| "mark_needs_reschedule",
+		extraPayload?: Record<string, any>,
 	) => {
 		setBusyActionId(`${bookingId}:${action}`);
 		try {
 			const res = await fetch(`${siteOrigin}/api/book/manage`, {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({ bookingId, action }),
+				body: JSON.stringify({
+					bookingId,
+					action,
+					rescheduleReason: rescheduleReasonInput[bookingId] || undefined,
+					...(extraPayload || {}),
+				}),
 			});
 			const data = await res.json();
 			if (!res.ok) {
@@ -871,6 +1013,10 @@ export function App() {
 			if (action === "approve_recording") {
 				showFlash(
 					`Approved recording, synced private block to alex.patterson@sanity.io, and sent StreamYard link (${data.recordingUrl || "https://streamyard.com/c4kv26is93"}) to guest.`,
+				);
+			} else if (action === "mark_needs_reschedule") {
+				showFlash(
+					"Moved booking to Needs Reschedule, cleared old calendar hold, and sent 1-click reschedule invite in the guest's canonical Gmail thread!",
 				);
 			} else if (action === "cancel_booking") {
 				showFlash(
@@ -2989,6 +3135,461 @@ export function App() {
 							</div>
 						</div>
 
+						{/* Pipeline Row: Needs Reschedule / On Hold + Post-Production & Editing */}
+						<div
+							style={{
+								display: "grid",
+								gridTemplateColumns:
+									"repeat(auto-fit, minmax(min(100%, 340px), 1fr))",
+								gap: 16,
+							}}
+						>
+							{/* Card 3: Needs Reschedule / Awaiting Recording Slot */}
+							<div
+								style={{
+									padding: "clamp(12px, 3vw, 16px)",
+									borderRadius: 10,
+									border: "1px solid #fcd34d",
+									background: "#fffbeb",
+									minWidth: 0,
+								}}
+							>
+								<h3
+									style={{
+										margin: "0 0 8px",
+										fontSize: 15,
+										color: "#92400e",
+									}}
+								>
+									🔄 Needs Reschedule / Awaiting Recording Slot (
+									{
+										bookings.filter(
+											(b) =>
+												b.status === "needs_reschedule" ||
+												(!isArchivedBookingStatus(b.status) &&
+													!isPostProductionBookingStatus(b.status) &&
+													b.slotStartAt &&
+													Date.parse(b.slotStartAt) < Date.now() - 3600_000),
+										).length
+									}
+									)
+								</h3>
+								<p
+									style={{
+										margin: "0 0 12px",
+										fontSize: 12,
+										color: "#78350f",
+									}}
+								>
+									Guests who missed a slot (sick / postponed) or completed a
+									15m pre-call and still need to pick their 45m recording slot.
+								</p>
+								<div style={{ display: "grid", gap: 8 }}>
+									{bookings
+										.filter(
+											(b) =>
+												b.status === "needs_reschedule" ||
+												(!isArchivedBookingStatus(b.status) &&
+													!isPostProductionBookingStatus(b.status) &&
+													b.slotStartAt &&
+													Date.parse(b.slotStartAt) < Date.now() - 3600_000),
+										)
+										.map((b) => {
+											const token =
+												b.portalToken ||
+												b._id.replace(/^(private\.)?booking-/, "");
+											const portalUrl = `${siteOrigin}/portal/${token}#booked-sessions`;
+											const gmailUrl = b.gmailThreadId
+												? `https://mail.google.com/mail/u/0/#inbox/${b.gmailThreadId}`
+												: "";
+											return (
+												<div
+													key={b._id}
+													style={{
+														padding: 10,
+														borderRadius: 8,
+														background: "#fff",
+														border: "1px solid #fde68a",
+														display: "flex",
+														flexDirection: "column",
+														gap: 8,
+													}}
+												>
+													<div
+														style={{
+															display: "flex",
+															justifyContent: "space-between",
+															alignItems: "flex-start",
+															gap: 8,
+															flexWrap: "wrap",
+														}}
+													>
+														<div style={{ minWidth: 0 }}>
+															<div style={{ fontWeight: 700, fontSize: 13 }}>
+																{b.guestName} ({b.company || "Independent"})
+															</div>
+															<div style={{ fontSize: 11, color: "#6b7280" }}>
+																{b.rescheduleReason ||
+																	(b.slotStartAt
+																		? `Missed / Past Slot: ${formatDateTime(b.slotStartAt)}`
+																		: "Awaiting 45m recording slot")}
+															</div>
+														</div>
+														<span
+															style={{
+																padding: "2px 8px",
+																borderRadius: 999,
+																fontSize: 11,
+																fontWeight: 700,
+																background:
+																	b.status === "needs_reschedule"
+																		? "#fef3c7"
+																		: "#fee2e2",
+																color:
+																	b.status === "needs_reschedule"
+																		? "#92400e"
+																		: "#991b1b",
+															}}
+														>
+															{b.status === "needs_reschedule"
+																? "🔄 Needs Reschedule"
+																: "⚠️ Past Unrecorded Slot"}
+														</span>
+													</div>
+													<div
+														style={{
+															display: "flex",
+															gap: 6,
+															flexWrap: "wrap",
+														}}
+													>
+														<button
+															type="button"
+															disabled={
+																busyActionId ===
+																`${b._id}:mark_needs_reschedule`
+															}
+															onClick={() =>
+																handleBookingManage(
+																	b._id,
+																	"mark_needs_reschedule",
+																)
+															}
+															style={{
+																...btnStyle,
+																background: "#d97706",
+																borderColor: "#d97706",
+																color: "#fff",
+															}}
+														>
+															{busyActionId ===
+															`${b._id}:mark_needs_reschedule`
+																? "Sending..."
+																: b.status === "needs_reschedule"
+																	? "📨 Resend Reschedule Email"
+																	: "🔄 Clear Hold & Send Reschedule Link"}
+														</button>
+														<a
+															href={portalUrl}
+															target="_blank"
+															rel="noreferrer"
+															style={btnStyle}
+														>
+															Portal ↗
+														</a>
+														{gmailUrl && (
+															<a
+																href={gmailUrl}
+																target="_blank"
+																rel="noreferrer"
+																style={btnStyle}
+															>
+																Gmail ↗
+															</a>
+														)}
+														<button
+															type="button"
+															onClick={() =>
+																setExpandedScheduleBookingId((prev) =>
+																	prev === b._id ? null : b._id,
+																)
+															}
+															style={btnStyle}
+														>
+															{expandedScheduleBookingId === b._id
+																? "Hide Notes"
+																: "📝 Run-of-Show"}
+														</button>
+													</div>
+													{expandedScheduleBookingId === b._id && (
+														<div style={{ width: "100%", marginTop: 4 }}>
+															{renderBookingDetailsPanel(b)}
+														</div>
+													)}
+												</div>
+											);
+										})}
+								</div>
+							</div>
+
+							{/* Card 4: Post-Production & Editing Pipeline */}
+							<div
+								style={{
+									padding: "clamp(12px, 3vw, 16px)",
+									borderRadius: 10,
+									border: "1px solid #d8b4fe",
+									background: "#faf5ff",
+									minWidth: 0,
+								}}
+							>
+								<h3
+									style={{
+										margin: "0 0 8px",
+										fontSize: 15,
+										color: "#581c87",
+									}}
+								>
+									🎬 Post-Production, Unlisted YouTube &amp; Draft Pipeline (
+									{
+										bookings.filter(
+											(b) =>
+												isPostProductionBookingStatus(b.status) &&
+												b.status !== "published",
+										).length
+									}
+									)
+								</h3>
+								<p
+									style={{
+										margin: "0 0 12px",
+										fontSize: 12,
+										color: "#6b21a8",
+									}}
+								>
+									Track recorded episodes through <strong>Editing</strong>,{" "}
+									<strong>Rough-Cut Guest Review</strong>, and{" "}
+									<strong>Ready to Publish</strong>. Paste an Unlisted YouTube
+									link to embed it directly on the Guest Portal.
+								</p>
+								<div style={{ display: "grid", gap: 8 }}>
+									{bookings
+										.filter(
+											(b) =>
+												isPostProductionBookingStatus(b.status) &&
+												b.status !== "published",
+										)
+										.map((b) => {
+											const token =
+												b.portalToken ||
+												b._id.replace(/^(private\.)?booking-/, "");
+											const portalReviewUrl = `${siteOrigin}/portal/${token}#post-production-review`;
+											const draftEpUrl = b.podcastSlug
+												? `${siteOrigin}/podcast/${b.podcastSlug}?sanity-preview-perspective=drafts`
+												: "";
+											const badge = getBookingStatusBadge(b.status);
+											const currentRoughCut =
+												roughCutUrlInput[b._id] !== undefined
+													? roughCutUrlInput[b._id]
+													: b.roughCutUrl || "";
+											return (
+												<div
+													key={b._id}
+													style={{
+														padding: 10,
+														borderRadius: 8,
+														background: "#fff",
+														border: "1px solid #e9d5ff",
+														display: "flex",
+														flexDirection: "column",
+														gap: 8,
+													}}
+												>
+													<div
+														style={{
+															display: "flex",
+															justifyContent: "space-between",
+															alignItems: "center",
+															gap: 8,
+															flexWrap: "wrap",
+														}}
+													>
+														<div style={{ minWidth: 0 }}>
+															<div style={{ fontWeight: 700, fontSize: 13 }}>
+																{b.guestName} ({b.company || "Independent"})
+															</div>
+															<div style={{ fontSize: 11, color: "#6b7280" }}>
+																Recorded: {formatDateTime(b.slotStartAt)}
+																{b.podcastDocId && (
+																	<>
+																		{" · "}
+																		<code>{b.podcastDocId}</code>
+																	</>
+																)}
+															</div>
+														</div>
+														<span
+															style={{
+																padding: "2px 8px",
+																borderRadius: 999,
+																fontSize: 11,
+																fontWeight: 700,
+																background: badge.bg,
+																color: badge.color,
+															}}
+														>
+															{badge.label}
+														</span>
+													</div>
+
+													<div
+														style={{
+															display: "flex",
+															gap: 6,
+															flexWrap: "wrap",
+															alignItems: "center",
+														}}
+													>
+														<select
+															value={b.status || "recorded"}
+															onChange={(e) =>
+																handleAdvancePostProduction(
+																	b._id,
+																	e.target.value,
+																	false,
+																)
+															}
+															style={{
+																padding: "5px 8px",
+																borderRadius: 6,
+																border: "1px solid #d1d5db",
+																fontSize: 12,
+																fontWeight: 600,
+																background: "#f9fafb",
+															}}
+														>
+															<option value="recorded">
+																🎬 1. Recorded (Raw)
+															</option>
+															<option value="editing">
+																✂️ 2. In Editing / Post-Production
+															</option>
+															<option value="guest_review">
+																👀 3. Rough Cut / Guest Review
+															</option>
+															<option value="ready_to_publish">
+																🚀 4. Ready to Publish
+															</option>
+															<option value="published">
+																✅ 5. Published (Archive)
+															</option>
+														</select>
+														<input
+															value={currentRoughCut}
+															onChange={(e) =>
+																setRoughCutUrlInput((prev) => ({
+																	...prev,
+																	[b._id]: e.target.value,
+																}))
+															}
+															placeholder="Unlisted YouTube URL (https://youtu.be/...)"
+															style={{
+																flex: "1 1 200px",
+																minWidth: 0,
+																padding: "5px 8px",
+																borderRadius: 6,
+																border: "1px solid #d1d5db",
+																fontSize: 12,
+															}}
+														/>
+														<button
+															type="button"
+															disabled={Boolean(
+																busyActionId?.startsWith(`${b._id}:postprod:`),
+															)}
+															onClick={() =>
+																handleAdvancePostProduction(
+																	b._id,
+																	currentRoughCut
+																		? "guest_review"
+																		: b.status || "editing",
+																	false,
+																)
+															}
+															style={btnStyle}
+														>
+															💾 Save &amp; Sync Draft
+														</button>
+														<button
+															type="button"
+															disabled={Boolean(
+																busyActionId?.startsWith(`${b._id}:postprod:`),
+															)}
+															onClick={() =>
+																handleAdvancePostProduction(
+																	b._id,
+																	currentRoughCut
+																		? "guest_review"
+																		: b.status || "editing",
+																	true,
+																)
+															}
+															style={primaryBtnStyle}
+														>
+															📨 Save &amp; Email Guest Review
+														</button>
+													</div>
+
+													<div
+														style={{
+															display: "flex",
+															gap: 6,
+															flexWrap: "wrap",
+														}}
+													>
+														<a
+															href={portalReviewUrl}
+															target="_blank"
+															rel="noreferrer"
+															style={btnStyle}
+														>
+															Portal Review ↗
+														</a>
+														{draftEpUrl && (
+															<a
+																href={draftEpUrl}
+																target="_blank"
+																rel="noreferrer"
+																style={btnStyle}
+															>
+																👁️ Preview Draft Podcast ↗
+															</a>
+														)}
+														<button
+															type="button"
+															onClick={() =>
+																setExpandedScheduleBookingId((prev) =>
+																	prev === b._id ? null : b._id,
+																)
+															}
+															style={btnStyle}
+														>
+															{expandedScheduleBookingId === b._id
+																? "Hide Notes"
+																: "📝 Run-of-Show & Scrub Notes"}
+														</button>
+													</div>
+													{expandedScheduleBookingId === b._id && (
+														<div style={{ width: "100%", marginTop: 4 }}>
+															{renderBookingDetailsPanel(b)}
+														</div>
+													)}
+												</div>
+											);
+										})}
+								</div>
+							</div>
+						</div>
+
 						{/* Ongoing Master Calendar Timeline */}
 						<div>
 							<h3 style={{ margin: "0 0 12px", fontSize: 16 }}>
@@ -3197,40 +3798,55 @@ export function App() {
 															>
 																{b ? (
 																	<div>
-																		<span
-																			style={{
-																				padding: "2px 7px",
-																				borderRadius: 999,
-																				fontSize: 11,
-																				fontWeight: 700,
-																				background: isApproved
-																					? "#dcfce7"
-																					: "#fef3c7",
-																				color: isApproved
-																					? "#065f46"
-																					: "#92400e",
-																				display: "inline-block",
-																			}}
-																		>
-																			{isApproved
-																				? "✓ Approved (StreamYard Sent)"
-																				: "⏳ Hold (Pending Approval)"}
-																		</span>
+																		{(() => {
+																			const badge = getBookingStatusBadge(
+																				b.status,
+																			);
+																			return (
+																				<span
+																					style={{
+																						padding: "2px 7px",
+																						borderRadius: 999,
+																						fontSize: 11,
+																						fontWeight: 700,
+																						background: badge.bg,
+																						color: badge.color,
+																						display: "inline-block",
+																					}}
+																				>
+																					{badge.label}
+																				</span>
+																			);
+																		})()}
 																		<div style={{ marginTop: 4, fontSize: 11 }}>
-																			<a
-																				href={
-																					b.recordingUrl ||
-																					"https://streamyard.com/c4kv26is93"
-																				}
-																				target="_blank"
-																				rel="noreferrer"
-																				style={{
-																					color: "#2563eb",
-																					fontWeight: 600,
-																				}}
-																			>
-																				StreamYard Studio ↗
-																			</a>
+																			{b.podcastSlug ? (
+																				<a
+																					href={`${siteOrigin}/podcast/${b.podcastSlug}?sanity-preview-perspective=drafts`}
+																					target="_blank"
+																					rel="noreferrer"
+																					style={{
+																						color: "#6b21a8",
+																						fontWeight: 600,
+																					}}
+																				>
+																					👁️ Draft Podcast Preview ↗
+																				</a>
+																			) : (
+																				<a
+																					href={
+																						b.recordingUrl ||
+																						"https://streamyard.com/c4kv26is93"
+																					}
+																					target="_blank"
+																					rel="noreferrer"
+																					style={{
+																						color: "#2563eb",
+																						fontWeight: 600,
+																					}}
+																				>
+																					StreamYard Studio ↗
+																				</a>
+																			)}
 																		</div>
 																	</div>
 																) : (

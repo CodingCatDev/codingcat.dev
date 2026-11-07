@@ -40,7 +40,7 @@ export const ALL: APIRoute = async ({ request, locals }) => {
 			const { client } = getSanityServerClient();
 			const [leadDoc, bookingDoc] = await Promise.all([
 				client.fetch<Record<string, any> | null>(
-					`*[_type == "sponsorLead" && (portalToken == $token || legacyPortalToken == $token || _id == $privateLeadId || _id == $leadId)][0]{ contactEmail, coordinatorEmail, coordinatorEmails, allowedEmails }`,
+					`*[_type == "sponsorLead" && (portalToken == $token || legacyPortalToken == $token || _id == $privateLeadId || _id == $leadId)][0]{ contactEmail, coordinatorEmail, coordinatorEmails, allowedEmails, guests }`,
 					{
 						token: portalTokenHeader,
 						privateLeadId: `private.sponsorLead-${portalTokenHeader}`,
@@ -48,7 +48,7 @@ export const ALL: APIRoute = async ({ request, locals }) => {
 					} as Record<string, any>,
 				),
 				client.fetch<Record<string, any> | null>(
-					`*[_type == "booking" && (portalToken == $token || legacyPortalToken == $token || _id == $privateBookingId)] | order(_createdAt desc)[0]{ guestEmail, coordinatorEmail, coordinatorEmails, allowedEmails }`,
+					`*[_type == "booking" && (portalToken == $token || legacyPortalToken == $token || _id == $privateBookingId)] | order(_createdAt desc)[0]{ guestEmail, coordinatorEmail, coordinatorEmails, allowedEmails, guests }`,
 					{
 						token: portalTokenHeader,
 						privateBookingId: `private.booking-${portalTokenHeader}`,

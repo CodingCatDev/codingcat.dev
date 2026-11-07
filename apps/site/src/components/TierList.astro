@@ -25,6 +25,7 @@ export interface TierItem {
 	category?: string;
 	summary?: string;
 	badge?: string;
+	url?: string;
 	details?: TierDetail[];
 }
 
@@ -281,7 +282,18 @@ const activeTiers = TIER_ORDER.filter(
 												{/* Top Row: Platform Name + Category Pill */}
 												<div class="flex flex-wrap items-start justify-between gap-2">
 													<h4 class="font-display text-base font-extrabold text-[#2A1155] dark:text-white">
-														{item.name}
+														{item.url ? (
+															<a
+																href={item.url}
+																target="_blank"
+																rel="noopener noreferrer"
+																class="underline decoration-[#7C3AED]/40 underline-offset-2 hover:text-[#7C3AED] dark:hover:text-[#C084FC]"
+															>
+																{item.name} ↗
+															</a>
+														) : (
+															item.name
+														)}
 													</h4>
 													{item.category && (
 														<span class="rounded-full border border-[#7C3AED]/35 bg-[#EDE9FE] px-2.5 py-0.5 font-mono text-[11px] font-bold text-[#4C1D95] dark:border-purple-400/35 dark:bg-purple-950/70 dark:text-purple-200">

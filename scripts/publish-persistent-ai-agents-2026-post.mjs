@@ -173,6 +173,83 @@ function createRichBlock(
 }
 
 function createTableBlock(rows, keySeed) {
+  if (rows.length >= 2) {
+    const headCells = (rows[0] ?? []).map((c) => cleanDashes(String(c)));
+    const bodyRows = rows.slice(1);
+    const firstHeader = (headCells[0] ?? "").trim().toLowerCase();
+    const isTierList =
+      (firstHeader === "tier" ||
+        firstHeader === "tier rank" ||
+        firstHeader === "rank") &&
+      bodyRows.every((r) => /^[sabcd](\b|-|\s|$)/i.test(String(r[0] ?? "").trim()));
+
+    if (isTierList) {
+      const verdictIdx = headCells.findIndex((h) =>
+        /verdict|why|summary|notes/i.test(h)
+      );
+      const pricingIdx = headCells.findIndex((h) =>
+        /price|pricing|cost|quota/i.test(h)
+      );
+
+      const items = bodyRows.map((cells, rIdx) => {
+        const cleanCells = cells.map((c) => cleanDashes(String(c)));
+        const rawTier = (cleanCells[0] ?? "B").toUpperCase().charAt(0);
+        const tier =
+          rawTier === "S" ||
+          rawTier === "A" ||
+          rawTier === "B" ||
+          rawTier === "C" ||
+          rawTier === "D"
+            ? rawTier
+            : "B";
+        const name = cleanCells[1] || `Platform ${rIdx + 1}`;
+        const category = cleanCells[2] || "";
+        const summary =
+          verdictIdx >= 3 && cleanCells[verdictIdx]
+            ? cleanCells[verdictIdx]
+            : cleanCells[3] || "";
+
+        const details = [];
+        for (let cIdx = 3; cIdx < cleanCells.length; cIdx++) {
+          const val = cleanCells[cIdx];
+          if (!val || val === summary) continue;
+          details.push({
+            _type: "tierDetail",
+            _key: makeKey(`td_${rIdx}_${cIdx}`, `${keySeed}_${rIdx}_${cIdx}`),
+            label: headCells[cIdx] || `Spec ${cIdx - 2}`,
+            value: val,
+          });
+        }
+
+        const badge =
+          pricingIdx >= 2 && cleanCells[pricingIdx]
+            ? cleanCells[pricingIdx]
+            : undefined;
+
+        return {
+          _type: "tierItem",
+          _key: makeKey(`ti_${rIdx}`, `${keySeed}_ti_${rIdx}_${name}`),
+          tier,
+          name,
+          ...(category ? { category } : {}),
+          ...(summary ? { summary } : {}),
+          ...(badge ? { badge } : {}),
+          details,
+        };
+      });
+
+      return {
+        _type: "tierList",
+        _key: makeKey("tierlist", keySeed),
+        title: "Alex's 2026 Persistent AI Agent Tier List (All 18 Platforms Ranked)",
+        subtitle:
+          "Ranked from S-Tier (Purrfect Production Pick) to D-Tier across VM isolation, memory topology, MCP ecosystem, and real-world pricing.",
+        ajComment: "I ranked all 18 of them! Watch out for shared VMs... 👀🐾",
+        items,
+      };
+    }
+  }
+
   return {
     _type: "table",
     _key: makeKey("tbl", keySeed),

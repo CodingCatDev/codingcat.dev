@@ -1,5 +1,10 @@
 import type { APIRoute } from "astro";
 import {
+	findGuestByEmail,
+	hasGuestList,
+	resolvePortalGuests,
+} from "@/lib/portal-guests";
+import {
 	extractPortalAllowedEmails,
 	verifyPortalRequestAuth,
 } from "@/lib/portal-security";
@@ -90,7 +95,8 @@ export const POST: APIRoute = async ({ request, url }) => {
 				contactEmail,
 				coordinatorEmail,
 				coordinatorEmails,
-				allowedEmails
+				allowedEmails,
+				guests
 			}`,
 			{ token } as Record<string, any>,
 		);
@@ -125,22 +131,58 @@ export const POST: APIRoute = async ({ request, url }) => {
 		}
 
 		const signedAt = new Date().toISOString();
-		await Promise.all(
-			targetDocs.map((d) =>
-				client
-					.patch(d._id)
-					.set({
-						signatureMode,
-						signatureData,
-						signedAt,
-						consentRecording: true,
-						consentCommercial: true,
-						consentLikeness: true,
-					})
-					.commit()
-					.catch(() => {}),
-			),
+		const releaseFields = {
+			signatureMode,
+			signatureData,
+			signedAt,
+			consentRecording: true,
+			consentCommercial: true,
+			consentLikeness: true,
+		};
+
+		const multiGuestBooking = targetDocs.find(
+			(d) => d._type === "booking" && hasGuestList(d),
 		);
+		if (multiGuestBooking) {
+			const guests = resolvePortalGuests(multiGuestBooking);
+			const signer = findGuestByEmail(guests, auth.verifiedEmail);
+			if (!signer) {
+				return new Response(
+					JSON.stringify({
+						ok: false,
+						error:
+							"Each guest signs their own media release. Sign in with the email you were invited with.",
+					}),
+					{ status: 403, headers: CORS_HEADERS },
+				);
+			}
+			const prefix = `guests[_key=="${signer._key}"]`;
+			const patch = client
+				.patch(multiGuestBooking._id)
+				.set(
+					Object.fromEntries(
+						Object.entries(releaseFields).map(([k, v]) => [
+							`${prefix}.${k}`,
+							v,
+						]),
+					),
+				);
+			// The top-level fields mirror the first guest for single-guest consumers (ops dashboard).
+			if (guests[0]?._key === signer._key) {
+				patch.set(releaseFields);
+			}
+			await patch.commit();
+		} else {
+			await Promise.all(
+				targetDocs.map((d) =>
+					client
+						.patch(d._id)
+						.set(releaseFields)
+						.commit()
+						.catch(() => {}),
+				),
+			);
+		}
 
 		return new Response(
 			JSON.stringify({

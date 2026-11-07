@@ -1,0 +1,93 @@
+---
+import { stegaClean } from "@sanity/client/stega";
+import type { Props as PtProps } from "astro-portabletext/types";
+import TierList, {
+	type TierDetail,
+	type TierItem,
+	type TierRank,
+} from "@/components/TierList.astro";
+
+type SanityTierDetail = {
+	_key?: string;
+	label?: string;
+	value?: string;
+};
+
+type SanityTierItem = {
+	_key?: string;
+	tier?: string;
+	name?: string;
+	category?: string;
+	summary?: string;
+	badge?: string;
+	url?: string;
+	details?: SanityTierDetail[];
+};
+
+type TierListNode = {
+	_type: "tierList";
+	title?: string;
+	subtitle?: string;
+	ajComment?: string;
+	items?: SanityTierItem[];
+};
+
+type Props = PtProps<TierListNode>;
+
+const { node } = Astro.props;
+
+function normalizeRank(raw?: string): TierRank {
+	const cleaned = (stegaClean(raw) ?? "").trim().toUpperCase();
+	const first = cleaned.charAt(0);
+	if (
+		first === "S" ||
+		first === "A" ||
+		first === "B" ||
+		first === "C" ||
+		first === "D"
+	) {
+		return first;
+	}
+	return "B";
+}
+
+const rawItems = node.items ?? [];
+const items: TierItem[] = rawItems.map((it, idx) => {
+	const details: TierDetail[] = (it.details ?? [])
+		.map((d) => ({
+			label: (stegaClean(d.label) ?? "").trim(),
+			value: (stegaClean(d.value) ?? "").trim(),
+		}))
+		.filter((d) => d.label && d.value);
+
+	return {
+		name: (stegaClean(it.name) ?? `Platform ${idx + 1}`).trim(),
+		tier: normalizeRank(it.tier),
+		category: (stegaClean(it.category) ?? "").trim() || undefined,
+		summary: (stegaClean(it.summary) ?? "").trim() || undefined,
+		badge: (stegaClean(it.badge) ?? "").trim() || undefined,
+		url: (stegaClean(it.url) ?? "").trim() || undefined,
+		details,
+	};
+});
+---
+
+{
+	items.length > 0 && (
+		<TierList
+			title={
+				stegaClean(node.title) ||
+				`Alex's Architectural Tier List (${items.length} Platforms Ranked)`
+			}
+			subtitle={
+				stegaClean(node.subtitle) ||
+				"Ranked from S-Tier (Purrfect Production Pick) to D-Tier across VM isolation, memory topology, MCP ecosystem, and real-world pricing."
+			}
+			ajComment={
+				stegaClean(node.ajComment) ||
+				"I ranked all of them! Watch out for shared VMs... 👀🐾"
+			}
+			items={items}
+		/>
+	)
+}

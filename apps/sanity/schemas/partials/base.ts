@@ -15,6 +15,7 @@ import codesandbox from "../custom/codesandbox";
 import html from "../custom/html";
 import twitter from "../custom/twitter-embed";
 import quote from "../custom/quote";
+import tierList from "../custom/tierList";
 import youtube from "../custom/youtube";
 import youtubeShorts from "../custom/youtube-shorts";
 import socialEmbed, {
@@ -38,6 +39,14 @@ const baseType = defineType({
 			type: "image",
 			options: { hotspot: true },
 			validation: (rule) => rule.required(),
+		}),
+		defineField({
+			name: "ogImage",
+			title: "Open Graph Override Image",
+			type: "image",
+			options: { hotspot: true },
+			description:
+				"Optional social share card image override. When empty, falls back to prewarmed OG cards or dynamically generated CodingCat.dev cards.",
 		}),
 		defineField({
 			name: "date",
@@ -122,6 +131,7 @@ const baseType = defineType({
 				defineArrayMember(githubGistEmbed),
 				defineArrayMember(html),
 				defineArrayMember(quote),
+				defineArrayMember(tierList),
 				defineArrayMember({ type: "table" }),
 			],
 		}),
