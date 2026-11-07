@@ -4,13 +4,40 @@
  *
  * Dual-Theme Chalkboard Paper (`8d1319903d504a79ae56110486455e17`) &
  * Obsidian Chalkboard (`b9e00f99c0d34e9884bf7766a014577b`) Courses Page.
+ *
+ * Features:
+ * - Signature Winding Timeline Spine layout with dynamic re-numbering & left/right alternation when filtered
+ * - Track Filter Tabs (`All Courses`, `2026 Flagships`, `The Odin Project`, `Frameworks & UI`)
+ * - 110+ Logo Tag Pills (`<TopicFilterStrip>`) & Live Keyword Search (`?topic=`, `?track=`, `?q=`)
+ * - Clickable Brand Logo Tag Pills (`<TagPills>`) on every Course Card
  */
 import AjMascot from "@/components/AjMascot.astro";
 import CoverImage from "@/components/CoverImage.astro";
 import ExcalidrawDiagram from "@/components/ExcalidrawDiagram.astro";
+import TagPills from "@/components/TagPills.astro";
+import TopicFilterStrip from "@/components/TopicFilterStrip.astro";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import { coursesQuery } from "@/lib/sanity/queries";
 import type { CoverImage as CoverImageType } from "@/lib/sanity/types.gen";
+import {
+	getTopicBySlug,
+	resolveItemTopics,
+	type SanityTagItem,
+} from "@/lib/topics";
+
+type CourseTrack = "flagship" | "odin" | "frameworks";
+
+interface CourseLessonSummary {
+	title?: string | null;
+	slug?: string | null;
+	excerpt?: string | null;
+	tags?: SanityTagItem[] | null;
+}
+
+interface CourseSectionSummary {
+	title?: string | null;
+	lessons?: CourseLessonSummary[] | null;
+}
 
 interface CourseListItem {
 	_id: string;
@@ -20,25 +47,37 @@ interface CourseListItem {
 	excerpt?: string | null;
 	coverImage?: CoverImageType | null;
 	lessonsCount?: number | null;
+	tags?: SanityTagItem[] | null;
+	sections?: CourseSectionSummary[] | null;
 }
 
 const { sanity } = Astro.locals;
 const rawCourses = ((await sanity.loadQuery(coursesQuery)) ??
 	[]) as unknown as CourseListItem[];
 
-const LEARNING_ORDER: Record<
-	string,
-	{
-		rank: number;
-		tier: string;
-		color: string;
-		lip: string;
-		textColor: string;
-		badge: string;
-	}
-> = {
+const initialTopicParam = Astro.url.searchParams.get("topic")?.trim() || "";
+const initialTopicDef = initialTopicParam
+	? getTopicBySlug(initialTopicParam)
+	: undefined;
+const initialTrackParam = (
+	Astro.url.searchParams.get("track")?.trim() || "all"
+).toLowerCase();
+const initialQueryParam = Astro.url.searchParams.get("q")?.trim() || "";
+
+interface CourseOrderMeta {
+	rank: number;
+	track: CourseTrack;
+	tier: string;
+	color: string;
+	lip: string;
+	textColor: string;
+	badge: string;
+}
+
+const LEARNING_ORDER: Record<string, CourseOrderMeta> = {
 	"mcp-in-production": {
 		rank: 1,
+		track: "flagship",
 		tier: "Course 1 · 2026 Flagship",
 		color: "#86EFAC",
 		lip: "#2A1155",
@@ -47,6 +86,7 @@ const LEARNING_ORDER: Record<
 	},
 	"zero-cold-start-edge-stack": {
 		rank: 2,
+		track: "flagship",
 		tier: "Course 2 · 2026 Flagship",
 		color: "#EDE9FE",
 		lip: "#2A1155",
@@ -55,6 +95,7 @@ const LEARNING_ORDER: Record<
 	},
 	"sanity-content-operating-system": {
 		rank: 3,
+		track: "flagship",
 		tier: "Course 3 · 2026 Flagship",
 		color: "#FEF08A",
 		lip: "#2A1155",
@@ -63,6 +104,7 @@ const LEARNING_ORDER: Record<
 	},
 	"full-stack-ai-agents-typescript": {
 		rank: 4,
+		track: "flagship",
 		tier: "Course 4 · 2026 Flagship",
 		color: "#7C3AED",
 		lip: "#2A1155",
@@ -71,14 +113,79 @@ const LEARNING_ORDER: Record<
 	},
 	"cloudflare-agents-durable-workflows-typescript": {
 		rank: 5,
+		track: "flagship",
 		tier: "Course 5 · 2026 Edge Agents",
 		color: "#EDE9FE",
 		lip: "#2A1155",
 		textColor: "#5B21B6",
 		badge: "⚡ Durable Objects & Workflows",
 	},
-	"odin-web-development-foundations": {
+	"tanstack-start-type-safe-full-stack-react": {
 		rank: 6,
+		track: "flagship",
+		tier: "2026 Flagship · Full-Stack React",
+		color: "#FEF08A",
+		lip: "#2A1155",
+		textColor: "#713F12",
+		badge: "🏖️ TanStack Start & Drizzle",
+	},
+	"local-first-web-apps-pglite-electric-sql": {
+		rank: 7,
+		track: "flagship",
+		tier: "2026 Flagship · Local-First SQL",
+		color: "#BAE6FD",
+		lip: "#2A1155",
+		textColor: "#0369A1",
+		badge: "🐘 PGlite WASM Postgres",
+	},
+	"browser-webgpu-local-llms-transformers-js": {
+		rank: 8,
+		track: "flagship",
+		tier: "2026 Flagship · Browser WebGPU AI",
+		color: "#86EFAC",
+		lip: "#2A1155",
+		textColor: "#166534",
+		badge: "🎮 WebGPU & Transformers.js",
+	},
+	"stripe-billing-edge-webhooks-d1-entitlements": {
+		rank: 9,
+		track: "flagship",
+		tier: "2026 Flagship · Edge SaaS Billing",
+		color: "#EDE9FE",
+		lip: "#2A1155",
+		textColor: "#5B21B6",
+		badge: "💳 Stripe Webhooks & D1",
+	},
+	"playwright-e2e-testing-for-ai-and-edge-apps": {
+		rank: 10,
+		track: "flagship",
+		tier: "2026 Flagship · Deterministic E2E",
+		color: "#86EFAC",
+		lip: "#2A1155",
+		textColor: "#166534",
+		badge: "🎭 Playwright E2E Testing",
+	},
+	"cloudflare-queues-r2-event-pipelines": {
+		rank: 11,
+		track: "flagship",
+		tier: "2026 Flagship · Event Pipelines",
+		color: "#FEF08A",
+		lip: "#2A1155",
+		textColor: "#713F12",
+		badge: "📨 Cloudflare Queues & R2",
+	},
+	"monorepo-architecture-pnpm-turborepo-changesets": {
+		rank: 12,
+		track: "flagship",
+		tier: "2026 Flagship · Monorepo Systems",
+		color: "#BAE6FD",
+		lip: "#2A1155",
+		textColor: "#0369A1",
+		badge: "📦 pnpm & Turborepo CI",
+	},
+	"odin-web-development-foundations": {
+		rank: 20,
+		track: "odin",
 		tier: "Odin Project 1 · Foundations",
 		color: "#86EFAC",
 		lip: "#2A1155",
@@ -86,7 +193,8 @@ const LEARNING_ORDER: Record<
 		badge: "🌐 HTML, CSS, Flexbox & JS",
 	},
 	"odin-git-and-github-workflows": {
-		rank: 7,
+		rank: 21,
+		track: "odin",
 		tier: "Odin Project 2 · Git & GitHub",
 		color: "#FEF08A",
 		lip: "#2A1155",
@@ -94,7 +202,8 @@ const LEARNING_ORDER: Record<
 		badge: "🌿 Git Internals & Rebase",
 	},
 	"odin-intermediate-html-and-css-grid": {
-		rank: 8,
+		rank: 22,
+		track: "odin",
 		tier: "Odin Project 3 · CSS Grid & Forms",
 		color: "#FBCFE8",
 		lip: "#2A1155",
@@ -102,7 +211,8 @@ const LEARNING_ORDER: Record<
 		badge: "📐 Grid & Subgrid",
 	},
 	"odin-javascript-deep-dive": {
-		rank: 9,
+		rank: 23,
+		track: "odin",
 		tier: "Odin Project 4 · JS Deep Dive",
 		color: "#FEF08A",
 		lip: "#2A1155",
@@ -110,7 +220,8 @@ const LEARNING_ORDER: Record<
 		badge: "⚙️ Event Loop, Closures & TDD",
 	},
 	"odin-advanced-html-css-and-a11y": {
-		rank: 10,
+		rank: 24,
+		track: "odin",
 		tier: "Odin Project 5 · Motion & A11y",
 		color: "#BAE6FD",
 		lip: "#2A1155",
@@ -118,7 +229,8 @@ const LEARNING_ORDER: Record<
 		badge: "♿ View Transitions & WCAG",
 	},
 	"odin-modern-react-and-typescript": {
-		rank: 11,
+		rank: 25,
+		track: "odin",
 		tier: "Odin Project 6 · React 19 & TS",
 		color: "#EDE9FE",
 		lip: "#2A1155",
@@ -126,7 +238,8 @@ const LEARNING_ORDER: Record<
 		badge: "⚛️ React 19 & Astro Islands",
 	},
 	"odin-databases-and-sql": {
-		rank: 12,
+		rank: 26,
+		track: "odin",
 		tier: "Odin Project 7 · SQL & Drizzle",
 		color: "#86EFAC",
 		lip: "#2A1155",
@@ -134,7 +247,8 @@ const LEARNING_ORDER: Record<
 		badge: "🗄️ SQL Indexing & D1",
 	},
 	"odin-nodejs-backend-and-getting-hired": {
-		rank: 13,
+		rank: 27,
+		track: "odin",
 		tier: "Odin Project 8 · Backend & Career",
 		color: "#7C3AED",
 		lip: "#2A1155",
@@ -142,48 +256,54 @@ const LEARNING_ORDER: Record<
 		badge: "🚀 Hono RPC & Getting Hired",
 	},
 	"css-animations": {
-		rank: 14,
-		tier: "Course 14 · Style & Motion",
+		rank: 40,
+		track: "frameworks",
+		tier: "Style & Motion Track",
 		color: "#FBCFE8",
 		lip: "#2A1155",
 		textColor: "#9D174D",
 		badge: "🎨 UI & Modern CSS",
 	},
 	"intro-to-svelte": {
-		rank: 15,
-		tier: "Course 15 · Reactive UI",
+		rank: 41,
+		track: "frameworks",
+		tier: "Reactive UI Track",
 		color: "#EDE9FE",
 		lip: "#2A1155",
 		textColor: "#5B21B6",
 		badge: "⚡ Frontend Frameworks",
 	},
 	"intro-to-solid-js": {
-		rank: 16,
-		tier: "Course 16 · Fine-Grained Reactivity",
+		rank: 42,
+		track: "frameworks",
+		tier: "Fine-Grained Reactivity",
 		color: "#86EFAC",
 		lip: "#2A1155",
 		textColor: "#166534",
 		badge: "⚡ Frontend Frameworks",
 	},
 	svelte: {
-		rank: 17,
-		tier: "Course 17 · Component Architecture",
+		rank: 43,
+		track: "frameworks",
+		tier: "Component Architecture",
 		color: "#FEF08A",
 		lip: "#2A1155",
 		textColor: "#713F12",
-		badge: "🧶 Intermediate",
+		badge: "🧶 Svelte Deep Dive",
 	},
 	"sveltekit-firebase": {
-		rank: 18,
-		tier: "Course 18 · Full-Stack Apps",
+		rank: 44,
+		track: "frameworks",
+		tier: "Full-Stack Apps",
 		color: "#BAE6FD",
 		lip: "#2A1155",
 		textColor: "#0369A1",
-		badge: "🚀 Full-Stack",
+		badge: "🚀 SvelteKit & Firebase",
 	},
 	angularmaterial: {
-		rank: 19,
-		tier: "Course 19 · Enterprise UI",
+		rank: 45,
+		track: "frameworks",
+		tier: "Enterprise UI Systems",
 		color: "#BAE6FD",
 		lip: "#2A1155",
 		textColor: "#0369A1",
@@ -191,34 +311,140 @@ const LEARNING_ORDER: Record<
 	},
 };
 
+function resolveCourseMeta(course: CourseListItem, fallbackIdx: number): CourseOrderMeta {
+	const slug = course.slug ?? "";
+	if (LEARNING_ORDER[slug]) {
+		return LEARNING_ORDER[slug];
+	}
+	if (slug.startsWith("odin-")) {
+		return {
+			rank: 30 + fallbackIdx,
+			track: "odin",
+			tier: "Odin Project Series",
+			color: "#FEF08A",
+			lip: "#2A1155",
+			textColor: "#713F12",
+			badge: "🛡️ Full-Stack Foundations",
+		};
+	}
+	return {
+		rank: 15 + fallbackIdx,
+		track: "flagship",
+		tier: "2026 Flagship Course",
+		color: "#EDE9FE",
+		lip: "#2A1155",
+		textColor: "#5B21B6",
+		badge: "🧶 Hands-On Course",
+	};
+}
+
 const courses = [...rawCourses].sort((a, b) => {
-	const rA = LEARNING_ORDER[a.slug ?? ""]?.rank ?? 99;
-	const rB = LEARNING_ORDER[b.slug ?? ""]?.rank ?? 99;
+	const rA = LEARNING_ORDER[a.slug ?? ""]?.rank ?? 35;
+	const rB = LEARNING_ORDER[b.slug ?? ""]?.rank ?? 35;
 	return rA - rB;
 });
+
+const enrichedCourses = courses.map((course, idx) => {
+	const meta = resolveCourseMeta(course, idx);
+	const sectionTitles = (course.sections ?? [])
+		.map((s) => s?.title || "")
+		.filter(Boolean);
+	const lessons = (course.sections ?? []).flatMap((s) => s?.lessons ?? []);
+	const lessonTitles = lessons.map((l) => l?.title || "").filter(Boolean);
+	const lessonExcerpts = lessons.map((l) => l?.excerpt || "").filter(Boolean);
+	const lessonTags = lessons.flatMap((l) => l?.tags ?? []);
+	const combinedTags: SanityTagItem[] = [
+		...(course.tags ?? []),
+		...lessonTags,
+	];
+
+	const resolvedTopics = resolveItemTopics({
+		title: `${course.title} ${sectionTitles.join(" ")} ${lessonTitles.join(" ")}`,
+		excerpt: `${course.excerpt ?? ""} ${lessonExcerpts.join(" ")}`,
+		tags: combinedTags,
+	});
+
+	const topicSlugs = resolvedTopics.visible.map((t) => t.slug);
+	const topicTitles = resolvedTopics.visible.map((t) => t.title);
+	const searchHaystack = [
+		course.title,
+		course.slug ?? "",
+		course.excerpt ?? "",
+		meta.tier,
+		meta.badge,
+		...sectionTitles,
+		...lessonTitles,
+		...topicSlugs,
+		...topicTitles,
+	]
+		.join(" ")
+		.toLowerCase();
+
+	const matchesInitialTopic = initialTopicDef
+		? topicSlugs.includes(initialTopicDef.slug)
+		: true;
+	const matchesInitialTrack =
+		initialTrackParam === "all" || meta.track === initialTrackParam;
+	const matchesInitialQuery = initialQueryParam
+		? searchHaystack.includes(initialQueryParam.toLowerCase())
+		: true;
+
+	return {
+		course,
+		meta,
+		combinedTags,
+		topicSlugs,
+		searchHaystack,
+		initiallyVisible:
+			matchesInitialTopic && matchesInitialTrack && matchesInitialQuery,
+	};
+});
+
+const totalLessonsCount = enrichedCourses.reduce(
+	(acc, item) => acc + (item.course.lessonsCount || 0),
+	0,
+);
+const initialVisibleCount = enrichedCourses.filter(
+	(c) => c.initiallyVisible,
+).length;
+const flagshipCount = enrichedCourses.filter(
+	(c) => c.meta.track === "flagship",
+).length;
+const odinCount = enrichedCourses.filter(
+	(c) => c.meta.track === "odin",
+).length;
+const frameworksCount = enrichedCourses.filter(
+	(c) => c.meta.track === "frameworks",
+).length;
 ---
 
 <BaseLayout
 	title="Courses & Lessons | CodingCat.dev"
-	description="Explore CodingCat.dev hands-on courses and video lessons covering Model Context Protocol (MCP), Astro 7, Cloudflare Workers, D1, Better-Auth, Sanity Content OS, and Full-Stack AI Agents in TypeScript."
+	description="Explore CodingCat.dev hands-on courses and video lessons covering Model Context Protocol (MCP), Astro 7, Cloudflare Workers, D1, Better-Auth, Sanity Content OS, The Odin Project, and Full-Stack AI Agents in TypeScript."
 	ogFallback={{
 		title: "CodingCat.dev Courses",
 		subtitle: "Hands-On Web Development Courses & Lessons",
 		type: "Blog",
 	}}
 >
-	<section class="py-10 md:py-16">
+	<section
+		class="py-10 md:py-16"
+		id="courses-page-root"
+		data-initial-topic={initialTopicDef?.slug ?? ""}
+		data-initial-track={initialTrackParam}
+		data-initial-query={initialQueryParam}
+	>
 		{/* Top Hero Banner */}
 		<div class="mx-auto max-w-4xl text-center">
 			<span class="inline-flex items-center gap-2 rounded-full border-2 border-[#2A1155] bg-[#EDE9FE] px-4 py-1.5 font-mono text-xs font-extrabold uppercase tracking-wider text-[#7C3AED] dark:border-purple-400/40 dark:bg-purple-950/60 dark:text-purple-200 hand-border shadow-sketch-sm">
-				🧶 Hands-On Courses &amp; Video Lessons
+				🧶 {enrichedCourses.length} Hands-On Courses &middot; {totalLessonsCount} Video Lessons
 			</span>
 			<h1 class="mt-4 font-display text-4xl font-black tracking-tight text-[#2A1155] dark:text-white sm:text-6xl">
 				pick your <span class="text-[#7C3AED] dark:text-[#C084FC]">next</span>{" "}
 				course<span class="text-[#7C3AED] dark:text-[#C084FC]">.</span>
 			</h1>
 			<p class="font-hand mx-auto mt-3 max-w-2xl text-2xl font-bold text-[#4C1D95] dark:text-purple-200">
-				Start with our 2026 Flagship Courses on MCP, the Zero-Cold-Start Edge Stack, Sanity Content OS, and TypeScript AI Agents.
+				Start with our 2026 Flagship Courses on MCP, the Zero-Cold-Start Edge Stack, Sanity Content OS, and TypeScript AI Agents, or follow our modernized Odin Project path.
 			</p>
 			<div class="mt-5 flex flex-wrap items-center justify-center gap-3">
 				<a
@@ -236,29 +462,29 @@ const courses = [...rawCourses].sort((a, b) => {
 		<div class="mx-auto mt-8 max-w-5xl">
 			<ExcalidrawDiagram
 				title="2026 Courses Progression Diagram"
-				caption="Select any course below to open its bite-sized video lessons and production TypeScript code."
+				caption="Select any course below or filter by stack tag, track, or keyword to jump straight into bite-sized video lessons and production TypeScript code."
 				compact={true}
 				nodes={[
 					{
 						id: "c1",
-						badge: "Edge & Content OS",
-						label: "Astro 7, Workers & Sanity",
-						sublabel: "✓ Zero cold start + TypeGen",
+						badge: "Foundations & Edge",
+						label: "Odin Path + Astro 7 & D1",
+						sublabel: "✓ Web fundamentals + zero cold start",
 						color: "purple",
 						status: "good",
 					},
 					{
 						id: "c2",
-						badge: "Context Protocol",
-						label: "MCP in Production",
+						badge: "Context & Content OS",
+						label: "Sanity + MCP in Production",
 						sublabel: "✓ Streamable HTTP & OAuth 2.1",
 						color: "blue",
 						status: "good",
 					},
 					{
 						id: "c3",
-						badge: "Agent Systems",
-						label: "TypeScript AI Agents",
+						badge: "Stateful Agent Systems",
+						label: "TypeScript & Durable Agents",
 						sublabel: "✓ Deterministic Tool Calling",
 						color: "green",
 						status: "good",
@@ -271,41 +497,177 @@ const courses = [...rawCourses].sort((a, b) => {
 			/>
 		</div>
 
+		{/* Unified Track Filter Tabs + Tag Popover + Live Search Toolbar */}
+		<div class="duo-card hand-border mx-auto mt-10 max-w-5xl p-5">
+			<div class="flex flex-col justify-between gap-4 lg:flex-row lg:items-center">
+				{/* Track Tabs */}
+				<div
+					class="flex flex-wrap items-center gap-2"
+					role="tablist"
+					aria-label="Filter courses by learning track"
+				>
+					<button
+						type="button"
+						data-course-track-tab="all"
+						aria-selected={initialTrackParam === "all" ? "true" : "false"}
+						class:list={[
+							"course-track-btn rounded-full border-2 border-[#2A1155] px-4 py-1.5 font-display text-xs font-black shadow-sketch-sm transition hover:-translate-y-0.5 cursor-pointer",
+							initialTrackParam === "all"
+								? "bg-[#7C3AED] text-white dark:border-white/50"
+								: "bg-white text-[#2A1155] hover:bg-[#EDE9FE] hover:text-[#7C3AED] dark:border-white/25 dark:bg-[#131B2E] dark:text-slate-100",
+						]}
+					>
+						All Tracks ({enrichedCourses.length})
+					</button>
+					<button
+						type="button"
+						data-course-track-tab="flagship"
+						aria-selected={initialTrackParam === "flagship" ? "true" : "false"}
+						class:list={[
+							"course-track-btn rounded-full border-2 border-[#2A1155] px-4 py-1.5 font-display text-xs font-black shadow-sketch-sm transition hover:-translate-y-0.5 cursor-pointer",
+							initialTrackParam === "flagship"
+								? "bg-[#7C3AED] text-white dark:border-white/50"
+								: "bg-white text-[#2A1155] hover:bg-[#EDE9FE] hover:text-[#7C3AED] dark:border-white/25 dark:bg-[#131B2E] dark:text-slate-100",
+						]}
+					>
+						★ 2026 Flagships ({flagshipCount})
+					</button>
+					<button
+						type="button"
+						data-course-track-tab="odin"
+						aria-selected={initialTrackParam === "odin" ? "true" : "false"}
+						class:list={[
+							"course-track-btn rounded-full border-2 border-[#2A1155] px-4 py-1.5 font-display text-xs font-black shadow-sketch-sm transition hover:-translate-y-0.5 cursor-pointer",
+							initialTrackParam === "odin"
+								? "bg-[#7C3AED] text-white dark:border-white/50"
+								: "bg-white text-[#2A1155] hover:bg-[#EDE9FE] hover:text-[#7C3AED] dark:border-white/25 dark:bg-[#131B2E] dark:text-slate-100",
+						]}
+					>
+						🛡️ The Odin Project ({odinCount})
+					</button>
+					<button
+						type="button"
+						data-course-track-tab="frameworks"
+						aria-selected={initialTrackParam === "frameworks" ? "true" : "false"}
+						class:list={[
+							"course-track-btn rounded-full border-2 border-[#2A1155] px-4 py-1.5 font-display text-xs font-black shadow-sketch-sm transition hover:-translate-y-0.5 cursor-pointer",
+							initialTrackParam === "frameworks"
+								? "bg-[#7C3AED] text-white dark:border-white/50"
+								: "bg-white text-[#2A1155] hover:bg-[#EDE9FE] hover:text-[#7C3AED] dark:border-white/25 dark:bg-[#131B2E] dark:text-slate-100",
+						]}
+					>
+						⚡ Frameworks &amp; UI ({frameworksCount})
+					</button>
+				</div>
+
+				{/* Live Search Input */}
+				<div class="relative w-full lg:w-80">
+					<input
+						type="search"
+						value={initialQueryParam}
+						placeholder="Search courses, lessons, or stack tags..."
+						aria-label="Search courses, lessons, or stack tags"
+						data-courses-search-input
+						class="w-full rounded-full border-2 border-[#2A1155] bg-white px-4 py-2 font-sans text-xs font-bold text-[#2A1155] placeholder-[#2A1155]/45 focus:border-[#7C3AED] focus:outline-none dark:border-white/25 dark:bg-[#0B1326] dark:text-white dark:placeholder-slate-400 dark:focus:border-[#C084FC]"
+					/>
+				</div>
+			</div>
+
+			{/* Unified 1-Row Quick Tag Pills + Popover + Status Bar */}
+			<div class="mt-3 flex flex-wrap items-center justify-between gap-2 border-t border-dashed border-[#2A1155]/15 pt-3 font-mono text-xs font-bold text-[#2A1155]/80 dark:border-white/15 dark:text-slate-300">
+				<div class="flex flex-wrap items-center gap-2">
+					<TopicFilterStrip
+						basePath="/courses"
+						allLabel="All Tags"
+						activeSlug={initialTopicDef ? initialTopicDef.slug : ""}
+						variant="inline"
+					/>
+					<span data-courses-count-label class="ml-1">
+						Showing {initialVisibleCount} of {enrichedCourses.length} courses ({totalLessonsCount} video lessons)
+					</span>
+					<span
+						data-courses-active-topic-badge
+						class:list={[
+							"inline-flex items-center gap-1.5 rounded-full border border-[#2A1155] bg-[#EDE9FE] px-2.5 py-0.5 font-mono text-[11px] font-extrabold text-[#7C3AED] dark:border-purple-400/40 dark:bg-purple-950/70 dark:text-purple-200",
+							!initialTopicDef && "hidden",
+						]}
+					>
+						<span data-courses-active-topic-text>
+							{initialTopicDef ? `Tag: ${initialTopicDef.title}` : ""}
+						</span>
+					</span>
+				</div>
+
+				<div class="flex items-center gap-3">
+					<button
+						type="button"
+						data-courses-clear-filters
+						class:list={[
+							"font-mono text-xs font-extrabold text-[#7C3AED] hover:underline dark:text-[#C084FC] cursor-pointer",
+							!initialTopicDef &&
+								initialTrackParam === "all" &&
+								!initialQueryParam &&
+								"hidden",
+						]}
+					>
+						Clear Filters ✕
+					</button>
+					<a
+						href={initialTopicDef ? `/topic/${initialTopicDef.slug}` : "/topics"}
+						data-courses-hub-link
+						class:list={[
+							"font-display text-xs font-black text-[#7C3AED] hover:underline dark:text-[#C084FC]",
+							!initialTopicDef && "hidden",
+						]}
+					>
+						Open Topic Hub &rarr;
+					</a>
+				</div>
+			</div>
+		</div>
+
 		{/* Winding Courses List */}
-		<div class="relative mx-auto mt-14 max-w-4xl">
+		<div class="relative mx-auto mt-14 max-w-4xl" data-courses-winding-wrapper>
 			{/* Central Vertical Glowing Purple-to-Fuchsia Yarn Spine */}
 			<div
-				class="pointer-events-none absolute bottom-10 left-1/2 top-10 hidden w-1.5 -translate-x-1/2 rounded-full bg-gradient-to-b from-[#7C3AED] via-[#C084FC] to-[#D946EF] opacity-85 md:block"
+				data-courses-spine
+				class:list={[
+					"pointer-events-none absolute bottom-10 left-1/2 top-10 hidden w-1.5 -translate-x-1/2 rounded-full bg-gradient-to-b from-[#7C3AED] via-[#C084FC] to-[#D946EF] opacity-85 md:block",
+					initialVisibleCount === 0 && "!hidden",
+				]}
 				aria-hidden="true"
 			></div>
 
-			<div class="flex flex-col gap-12">
+			<div class="flex flex-col gap-12" data-courses-list>
 				{
-					courses.map((course, index) => {
-						const meta = LEARNING_ORDER[course.slug ?? ""] ?? {
-							rank: index + 1,
-							tier: `Course ${index + 1} · Hands-On Lessons`,
-							color: "#EDE9FE",
-							lip: "#2A1155",
-							textColor: "#2A1155",
-							badge: "🧶 CodingCat Course",
-						};
+					enrichedCourses.map((entry, index) => {
+						const {
+							course,
+							meta,
+							combinedTags,
+							topicSlugs,
+							searchHaystack,
+							initiallyVisible,
+						} = entry;
 						const isEven = index % 2 === 0;
 						const href = `/course/${course.slug}`;
 
 						return (
 							<div
+								data-course-row
+								data-course-track={meta.track}
+								data-course-topics={topicSlugs.join(",")}
+								data-course-lessons={String(course.lessonsCount || 0)}
+								data-course-haystack={searchHaystack}
 								class:list={[
 									"duo-scroll-reveal relative flex flex-col items-center gap-6 md:flex-row",
 									isEven ? "md:flex-row" : "md:flex-row-reverse",
+									!initiallyVisible && "hidden",
 								]}
 							>
 								{/* Course Card */}
 								<div class="w-full md:w-[46%]">
-									<a
-										href={href}
-										class="duo-card hand-border group block overflow-hidden p-6 transition-all duration-200 hover:-translate-y-1.5 hover:border-[#7C3AED] dark:hover:border-[#C084FC]"
-									>
+									<article class="duo-card hand-border group block overflow-hidden p-6 transition-all duration-200 hover:-translate-y-1.5 hover:border-[#7C3AED] dark:hover:border-[#C084FC]">
 										<div class="mb-3 flex flex-wrap items-center justify-between gap-2">
 											<span
 												class="rounded-full border border-[#2A1155] px-3 py-1 font-mono text-xs font-black uppercase tracking-wider"
@@ -319,18 +681,36 @@ const courses = [...rawCourses].sort((a, b) => {
 										</div>
 
 										{course.coverImage && (
-											<div class="mb-4 overflow-hidden rounded-2xl border-2 border-[#2A1155] bg-[#2A1155] dark:border-white/20 dark:bg-[#060E20]">
+											<a
+												href={href}
+												class="mb-4 block overflow-hidden rounded-2xl border-2 border-[#2A1155] bg-[#2A1155] dark:border-white/20 dark:bg-[#060E20]"
+											>
 												<CoverImage
 													image={course.coverImage}
 													fallbackAlt={course.title}
 													width={640}
 													height={360}
 												/>
-											</div>
+											</a>
 										)}
 
+										{/* Logo Tag Pills (up to 4 + overflow indicator) */}
+										<div class="mb-3 flex flex-wrap items-center gap-1.5">
+											<TagPills
+												title={course.title}
+												excerpt={course.excerpt}
+												tags={combinedTags}
+												maxCount={4}
+												size="sm"
+												overflowHref={href}
+												inPageFilter={true}
+											/>
+										</div>
+
 										<h2 class="font-display text-2xl font-black text-[#2A1155] transition-colors group-hover:text-[#7C3AED] dark:text-white dark:group-hover:text-[#C084FC]">
-											{course.title}
+											<a href={href} class="hover:underline">
+												{course.title}
+											</a>
 										</h2>
 										{course.excerpt && (
 											<p class="mt-2 text-sm font-medium leading-relaxed text-[#2A1155]/75 dark:text-slate-300 line-clamp-3">
@@ -344,18 +724,19 @@ const courses = [...rawCourses].sort((a, b) => {
 													? `${course.lessonsCount} Lessons`
 													: "Course Lessons"}
 											</span>
-											<span class="tactile-btn px-4 py-1.5 text-xs">
+											<a href={href} class="tactile-btn px-4 py-1.5 text-xs">
 												<span>Start Course</span>
 												<span class="text-[#86EFAC]">→</span>
-											</span>
+											</a>
 										</div>
-									</a>
+									</article>
 								</div>
 
 								{/* Center Tactile 3D Course Number Circle */}
 								<div class="z-10 flex shrink-0 flex-col items-center justify-center md:w-[8%]">
 									<a
 										href={href}
+										data-course-number-circle
 										class="flex size-16 items-center justify-center rounded-full border-2 border-[#2A1155] font-display text-xl font-black transition-transform hover:scale-110 shadow-sketch"
 										style={`background-color: ${meta.color}; color: ${meta.textColor};`}
 										aria-label={`Course ${index + 1}: ${course.title}`}
@@ -378,9 +759,9 @@ const courses = [...rawCourses].sort((a, b) => {
 											state="point-diagram"
 											angle="three-quarter-right"
 											cls="w-28 h-auto"
-											caption="Reactive frameworks! ⚡"
+											caption="Production agents! ⚡"
 										/>
-									) : index === courses.length - 1 ? (
+									) : index === enrichedCourses.length - 1 ? (
 										<AjMascot
 											state="podcast-groove"
 											angle={isEven ? "three-quarter-left" : "three-quarter-right"}
@@ -388,7 +769,10 @@ const courses = [...rawCourses].sort((a, b) => {
 											caption="Full-stack apps! 🚀"
 										/>
 									) : (
-										<div class="-rotate-1 rounded-2xl border-2 border-[#2A1155] bg-[#FEF08A] px-5 py-4 font-hand text-xl font-bold text-[#713F12] shadow-sketch-sm dark:border-yellow-600">
+										<div
+											data-course-sticky-note
+											class="-rotate-1 rounded-2xl border-2 border-[#2A1155] bg-[#FEF08A] px-5 py-4 font-hand text-xl font-bold text-[#713F12] shadow-sketch-sm dark:border-yellow-600"
+										>
 											✏️ Course #{index + 1}: Video lessons, code &amp; visual diagrams
 										</div>
 									)}
@@ -398,6 +782,340 @@ const courses = [...rawCourses].sort((a, b) => {
 					})
 				}
 			</div>
+
+			{/* Empty Filter State */}
+			<div
+				data-courses-empty
+				class:list={[
+					"duo-card hand-border my-12 p-10 text-center",
+					initialVisibleCount > 0 && "hidden",
+				]}
+			>
+				<p class="font-display text-2xl font-black text-[#2A1155] dark:text-white">
+					No matching courses found for this filter.
+				</p>
+				<p class="font-hand mt-2 text-xl font-bold text-[#4C1D95] dark:text-purple-200">
+					Try clearing the tag, track, or search filter above to view all {enrichedCourses.length} courses.
+				</p>
+			</div>
 		</div>
 	</section>
 </BaseLayout>
+
+<script is:inline>
+	(function () {
+		function initCoursesFilter() {
+			var root = document.getElementById("courses-page-root");
+			if (!root || root.dataset.bound === "true") return;
+			root.dataset.bound = "true";
+
+			var rows = Array.from(root.querySelectorAll("[data-course-row]"));
+			var trackBtns = Array.from(
+				root.querySelectorAll("[data-course-track-tab]"),
+			);
+			var searchInput = root.querySelector("[data-courses-search-input]");
+			var countLabel = root.querySelector("[data-courses-count-label]");
+			var topicBadge = root.querySelector("[data-courses-active-topic-badge]");
+			var topicText = root.querySelector("[data-courses-active-topic-text]");
+			var clearBtn = root.querySelector("[data-courses-clear-filters]");
+			var hubLink = root.querySelector("[data-courses-hub-link]");
+			var spine = root.querySelector("[data-courses-spine]");
+			var emptyBox = root.querySelector("[data-courses-empty]");
+			var filterStrip = root.querySelector(
+				'[data-topic-filter-strip="in-page"]',
+			);
+			var stripPills = filterStrip
+				? Array.from(filterStrip.querySelectorAll("[data-topic-pill]"))
+				: [];
+
+			var activeTopic = root.dataset.initialTopic || "";
+			var activeTopicTitle = "";
+			var activeTrack = root.dataset.initialTrack || "all";
+			var activeQuery = root.dataset.initialQuery || "";
+
+			if (activeTopic && stripPills.length > 0) {
+				var initPill = stripPills.find(function (p) {
+					return (p.dataset.topicPill || "") === activeTopic;
+				});
+				if (initPill) {
+					activeTopicTitle = initPill.dataset.topicTitle || activeTopic;
+				}
+			}
+
+			function syncUrl(push) {
+				var url = new URL(window.location.href);
+				if (activeTopic) {
+					url.searchParams.set("topic", activeTopic);
+				} else {
+					url.searchParams.delete("topic");
+				}
+				if (activeTrack && activeTrack !== "all") {
+					url.searchParams.set("track", activeTrack);
+				} else {
+					url.searchParams.delete("track");
+				}
+				if (activeQuery.trim()) {
+					url.searchParams.set("q", activeQuery.trim());
+				} else {
+					url.searchParams.delete("q");
+				}
+				var state = {
+					topic: activeTopic,
+					track: activeTrack,
+					q: activeQuery,
+				};
+				if (push) {
+					window.history.pushState(state, "", url.toString());
+				} else {
+					window.history.replaceState(state, "", url.toString());
+				}
+			}
+
+			function syncStripPills() {
+				for (var i = 0; i < stripPills.length; i++) {
+					var pill = stripPills[i];
+					var slug = pill.dataset.topicPill || "";
+					var isActive = slug === activeTopic;
+					pill.setAttribute("aria-current", isActive ? "true" : "false");
+					if (isActive) {
+						pill.classList.add(
+							"bg-[#7C3AED]",
+							"text-white",
+							"dark:border-white/50",
+						);
+						pill.classList.remove(
+							"bg-white",
+							"text-[#2A1155]",
+							"hover:bg-[#EDE9FE]",
+							"hover:text-[#7C3AED]",
+							"dark:border-white/25",
+							"dark:bg-[#131B2E]",
+							"dark:text-slate-100",
+						);
+						pill.classList.remove("hidden");
+					} else {
+						pill.classList.remove(
+							"bg-[#7C3AED]",
+							"text-white",
+							"dark:border-white/50",
+						);
+						pill.classList.add(
+							"bg-white",
+							"text-[#2A1155]",
+							"hover:bg-[#EDE9FE]",
+							"hover:text-[#7C3AED]",
+							"dark:border-white/25",
+							"dark:bg-[#131B2E]",
+							"dark:text-slate-100",
+						);
+					}
+				}
+			}
+
+			function syncTrackTabs() {
+				for (var i = 0; i < trackBtns.length; i++) {
+					var btn = trackBtns[i];
+					var t = btn.dataset.courseTrackTab || "all";
+					var isActive = t === activeTrack;
+					btn.setAttribute("aria-selected", isActive ? "true" : "false");
+					if (isActive) {
+						btn.classList.add(
+							"bg-[#7C3AED]",
+							"text-white",
+							"dark:border-white/50",
+						);
+						btn.classList.remove(
+							"bg-white",
+							"text-[#2A1155]",
+							"hover:bg-[#EDE9FE]",
+							"hover:text-[#7C3AED]",
+							"dark:border-white/25",
+							"dark:bg-[#131B2E]",
+							"dark:text-slate-100",
+						);
+					} else {
+						btn.classList.remove(
+							"bg-[#7C3AED]",
+							"text-white",
+							"dark:border-white/50",
+						);
+						btn.classList.add(
+							"bg-white",
+							"text-[#2A1155]",
+							"hover:bg-[#EDE9FE]",
+							"hover:text-[#7C3AED]",
+							"dark:border-white/25",
+							"dark:bg-[#131B2E]",
+							"dark:text-slate-100",
+						);
+					}
+				}
+			}
+
+			function applyFilters() {
+				var q = activeQuery.trim().toLowerCase();
+				var visibleIndex = 0;
+				var visibleLessons = 0;
+
+				for (var i = 0; i < rows.length; i++) {
+					var row = rows[i];
+					var rowTrack = row.dataset.courseTrack || "flagship";
+					var rowTopics = (row.dataset.courseTopics || "").split(",");
+					var rowHay = row.dataset.courseHaystack || "";
+					var rowLessons = Number.parseInt(
+						row.dataset.courseLessons || "0",
+						10,
+					);
+
+					var okTrack = activeTrack === "all" || rowTrack === activeTrack;
+					var okTopic =
+						!activeTopic || rowTopics.indexOf(activeTopic) !== -1;
+					var okQuery = !q || rowHay.indexOf(q) !== -1;
+
+					var show = okTrack && okTopic && okQuery;
+					row.classList.toggle("hidden", !show);
+
+					if (show) {
+						var isEven = visibleIndex % 2 === 0;
+						row.classList.toggle("md:flex-row", isEven);
+						row.classList.toggle("md:flex-row-reverse", !isEven);
+
+						var numCircle = row.querySelector("[data-course-number-circle]");
+						if (numCircle) {
+							numCircle.textContent = String(visibleIndex + 1);
+						}
+						var stickyNote = row.querySelector("[data-course-sticky-note]");
+						if (stickyNote) {
+							stickyNote.textContent =
+								"✏️ Course #" +
+								(visibleIndex + 1) +
+								": Video lessons, code & visual diagrams";
+						}
+
+						visibleIndex++;
+						visibleLessons += rowLessons;
+					}
+				}
+
+				if (countLabel) {
+					countLabel.textContent =
+						"Showing " +
+						visibleIndex +
+						" of " +
+						rows.length +
+						" courses (" +
+						visibleLessons +
+						" video lessons)";
+				}
+
+				if (topicBadge && topicText) {
+					if (activeTopic) {
+						topicText.textContent =
+							"Tag: " + (activeTopicTitle || activeTopic);
+						topicBadge.classList.remove("hidden");
+					} else {
+						topicBadge.classList.add("hidden");
+					}
+				}
+
+				if (hubLink) {
+					if (activeTopic) {
+						hubLink.href = "/topic/" + activeTopic;
+						hubLink.classList.remove("hidden");
+					} else {
+						hubLink.classList.add("hidden");
+					}
+				}
+
+				if (clearBtn) {
+					var hasAnyFilter =
+						Boolean(activeTopic) ||
+						activeTrack !== "all" ||
+						Boolean(q);
+					clearBtn.classList.toggle("hidden", !hasAnyFilter);
+				}
+
+				if (spine) {
+					spine.classList.toggle("!hidden", visibleIndex === 0);
+				}
+				if (emptyBox) {
+					emptyBox.classList.toggle("hidden", visibleIndex > 0);
+				}
+			}
+
+			// 1. Bind Track Tabs
+			for (var t = 0; t < trackBtns.length; t++) {
+				(function (btn) {
+					btn.addEventListener("click", function () {
+						activeTrack = btn.dataset.courseTrackTab || "all";
+						syncTrackTabs();
+						applyFilters();
+						syncUrl(true);
+					});
+				})(trackBtns[t]);
+			}
+
+			// 2. Bind TopicFilterStrip pills
+			for (var p = 0; p < stripPills.length; p++) {
+				(function (pill) {
+					pill.addEventListener("click", function (ev) {
+						ev.preventDefault();
+						var slug = pill.dataset.topicPill || "";
+						var title = pill.dataset.topicTitle || slug;
+						activeTopic = slug;
+						activeTopicTitle = title;
+						syncStripPills();
+						applyFilters();
+						syncUrl(true);
+					});
+				})(stripPills[p]);
+			}
+
+			// 3. Bind Search Input
+			if (searchInput) {
+				searchInput.addEventListener("input", function () {
+					activeQuery = searchInput.value || "";
+					applyFilters();
+					syncUrl(false);
+				});
+			}
+
+			// 4. Bind Clear Filters button
+			if (clearBtn) {
+				clearBtn.addEventListener("click", function () {
+					activeTopic = "";
+					activeTopicTitle = "";
+					activeTrack = "all";
+					activeQuery = "";
+					if (searchInput) searchInput.value = "";
+					syncStripPills();
+					syncTrackTabs();
+					applyFilters();
+					syncUrl(true);
+				});
+			}
+
+			// 5. Handle browser Back/Forward navigation
+			window.addEventListener("popstate", function () {
+				var url = new URL(window.location.href);
+				activeTopic = url.searchParams.get("topic") || "";
+				activeTrack = url.searchParams.get("track") || "all";
+				activeQuery = url.searchParams.get("q") || "";
+				if (searchInput) searchInput.value = activeQuery;
+				var matchPill = stripPills.find(function (p) {
+					return (p.dataset.topicPill || "") === activeTopic;
+				});
+				activeTopicTitle =
+					(matchPill && matchPill.dataset.topicTitle) || activeTopic;
+				syncStripPills();
+				syncTrackTabs();
+				applyFilters();
+			});
+		}
+
+		document.addEventListener("DOMContentLoaded", initCoursesFilter);
+		window.addEventListener("load", initCoursesFilter);
+		document.addEventListener("astro:page-load", initCoursesFilter);
+		initCoursesFilter();
+	})();
+</script>

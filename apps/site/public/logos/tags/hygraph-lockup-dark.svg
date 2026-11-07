@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 64" width="200" height="64" role="img" aria-label="Hygraph">
+  <g transform="translate(14.00, 14.00) scale(1.5000)" fill="#C084FC">
+    <path d="M4 3.5 9.5 2v7.5L14.5 8V2L20 3.5v17L14.5 22v-7.5L9.5 16v6L4 20.5v-17z"/>
+  </g>
+  <text x="64" y="41" fill="#FFFFFF" font-family="'Nunito', 'Inter', system-ui, -apple-system, sans-serif" font-size="25" font-weight="900" letter-spacing="-0.02em">Hygraph</text>
+</svg>

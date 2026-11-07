@@ -35,8 +35,6 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
 			</div>
 		</header>
 
-		<TopicFilterStrip label="Official Vendor & Topic Hubs:" />
-
 		<!-- Search Input Bar -->
 		<div class="flex w-full max-w-4xl flex-col gap-3">
 			<form
@@ -176,6 +174,9 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
 			>
 				Guests
 			</button>
+			<div class="ml-auto">
+				<TopicFilterStrip allLabel="All Topic Hubs" variant="inline" />
+			</div>
 		</div>
 
 		<!-- Status & Summary Line -->

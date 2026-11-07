@@ -1,12 +1,11 @@
 ---
 /**
- * `/topic/[slug]` | Vendor & Technology Hub Page (e.g. `/topic/sanity`, `/topic/firebase`, `/topic/amplify`).
+ * `/topic/[slug]` | Vendor, Framework, Language & Technology Hub Page
+ * (e.g. `/topic/sanity`, `/topic/firebase`, `/topic/amplify`, `/topic/typescript`, `/topic/hono`).
  *
- * Displays the official vendor logo (`Sanity-Full_logo`, `Firebase Primary Lockup`, `Amplify.svg`),
- * a hand-drawn architecture diagram, partner CTA (if applicable), and infinite-scrolling
- * Courses, Podcasts (Episodes), and Blog Posts from Sanity.
+ * Displays the official vendor/brand logo lockup, a hand-drawn architecture diagram,
+ * partner CTA (if applicable), and matching Courses, Podcasts (Episodes), and Blog Posts from Sanity.
  */
-import groq from "groq";
 import Breadcrumbs from "@/components/Breadcrumbs.astro";
 import ContentGrid from "@/components/ContentGrid.astro";
 import ExcalidrawDiagram from "@/components/ExcalidrawDiagram.astro";
@@ -16,7 +15,11 @@ import TopicFilterStrip from "@/components/TopicFilterStrip.astro";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import type { ContentListItem } from "@/lib/content";
 import { resolvePartnerUrl } from "@/lib/partner-links";
-import { morePodcastQuery, morePostQuery } from "@/lib/sanity/queries";
+import {
+	coursesQuery,
+	morePodcastQuery,
+	morePostQuery,
+} from "@/lib/sanity/queries";
 import { getTopicBySlug, itemMatchesTopic } from "@/lib/topics";
 
 const { slug } = Astro.params;
@@ -26,35 +29,53 @@ if (!topic) {
 	return new Response(null, { status: 404 });
 }
 
-const { sanity } = Astro.locals;
-const primaryKeyword = `*${topic.keywords[0]}*`;
-const secondaryKeyword = `*${topic.keywords[1] ?? topic.keywords[0]}*`;
+// Redirect alias slugs (e.g. /topic/next.js -> /topic/nextjs) to canonical slug
+if (slug && slug !== topic.slug) {
+	return Astro.redirect(`/topic/${topic.slug}`, 301);
+}
 
-const coursesHubQuery = groq`*[_type == "course" && defined(slug.current) && (title match $kw1 || excerpt match $kw1 || title match $kw2 || excerpt match $kw2)] | order(_createdAt desc)[0...6]{
-	_id,
-	_type,
-	title,
-	"slug": slug.current,
-	excerpt,
-	coverImage,
-	date
-}`;
+const { sanity } = Astro.locals;
 
 const [rawCourses, allPosts, allPodcasts] = await Promise.all([
-	sanity.loadQuery(coursesHubQuery, {
-		kw1: primaryKeyword,
-		kw2: secondaryKeyword,
-	}),
+	sanity.loadQuery(coursesQuery),
 	sanity.loadQuery(morePostQuery, { skip: "none", offset: 0, limit: 300 }),
 	sanity.loadQuery(morePodcastQuery, { skip: "none", offset: 0, limit: 300 }),
 ]);
 
-const courses = (rawCourses ?? []) as unknown as ContentListItem[];
+interface RawCourseWithLessons extends ContentListItem {
+	sections?: Array<{
+		title?: string | null;
+		lessons?: Array<{
+			title?: string | null;
+			excerpt?: string | null;
+			tags?: Array<{ label?: string | null; value?: string | null }> | null;
+		}> | null;
+	}> | null;
+}
+
+const courses = ((rawCourses ?? []) as unknown as RawCourseWithLessons[]).filter(
+	(course) => {
+		if (itemMatchesTopic(course.title, course.excerpt, topic, course.tags)) {
+			return true;
+		}
+		for (const sec of course.sections ?? []) {
+			for (const lesson of sec?.lessons ?? []) {
+				if (
+					itemMatchesTopic(lesson?.title, lesson?.excerpt, topic, lesson?.tags)
+				) {
+					return true;
+				}
+			}
+		}
+		return false;
+	},
+);
+
 const matchedPosts = ((allPosts ?? []) as ContentListItem[]).filter((item) =>
-	itemMatchesTopic(item.title, item.excerpt, topic),
+	itemMatchesTopic(item.title, item.excerpt, topic, item.tags),
 );
 const matchedPodcasts = ((allPodcasts ?? []) as ContentListItem[]).filter(
-	(item) => itemMatchesTopic(item.title, item.excerpt, topic),
+	(item) => itemMatchesTopic(item.title, item.excerpt, topic, item.tags),
 );
 
 const INITIAL_BATCH = 8;
@@ -70,14 +91,19 @@ const partnerHref = topic.partnerUrl
 	description={topic.description}
 	canonical={`/topic/${topic.slug}`}
 >
-	<Breadcrumbs
-		links={[
-			{ title: "Topics & Vendors", href: "/topics" },
-			{ title: topic.title },
-		]}
-	/>
-
-	<TopicFilterStrip activeSlug={topic.slug} />
+	<div class="flex flex-wrap items-center justify-between gap-3">
+		<Breadcrumbs
+			links={[
+				{ title: "Topics & Vendors", href: "/topics" },
+				{ title: topic.title },
+			]}
+		/>
+		<TopicFilterStrip
+			activeSlug={topic.slug}
+			allLabel="All Hubs"
+			variant="inline"
+		/>
+	</div>
 
 	{/* Vendor / Topic Hero Header Card */}
 	<section class="duo-card hand-border my-6 p-6 md:p-10">
@@ -112,6 +138,13 @@ const partnerHref = topic.partnerUrl
 						</a>
 					)}
 					<a
+						href={`/courses?topic=${encodeURIComponent(topic.slug)}`}
+						class="tactile-btn px-5 py-3 text-sm"
+					>
+						<span>Filter {topic.title} Courses</span>
+						<span class="text-[#86EFAC]">&rarr;</span>
+					</a>
+					<a
 						href={`/search?q=${encodeURIComponent(topic.title)}`}
 						class="tactile-btn-secondary px-5 py-3 text-sm font-extrabold"
 					>
@@ -120,9 +153,9 @@ const partnerHref = topic.partnerUrl
 				</div>
 			</div>
 
-			{/* Official Vendor Light/Dark Logo Showcase */}
+			{/* Official Vendor / Tag Light/Dark Logo Showcase */}
 			<div class="lg:col-span-5">
-				{topic.logoLight && topic.logoDark ? (
+				{topic.kind === "brand" && topic.logoLight && topic.logoDark ? (
 					<div class="flex flex-col items-center justify-center gap-4 rounded-3xl border-2 border-[#2A1155] bg-[#FAF9FC] p-8 shadow-sketch-sm dark:border-white/25 dark:bg-[#0B1326]">
 						<img
 							src={topic.logoLight}
@@ -135,32 +168,37 @@ const partnerHref = topic.partnerUrl
 							class="hidden max-h-20 w-auto object-contain dark:block"
 						/>
 						<span class="font-mono text-xs font-bold text-[#2A1155]/65 dark:text-slate-400">
-							Official {topic.title} Brand Lockup ({matchedPosts.length} Blog Posts · {matchedPodcasts.length} Episodes)
+							{courses.length} Courses · {matchedPosts.length} Blog Posts · {matchedPodcasts.length} Episodes
 						</span>
 					</div>
 				) : (
-					<div class="flex flex-col items-center justify-center gap-3 rounded-3xl border-2 border-[#2A1155] bg-[#EDE9FE] p-8 text-center shadow-sketch-sm dark:border-purple-400/30 dark:bg-purple-950/50">
-						<span class="font-display text-4xl font-black text-[#2A1155] dark:text-white">
+					<div class="flex flex-col items-center justify-center gap-3 rounded-3xl border-2 border-dashed border-[#2A1155]/40 bg-[#EDE9FE]/70 p-8 text-center shadow-sketch-sm dark:border-purple-400/30 dark:bg-purple-950/40">
+						<span class="inline-flex size-12 items-center justify-center rounded-2xl border-2 border-[#2A1155] bg-white font-mono text-2xl font-black text-[#7C3AED] dark:border-white/25 dark:bg-[#0B1326] dark:text-[#C084FC]">
+							#
+						</span>
+						<span class="font-display text-3xl font-black text-[#2A1155] dark:text-white">
 							{topic.title}
 						</span>
 						<span class="font-mono text-xs font-bold text-[#7C3AED] dark:text-[#C084FC]">
-							{matchedPosts.length} Blog Posts · {matchedPodcasts.length} Podcast Episodes
+							{courses.length} Courses · {matchedPosts.length} Blog Posts · {matchedPodcasts.length} Podcast Episodes
 						</span>
 					</div>
 				)}
 			</div>
 		</div>
 
-		{/* Hand-Drawn Architecture Diagram */}
-		<div class="mt-8">
-			<ExcalidrawDiagram
-				title={topic.diagram.title}
-				caption={topic.diagram.caption}
-				compact={true}
-				nodes={topic.diagram.nodes}
-				edges={topic.diagram.edges}
-			/>
-		</div>
+		{/* Hand-Drawn Architecture Diagram (only for technical & vendor hubs) */}
+		{topic.hasArchitectureDiagram && (
+			<div class="mt-8">
+				<ExcalidrawDiagram
+					title={topic.diagram.title}
+					caption={topic.diagram.caption}
+					compact={true}
+					nodes={topic.diagram.nodes}
+					edges={topic.diagram.edges}
+				/>
+			</div>
+		)}
 	</section>
 
 	{/* Matching Courses */}
@@ -169,8 +207,8 @@ const partnerHref = topic.partnerUrl
 			<section class="my-12">
 				<SectionHeader
 					title={`${topic.title} Courses`}
-					href="/courses"
-					linkText="All Courses"
+					href={`/courses?topic=${topic.slug}`}
+					linkText="Filter on Courses Page"
 				/>
 				<ContentGrid items={courses} priorityCount={0} />
 			</section>
@@ -191,6 +229,7 @@ const partnerHref = topic.partnerUrl
 					batchSize={INITIAL_BATCH}
 					activeTopic={topic.slug}
 					showSearch={true}
+					enableTopicFilter={false}
 					searchPlaceholder={`Filter ${topic.title} blog posts...`}
 					priorityCount={2}
 					nounPlural="blog posts"
@@ -213,6 +252,7 @@ const partnerHref = topic.partnerUrl
 					batchSize={INITIAL_BATCH}
 					activeTopic={topic.slug}
 					showSearch={true}
+					enableTopicFilter={false}
 					searchPlaceholder={`Filter ${topic.title} episodes...`}
 					priorityCount={0}
 					nounPlural="episodes"

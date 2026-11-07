@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 260 64" width="260" height="64" role="img" aria-label="LaunchDarkly">
+  <g transform="translate(14.00, 14.00) scale(1.5000)" fill="#38BDF8">
+    <path d="M3 5.5 14.5 2l-3.2 7.8L21 7.2 8.5 22l3.1-8.8L3 15.8V5.5z"/>
+  </g>
+  <text x="64" y="41" fill="#FFFFFF" font-family="'Nunito', 'Inter', system-ui, -apple-system, sans-serif" font-size="25" font-weight="900" letter-spacing="-0.02em">LaunchDarkly</text>
+</svg>

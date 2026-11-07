@@ -78,16 +78,18 @@ export interface TopicDefinition {
 	slug: string;
 	title: string;
 	category: TopicCategory;
+	kind: "brand" | "concept";
+	hasArchitectureDiagram: boolean;
 	featured?: boolean;
 	aliases?: string[];
 	tagline: string;
 	description: string;
 	badge: string;
-	/** Light-mode logo path (for Chalkboard Paper `#FAF9FC`) */
+	/** Light-mode logo path (for Chalkboard Paper `#FAF9FC`), empty for concept tags */
 	logoLight: string;
-	/** Dark-mode logo path (for Obsidian Chalkboard `#0B1326`) */
+	/** Dark-mode logo path (for Obsidian Chalkboard `#0B1326`), empty for concept tags */
 	logoDark: string;
-	/** Compact symbol/icon path for filter pills */
+	/** Compact symbol/icon path for filter pills, empty for concept tags */
 	symbolLight: string;
 	symbolDark: string;
 	/** Optional partner/vendor URL (automatically routed through partner-links) */
@@ -95,11 +97,60 @@ export interface TopicDefinition {
 	partnerCtaLabel?: string;
 	/** Keywords used to match Courses, Lessons, Podcasts, and Blog Posts in Sanity */
 	keywords: string[];
+	/** Pre-compiled strict word-boundary regexes for keywords */
+	keywordRegexes: RegExp[];
 	/** Hand-drawn architecture diagram nodes for the topic hub */
 	diagram: TopicDiagram;
 }
 
-function defaultLogos(slug: string) {
+const CONCEPT_SLUGS = new Set([
+	"cms",
+	"database",
+	"ai",
+	"web-ai",
+	"rag",
+	"testing",
+	"security",
+	"serverless",
+	"devops",
+	"a11y",
+	"design",
+	"architecture",
+	"career",
+	"webdev",
+	"oss",
+	"video",
+	"mental-health",
+	"infrastructure",
+	"web-technologies",
+]);
+
+const NON_DIAGRAM_SLUGS = new Set([
+	"career",
+	"mental-health",
+	"oss",
+	"webdev",
+	"video",
+	"design",
+]);
+
+function compileKeywordRegex(keyword: string): RegExp {
+	const trimmed = keyword.trim().toLowerCase();
+	const escaped = trimmed.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+	const prefix = /^[a-z0-9]/i.test(trimmed) ? "(?<![a-z0-9._/-])" : "";
+	const suffix = /[a-z0-9]$/i.test(trimmed) ? "(?![a-z0-9._/-])" : "";
+	return new RegExp(`${prefix}${escaped}${suffix}`, "i");
+}
+
+function defaultLogos(slug: string, isConcept: boolean) {
+	if (isConcept) {
+		return {
+			logoLight: "",
+			logoDark: "",
+			symbolLight: "",
+			symbolDark: "",
+		};
+	}
 	return {
 		logoLight: `/logos/tags/${slug}-lockup-light.svg`,
 		logoDark: `/logos/tags/${slug}-lockup-dark.svg`,
@@ -2005,7 +2056,7 @@ const RAW_TOPICS: RawTopicSeed[] = [
 		category: "devops",
 		aliases: ["design-systems", "figma"],
 		tagline: "W3C Design Tokens, Dual-Theme UI Systems, Figma & Component Libraries",
-		keywords: ["design", "design system", "figma", "ui/ux", "design tokens"],
+		keywords: ["design system", "design systems", "figma", "ui/ux", "design tokens"],
 		diagramSteps: [
 			"W3C tokens.json",
 			"Semantic Light/Dark Tokens",
@@ -2143,7 +2194,7 @@ const RAW_TOPICS: RawTopicSeed[] = [
 		title: "Video",
 		category: "devops",
 		tagline: "Developer Video Production, Streaming Protocols, HLS & Captions",
-		keywords: ["video", "hls", "webrtc"],
+		keywords: ["video production", "video streaming", "hls", "webrtc"],
 		diagramSteps: [
 			"1080p/4K Studio Capture",
 			"Whisper Word Timestamps",
@@ -2212,7 +2263,8 @@ const CATEGORY_BADGE_MAP: Record<TopicCategory, string> = {
 };
 
 export const TOPICS: TopicDefinition[] = RAW_TOPICS.map((seed) => {
-	const logos = defaultLogos(seed.slug);
+	const isConcept = CONCEPT_SLUGS.has(seed.slug);
+	const logos = defaultLogos(seed.slug, isConcept);
 	const steps = seed.diagramSteps ?? [
 		`${seed.title} Setup`,
 		"Type-Safe Config",
@@ -2225,6 +2277,8 @@ export const TOPICS: TopicDefinition[] = RAW_TOPICS.map((seed) => {
 		slug: seed.slug,
 		title: seed.title,
 		category: seed.category,
+		kind: isConcept ? "concept" : "brand",
+		hasArchitectureDiagram: !NON_DIAGRAM_SLUGS.has(seed.slug),
 		featured: Boolean(seed.featured),
 		aliases: seed.aliases ?? [],
 		tagline: seed.tagline,
@@ -2232,13 +2286,14 @@ export const TOPICS: TopicDefinition[] = RAW_TOPICS.map((seed) => {
 			seed.description ??
 			`Explore CodingCat.dev hands-on courses, video lessons, podcast episodes, and technical deep-dive blog posts covering ${seed.title}: ${seed.tagline}.`,
 		badge: seed.badge ?? CATEGORY_BADGE_MAP[seed.category],
-		logoLight: seed.logoLight ?? logos.logoLight,
-		logoDark: seed.logoDark ?? logos.logoDark,
-		symbolLight: seed.symbolLight ?? logos.symbolLight,
-		symbolDark: seed.symbolDark ?? logos.symbolDark,
+		logoLight: isConcept ? "" : (seed.logoLight ?? logos.logoLight),
+		logoDark: isConcept ? "" : (seed.logoDark ?? logos.logoDark),
+		symbolLight: isConcept ? "" : (seed.symbolLight ?? logos.symbolLight),
+		symbolDark: isConcept ? "" : (seed.symbolDark ?? logos.symbolDark),
 		partnerUrl: seed.partnerUrl,
 		partnerCtaLabel: seed.partnerCtaLabel,
 		keywords: seed.keywords,
+		keywordRegexes: seed.keywords.map(compileKeywordRegex),
 		diagram:
 			seed.diagram ??
 			defaultDiagram(
@@ -2256,6 +2311,19 @@ export const TOPICS: TopicDefinition[] = RAW_TOPICS.map((seed) => {
 export const FEATURED_TOPICS: TopicDefinition[] = TOPICS.filter(
 	(t) => t.featured,
 );
+
+const QUICK_FILTER_SLUGS = [
+	"sanity",
+	"cloudflare",
+	"astro",
+	"firebase",
+	"nextjs",
+	"ai",
+];
+
+export const QUICK_FILTER_TOPICS: TopicDefinition[] = QUICK_FILTER_SLUGS.map(
+	(slug) => TOPICS.find((t) => t.slug === slug),
+).filter((t): t is TopicDefinition => Boolean(t));
 
 /**
  * Lookup map indexing canonical `slug`, `title` (lowercased), and all `aliases`.
@@ -2303,8 +2371,8 @@ export function itemMatchesTopic(
 			}
 		}
 	}
-	const hay = `${title ?? ""} ${excerpt ?? ""}`.toLowerCase();
-	return topic.keywords.some((kw) => hay.includes(kw.toLowerCase()));
+	const hay = `${title ?? ""} ${excerpt ?? ""}`;
+	return topic.keywordRegexes.some((re) => re.test(hay));
 }
 
 export function matchTopicsForText(
@@ -2324,10 +2392,22 @@ export function matchTopicsForText(
 		}
 	}
 
-	const hay = `${textOrTitle ?? ""} ${excerpt ?? ""}`.toLowerCase();
-	for (const topic of TOPICS) {
-		if (matched.has(topic.slug)) continue;
-		if (topic.keywords.some((kw) => hay.includes(kw.toLowerCase()))) {
+	// Only fall back to strict word-boundary title/excerpt matching when fewer than 2 explicit Sanity tags matched
+	if (matched.size < 2) {
+		const hay = `${textOrTitle ?? ""} ${excerpt ?? ""}`;
+		const inferredBrands: TopicDefinition[] = [];
+		const inferredConcepts: TopicDefinition[] = [];
+		for (const topic of TOPICS) {
+			if (matched.has(topic.slug)) continue;
+			if (topic.keywordRegexes.some((re) => re.test(hay))) {
+				if (topic.kind === "brand") {
+					inferredBrands.push(topic);
+				} else {
+					inferredConcepts.push(topic);
+				}
+			}
+		}
+		for (const topic of [...inferredBrands, ...inferredConcepts]) {
 			matched.set(topic.slug, topic);
 		}
 	}
@@ -2337,7 +2417,7 @@ export function matchTopicsForText(
 
 /**
  * Resolves all canonical TopicDefinitions for a content item (`course`, `lesson`, `post`, `podcast`),
- * prioritizing explicit Sanity `tags[]` first and supplementing with keyword matches.
+ * prioritizing explicit Sanity `tags[]` first and supplementing with strict word-boundary keyword matches.
  */
 export function resolveItemTopics(
 	item: {

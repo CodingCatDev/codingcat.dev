@@ -1,10 +1,11 @@
 ---
 /**
- * `TagPills.astro` | Clickable Brand Logo Tag Pills for Cards & Detail Headers.
+ * `TagPills.astro` | Clickable Brand Logo & Concept Tag Pills for Cards & Detail Headers.
  *
- * Resolves a document's Sanity `tags[]` + title/excerpt matches into canonical
- * `TopicDefinition` entries with Light Mode (`symbolLight`) and Dark Mode (`symbolDark`)
- * brand SVG icons.
+ * Resolves a document's Sanity `tags[]` + strict word-boundary title/excerpt matches
+ * into canonical `TopicDefinition` entries:
+ * - `kind === "brand"`: renders official Light Mode (`symbolLight`) and Dark Mode (`symbolDark`) brand SVG icons.
+ * - `kind === "concept"`: renders a crisp `#` editorial tag prefix with zero fake company logos.
  */
 import { resolveItemTopics, type SanityTagItem } from "@/lib/topics";
 
@@ -12,12 +13,12 @@ interface Props {
 	title?: string | null;
 	excerpt?: string | null;
 	tags?: SanityTagItem[] | null;
-	/** Maximum number of logo tag pills to render (omit on detail pages to show all). */
+	/** Maximum number of tag pills to render (omit on detail pages to show all). */
 	maxCount?: number;
 	size?: "sm" | "md";
 	/** Optional href for the "+N more" overflow pill on cards. */
 	overflowHref?: string;
-	/** Optional data attribute so in-page filter scripts can intercept clicks if desired. */
+	/** Emits data-topic-pill so in-page filter controllers (/courses, /podcasts, /blog) intercept clicks. */
 	inPageFilter?: boolean;
 	/** Render as "span" when placed inside an outer <a> element to avoid nested links. */
 	as?: "a" | "span";
@@ -48,6 +49,8 @@ const isSmall = size === "sm";
 			{visible.map((topic) => (
 				<TagEl
 					href={TagEl === "a" ? `/topic/${topic.slug}` : undefined}
+					data-topic-pill={inPageFilter ? topic.slug : undefined}
+					data-topic-title={inPageFilter ? topic.title : undefined}
 					data-tag-pill={inPageFilter ? topic.slug : undefined}
 					data-tag-title={inPageFilter ? topic.title : undefined}
 					class:list={[
@@ -58,31 +61,38 @@ const isSmall = size === "sm";
 							: "gap-2 border-2 px-3.5 py-1 font-display text-xs font-black shadow-sketch-sm",
 					]}
 				>
-					{topic.symbolLight && (
-						<img
-							src={topic.symbolLight}
-							alt=""
+					{topic.kind === "brand" && topic.symbolLight ? (
+						<>
+							<img
+								src={topic.symbolLight}
+								alt=""
+								aria-hidden="true"
+								class:list={[
+									"w-auto shrink-0 object-contain dark:hidden",
+									isSmall ? "h-3" : "h-3.5",
+								]}
+								loading="lazy"
+								decoding="async"
+							/>
+							<img
+								src={topic.symbolDark || topic.symbolLight}
+								alt=""
+								aria-hidden="true"
+								class:list={[
+									"hidden w-auto shrink-0 object-contain dark:block",
+									isSmall ? "h-3" : "h-3.5",
+								]}
+								loading="lazy"
+								decoding="async"
+							/>
+						</>
+					) : (
+						<span
+							class="font-mono font-extrabold text-[#7C3AED] dark:text-[#C084FC]"
 							aria-hidden="true"
-							class:list={[
-								"w-auto shrink-0 object-contain dark:hidden",
-								isSmall ? "h-3" : "h-3.5",
-							]}
-							loading="lazy"
-							decoding="async"
-						/>
-					)}
-					{topic.symbolDark && (
-						<img
-							src={topic.symbolDark}
-							alt=""
-							aria-hidden="true"
-							class:list={[
-								"hidden w-auto shrink-0 object-contain dark:block",
-								isSmall ? "h-3" : "h-3.5",
-							]}
-							loading="lazy"
-							decoding="async"
-						/>
+						>
+							#
+						</span>
 					)}
 					<span>{topic.title}</span>
 				</TagEl>

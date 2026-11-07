@@ -10,8 +10,9 @@
  */
 import { stegaClean } from "@sanity/client/stega";
 import ContentCard from "@/components/ContentCard.astro";
+import TopicFilterStrip from "@/components/TopicFilterStrip.astro";
 import type { ContentListItem } from "@/lib/content";
-import { TOPICS_BY_SLUG } from "@/lib/topics";
+import { getTopicBySlug } from "@/lib/topics";
 
 interface Props {
 	items: ContentListItem[];
@@ -24,6 +25,8 @@ interface Props {
 	activeTopic?: string;
 	initialQuery?: string;
 	showSearch?: boolean;
+	enableTopicFilter?: boolean;
+	basePath?: string;
 	searchPlaceholder?: string;
 	priorityCount?: number;
 	nounPlural?: string;
@@ -42,6 +45,8 @@ const {
 	activeTopic = "",
 	initialQuery = "",
 	showSearch = false,
+	enableTopicFilter = showSearch && (type === "podcast" || type === "post"),
+	basePath = type === "podcast" ? "/podcasts" : type === "post" ? "/blog" : undefined,
 	searchPlaceholder,
 	priorityCount = 0,
 	nounPlural = type === "podcast"
@@ -61,7 +66,7 @@ const cleanSkipId =
 	stegaClean(skipId).trim().replace(/^drafts\./, "") || "none";
 const cleanRefId = stegaClean(refId).trim().replace(/^drafts\./, "");
 const hasMoreInitial = items.length > 0 && initialOffset < totalCount;
-const activeTopicDef = activeTopic ? TOPICS_BY_SLUG[activeTopic] : undefined;
+const activeTopicDef = activeTopic ? getTopicBySlug(activeTopic) : undefined;
 const effectivePlaceholder =
 	searchPlaceholder ?? `Filter ${nounPlural} by name or keyword...`;
 ---
@@ -79,30 +84,44 @@ const effectivePlaceholder =
 	data-active-query={initialQuery}
 	data-noun-plural={nounPlural}
 >
-	{/* Live In-Page Filter / Status Bar */}
+	{/* Unified 1-Row In-Page Filter & Status Toolbar */}
 	<div
-		class="mb-8 flex flex-col justify-between gap-3 rounded-2xl border-2 border-dashed border-[#2A1155]/20 bg-[#FAF9FC] px-4 py-3 dark:border-white/15 dark:bg-[#131B2E]/70 sm:flex-row sm:items-center"
+		class="mb-8 flex flex-col justify-between gap-3 rounded-2xl border-2 border-dashed border-[#2A1155]/20 bg-[#FAF9FC] px-4 py-3 dark:border-white/15 dark:bg-[#131B2E]/70 lg:flex-row lg:items-center"
 		data-feed-status-bar
 	>
 		<div class="flex flex-wrap items-center gap-2 font-mono text-xs font-bold text-[#2A1155]/80 dark:text-slate-300">
-			<span
-				class="inline-block size-2 rounded-full bg-[#7C3AED] dark:bg-[#C084FC]"
-				aria-hidden="true"
-			></span>
-			<span data-feed-count-label>
+			{
+				enableTopicFilter && basePath ? (
+					<TopicFilterStrip
+						basePath={basePath}
+						activeSlug={activeTopic}
+						allLabel="All"
+						variant="inline"
+					/>
+				) : (
+					<span
+						class="inline-block size-2 rounded-full bg-[#7C3AED] dark:bg-[#C084FC]"
+						aria-hidden="true"
+					/>
+				)
+			}
+			<span data-feed-count-label class="ml-1">
 				Showing {items.length} of {totalCount} {nounPlural}
 			</span>
-			<span
+			<button
+				type="button"
 				data-feed-topic-badge
+				title="Clear topic filter"
 				class:list={[
-					"inline-flex items-center gap-1.5 rounded-full border border-[#2A1155] bg-[#EDE9FE] px-2.5 py-0.5 font-mono text-[11px] font-extrabold text-[#7C3AED] dark:border-purple-400/40 dark:bg-purple-950/70 dark:text-purple-200",
+					"inline-flex cursor-pointer items-center gap-1.5 rounded-full border border-[#2A1155] bg-[#EDE9FE] px-2.5 py-0.5 font-mono text-[11px] font-extrabold text-[#7C3AED] hover:bg-[#DDD6FE] dark:border-purple-400/40 dark:bg-purple-950/70 dark:text-purple-200",
 					!activeTopicDef && "hidden",
 				]}
 			>
 				<span data-feed-topic-name>
 					{activeTopicDef ? `Filtered: ${activeTopicDef.title}` : ""}
 				</span>
-			</span>
+				<span aria-hidden="true">✕</span>
+			</button>
 		</div>
 
 		<div class="flex flex-wrap items-center gap-3">
@@ -129,7 +148,7 @@ const effectivePlaceholder =
 					!activeTopicDef && "hidden",
 				]}
 			>
-				Open Full Topic Hub &rarr;
+				Open Topic Hub &rarr;
 			</a>
 		</div>
 	</div>
@@ -437,124 +456,156 @@ const effectivePlaceholder =
 				});
 			}
 
-			// 3. In-page Topic Filter Strip interception (when only 1 primary feed on page)
+			// 3. In-page Topic Filter Strip & Card Tag Pill interception (when only 1 primary feed on page)
 			if (isSingleFeedPage) {
-				var filterStrip = document.querySelector(
-					'[data-topic-filter-strip="in-page"]',
-				);
-				if (filterStrip && filterStrip.dataset.bound !== "true") {
-					filterStrip.dataset.bound = "true";
-					var pills = Array.from(
-						filterStrip.querySelectorAll("[data-topic-pill]"),
+				var filterStrip =
+					root.querySelector('[data-topic-filter-strip="in-page"]') ||
+					document.querySelector('[data-topic-filter-strip="in-page"]');
+				var pills = filterStrip
+					? Array.from(filterStrip.querySelectorAll("[data-topic-pill]"))
+					: [];
+
+				var syncPillStyles = function (selectedSlug, selectedTitle) {
+					for (var p = 0; p < pills.length; p++) {
+						var pill = pills[p];
+						var slug = pill.dataset.topicPill || "";
+						var isActive = slug === selectedSlug;
+						pill.setAttribute("aria-current", isActive ? "true" : "false");
+						if (isActive) {
+							pill.classList.add(
+								"bg-[#7C3AED]",
+								"text-white",
+								"dark:border-white/50",
+							);
+							pill.classList.remove(
+								"bg-white",
+								"text-[#2A1155]",
+								"hover:bg-[#EDE9FE]",
+								"hover:text-[#7C3AED]",
+								"dark:border-white/25",
+								"dark:bg-[#0B1326]",
+								"dark:bg-[#131B2E]",
+								"dark:text-slate-100",
+							);
+						} else {
+							pill.classList.remove(
+								"bg-[#7C3AED]",
+								"text-white",
+								"dark:border-white/50",
+							);
+							pill.classList.add(
+								"bg-white",
+								"text-[#2A1155]",
+								"hover:bg-[#EDE9FE]",
+								"hover:text-[#7C3AED]",
+								"dark:border-white/25",
+								"dark:bg-[#0B1326]",
+								"dark:text-slate-100",
+							);
+						}
+					}
+
+					if (topicBadge && topicName) {
+						if (selectedSlug) {
+							topicName.textContent = "Filtered: " + selectedTitle;
+							topicBadge.classList.remove("hidden");
+						} else {
+							topicBadge.classList.add("hidden");
+						}
+					}
+					if (hubLink) {
+						if (selectedSlug) {
+							hubLink.href = "/topic/" + selectedSlug;
+							hubLink.classList.remove("hidden");
+						} else {
+							hubLink.classList.add("hidden");
+						}
+					}
+				};
+
+				var selectTopic = function (nextTopic, nextTitle, scrollToBar) {
+					if (nextTopic === activeTopic && !isLoading) return;
+					activeTopic = nextTopic;
+					root.dataset.activeTopic = activeTopic;
+					syncPillStyles(activeTopic, nextTitle || activeTopic);
+
+					var url = new URL(window.location.href);
+					if (activeTopic) {
+						url.searchParams.set("topic", activeTopic);
+					} else {
+						url.searchParams.delete("topic");
+					}
+					window.history.pushState(
+						{ topic: activeTopic, q: activeQuery },
+						"",
+						url.toString(),
 					);
 
-					var syncPillStyles = function (selectedSlug, selectedTitle) {
-						for (var p = 0; p < pills.length; p++) {
-							var pill = pills[p];
-							var slug = pill.dataset.topicPill || "";
-							var isActive = slug === selectedSlug;
-							pill.setAttribute("aria-current", isActive ? "true" : "false");
-							if (isActive) {
-								pill.classList.add(
-									"bg-[#7C3AED]",
-									"text-white",
-									"dark:border-white/50",
-								);
-								pill.classList.remove(
-									"bg-white",
-									"text-[#2A1155]",
-									"hover:bg-[#EDE9FE]",
-									"hover:text-[#7C3AED]",
-									"dark:border-white/25",
-									"dark:bg-[#131B2E]",
-									"dark:text-slate-100",
-								);
-							} else {
-								pill.classList.remove(
-									"bg-[#7C3AED]",
-									"text-white",
-									"dark:border-white/50",
-								);
-								pill.classList.add(
-									"bg-white",
-									"text-[#2A1155]",
-									"hover:bg-[#EDE9FE]",
-									"hover:text-[#7C3AED]",
-									"dark:border-white/25",
-									"dark:bg-[#131B2E]",
-									"dark:text-slate-100",
-								);
-							}
-						}
+					hasMore = true;
+					void fetchBatch(true, false);
 
-						if (topicBadge && topicName) {
-							if (selectedSlug) {
-								topicName.textContent = "Filtered: " + selectedTitle;
-								topicBadge.classList.remove("hidden");
-							} else {
-								topicBadge.classList.add("hidden");
-							}
+					if (scrollToBar) {
+						var bar = root.querySelector("[data-feed-status-bar]");
+						if (bar) {
+							bar.scrollIntoView({ behavior: "smooth", block: "nearest" });
 						}
-						if (hubLink) {
-							if (selectedSlug) {
-								hubLink.href = "/topic/" + selectedSlug;
-								hubLink.classList.remove("hidden");
-							} else {
-								hubLink.classList.add("hidden");
-							}
-						}
-					};
+					}
+				};
 
+				if (topicBadge) {
+					topicBadge.addEventListener("click", function () {
+						selectTopic("", "All", false);
+					});
+				}
+
+				if (filterStrip && filterStrip.dataset.bound !== "true") {
+					filterStrip.dataset.bound = "true";
 					for (var k = 0; k < pills.length; k++) {
 						(function (pill) {
 							pill.addEventListener("click", function (ev) {
 								ev.preventDefault();
 								var nextTopic = pill.dataset.topicPill || "";
 								var nextTitle = pill.dataset.topicTitle || nextTopic;
-								if (nextTopic === activeTopic && !isLoading) return;
-
-								activeTopic = nextTopic;
-								root.dataset.activeTopic = activeTopic;
-								syncPillStyles(activeTopic, nextTitle);
-
-								var url = new URL(window.location.href);
-								if (activeTopic) {
-									url.searchParams.set("topic", activeTopic);
-								} else {
-									url.searchParams.delete("topic");
-								}
-								window.history.pushState(
-									{ topic: activeTopic, q: activeQuery },
-									"",
-									url.toString(),
-								);
-
-								hasMore = true;
-								void fetchBatch(true, false);
+								selectTopic(nextTopic, nextTitle, false);
 							});
 						})(pills[k]);
 					}
+				}
 
-					window.addEventListener("popstate", function () {
-						var url = new URL(window.location.href);
-						var poppedTopic = url.searchParams.get("topic") || "";
-						var poppedQuery = url.searchParams.get("q") || "";
-						if (poppedTopic === activeTopic && poppedQuery === activeQuery)
-							return;
-						activeTopic = poppedTopic;
-						activeQuery = poppedQuery;
-						if (searchInput) searchInput.value = activeQuery;
-						var matchingPill = pills.find(function (p) {
-							return (p.dataset.topicPill || "") === activeTopic;
-						});
-						syncPillStyles(
-							activeTopic,
-							(matchingPill && matchingPill.dataset.topicTitle) || activeTopic,
-						);
-						hasMore = true;
-						void fetchBatch(true, false);
+				// Delegated interception for card tag pills inside this feed
+				if (grid) {
+					grid.addEventListener("click", function (ev) {
+						var target = ev.target;
+						if (!(target instanceof Element)) return;
+						var tagEl = target.closest("[data-tag-pill]");
+						if (!tagEl) return;
+						var slug = tagEl.getAttribute("data-tag-pill") || "";
+						var title = tagEl.getAttribute("data-tag-title") || slug;
+						if (!slug) return;
+						ev.preventDefault();
+						selectTopic(slug, title, true);
 					});
 				}
+
+				window.addEventListener("popstate", function () {
+					var url = new URL(window.location.href);
+					var poppedTopic = url.searchParams.get("topic") || "";
+					var poppedQuery = url.searchParams.get("q") || "";
+					if (poppedTopic === activeTopic && poppedQuery === activeQuery)
+						return;
+					activeTopic = poppedTopic;
+					activeQuery = poppedQuery;
+					if (searchInput) searchInput.value = activeQuery;
+					var matchingPill = pills.find(function (p) {
+						return (p.dataset.topicPill || "") === activeTopic;
+					});
+					syncPillStyles(
+						activeTopic,
+						(matchingPill && matchingPill.dataset.topicTitle) || activeTopic,
+					);
+					hasMore = true;
+					void fetchBatch(true, false);
+				});
 			}
 		}
 
