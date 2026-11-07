@@ -39,9 +39,7 @@ async function syncPrivateShadowCalendarBlocks(opts: {
 			"Private Calendar Block synced from alex@codingcat.dev",
 			`Room: ${studioOrMeet}`,
 			`Guest: ${opts.guestName} (${opts.company})`,
-			...(opts.portalUrl
-				? [`Guest Studio Portal: ${opts.portalUrl}`]
-				: []),
+			...(opts.portalUrl ? [`Guest Studio Portal: ${opts.portalUrl}`] : []),
 		].join("\n"),
 		location: studioOrMeet,
 		status: "confirmed",

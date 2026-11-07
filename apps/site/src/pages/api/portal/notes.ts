@@ -851,7 +851,7 @@ export const POST: APIRoute = async ({ request, url }) => {
 					headline:
 						chatMessage && noteType === "call_note"
 							? `Call Notes & Next Steps for ${company} x CodingCat.dev`
-							: `Alex Patterson Updated Your Shared Run-of-Show & Notes`,
+							: "Alex Patterson Updated Your Shared Run-of-Show & Notes",
 					introParagraph: chatMessage
 						? `I just posted new notes${newAttachments.length > 0 ? " and shared files" : ""} in your CodingCat.dev Studio Portal: "${chatMessage.slice(0, 280)}${chatMessage.length > 280 ? "..." : ""}". You can reply, drop files into the chat, or edit the shared Run-of-Show directly in your portal below.`
 						: "I just updated our shared Pre-Call Notes and 5-Part Run-of-Show outline in your CodingCat.dev Studio Portal. Take a look below and feel free to edit or leave a comment directly in the portal!",
@@ -913,7 +913,7 @@ export const POST: APIRoute = async ({ request, url }) => {
 							? `${resolvedAuthorName} Posted a Note in the Studio Portal`
 							: `${resolvedAuthorName} Updated the Shared Run-of-Show`,
 					introParagraph: isFeedback
-						? `${resolvedAuthorName} (${verifiedEmail || guestEmail}) just submitted feedback on the CodingCat.dev Booking & Studio Portal${feedbackRating ? ` (Rating: ${feedbackRating}/5)` : ""}${feedbackTopics.length > 0 ? ` [${feedbackTopics.join(", ")}]` : ""}${newAttachments.length > 0 ? ` with an annotated screen capture synced to Sanity Media Library` : ""}.`
+						? `${resolvedAuthorName} (${verifiedEmail || guestEmail}) just submitted feedback on the CodingCat.dev Booking & Studio Portal${feedbackRating ? ` (Rating: ${feedbackRating}/5)` : ""}${feedbackTopics.length > 0 ? ` [${feedbackTopics.join(", ")}]` : ""}${newAttachments.length > 0 ? " with an annotated screen capture synced to Sanity Media Library" : ""}.`
 						: chatMessage
 							? `${resolvedAuthorName} (${verifiedEmail || guestEmail}) just posted a message${newAttachments.length > 0 ? ` and dropped ${newAttachments.length} attachment(s)` : ""} in the ${company} Studio Portal: "${chatMessage}".`
 							: `${resolvedAuthorName} (${verifiedEmail || guestEmail}) just edited the shared Run-of-Show / Pre-Call Notes in the ${company} Studio Portal.`,
