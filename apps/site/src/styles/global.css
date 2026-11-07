@@ -572,3 +572,33 @@ html.aj-drawer-open #aj-agent-drawer {
 	content-visibility: auto;
 	contain-intrinsic-size: auto 520px;
 }
+
+/*
+ * Slide-over Mobile Navigation Sheet (#nav-drawer) animation
+ */
+@media (prefers-reduced-motion: no-preference) {
+	#nav-drawer[open] {
+		animation: cc-drawer-slide-in 200ms cubic-bezier(0.22, 1, 0.36, 1) both;
+	}
+	#nav-drawer[open]::backdrop {
+		animation: cc-drawer-backdrop-fade 200ms ease-out both;
+	}
+}
+
+@keyframes cc-drawer-slide-in {
+	from {
+		transform: translateX(100%);
+	}
+	to {
+		transform: translateX(0);
+	}
+}
+
+@keyframes cc-drawer-backdrop-fade {
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+	}
+}

@@ -1,5 +1,10 @@
 ---
 import AjHeadphones from "@/components/icons/AjHeadphones.astro";
+import {
+	matchNavHref,
+	normalizeNavPath,
+	resolveActivePillar,
+} from "@/lib/navigation";
 import { settingsQuery } from "@/lib/sanity/queries";
 import NavLink from "./NavLink.astro";
 import SearchModal from "./SearchModal.astro";
@@ -10,49 +15,170 @@ const navLinks = settings?.navLinks ?? [];
 
 const desktopLinks = navLinks.filter((link) => link?.sideOnly !== true);
 const hasCoursesLink = desktopLinks.some((link) =>
-	(link?.path ?? "").startsWith("/course"),
+	normalizeNavPath(link?.path).startsWith("/course"),
 );
 const hasTopicsLink = desktopLinks.some((link) =>
-	(link?.path ?? "").startsWith("/topic"),
+	normalizeNavPath(link?.path).startsWith("/topic"),
 );
-const hasHomeLink = navLinks.some((link) => (link?.path ?? "") === "/");
+
+const currentPathname = Astro.url.pathname;
+const activePillar = resolveActivePillar(currentPathname);
+
+const primaryPillars = [
+	{
+		id: "courses",
+		title: "Courses",
+		subtitle: "Hands-on lessons & real-world apps",
+		href: "/courses",
+		icon: "courses",
+	},
+	{
+		id: "podcasts",
+		title: "Podcasts",
+		subtitle: "Video episodes & builder interviews",
+		href: "/podcasts",
+		icon: "podcasts",
+	},
+	{
+		id: "blog",
+		title: "Blog",
+		subtitle: "Deep-dive posts & architecture guides",
+		href: "/blog",
+		icon: "blog",
+	},
+	{
+		id: "topics",
+		title: "Topics & Vendors",
+		subtitle: "Frameworks, tools & stack hubs",
+		href: "/topics",
+		icon: "topics",
+	},
+] as const;
+
+const canonicalPaths = new Set([
+	"/",
+	"/courses",
+	"/podcasts",
+	"/blog",
+	"/topics",
+	"/sponsors",
+	"/sponsorships",
+]);
+
+const extraSanityLinks = navLinks.filter((link) => {
+	const normalized = normalizeNavPath(link?.path);
+	return !canonicalPaths.has(normalized);
+});
+
+const secondaryMobileLinks = [
+	{ title: "Home", href: "/", prefix: false },
+	{ title: "Sponsors", href: "/sponsors", prefix: true },
+	{ title: "Sponsorships", href: "/sponsorships", prefix: true },
+	...extraSanityLinks.map((link) => ({
+		title: link?.title ?? "Link",
+		href: link?.path ?? "/",
+		prefix: true,
+	})),
+];
 ---
 
 <header
 	id="site-header"
 	class="fixed left-0 right-0 top-0 z-40 px-3 pt-2.5 sm:px-6 sm:pt-4"
 >
+	<a
+		href="#main-content"
+		class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-60 focus:inline-flex focus:items-center focus:gap-2 focus:rounded-full focus:border-2 focus:border-[#2A1155] focus:bg-[#FEF08A] focus:px-4 focus:py-2 focus:font-display focus:text-sm focus:font-black focus:text-[#2A1155] focus:shadow-sketch focus:outline-none"
+	>
+		Skip to main content →
+	</a>
+
 	<div class="mx-auto flex max-w-7xl items-center justify-between gap-2 rounded-full border-2 border-[#2A1155] bg-white/95 px-3.5 py-2 backdrop-blur-md dark:border-white/22 dark:bg-[#131B2E]/90 sm:px-6 sm:py-2.5 shadow-sketch">
-		<div class="flex min-w-0 items-center gap-4 lg:gap-6">
-			<a
-				class="group flex shrink-0 items-center gap-2 font-display text-lg font-black tracking-tight text-[#2A1155] dark:text-white sm:gap-2.5 sm:text-2xl"
-				href="/"
-			>
-				<div class="flex size-8 shrink-0 items-center justify-center overflow-hidden rounded-full border-2 border-[#2A1155] bg-[#7C3AED] transition-transform duration-200 group-hover:-rotate-6 group-hover:scale-105 dark:border-white/40 sm:size-10 shadow-sketch-sm">
-					<AjHeadphones cls="block size-6 sm:size-8" />
+		<div class="flex min-w-0 items-center gap-2 sm:gap-3 lg:gap-5">
+			<div class="flex min-w-0 items-center gap-2 sm:gap-2.5">
+				<a
+					class="group flex shrink-0 items-center gap-2 font-display text-lg font-black tracking-tight text-[#2A1155] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7C3AED] dark:text-white dark:focus-visible:ring-[#C084FC] sm:gap-2.5 sm:text-2xl rounded-full"
+					href="/"
+				>
+					<div class="flex size-8 shrink-0 items-center justify-center overflow-hidden rounded-full border-2 border-[#2A1155] bg-[#7C3AED] transition-transform duration-200 group-hover:-rotate-6 group-hover:scale-105 dark:border-white/40 sm:size-10 shadow-sketch-sm">
+						<AjHeadphones cls="block size-6 sm:size-8" />
+					</div>
+					<span class="flex flex-col leading-none">
+						<span class="truncate">
+							CodingCat<span class="text-[#7C3AED] dark:text-[#C084FC]">.dev</span>
+						</span>
+						{
+							activePillar && (
+								<span
+									id="mobile-active-pillar-subpill"
+									class="mt-0.5 inline-flex w-fit items-center gap-1 rounded-full border border-[#2A1155] bg-[#EDE9FE] px-1.5 py-0.5 font-mono text-[9px] font-extrabold uppercase tracking-wider text-[#2A1155] dark:border-[#C084FC]/80 dark:bg-[#7C3AED]/35 dark:text-white sm:hidden"
+								>
+									<span
+										class="size-1.5 shrink-0 rounded-full bg-[#7C3AED] dark:bg-[#86EFAC]"
+										aria-hidden="true"
+									/>
+									<span>{activePillar.label}</span>
+								</span>
+							)
+						}
+					</span>
+				</a>
+
+				<div
+					id="mobile-active-pillar-slot"
+					class="hidden min-w-0 items-center gap-2 sm:flex lg:hidden"
+				>
+					{
+						activePillar && (
+							<>
+								<span
+									aria-hidden="true"
+									class="font-mono text-sm font-bold text-[#2A1155]/35 dark:text-white/30"
+								>
+									/
+								</span>
+								<a
+									href={activePillar.href}
+									id="mobile-active-pillar-badge"
+									aria-label={`Current section: ${activePillar.label}`}
+									aria-current={activePillar.isExact ? "page" : "true"}
+									class="inline-flex items-center gap-1.5 rounded-full border-2 border-[#2A1155] bg-[#EDE9FE] px-3 py-1 font-display text-xs font-black tracking-tight text-[#2A1155] shadow-[2px_2px_0px_0px_#2A1155] transition-transform hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7C3AED] dark:border-[#C084FC] dark:bg-[#7C3AED]/30 dark:text-white dark:shadow-[2px_2px_0px_0px_rgba(192,132,252,0.45)] dark:focus-visible:ring-[#C084FC]"
+								>
+									<span
+										class="size-2 shrink-0 rounded-full bg-[#7C3AED] dark:bg-[#86EFAC]"
+										aria-hidden="true"
+									/>
+									<span class="truncate">{activePillar.label}</span>
+								</a>
+							</>
+						)
+					}
 				</div>
-				<span class="truncate">
-					CodingCat<span class="text-[#7C3AED] dark:text-[#C084FC]">.dev</span>
-				</span>
-			</a>
-			<nav class="hidden items-center gap-6 text-sm font-bold text-[#2A1155]/85 dark:text-slate-200 lg:flex" aria-label="Main">
+			</div>
+
+			<nav
+				class="hidden items-center gap-1.5 text-sm font-bold text-[#2A1155]/85 dark:text-slate-200 lg:flex xl:gap-2"
+				aria-label="Main"
+			>
 				{
 					!hasCoursesLink && (
-						<NavLink href="/courses">
-							<span class="inline-flex items-center gap-1.5 font-extrabold text-[#7C3AED] dark:text-[#C084FC]">
-								Courses
-							</span>
+						<NavLink href="/courses" variant="desktop-pill">
+							Courses
 						</NavLink>
 					)
 				}
 				{
 					desktopLinks.map((link) => (
-						<NavLink href={link?.path ?? "/"}>{link?.title}</NavLink>
+						<NavLink href={link?.path ?? "/"} variant="desktop-pill">
+							{link?.title}
+						</NavLink>
 					))
 				}
 				{
 					!hasTopicsLink && (
-						<NavLink href="/topics">Topics</NavLink>
+						<NavLink href="/topics" variant="desktop-pill">
+							Topics
+						</NavLink>
 					)
 				}
 			</nav>
@@ -64,7 +190,7 @@ const hasHomeLink = navLinks.some((link) => (link?.path ?? "") === "/");
 				id="search-header-trigger"
 				data-track="search_open"
 				data-track-label="header_search"
-				class="inline-flex size-9 cursor-pointer items-center justify-center gap-2 rounded-full border-2 border-[#2A1155] bg-[#FAF9FC] text-xs font-bold text-[#2A1155] transition-colors hover:bg-[#EDE9FE] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7C3AED] dark:border-white/20 dark:bg-[#0B1326]/90 dark:text-slate-100 dark:hover:border-[#C084FC] sm:w-auto sm:px-3 sm:py-1.5 shadow-sketch-sm"
+				class="inline-flex size-9 cursor-pointer items-center justify-center gap-2 rounded-full border-2 border-[#2A1155] bg-[#FAF9FC] text-xs font-bold text-[#2A1155] transition-colors hover:bg-[#EDE9FE] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7C3AED] dark:border-white/20 dark:bg-[#0B1326]/90 dark:text-slate-100 dark:hover:border-[#C084FC] dark:focus-visible:ring-[#C084FC] sm:w-auto sm:px-3 sm:py-1.5 shadow-sketch-sm"
 				aria-label="Search CodingCat.dev (⌘K)"
 			>
 				<span class="inline-flex items-center gap-1.5">
@@ -89,7 +215,7 @@ const hasHomeLink = navLinks.some((link) => (link?.path ?? "") === "/");
 			<button
 				type="button"
 				id="ask-agent-header-trigger"
-				class="inline-flex size-9 cursor-pointer items-center justify-center gap-1.5 rounded-full border-2 border-[#2A1155] bg-[#EDE9FE] font-mono text-[11px] font-bold uppercase tracking-wider text-[#2A1155] transition-colors hover:bg-[#DDD6FE] dark:border-purple-400/40 dark:bg-purple-950/60 dark:text-purple-200 dark:hover:border-[#C084FC] md:w-auto md:px-3 md:py-1.5 shadow-sketch-sm"
+				class="inline-flex size-9 cursor-pointer items-center justify-center gap-1.5 rounded-full border-2 border-[#2A1155] bg-[#EDE9FE] font-mono text-[11px] font-bold uppercase tracking-wider text-[#2A1155] transition-colors hover:bg-[#DDD6FE] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7C3AED] dark:border-purple-400/40 dark:bg-purple-950/60 dark:text-purple-200 dark:hover:border-[#C084FC] dark:focus-visible:ring-[#C084FC] md:w-auto md:px-3 md:py-1.5 shadow-sketch-sm"
 				aria-label="Ask Agent AJ"
 			>
 				<svg
@@ -114,9 +240,10 @@ const hasHomeLink = navLinks.some((link) => (link?.path ?? "") === "/");
 			<button
 				type="button"
 				id="nav-drawer-toggle"
-				class="inline-flex size-9 cursor-pointer items-center justify-center rounded-full border-2 border-[#2A1155] bg-[#FAF9FC] text-[#2A1155] transition-colors hover:bg-[#EDE9FE] dark:border-white/20 dark:bg-[#0B1326] dark:text-white lg:hidden shadow-sketch-sm"
+				class="inline-flex size-9 cursor-pointer items-center justify-center rounded-full border-2 border-[#2A1155] bg-[#FAF9FC] text-[#2A1155] transition-colors hover:bg-[#EDE9FE] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7C3AED] dark:border-white/20 dark:bg-[#0B1326] dark:text-white dark:hover:border-[#C084FC] dark:focus-visible:ring-[#C084FC] lg:hidden shadow-sketch-sm"
 				aria-controls="nav-drawer"
 				aria-expanded="false"
+				aria-haspopup="dialog"
 				aria-label="Open navigation menu"
 			>
 				<svg
@@ -137,17 +264,19 @@ const hasHomeLink = navLinks.some((link) => (link?.path ?? "") === "/");
 	</div>
 </header>
 
-<div
+<dialog
 	id="nav-drawer"
-	hidden
-	class="fixed inset-0 z-50 bg-[#FAF9FC]/98 backdrop-blur-md dark:bg-[#0B1326]/98 lg:hidden"
+	closedby="any"
+	aria-label="Mobile navigation menu"
+	class="fixed inset-y-0 right-0 left-auto z-50 m-0 hidden h-dvh max-h-dvh w-[90dvw] max-w-sm flex-col border-l-2 border-[#2A1155] bg-[#FAF9FC] p-0 text-[#2A1155] shadow-[-8px_0_30px_rgba(0,0,0,0.35)] backdrop:bg-[#060E20]/65 backdrop:backdrop-blur-xs open:flex dark:border-white/22 dark:bg-[#0B1326] dark:text-white lg:hidden"
 >
-	<div class="flex items-center justify-between border-b border-[#2A1155]/15 px-6 py-4 dark:border-white/15">
+	{/* Drawer Top Bar */}
+	<div class="flex items-center justify-between border-b-2 border-[#2A1155]/15 bg-white/90 px-5 py-3.5 backdrop-blur-sm dark:border-white/15 dark:bg-[#131B2E]/90">
 		<a
 			href="/"
-			class="flex items-center gap-2.5 font-display text-xl font-black text-[#2A1155] dark:text-white"
+			class="flex items-center gap-2.5 rounded-full font-display text-xl font-black text-[#2A1155] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7C3AED] dark:text-white dark:focus-visible:ring-[#C084FC]"
 		>
-			<div class="flex size-8 items-center justify-center overflow-hidden rounded-full border-2 border-[#2A1155] bg-[#7C3AED] dark:border-white/40">
+			<div class="flex size-8 items-center justify-center overflow-hidden rounded-full border-2 border-[#2A1155] bg-[#7C3AED] dark:border-white/40 shadow-sketch-sm">
 				<AjHeadphones cls="block size-6" />
 			</div>
 			<span>
@@ -157,7 +286,7 @@ const hasHomeLink = navLinks.some((link) => (link?.path ?? "") === "/");
 		<button
 			type="button"
 			id="nav-drawer-close"
-			class="inline-flex size-10 cursor-pointer items-center justify-center rounded-full border-2 border-[#2A1155] bg-white text-[#2A1155] dark:border-white/25 dark:bg-[#131B2E] dark:text-white shadow-sketch-sm"
+			class="inline-flex size-10 cursor-pointer items-center justify-center rounded-full border-2 border-[#2A1155] bg-white text-[#2A1155] transition-colors hover:bg-[#EDE9FE] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7C3AED] dark:border-white/25 dark:bg-[#171F33] dark:text-white dark:hover:border-[#C084FC] dark:focus-visible:ring-[#C084FC] shadow-sketch-sm"
 			aria-label="Close navigation menu"
 		>
 			<svg
@@ -174,22 +303,249 @@ const hasHomeLink = navLinks.some((link) => (link?.path ?? "") === "/");
 			</svg>
 		</button>
 	</div>
-	<nav class="grid gap-4 px-6 py-6 text-xl font-bold text-[#2A1155] dark:text-white" aria-label="Mobile">
-		{!hasHomeLink && <NavLink href="/">Home</NavLink>}
-		{!hasCoursesLink && <NavLink href="/courses">Courses</NavLink>}
-		{!hasTopicsLink && <NavLink href="/topics">Topics &amp; Vendors</NavLink>}
-		{navLinks.map((link) => <NavLink href={link?.path ?? "/"}>{link?.title}</NavLink>)}
-	</nav>
-</div>
+
+	{/* Scrollable Drawer Content */}
+	<div class="flex-1 space-y-6 overflow-y-auto px-5 py-5">
+		{/* Quick Action Utilities (Search & Ask Agent AJ) */}
+		<div class="grid grid-cols-2 gap-2.5">
+			<button
+				type="button"
+				id="nav-drawer-search"
+				class="inline-flex min-h-11 cursor-pointer items-center justify-center gap-2 rounded-xl border-2 border-[#2A1155] bg-white px-3 py-2.5 font-mono text-xs font-extrabold uppercase tracking-wider text-[#2A1155] shadow-[2px_3px_0px_0px_#2A1155] transition-transform hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7C3AED] dark:border-white/20 dark:bg-[#131B2E] dark:text-slate-100 dark:shadow-[2px_3px_0px_0px_rgba(0,0,0,0.65)] dark:hover:border-[#C084FC] dark:focus-visible:ring-[#C084FC]"
+			>
+				<svg
+					class="size-4 shrink-0 text-[#7C3AED] dark:text-[#C084FC]"
+					viewBox="0 0 24 24"
+					fill="none"
+					stroke="currentColor"
+					stroke-width="2.5"
+					stroke-linecap="round"
+					stroke-linejoin="round"
+					aria-hidden="true"
+				>
+					<circle cx="11" cy="11" r="8"></circle>
+					<path d="m21 21-4.3-4.3"></path>
+				</svg>
+				<span>Search</span>
+			</button>
+
+			<button
+				type="button"
+				id="nav-drawer-ask-agent"
+				class="inline-flex min-h-11 cursor-pointer items-center justify-center gap-2 rounded-xl border-2 border-[#2A1155] bg-[#EDE9FE] px-3 py-2.5 font-mono text-xs font-extrabold uppercase tracking-wider text-[#2A1155] shadow-[2px_3px_0px_0px_#2A1155] transition-transform hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7C3AED] dark:border-purple-400/45 dark:bg-purple-950/70 dark:text-purple-100 dark:shadow-[2px_3px_0px_0px_rgba(0,0,0,0.65)] dark:hover:border-[#C084FC] dark:focus-visible:ring-[#C084FC]"
+			>
+				<svg
+					class="size-4 shrink-0 text-[#7C3AED] dark:text-[#C084FC]"
+					viewBox="0 0 24 24"
+					fill="none"
+					stroke="currentColor"
+					stroke-width="2.5"
+					stroke-linecap="round"
+					stroke-linejoin="round"
+					aria-hidden="true"
+				>
+					<path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"></path>
+					<path d="M20 3v4"></path>
+					<path d="M22 5h-4"></path>
+				</svg>
+				<span>Ask Agent</span>
+			</button>
+		</div>
+
+		{/* Primary Content Pillars */}
+		<div class="space-y-2.5">
+			<p
+				id="mobile-pillars-heading"
+				class="px-1 font-mono text-[11px] font-extrabold uppercase tracking-widest text-[#2A1155]/65 dark:text-slate-400"
+			>
+				Content Pillars
+			</p>
+			<nav
+				class="grid gap-2.5"
+				aria-labelledby="mobile-pillars-heading"
+			>
+				{
+					primaryPillars.map((pillar) => {
+						const match = matchNavHref(currentPathname, pillar.href);
+						return (
+							<a
+								href={pillar.href}
+								aria-current={match.ariaCurrent}
+								data-active={match.isActive ? "true" : undefined}
+								class:list={[
+									"group flex items-center justify-between gap-3 rounded-2xl p-3.5 transition-all duration-150",
+									"focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7C3AED] dark:focus-visible:ring-[#C084FC]",
+									match.isActive
+										? "border-2 border-[#2A1155] bg-[#EDE9FE] text-[#2A1155] shadow-[3px_4px_0px_0px_#2A1155] dark:border-[#C084FC] dark:bg-[#7C3AED]/28 dark:text-white dark:shadow-[3px_4px_0px_0px_rgba(192,132,252,0.45)]"
+										: "border-2 border-[#2A1155]/75 bg-white text-[#2A1155] shadow-[2px_3px_0px_0px_#2A1155] hover:-translate-y-0.5 hover:bg-[#F5F3FB] dark:border-white/20 dark:bg-[#131B2E] dark:text-white dark:shadow-[2px_3px_0px_0px_rgba(0,0,0,0.65)] dark:hover:border-[#C084FC]/60 dark:hover:bg-[#171F33]",
+								]}
+							>
+								<div class="flex min-w-0 items-center gap-3">
+									<div
+										class:list={[
+											"flex size-10 shrink-0 items-center justify-center rounded-xl border-2 transition-transform group-hover:scale-105",
+											match.isActive
+												? "border-[#2A1155] bg-[#7C3AED] text-white dark:border-[#C084FC] dark:bg-[#7C3AED]"
+												: "border-[#2A1155]/30 bg-[#F5F3FB] text-[#7C3AED] dark:border-white/15 dark:bg-[#0B1326] dark:text-[#C084FC]",
+										]}
+										aria-hidden="true"
+									>
+										{pillar.icon === "courses" && (
+											<svg
+												class="size-5"
+												viewBox="0 0 24 24"
+												fill="none"
+												stroke="currentColor"
+												stroke-width="2.25"
+												stroke-linecap="round"
+												stroke-linejoin="round"
+											>
+												<path d="M22 10v6M2 10l10-5 10 5-10 5z" />
+												<path d="M6 12v5c3 3 9 3 12 0v-5" />
+											</svg>
+										)}
+										{pillar.icon === "podcasts" && (
+											<svg
+												class="size-5"
+												viewBox="0 0 24 24"
+												fill="none"
+												stroke="currentColor"
+												stroke-width="2.25"
+												stroke-linecap="round"
+												stroke-linejoin="round"
+											>
+												<path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z" />
+												<path d="M19 10v2a7 7 0 0 1-14 0v-2" />
+												<line x1="12" x2="12" y1="19" y2="22" />
+											</svg>
+										)}
+										{pillar.icon === "blog" && (
+											<svg
+												class="size-5"
+												viewBox="0 0 24 24"
+												fill="none"
+												stroke="currentColor"
+												stroke-width="2.25"
+												stroke-linecap="round"
+												stroke-linejoin="round"
+											>
+												<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+												<polyline points="14 2 14 8 20 8" />
+												<line x1="16" x2="8" y1="13" y2="13" />
+												<line x1="16" x2="8" y1="17" y2="17" />
+											</svg>
+										)}
+										{pillar.icon === "topics" && (
+											<svg
+												class="size-5"
+												viewBox="0 0 24 24"
+												fill="none"
+												stroke="currentColor"
+												stroke-width="2.25"
+												stroke-linecap="round"
+												stroke-linejoin="round"
+											>
+												<rect width="7" height="7" x="3" y="3" rx="1.5" />
+												<rect width="7" height="7" x="14" y="3" rx="1.5" />
+												<rect width="7" height="7" x="14" y="14" rx="1.5" />
+												<rect width="7" height="7" x="3" y="14" rx="1.5" />
+											</svg>
+										)}
+									</div>
+									<div class="min-w-0">
+										<div class="flex items-center gap-2">
+											<span class="font-display text-base font-black tracking-tight">
+												{pillar.title}
+											</span>
+											{match.isActive && (
+												<span class="inline-flex items-center gap-1 rounded-full border border-[#2A1155] bg-[#7C3AED] px-2 py-0.5 font-mono text-[10px] font-black uppercase tracking-wider text-white dark:border-[#86EFAC]/50 dark:bg-[#86EFAC] dark:text-[#060E20]">
+													Active
+												</span>
+											)}
+										</div>
+										<p class="truncate text-xs font-semibold text-[#2A1155]/70 dark:text-slate-300">
+											{pillar.subtitle}
+										</p>
+									</div>
+								</div>
+								<span
+									class="shrink-0 font-mono text-sm font-black text-[#7C3AED] transition-transform group-hover:translate-x-0.5 dark:text-[#C084FC]"
+									aria-hidden="true"
+								>
+									→
+								</span>
+							</a>
+						);
+					})
+				}
+			</nav>
+		</div>
+
+		{/* Secondary Navigation Links */}
+		<div class="space-y-2.5">
+			<p
+				id="mobile-secondary-heading"
+				class="px-1 font-mono text-[11px] font-extrabold uppercase tracking-widest text-[#2A1155]/65 dark:text-slate-400"
+			>
+				More on CodingCat.dev
+			</p>
+			<nav
+				class="grid grid-cols-2 gap-2"
+				aria-labelledby="mobile-secondary-heading"
+			>
+				{
+					secondaryMobileLinks.map((link) => (
+						<NavLink
+							href={link.href}
+							prefix={link.prefix}
+							variant="mobile-secondary"
+						>
+							{link.title}
+						</NavLink>
+					))
+				}
+			</nav>
+		</div>
+	</div>
+</dialog>
 
 <SearchModal />
 
 <script>
-	const drawer = document.getElementById("nav-drawer");
+	const drawer = document.getElementById("nav-drawer") as HTMLDialogElement | null;
 	const openButton = document.getElementById("nav-drawer-toggle");
 	const closeButton = document.getElementById("nav-drawer-close");
 	const searchTrigger = document.getElementById("search-header-trigger");
 	const askAgentTrigger = document.getElementById("ask-agent-header-trigger");
+	const drawerSearchTrigger = document.getElementById("nav-drawer-search");
+	const drawerAskAgentTrigger = document.getElementById("nav-drawer-ask-agent");
+
+	const setOpen = (open: boolean) => {
+		if (!drawer) {
+			return;
+		}
+		if (open) {
+			if (!drawer.open) {
+				if (typeof drawer.showModal === "function") {
+					drawer.showModal();
+				} else {
+					drawer.setAttribute("open", "");
+				}
+			}
+			openButton?.setAttribute("aria-expanded", "true");
+			document.body.style.overflow = "hidden";
+		} else {
+			if (drawer.open) {
+				if (typeof drawer.close === "function") {
+					drawer.close();
+				} else {
+					drawer.removeAttribute("open");
+				}
+			}
+			openButton?.setAttribute("aria-expanded", "false");
+			document.body.style.overflow = "";
+		}
+	};
 
 	searchTrigger?.addEventListener("click", () => {
 		(window as unknown as { openSearchModal?: () => void }).openSearchModal?.();
@@ -199,24 +555,30 @@ const hasHomeLink = navLinks.some((link) => (link?.path ?? "") === "/");
 		(window as unknown as { toggleAgentAjDrawer?: () => void }).toggleAgentAjDrawer?.();
 	});
 
-	const setOpen = (open: boolean) => {
-		if (!drawer) {
-			return;
-		}
-		drawer.hidden = !open;
-		openButton?.setAttribute("aria-expanded", String(open));
-		document.body.style.overflow = open ? "hidden" : "";
-	};
+	drawerSearchTrigger?.addEventListener("click", () => {
+		setOpen(false);
+		(window as unknown as { openSearchModal?: () => void }).openSearchModal?.();
+	});
+
+	drawerAskAgentTrigger?.addEventListener("click", () => {
+		setOpen(false);
+		(window as unknown as { toggleAgentAjDrawer?: () => void }).toggleAgentAjDrawer?.();
+	});
 
 	openButton?.addEventListener("click", () => setOpen(true));
 	closeButton?.addEventListener("click", () => setOpen(false));
-	drawer?.addEventListener("click", (event) => {
-		if (event.target instanceof HTMLAnchorElement) {
-			setOpen(false);
-		}
+
+	drawer?.addEventListener("close", () => {
+		openButton?.setAttribute("aria-expanded", "false");
+		document.body.style.overflow = "";
 	});
-	document.addEventListener("keydown", (event) => {
-		if (event.key === "Escape" && drawer && !drawer.hidden) {
+
+	drawer?.addEventListener("click", (event) => {
+		if (event.target === drawer) {
+			setOpen(false);
+			return;
+		}
+		if (event.target instanceof Element && event.target.closest("a[href]")) {
 			setOpen(false);
 		}
 	});

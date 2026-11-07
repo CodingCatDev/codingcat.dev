@@ -305,7 +305,7 @@ const graph = buildGraph([
 		</p>
 		<div class="flex min-h-dvh max-w-full flex-col overflow-x-clip">
 			<Header />
-			<main class="mt-24 min-w-0 max-w-full flex-1">
+			<main id="main-content" tabindex="-1" class="mt-24 min-w-0 max-w-full flex-1 focus:outline-none">
 				{
 					bare ? (
 						<slot />
