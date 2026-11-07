@@ -12,6 +12,7 @@ import {
 	semanticSearchQuery,
 	textSearchFallbackQuery,
 } from "@/lib/sanity/queries";
+import { youtubeId } from "@/lib/youtube";
 
 export const prerender = false;
 
@@ -626,8 +627,40 @@ export const POST: APIRoute = async ({ request }) => {
 			date?: string;
 			excerpt?: string;
 			youtube?: string | null;
+			youtubeId?: string;
+			thumbnailUrl?: string;
+			duration?: string;
+			viewCount?: number;
 			listenLinks?: Record<string, string | undefined>;
 		}> = [];
+
+		const formatDuration = (
+			rawDuration?: string | null,
+			durationSeconds?: number | null,
+		): string | undefined => {
+			if (typeof durationSeconds === "number" && durationSeconds > 0) {
+				const hrs = Math.floor(durationSeconds / 3600);
+				const mins = Math.floor((durationSeconds % 3600) / 60);
+				const secs = Math.floor(durationSeconds % 60);
+				return hrs > 0
+					? `${hrs}:${String(mins).padStart(2, "0")}:${String(secs).padStart(2, "0")}`
+					: `${mins}:${String(secs).padStart(2, "0")}`;
+			}
+			if (!rawDuration || typeof rawDuration !== "string") {
+				return undefined;
+			}
+			const trimmed = rawDuration.trim();
+			const isoMatch = trimmed.match(/^PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?$/i);
+			if (isoMatch) {
+				const hrs = Number(isoMatch[1] || 0);
+				const mins = Number(isoMatch[2] || 0);
+				const secs = Number(isoMatch[3] || 0);
+				return hrs > 0
+					? `${hrs}:${String(mins).padStart(2, "0")}:${String(secs).padStart(2, "0")}`
+					: `${mins}:${String(secs).padStart(2, "0")}`;
+			}
+			return trimmed || undefined;
+		};
 
 		const normalizeAndCollectItems = (rawItems: any[]) => {
 			const normalized = rawItems
@@ -660,6 +693,18 @@ export const POST: APIRoute = async ({ request }) => {
 						(typeof item.youtubeId === "string"
 							? `https://www.youtube.com/watch?v=${item.youtubeId}`
 							: undefined);
+					const resolvedYtId =
+						(typeof item.youtubeId === "string" && item.youtubeId.length === 11
+							? item.youtubeId
+							: undefined) || youtubeId(youtubeLink);
+					const thumbnailUrl = resolvedYtId
+						? `https://i.ytimg.com/vi/${resolvedYtId}/mqdefault.jpg`
+						: undefined;
+					const duration = formatDuration(item.duration, item.durationSeconds);
+					const viewCount =
+						typeof item.viewCount === "number" && item.viewCount > 0
+							? item.viewCount
+							: undefined;
 					const routeType =
 						itemType === "transcript" && parentType ? parentType : itemType;
 					const url =
@@ -712,7 +757,7 @@ export const POST: APIRoute = async ({ request }) => {
 							: undefined;
 					return {
 						title: item.title || item.name || "Untitled",
-						type: itemType,
+						type: routeType,
 						slug: slugStr,
 						url,
 						date: item.date || item.publishedAt,
@@ -723,6 +768,10 @@ export const POST: APIRoute = async ({ request }) => {
 							item.transcriptSummary ||
 							"",
 						youtube: youtubeLink,
+						...(resolvedYtId ? { youtubeId: resolvedYtId } : {}),
+						...(thumbnailUrl ? { thumbnailUrl } : {}),
+						...(duration ? { duration } : {}),
+						...(viewCount ? { viewCount } : {}),
 						listenLinks:
 							listenLinks && Object.keys(listenLinks).length > 0
 								? listenLinks
@@ -730,15 +779,22 @@ export const POST: APIRoute = async ({ request }) => {
 					};
 				});
 			for (const entry of normalized) {
-				if (
-					entry.title &&
-					!collectedToolItems.some(
-						(existing) =>
-							(entry.url && existing.url === entry.url) ||
-							existing.title === entry.title,
-					)
-				) {
-					collectedToolItems.push(entry);
+				const existing = collectedToolItems.find(
+					(item) =>
+						(entry.url && item.url === entry.url) || item.title === entry.title,
+				);
+				if (!existing) {
+					if (entry.title) {
+						collectedToolItems.push(entry);
+					}
+				} else {
+					existing.youtube = existing.youtube || entry.youtube;
+					existing.youtubeId = existing.youtubeId || entry.youtubeId;
+					existing.thumbnailUrl = existing.thumbnailUrl || entry.thumbnailUrl;
+					existing.duration = existing.duration || entry.duration;
+					existing.viewCount = existing.viewCount ?? entry.viewCount;
+					existing.excerpt = existing.excerpt || entry.excerpt;
+					existing.listenLinks = existing.listenLinks || entry.listenLinks;
 				}
 			}
 			return normalized;
@@ -770,7 +826,10 @@ export const POST: APIRoute = async ({ request }) => {
 								"date": coalesce(publishedAt, _createdAt),
 								"excerpt": coalesce(summary, description),
 								"youtube": youtubeUrl,
-								youtubeId
+								youtubeId,
+								duration,
+								durationSeconds,
+								"viewCount": coalesce(statistics.viewCount, statistics.youtube.viewCount)
 							}`,
 							{ limit: count },
 						);
@@ -801,6 +860,10 @@ export const POST: APIRoute = async ({ request }) => {
 								date,
 								excerpt,
 								"youtube": coalesce(youtube, listenLinks.youtube, transcript->youtubeUrl),
+								"youtubeId": transcript->youtubeId,
+								"duration": coalesce(duration, transcript->duration),
+								"durationSeconds": transcript->durationSeconds,
+								"viewCount": coalesce(statistics.viewCount, statistics.youtube.viewCount, transcript->statistics.viewCount),
 								listenLinks,
 								"spotifyLink": spotify.link
 							}`,
@@ -822,7 +885,10 @@ export const POST: APIRoute = async ({ request }) => {
 							"date": coalesce(date, publishedAt, _createdAt),
 							"excerpt": coalesce(excerpt, summary, description),
 							"youtube": coalesce(youtube, youtubeUrl, listenLinks.youtube, transcript->youtubeUrl),
-							youtubeId,
+							"youtubeId": coalesce(youtubeId, transcript->youtubeId),
+							"duration": coalesce(duration, transcript->duration),
+							"durationSeconds": coalesce(durationSeconds, transcript->durationSeconds),
+							"viewCount": coalesce(statistics.viewCount, statistics.youtube.viewCount, transcript->statistics.viewCount),
 							listenLinks,
 							"spotifyLink": spotify.link
 						}`,
@@ -907,7 +973,7 @@ export const POST: APIRoute = async ({ request }) => {
 		if (useFastPathSynthesis && model) {
 			// Single-pass tool-free synthesis: skips remote MCP connection and tool-calling loops
 			const preFetchedJson = JSON.stringify(
-				collectedToolItems.slice(0, 8),
+				collectedToolItems.slice(0, 5),
 				null,
 				2,
 			);
@@ -1504,20 +1570,25 @@ export const POST: APIRoute = async ({ request }) => {
 					}
 				}
 
-				const podcastProviders = collectedToolItems
-					.filter(
-						(item) => item.type === "podcast" && item.url && item.listenLinks,
-					)
-					.slice(0, 5)
+				const previewItems = collectedToolItems
+					.filter((item) => item.url)
+					.slice(0, 6)
 					.map((item) => ({
 						title: item.title,
+						type: item.type || "post",
 						url: item.url,
-						listenLinks: item.listenLinks,
+						...(item.excerpt ? { excerpt: item.excerpt.slice(0, 140) } : {}),
+						...(item.youtube ? { youtubeUrl: item.youtube } : {}),
+						...(item.youtubeId ? { youtubeId: item.youtubeId } : {}),
+						...(item.thumbnailUrl ? { thumbnailUrl: item.thumbnailUrl } : {}),
+						...(item.duration ? { duration: item.duration } : {}),
+						...(item.viewCount ? { viewCount: item.viewCount } : {}),
+						...(item.listenLinks ? { listenLinks: item.listenLinks } : {}),
 					}));
-				if (podcastProviders.length > 0) {
+				if (previewItems.length > 0) {
 					await writer.write(
 						encoder.encode(
-							`\n<!--AJ_PODCAST_PROVIDERS:${JSON.stringify(podcastProviders)}-->`,
+							`\n<!--AJ_PODCAST_PROVIDERS:${JSON.stringify(previewItems)}-->`,
 						),
 					);
 				}

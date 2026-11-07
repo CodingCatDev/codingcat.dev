@@ -535,7 +535,10 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
 			const hits = data.hits || [];
 
 			if (clairicPill && data.extraction) {
-				clairicPill.textContent = `⚡ ${data.extraction.source}: ${data.extraction.intent} (${data.extraction.latencyMs}ms)`;
+				const detailText = `${data.extraction.source}: ${data.extraction.intent} (${data.extraction.latencyMs}ms)`;
+				clairicPill.title = detailText;
+				clairicPill.setAttribute("aria-label", detailText);
+				clairicPill.innerHTML = `<span aria-hidden="true">⚡</span><span class="hidden sm:inline"> ${detailText}</span>`;
 				clairicPill.classList.remove("hidden");
 			}
 

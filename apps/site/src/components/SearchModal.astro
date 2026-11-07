@@ -175,6 +175,7 @@
 			<span
 				id="modal-clairic-badge"
 				class="hidden shrink-0 rounded-full border border-primary/30 bg-primary/10 px-2 py-0.5 font-mono text-[10px] font-medium text-primary"
+				title="Extraction telemetry"
 			></span>
 		</div>
 
@@ -730,7 +731,10 @@
 			if (clairicBadge) {
 				if (data.extraction) {
 					clairicBadge.classList.remove("hidden");
-					clairicBadge.textContent = `⚡ ${data.extraction.source}: ${data.extraction.intent} (${data.extraction.latencyMs}ms)`;
+					const detailText = `${data.extraction.source}: ${data.extraction.intent} (${data.extraction.latencyMs}ms)`;
+					clairicBadge.title = detailText;
+					clairicBadge.setAttribute("aria-label", detailText);
+					clairicBadge.innerHTML = `<span aria-hidden="true">⚡</span><span class="hidden sm:inline"> ${escapeHtml(detailText)}</span>`;
 				} else {
 					clairicBadge.classList.add("hidden");
 				}
