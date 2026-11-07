@@ -407,11 +407,36 @@ import AjAnimatedMascot from "@/components/AjAnimatedMascot.astro";
 				curCanonical.setAttribute("href", newCanonical);
 			}
 
-			// Update header nav active states
-			const newHeaderNav = doc.querySelector("#site-header nav");
-			const curHeaderNav = document.querySelector("#site-header nav");
-			if (newHeaderNav && curHeaderNav) {
-				curHeaderNav.innerHTML = newHeaderNav.innerHTML;
+			// Update header nav & mobile active pillar states
+			const newHeader = doc.getElementById("site-header");
+			const curHeader = document.getElementById("site-header");
+			if (newHeader && curHeader) {
+				const newHeaderNav = newHeader.querySelector("nav");
+				const curHeaderNav = curHeader.querySelector("nav");
+				if (newHeaderNav && curHeaderNav) {
+					curHeaderNav.innerHTML = newHeaderNav.innerHTML;
+				}
+				const newBrandLink = newHeader.querySelector('a[href="/"]');
+				const curBrandLink = curHeader.querySelector('a[href="/"]');
+				if (newBrandLink && curBrandLink) {
+					curBrandLink.innerHTML = newBrandLink.innerHTML;
+				}
+				const newMobileSlot = newHeader.querySelector("#mobile-active-pillar-slot");
+				const curMobileSlot = curHeader.querySelector("#mobile-active-pillar-slot");
+				if (newMobileSlot && curMobileSlot) {
+					curMobileSlot.innerHTML = newMobileSlot.innerHTML;
+				}
+			}
+			const newDrawer = doc.getElementById("nav-drawer");
+			const curDrawer = document.getElementById("nav-drawer");
+			if (newDrawer && curDrawer) {
+				const newDrawerNavs = newDrawer.querySelectorAll("nav");
+				const curDrawerNavs = curDrawer.querySelectorAll("nav");
+				newDrawerNavs.forEach((navEl, idx) => {
+					if (curDrawerNavs[idx]) {
+						curDrawerNavs[idx].innerHTML = navEl.innerHTML;
+					}
+				});
 			}
 
 			// Close SearchModal or mobile nav drawer if open
@@ -420,9 +445,15 @@ import AjAnimatedMascot from "@/components/AjAnimatedMascot.astro";
 				searchDialog.close();
 				document.body.style.overflow = "";
 			}
-			const mobileNav = document.getElementById("nav-drawer");
-			if (mobileNav && !mobileNav.hidden) {
-				mobileNav.hidden = true;
+			const mobileNav = document.getElementById("nav-drawer") as HTMLDialogElement | null;
+			if (mobileNav) {
+				mobileNav.hidden = false;
+				mobileNav.removeAttribute("hidden");
+				if (mobileNav.open && typeof mobileNav.close === "function") {
+					mobileNav.close();
+				}
+				mobileNav.removeAttribute("open");
+				document.getElementById("nav-drawer-toggle")?.setAttribute("aria-expanded", "false");
 				document.body.style.overflow = "";
 			}
 
@@ -453,8 +484,9 @@ import AjAnimatedMascot from "@/components/AjAnimatedMascot.astro";
 			// Re-ensure drawer stays open if saved open
 			syncDrawerFromStorage();
 
-			// Notify page widgets (e.g. TranscriptModal, Recently Viewed tracker)
+			// Notify page widgets (e.g. TranscriptModal, Recently Viewed tracker, Courses/Topics filters)
 			window.dispatchEvent(new CustomEvent("cc:page-load"));
+			document.dispatchEvent(new CustomEvent("astro:page-load"));
 			return true;
 		} catch (err: unknown) {
 			if (err instanceof Error && err.name === "AbortError") {
@@ -720,17 +752,23 @@ import AjAnimatedMascot from "@/components/AjAnimatedMascot.astro";
 		}
 
 		const internalLinkRegex =
-			/\[([^\]]+)\]\(((\/(?:podcast|post)\/[a-zA-Z0-9_\-.]+))\)/gi;
+			/\[([^\]]+)\]\(((\/(?:podcast|post|course)\/[a-zA-Z0-9_\-.\/]+))\)/gi;
 		const internalLinks: Array<{
 			title: string;
 			url: string;
-			type: "podcast" | "post";
+			type: "podcast" | "post" | "course" | "lesson";
 		}> = [];
 		let intMatch: RegExpExecArray | null;
 		while ((intMatch = internalLinkRegex.exec(cleanedText)) !== null) {
 			const linkUrl = intMatch[2];
 			const linkTitle = intMatch[1];
-			const type = linkUrl.startsWith("/podcast") ? "podcast" : "post";
+			const type = linkUrl.startsWith("/podcast")
+				? "podcast"
+				: linkUrl.startsWith("/course") && linkUrl.includes("/lesson/")
+					? "lesson"
+					: linkUrl.startsWith("/course")
+						? "course"
+						: "post";
 			if (!internalLinks.some((l) => l.url === linkUrl)) {
 				internalLinks.push({ title: linkTitle, url: linkUrl, type });
 			}
@@ -832,12 +870,20 @@ import AjAnimatedMascot from "@/components/AjAnimatedMascot.astro";
 					}
 				}
 
+				const typeBadgeLabel =
+					link.type === "podcast"
+						? "Podcast Episode"
+						: link.type === "course"
+							? "Course"
+							: link.type === "lesson"
+								? "Lesson"
+								: "Blog Post";
 				cardsHtml += `
 					<div class="flex flex-col p-2.5 rounded-xl border border-border bg-background/70 hover:border-primary/50 transition-all text-left">
 						<a href="${link.url}" class="aj-internal-nav group flex items-center justify-between gap-2.5 no-underline">
 							<div class="min-w-0">
 								<div class="text-xs font-semibold text-foreground group-hover:text-primary transition-colors truncate">${escapeHtml(link.title)}</div>
-								<div class="text-[10px] font-mono text-muted-foreground uppercase tracking-wider">${isPodcast ? "Podcast Episode" : "Blog Post"}</div>
+								<div class="text-[10px] font-mono text-muted-foreground uppercase tracking-wider">${typeBadgeLabel}</div>
 							</div>
 							<span class="shrink-0 text-xs font-medium text-primary">Open →</span>
 						</a>

@@ -108,7 +108,7 @@ import { FEATURED_TOPICS, TOPIC_CATEGORIES, TOPICS } from "@/lib/topics";
 				</span>
 			</div>
 
-			<div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+			<div class="grid grid-cols-1 min-w-0 gap-6 md:grid-cols-2 lg:grid-cols-3">
 				{
 					FEATURED_TOPICS.map((topic) => (
 						<a
@@ -116,7 +116,7 @@ import { FEATURED_TOPICS, TOPIC_CATEGORIES, TOPICS } from "@/lib/topics";
 							data-featured-hub-card
 							data-topic-cat={topic.category}
 							data-topic-haystack={`${topic.title} ${topic.slug} ${(topic.aliases ?? []).join(" ")} ${topic.tagline} ${topic.description} ${topic.keywords.join(" ")}`.toLowerCase()}
-							class="duo-card hand-border group flex flex-col justify-between p-6 transition-all duration-200 hover:-translate-y-1.5 hover:border-[#7C3AED] dark:hover:border-[#C084FC]"
+							class="duo-card hand-border group flex min-w-0 max-w-full flex-col justify-between overflow-hidden p-5 sm:p-6 transition-all duration-200 hover:-translate-y-1.5 hover:border-[#7C3AED] dark:hover:border-[#C084FC]"
 						>
 							<div>
 								<div class="mb-4 flex items-center justify-between gap-3">
@@ -189,23 +189,23 @@ import { FEATURED_TOPICS, TOPIC_CATEGORIES, TOPICS } from "@/lib/topics";
 					return (
 						<section
 							data-topic-category-group={cat.id}
-							class="duo-card hand-border p-6"
+							class="duo-card hand-border-rect min-w-0 max-w-full overflow-hidden p-4 sm:p-6"
 						>
 							<div class="mb-4 flex flex-wrap items-center justify-between gap-2 border-b-2 border-dashed border-[#2A1155]/15 pb-3 dark:border-white/15">
-								<div class="flex items-center gap-2.5">
-									<span class="rounded-full border border-[#2A1155] bg-[#EDE9FE] px-3 py-1 font-mono text-xs font-extrabold text-[#7C3AED] dark:border-purple-400/40 dark:bg-purple-950/80 dark:text-purple-200">
+								<div class="flex min-w-0 items-center gap-2.5">
+									<span class="shrink-0 rounded-full border border-[#2A1155] bg-[#EDE9FE] px-3 py-1 font-mono text-xs font-extrabold text-[#7C3AED] dark:border-purple-400/40 dark:bg-purple-950/80 dark:text-purple-200">
 										{cat.badge}
 									</span>
-									<h3 class="font-display text-xl font-black text-[#2A1155] dark:text-white">
+									<h3 class="min-w-0 font-display text-xl font-black text-[#2A1155] dark:text-white">
 										{cat.label}
 									</h3>
 								</div>
-								<span class="font-mono text-xs font-bold text-[#2A1155]/65 dark:text-slate-400">
+								<span class="shrink-0 font-mono text-xs font-bold text-[#2A1155]/65 dark:text-slate-400">
 									{catTopics.length} hubs
 								</span>
 							</div>
 
-							<div class="grid gap-3 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+							<div class="grid grid-cols-1 min-w-0 gap-3 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
 								{catTopics.map((topic) => (
 									<a
 										href={`/topic/${topic.slug}`}
@@ -213,9 +213,9 @@ import { FEATURED_TOPICS, TOPIC_CATEGORIES, TOPICS } from "@/lib/topics";
 										data-topic-cat={topic.category}
 										data-topic-featured={topic.featured ? "true" : "false"}
 										data-topic-haystack={`${topic.title} ${topic.slug} ${(topic.aliases ?? []).join(" ")} ${topic.tagline} ${topic.description} ${topic.keywords.join(" ")}`.toLowerCase()}
-										class="group flex items-center justify-between gap-3 rounded-2xl border-2 border-[#2A1155]/25 bg-white px-3.5 py-2.5 transition-all hover:-translate-y-0.5 hover:border-[#7C3AED] hover:bg-[#EDE9FE]/50 dark:border-white/20 dark:bg-[#0B1326] dark:hover:border-[#C084FC] dark:hover:bg-purple-950/40 shadow-sketch-sm"
+										class="group flex min-w-0 max-w-full items-center justify-between gap-3 overflow-hidden rounded-2xl border-2 border-[#2A1155]/25 bg-white px-3.5 py-2.5 transition-all hover:-translate-y-0.5 hover:border-[#7C3AED] hover:bg-[#EDE9FE]/50 dark:border-white/20 dark:bg-[#0B1326] dark:hover:border-[#C084FC] dark:hover:bg-purple-950/40 shadow-sketch-sm"
 									>
-										<div class="flex min-w-0 items-center gap-2.5">
+										<div class="flex min-w-0 flex-1 items-center gap-2.5">
 											{topic.kind === "brand" && topic.symbolLight ? (
 												<div class="flex size-8 shrink-0 items-center justify-center rounded-xl border border-[#2A1155]/15 bg-[#FAF9FC] p-1.5 dark:border-white/15 dark:bg-[#131B2E]">
 													<img
@@ -238,14 +238,14 @@ import { FEATURED_TOPICS, TOPIC_CATEGORIES, TOPICS } from "@/lib/topics";
 													#
 												</div>
 											)}
-											<div class="min-w-0">
-												<div class="flex items-center gap-1.5">
+											<div class="min-w-0 flex-1">
+												<div class="flex min-w-0 items-center gap-1.5">
 													<span class="truncate font-display text-sm font-black text-[#2A1155] group-hover:text-[#7C3AED] dark:text-white dark:group-hover:text-[#C084FC]">
 														{topic.title}
 													</span>
 													{topic.featured && (
 														<span
-															class="text-[10px] text-[#CA8A04] dark:text-[#FACC15]"
+															class="shrink-0 text-[10px] text-[#CA8A04] dark:text-[#FACC15]"
 															title="Featured Core Hub"
 														>
 															★
@@ -284,169 +284,170 @@ import { FEATURED_TOPICS, TOPIC_CATEGORIES, TOPICS } from "@/lib/topics";
 			</p>
 		</div>
 	</section>
-</BaseLayout>
 
-<script is:inline>
-	(function () {
-		function initTopicsDirectory() {
-			var root = document.getElementById("topics-directory-root");
-			if (!root || root.dataset.bound === "true") return;
-			root.dataset.bound = "true";
+	<script is:inline>
+		(function () {
+			function initTopicsDirectory() {
+				var root = document.getElementById("topics-directory-root");
+				if (!root || root.dataset.bound === "true") return;
+				root.dataset.bound = "true";
 
-			var tabs = Array.from(root.querySelectorAll("[data-topics-cat]"));
-			var searchInput = root.querySelector("[data-topics-search]");
-			var featuredSection = root.querySelector("[data-featured-showcase-section]");
-			var featuredCards = Array.from(
-				root.querySelectorAll("[data-featured-hub-card]"),
-			);
-			var catGroups = Array.from(
-				root.querySelectorAll("[data-topic-category-group]"),
-			);
-			var cards = Array.from(root.querySelectorAll("[data-topic-card]"));
-			var countEl = root.querySelector("[data-topics-count]");
-			var resetBtn = root.querySelector("[data-topics-reset]");
-			var emptyBox = root.querySelector("[data-topics-empty]");
+				var tabs = Array.from(root.querySelectorAll("[data-topics-cat]"));
+				var searchInput = root.querySelector("[data-topics-search]");
+				var featuredSection = root.querySelector("[data-featured-showcase-section]");
+				var featuredCards = Array.from(
+					root.querySelectorAll("[data-featured-hub-card]"),
+				);
+				var catGroups = Array.from(
+					root.querySelectorAll("[data-topic-category-group]"),
+				);
+				var cards = Array.from(root.querySelectorAll("[data-topic-card]"));
+				var countEl = root.querySelector("[data-topics-count]");
+				var resetBtn = root.querySelector("[data-topics-reset]");
+				var emptyBox = root.querySelector("[data-topics-empty]");
 
-			var activeCat = "all";
-			var activeQuery = "";
+				var activeCat = "all";
+				var activeQuery = "";
 
-			function applyFilter() {
-				var q = activeQuery.trim().toLowerCase();
-				var visibleCount = 0;
+				function applyFilter() {
+					var q = activeQuery.trim().toLowerCase();
+					var visibleCount = 0;
 
-				// 1. Filter Tier 1 Featured Showcase
-				var visibleFeatured = 0;
-				for (var f = 0; f < featuredCards.length; f++) {
-					var fCard = featuredCards[f];
-					var fCat = fCard.dataset.topicCat || "";
-					var fHay = fCard.dataset.topicHaystack || "";
-					var fMatchCat =
-						activeCat === "all" ||
-						activeCat === "featured" ||
-						fCat === activeCat;
-					var fMatchQuery = !q || fHay.indexOf(q) !== -1;
-					var fShow = fMatchCat && fMatchQuery;
-					fCard.classList.toggle("hidden", !fShow);
-					if (fShow) visibleFeatured++;
-				}
-				if (featuredSection) {
-					featuredSection.classList.toggle("hidden", visibleFeatured === 0);
-				}
-
-				// 2. Filter Tier 2 Categorized Directory
-				for (var i = 0; i < cards.length; i++) {
-					var card = cards[i];
-					var cat = card.dataset.topicCat || "";
-					var isFeatured = card.dataset.topicFeatured === "true";
-					var hay = card.dataset.topicHaystack || "";
-
-					var matchesCat = false;
-					if (activeCat === "all") {
-						matchesCat = true;
-					} else if (activeCat === "featured") {
-						matchesCat = isFeatured;
-					} else {
-						matchesCat = cat === activeCat;
+					// 1. Filter Tier 1 Featured Showcase
+					var visibleFeatured = 0;
+					for (var f = 0; f < featuredCards.length; f++) {
+						var fCard = featuredCards[f];
+						var fCat = fCard.dataset.topicCat || "";
+						var fHay = fCard.dataset.topicHaystack || "";
+						var fMatchCat =
+							activeCat === "all" ||
+							activeCat === "featured" ||
+							fCat === activeCat;
+						var fMatchQuery = !q || fHay.indexOf(q) !== -1;
+						var fShow = fMatchCat && fMatchQuery;
+						fCard.classList.toggle("hidden", !fShow);
+						if (fShow) visibleFeatured++;
+					}
+					if (featuredSection) {
+						featuredSection.classList.toggle("hidden", visibleFeatured === 0);
 					}
 
-					var matchesQuery = !q || hay.indexOf(q) !== -1;
-					var visible = matchesCat && matchesQuery;
-					card.classList.toggle("hidden", !visible);
-					if (visible) visibleCount++;
-				}
+					// 2. Filter Tier 2 Categorized Directory
+					for (var i = 0; i < cards.length; i++) {
+						var card = cards[i];
+						var cat = card.dataset.topicCat || "";
+						var isFeatured = card.dataset.topicFeatured === "true";
+						var hay = card.dataset.topicHaystack || "";
 
-				for (var g = 0; g < catGroups.length; g++) {
-					var group = catGroups[g];
-					var groupCards = Array.from(
-						group.querySelectorAll("[data-topic-card]"),
-					);
-					var hasAnyVisible = groupCards.some(function (c) {
-						return !c.classList.contains("hidden");
-					});
-					group.classList.toggle("hidden", !hasAnyVisible);
-				}
+						var matchesCat = false;
+						if (activeCat === "all") {
+							matchesCat = true;
+						} else if (activeCat === "featured") {
+							matchesCat = isFeatured;
+						} else {
+							matchesCat = cat === activeCat;
+						}
 
-				for (var t = 0; t < tabs.length; t++) {
-					var tab = tabs[t];
-					var isActive = (tab.dataset.topicsCat || "all") === activeCat;
-					tab.setAttribute("aria-selected", isActive ? "true" : "false");
-					if (isActive) {
-						tab.classList.add(
-							"bg-[#7C3AED]",
-							"text-white",
-							"dark:border-white/50",
+						var matchesQuery = !q || hay.indexOf(q) !== -1;
+						var visible = matchesCat && matchesQuery;
+						card.classList.toggle("hidden", !visible);
+						if (visible) visibleCount++;
+					}
+
+					for (var g = 0; g < catGroups.length; g++) {
+						var group = catGroups[g];
+						var groupCards = Array.from(
+							group.querySelectorAll("[data-topic-card]"),
 						);
-						tab.classList.remove(
-							"bg-white",
-							"text-[#2A1155]",
-							"dark:bg-[#131B2E]",
-							"dark:text-slate-100",
-						);
-					} else {
-						tab.classList.remove(
-							"bg-[#7C3AED]",
-							"text-white",
-							"dark:border-white/50",
-						);
-						tab.classList.add(
-							"bg-white",
-							"text-[#2A1155]",
-							"dark:bg-[#131B2E]",
-							"dark:text-slate-100",
+						var hasAnyVisible = groupCards.some(function (c) {
+							return !c.classList.contains("hidden");
+						});
+						group.classList.toggle("hidden", !hasAnyVisible);
+					}
+
+					for (var t = 0; t < tabs.length; t++) {
+						var tab = tabs[t];
+						var isActive = (tab.dataset.topicsCat || "all") === activeCat;
+						tab.setAttribute("aria-selected", isActive ? "true" : "false");
+						if (isActive) {
+							tab.classList.add(
+								"bg-[#7C3AED]",
+								"text-white",
+								"dark:border-white/50",
+							);
+							tab.classList.remove(
+								"bg-white",
+								"text-[#2A1155]",
+								"dark:bg-[#131B2E]",
+								"dark:text-slate-100",
+							);
+						} else {
+							tab.classList.remove(
+								"bg-[#7C3AED]",
+								"text-white",
+								"dark:border-white/50",
+							);
+							tab.classList.add(
+								"bg-white",
+								"text-[#2A1155]",
+								"dark:bg-[#131B2E]",
+								"dark:text-slate-100",
+							);
+						}
+					}
+
+					if (countEl) {
+						countEl.textContent =
+							"Showing " +
+							visibleCount +
+							" of " +
+							cards.length +
+							" topic & vendor hubs";
+					}
+
+					var hasFilter = activeCat !== "all" || q.length > 0;
+					if (resetBtn) {
+						resetBtn.classList.toggle("hidden", !hasFilter);
+					}
+					if (emptyBox) {
+						emptyBox.classList.toggle(
+							"hidden",
+							visibleCount > 0 || visibleFeatured > 0,
 						);
 					}
 				}
 
-				if (countEl) {
-					countEl.textContent =
-						"Showing " +
-						visibleCount +
-						" of " +
-						cards.length +
-						" topic & vendor hubs";
+				for (var b = 0; b < tabs.length; b++) {
+					(function (tab) {
+						tab.addEventListener("click", function () {
+							activeCat = tab.dataset.topicsCat || "all";
+							applyFilter();
+						});
+					})(tabs[b]);
 				}
 
-				var hasFilter = activeCat !== "all" || q.length > 0;
-				if (resetBtn) {
-					resetBtn.classList.toggle("hidden", !hasFilter);
-				}
-				if (emptyBox) {
-					emptyBox.classList.toggle(
-						"hidden",
-						visibleCount > 0 || visibleFeatured > 0,
-					);
-				}
-			}
-
-			for (var b = 0; b < tabs.length; b++) {
-				(function (tab) {
-					tab.addEventListener("click", function () {
-						activeCat = tab.dataset.topicsCat || "all";
+				if (searchInput) {
+					searchInput.addEventListener("input", function () {
+						activeQuery = searchInput.value || "";
 						applyFilter();
 					});
-				})(tabs[b]);
+				}
+
+				if (resetBtn) {
+					resetBtn.addEventListener("click", function () {
+						activeCat = "all";
+						activeQuery = "";
+						if (searchInput) searchInput.value = "";
+						applyFilter();
+					});
+				}
 			}
 
-			if (searchInput) {
-				searchInput.addEventListener("input", function () {
-					activeQuery = searchInput.value || "";
-					applyFilter();
-				});
-			}
-
-			if (resetBtn) {
-				resetBtn.addEventListener("click", function () {
-					activeCat = "all";
-					activeQuery = "";
-					if (searchInput) searchInput.value = "";
-					applyFilter();
-				});
-			}
-		}
-
-		document.addEventListener("DOMContentLoaded", initTopicsDirectory);
-		window.addEventListener("load", initTopicsDirectory);
-		document.addEventListener("astro:page-load", initTopicsDirectory);
-		initTopicsDirectory();
-	})();
-</script>
+			document.addEventListener("DOMContentLoaded", initTopicsDirectory);
+			window.addEventListener("load", initTopicsDirectory);
+			document.addEventListener("astro:page-load", initTopicsDirectory);
+			window.addEventListener("cc:page-load", initTopicsDirectory);
+			initTopicsDirectory();
+		})();
+	</script>
+</BaseLayout>

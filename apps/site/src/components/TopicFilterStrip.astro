@@ -167,7 +167,7 @@ const isExtraActiveTopic = Boolean(
 			data-topic-popover-panel
 			role="dialog"
 			aria-label="Search and select a topic or vendor tag"
-			class="hidden absolute left-0 top-full z-40 mt-2 w-[min(92vw,34rem)] rounded-3xl border-2 border-[#2A1155] bg-[#FAF9FC] p-4 shadow-sketch dark:border-white/25 dark:bg-[#131B2E]"
+			class="hidden fixed inset-x-3 top-20 z-50 rounded-3xl border-2 border-[#2A1155] bg-[#FAF9FC] p-4 shadow-sketch dark:border-white/25 dark:bg-[#131B2E] sm:absolute sm:inset-x-auto sm:left-0 sm:top-full sm:mt-2 sm:w-[min(92vw,34rem)]"
 		>
 			{/* Search Input + Close Button */}
 			<div class="flex items-center gap-2">
@@ -464,6 +464,7 @@ const isExtraActiveTopic = Boolean(
 		document.addEventListener("DOMContentLoaded", initTopicFilterStrips);
 		window.addEventListener("load", initTopicFilterStrips);
 		document.addEventListener("astro:page-load", initTopicFilterStrips);
+		window.addEventListener("cc:page-load", initTopicFilterStrips);
 		initTopicFilterStrips();
 	})();
 </script>

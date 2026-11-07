@@ -20,7 +20,8 @@
     "typegen": "pnpm --filter @codingcatdev/sanity typegen",
     "build:production": "pnpm --filter @codingcatdev/site build:production",
     "preview": "pnpm --filter @codingcatdev/site preview",
-    "test:e2e": "pnpm --filter @codingcatdev/site test:e2e"
+    "test:e2e": "pnpm --filter @codingcatdev/site test:e2e",
+    "test:ui": "pnpm --filter @codingcatdev/site test:ui"
   },
   "devDependencies": {
     "@portabletext/markdown": "^2.5.0",

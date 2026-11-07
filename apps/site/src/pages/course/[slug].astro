@@ -197,35 +197,29 @@ const sanitizedContent = (course.content ?? []).filter((block) => {
 		}
 
 		{
-			sanitizedContent.length > 0 && (
-				<div class="my-8">
-					<PortableTextContent
-						value={sanitizedContent}
-						class="mx-auto prose-violet lg:prose-xl lg:max-w-4xl"
-					/>
-				</div>
-			)
-		}
-
-		{
 			sections.length > 0 && (
-				<section class="my-12">
-					<h2 class="mb-6 font-display text-3xl font-black text-[#2A1155] dark:text-white">
-						course lessons<span class="text-[#7C3AED] dark:text-[#C084FC]">.</span>
-					</h2>
-					<div class="grid gap-6">
+				<section id="course-lessons-section" class="my-10">
+					<div class="mb-6 flex flex-wrap items-end justify-between gap-3">
+						<h2 class="font-display text-3xl font-black text-[#2A1155] dark:text-white">
+							course lessons<span class="text-[#7C3AED] dark:text-[#C084FC]">.</span>
+						</h2>
+						<span class="font-mono text-xs font-bold text-[#2A1155]/70 dark:text-slate-400">
+							{sections.length} {sections.length === 1 ? "Section" : "Sections"} &middot; {allLessons.length} {allLessons.length === 1 ? "Lesson" : "Lessons"}
+						</span>
+					</div>
+					<div class="grid grid-cols-1 min-w-0 gap-6">
 						{sections.map((sec, sIdx) => (
-							<div class="duo-card hand-border p-6">
-								<div class="mb-4 flex items-center gap-3">
-									<span class="inline-flex size-9 items-center justify-center rounded-full border-2 border-[#2A1155] bg-[#7C3AED] font-display font-black text-white shadow-sketch-sm dark:border-white/50">
+							<div class="duo-card hand-border-rect min-w-0 max-w-full overflow-hidden p-4 sm:p-6">
+								<div class="mb-4 flex min-w-0 items-center gap-3">
+									<span class="inline-flex size-9 shrink-0 items-center justify-center rounded-full border-2 border-[#2A1155] bg-[#7C3AED] font-display font-black text-white shadow-sketch-sm dark:border-white/50">
 										{sIdx + 1}
 									</span>
-									<h3 class="font-display text-2xl font-black text-[#2A1155] dark:text-white">
+									<h3 class="min-w-0 font-display text-xl font-black text-[#2A1155] dark:text-white sm:text-2xl">
 										{sec?.title || `Section ${sIdx + 1}`}
 									</h3>
 								</div>
 								{sec?.lesson && sec.lesson.length > 0 && (
-									<ul class="grid gap-3 sm:grid-cols-2">
+									<ul class="grid grid-cols-1 min-w-0 gap-3 sm:grid-cols-2">
 										{sec.lesson.map((lesson, lIdx) => {
 											const lessonHref = lesson?.slug
 												? `/course/${slug}/lesson/${lesson.slug}`
@@ -234,18 +228,18 @@ const sanitizedContent = (course.content ?? []).filter((block) => {
 												lesson?.youtube || lesson?.videoCloudinary?.asset?._ref,
 											);
 											return (
-												<li>
+												<li class="min-w-0">
 													{lessonHref ? (
 														<a
 															href={lessonHref}
-															class="group flex h-full flex-col justify-between gap-3 rounded-xl border-2 border-[#2A1155] bg-[#FAF9FC] p-4 shadow-sketch-sm transition hover:-translate-y-0.5 hover:border-[#7C3AED] hover:bg-[#F3E8FF]/60 dark:border-white/20 dark:bg-[#0B1326] dark:hover:border-[#C084FC] dark:hover:bg-[#131B2E]"
+															class="group flex h-full min-w-0 max-w-full flex-col justify-between gap-3 overflow-hidden rounded-xl border-2 border-[#2A1155] bg-[#FAF9FC] p-4 shadow-sketch-sm transition hover:-translate-y-0.5 hover:border-[#7C3AED] hover:bg-[#F3E8FF]/60 dark:border-white/20 dark:bg-[#0B1326] dark:hover:border-[#C084FC] dark:hover:bg-[#131B2E]"
 														>
-															<div class="flex items-start gap-3">
+															<div class="flex min-w-0 items-start gap-3">
 																<span class="mt-0.5 inline-flex shrink-0 items-center justify-center rounded-md border border-[#7C3AED]/40 bg-[#EDE9FE] px-2 py-0.5 font-mono text-xs font-extrabold text-[#7C3AED] dark:border-purple-400/40 dark:bg-purple-950/60 dark:text-[#C084FC]">
 																	{sIdx + 1}.{lIdx + 1}
 																</span>
 																<div class="min-w-0 flex-1">
-																	<span class="block font-bold text-[#2A1155] transition group-hover:text-[#7C3AED] dark:text-slate-100 dark:group-hover:text-[#C084FC]">
+																	<span class="block break-words font-bold text-[#2A1155] transition group-hover:text-[#7C3AED] dark:text-slate-100 dark:group-hover:text-[#C084FC]">
 																		{lesson?.title || `Lesson ${lIdx + 1}`}
 																	</span>
 																	{lesson?.excerpt && (
@@ -275,11 +269,11 @@ const sanitizedContent = (course.content ?? []).filter((block) => {
 															</div>
 														</a>
 													) : (
-														<div class="flex items-start gap-3 rounded-xl border-2 border-[#2A1155] bg-[#FAF9FC] p-4 shadow-sketch-sm dark:border-white/20 dark:bg-[#0B1326]">
-															<span class="font-mono text-xs font-extrabold text-[#7C3AED] dark:text-[#C084FC]">
+														<div class="flex min-w-0 items-start gap-3 rounded-xl border-2 border-[#2A1155] bg-[#FAF9FC] p-4 shadow-sketch-sm dark:border-white/20 dark:bg-[#0B1326]">
+															<span class="shrink-0 font-mono text-xs font-extrabold text-[#7C3AED] dark:text-[#C084FC]">
 																{sIdx + 1}.{lIdx + 1}
 															</span>
-															<span class="font-bold text-[#2A1155] dark:text-slate-100">
+															<span class="min-w-0 break-words font-bold text-[#2A1155] dark:text-slate-100">
 																{lesson?.title || `Lesson ${lIdx + 1}`}
 															</span>
 														</div>
@@ -292,6 +286,20 @@ const sanitizedContent = (course.content ?? []).filter((block) => {
 							</div>
 						))}
 					</div>
+				</section>
+			)
+		}
+
+		{
+			sanitizedContent.length > 0 && (
+				<section id="course-overview-section" class="my-12">
+					<h2 class="mb-6 font-display text-3xl font-black text-[#2A1155] dark:text-white">
+						course overview<span class="text-[#7C3AED] dark:text-[#C084FC]">.</span>
+					</h2>
+					<PortableTextContent
+						value={sanitizedContent}
+						class="mx-auto prose-violet lg:prose-xl lg:max-w-4xl"
+					/>
 				</section>
 			)
 		}

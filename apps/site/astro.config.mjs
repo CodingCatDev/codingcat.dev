@@ -44,7 +44,7 @@ export default defineConfig({
 		// Images are Sanity CDN URLs already transformed by @sanity/image-url;
 		// do not route them through Cloudflare Images.
 		imageService: "passthrough",
-		platformProxy: { enabled: true },
+		remoteBindings: false,
 	}),
 	integrations: [react()],
 	// Replaces next/font/google. The CSS variable names match the ones
@@ -99,5 +99,8 @@ export default defineConfig({
 	vite: {
 		plugins: [tailwindcss(), rawFonts([".ttf", ".otf"])],
 		assetsInclude: ["**/*.wasm"],
+		optimizeDeps: {
+			include: ["astro/assets/services/noop"],
+		},
 	},
 });

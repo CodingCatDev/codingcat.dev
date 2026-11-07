@@ -44,3 +44,9 @@ package-lock.json
 
 # agents teamwork
 .agents/
+
+# playwright
+test-results/
+playwright-report/
+blob-report/
+playwright/.cache/
