@@ -510,9 +510,8 @@ try {
 			rescheduleReason: bookingDoc?.rescheduleReason,
 			podcastSlug:
 				linkedPodcastDoc?.slug?.current ||
-				bookingDoc?.podcastSlug ||
-				(isPostProd ? candidatePodcastSlug : undefined),
-			podcastDocId: linkedPodcastDoc?._id || bookingDoc?.podcastDocId,
+				(isPostProd ? bookingDoc?.podcastSlug || candidatePodcastSlug : undefined),
+			podcastDocId: linkedPodcastDoc?._id,
 			podcastTitle:
 				linkedPodcastDoc?.title ||
 				(bookingDoc?.topics
@@ -520,7 +519,8 @@ try {
 					: undefined),
 			podcastExcerpt: linkedPodcastDoc?.excerpt,
 			podcastWorkflowStage:
-				linkedPodcastDoc?.workflowStage || resolvedBookingStatus,
+				linkedPodcastDoc?.workflowStage ||
+				(isPostProd ? resolvedBookingStatus : undefined),
 			roughCutUrl: bookingDoc?.roughCutUrl || linkedPodcastDoc?.youtube,
 			roughCutNotes:
 				linkedPodcastDoc?.roughCutNotes || bookingDoc?.roughCutNotes,
@@ -726,11 +726,14 @@ const postProductionStages = [
 	{ id: "published", label: "5. Published", icon: "✅" },
 ] as const;
 const activeStageId =
-	portalData.podcastWorkflowStage || portalData.bookingStatus || "recorded";
-const currentStageIndex = Math.max(
-	0,
-	postProductionStages.findIndex((s) => s.id === activeStageId),
-);
+	portalData.podcastWorkflowStage ||
+	(isPostProductionStatus ? portalData.bookingStatus : undefined);
+const currentStageIndex = activeStageId
+	? Math.max(
+			0,
+			postProductionStages.findIndex((s) => s.id === activeStageId),
+		)
+	: -1;
 
 const pageTitle = !portalFound
 	? "Studio Portal Not Found | CodingCat.dev"
@@ -1501,13 +1504,29 @@ const pageDescription = !portalFound
 						<label for="portal-rebook-date-picker" class="text-xs font-bold uppercase tracking-wider text-primary">
 							2. Jump to Specific Date / Week
 						</label>
-						<div class="flex items-center gap-2">
+						<div class="flex items-center gap-1.5">
+							<button
+								type="button"
+								id="portal-btn-prev-week"
+								class="px-2.5 py-2 rounded-xl border border-border bg-card hover:bg-muted text-xs font-mono font-bold text-foreground cursor-pointer transition-colors shrink-0"
+								title="Earlier week"
+							>
+								&larr; Earlier
+							</button>
 							<input
 								type="date"
 								id="portal-rebook-date-picker"
 								min={new Date(Date.now() + 86400_000).toISOString().slice(0, 10)}
-								class="flex-1 rounded-xl border border-border bg-card px-3 py-2 text-xs font-mono font-semibold text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+								class="flex-1 min-w-[125px] rounded-xl border border-border bg-card px-2.5 py-2 text-xs font-mono font-semibold text-foreground focus:outline-none focus:ring-2 focus:ring-primary cursor-pointer"
 							/>
+							<button
+								type="button"
+								id="portal-btn-next-week"
+								class="px-2.5 py-2 rounded-xl border border-border bg-card hover:bg-muted text-xs font-mono font-bold text-foreground cursor-pointer transition-colors shrink-0"
+								title="Next week"
+							>
+								Later &rarr;
+							</button>
 							<span id="portal-slots-loading-pill" class="hidden text-[11px] font-mono text-primary font-bold">
 								Syncing...
 							</span>
@@ -1601,7 +1620,7 @@ const pageDescription = !portalFound
 			</div>
 		</section>
 
-		{(isPostProductionStatus || portalData.roughCutUrl || portalData.podcastSlug) && (
+		{(isPostProductionStatus || Boolean(portalData.roughCutUrl)) && (
 			<section
 				id="post-production-review"
 				class="flex flex-col gap-5 p-5 sm:p-6 rounded-2xl border-2 border-purple-500/60 bg-purple-500/[0.04] shadow-xs scroll-mt-20"
@@ -4151,41 +4170,97 @@ const pageDescription = !portalFound
 		});
 
 		// Live Week / Date Picker inside Rebook Drawer
-		if (datePicker && datePicker instanceof HTMLInputElement) {
-			datePicker.addEventListener("change", async () => {
-				const startDate = datePicker.value;
-				if (!startDate) return;
-				if (loadingPill) loadingPill.classList.remove("hidden");
-				try {
-					const [res15, res45] = await Promise.all([
-						fetch(`/api/calendar/freebusy?limit=9&duration=15&startDate=${encodeURIComponent(startDate)}`),
-						fetch(`/api/calendar/freebusy?limit=9&duration=45&startDate=${encodeURIComponent(startDate)}`),
-					]);
-					const [data15, data45] = await Promise.all([res15.json(), res45.json()]);
-					if (data15?.slots && Array.isArray(data15.slots) && grid15) {
-						selectedSlot15 = data15.slots[0]?.startAt || "";
-						grid15.innerHTML = data15.slots
-							.map(
-								(s, idx) => `<button type="button" data-slot-start="${s.startAt}" data-slot-duration="15" class="portal-slot-btn-15 p-3 rounded-xl border text-left transition-all cursor-pointer flex flex-col gap-0.5 ${idx === 0 ? "border-primary bg-primary/10 ring-1 ring-primary" : "border-border bg-card hover:border-primary"}"><span class="font-bold text-xs text-foreground" data-slot-date-label>${s.displayDate}</span><span class="text-xs text-primary font-mono font-bold" data-slot-local-label>${s.displayTime}</span><span class="text-[10px] text-muted-foreground font-mono" data-slot-et-label>${s.displayTime}</span></button>`,
-							)
-							.join("");
-						hydrateSlotButtonLabels(grid15);
-					}
-					if (data45?.slots && Array.isArray(data45.slots) && grid45) {
-						selectedSlot45 = data45.slots[0]?.startAt || "";
-						grid45.innerHTML = data45.slots
-							.map(
-								(s, idx) => `<button type="button" data-slot-start="${s.startAt}" data-slot-duration="45" class="portal-slot-btn-45 p-3 rounded-xl border text-left transition-all cursor-pointer flex flex-col gap-0.5 ${idx === 0 ? "border-primary bg-primary/10 ring-1 ring-primary" : "border-border bg-card hover:border-primary"}"><span class="font-bold text-xs text-foreground" data-slot-date-label>${s.displayDate}</span><span class="text-xs text-primary font-mono font-bold" data-slot-local-label>${s.displayTime}</span><span class="text-[10px] text-muted-foreground font-mono" data-slot-et-label>${s.displayTime}</span></button>`,
-							)
-							.join("");
-						hydrateSlotButtonLabels(grid45);
-					}
-					bindSlotClicks();
-				} catch {
-					// Keep existing slots on network error
-				} finally {
-					if (loadingPill) loadingPill.classList.add("hidden");
+		const portalBtnPrevWeek = document.getElementById("portal-btn-prev-week");
+		const portalBtnNextWeek = document.getElementById("portal-btn-next-week");
+		const portalMinDateMs = Date.now() + 86400_000;
+		const portalMaxDateMs = Date.now() + 180 * 86400_000;
+
+		if (datePicker && datePicker instanceof HTMLInputElement && !datePicker.value) {
+			const initBtn = document.querySelector(".portal-slot-btn-45, .portal-slot-btn-15");
+			const initStart = initBtn ? initBtn.getAttribute("data-slot-start") : "";
+			datePicker.value = initStart
+				? initStart.slice(0, 10)
+				: new Date(portalMinDateMs).toISOString().slice(0, 10);
+		}
+
+		async function fetchPortalSlotsForDate(startDate) {
+			if (!startDate) return;
+			if (datePicker && datePicker instanceof HTMLInputElement) {
+				datePicker.value = startDate;
+			}
+			if (loadingPill) loadingPill.classList.remove("hidden");
+			try {
+				const [res15, res45] = await Promise.all([
+					fetch(`/api/calendar/freebusy?limit=9&duration=15&startDate=${encodeURIComponent(startDate)}`),
+					fetch(`/api/calendar/freebusy?limit=9&duration=45&startDate=${encodeURIComponent(startDate)}`),
+				]);
+				const [data15, data45] = await Promise.all([res15.json(), res45.json()]);
+				if (data15?.slots && Array.isArray(data15.slots) && grid15) {
+					selectedSlot15 = data15.slots[0]?.startAt || "";
+					grid15.innerHTML = data15.slots
+						.map(
+							(s, idx) => `<button type="button" data-slot-start="${s.startAt}" data-slot-duration="15" class="portal-slot-btn-15 p-3 rounded-xl border text-left transition-all cursor-pointer flex flex-col gap-0.5 ${idx === 0 ? "border-primary bg-primary/10 ring-1 ring-primary" : "border-border bg-card hover:border-primary"}"><span class="font-bold text-xs text-foreground" data-slot-date-label>${s.displayDate}</span><span class="text-xs text-primary font-mono font-bold" data-slot-local-label>${s.displayTime}</span><span class="text-[10px] text-muted-foreground font-mono" data-slot-et-label>${s.displayTime}</span></button>`,
+						)
+						.join("");
+					hydrateSlotButtonLabels(grid15);
 				}
+				if (data45?.slots && Array.isArray(data45.slots) && grid45) {
+					selectedSlot45 = data45.slots[0]?.startAt || "";
+					if (datePicker && datePicker instanceof HTMLInputElement && data45.slots[0]?.startAt) {
+						datePicker.value = data45.slots[0].startAt.slice(0, 10);
+					}
+					grid45.innerHTML = data45.slots
+						.map(
+							(s, idx) => `<button type="button" data-slot-start="${s.startAt}" data-slot-duration="45" class="portal-slot-btn-45 p-3 rounded-xl border text-left transition-all cursor-pointer flex flex-col gap-0.5 ${idx === 0 ? "border-primary bg-primary/10 ring-1 ring-primary" : "border-border bg-card hover:border-primary"}"><span class="font-bold text-xs text-foreground" data-slot-date-label>${s.displayDate}</span><span class="text-xs text-primary font-mono font-bold" data-slot-local-label>${s.displayTime}</span><span class="text-[10px] text-muted-foreground font-mono" data-slot-et-label>${s.displayTime}</span></button>`,
+						)
+						.join("");
+					hydrateSlotButtonLabels(grid45);
+				}
+				bindSlotClicks();
+			} catch {
+				// Keep existing slots on network error
+			} finally {
+				if (loadingPill) loadingPill.classList.add("hidden");
+			}
+		}
+
+		if (datePicker && datePicker instanceof HTMLInputElement) {
+			datePicker.addEventListener("change", () => {
+				if (datePicker.value) fetchPortalSlotsForDate(datePicker.value);
+			});
+		}
+
+		if (portalBtnPrevWeek) {
+			portalBtnPrevWeek.addEventListener("click", () => {
+				const curStr =
+					datePicker && datePicker instanceof HTMLInputElement && datePicker.value
+						? datePicker.value
+						: new Date(portalMinDateMs).toISOString().slice(0, 10);
+				const prevMs = Math.max(
+					portalMinDateMs,
+					new Date(`${curStr}T12:00:00Z`).getTime() - 7 * 86400_000,
+				);
+				fetchPortalSlotsForDate(new Date(prevMs).toISOString().slice(0, 10));
+			});
+		}
+
+		if (portalBtnNextWeek) {
+			portalBtnNextWeek.addEventListener("click", () => {
+				const activeGrid = activeDuration === 15 ? grid15 : grid45;
+				const lastBtn = activeGrid ? activeGrid.querySelector("button[data-slot-start]:last-of-type") : null;
+				const lastStart = lastBtn ? lastBtn.getAttribute("data-slot-start") : "";
+				const curStr =
+					lastStart
+						? lastStart.slice(0, 10)
+						: datePicker && datePicker instanceof HTMLInputElement && datePicker.value
+							? datePicker.value
+							: new Date(portalMinDateMs).toISOString().slice(0, 10);
+				const stepMs = lastStart ? 86400_000 : 7 * 86400_000;
+				const nextMs = Math.min(
+					portalMaxDateMs,
+					new Date(`${curStr}T12:00:00Z`).getTime() + stepMs,
+				);
+				fetchPortalSlotsForDate(new Date(nextMs).toISOString().slice(0, 10));
 			});
 		}
 
