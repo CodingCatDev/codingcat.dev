@@ -39,17 +39,18 @@ const RATING_OPTIONS = [
 <!-- Floating Bottom-Left Trigger Button (avoids Agent AJ on bottom-right) -->
 <div
 	id="pf-floating-dock"
-	class="fixed bottom-5 left-5 z-40 flex items-center gap-2 print:hidden"
+	class="fixed bottom-24 sm:bottom-5 left-4 sm:left-5 z-40 flex items-center gap-2 print:hidden"
 >
 	<button
 		type="button"
 		id="pf-open-btn"
 		data-open-portal-feedback
-		class="group inline-flex items-center gap-2.5 px-4 py-2.5 rounded-full bg-[#2A1155] dark:bg-[#7C3AED] text-white font-bold text-xs md:text-sm border-2 border-[#2A1155] dark:border-white/30 shadow-[3px_3px_0px_0px_#7C3AED] dark:shadow-[3px_3px_0px_0px_#000000] hover:translate-y-[-1px] transition-all cursor-pointer"
+		class="group inline-flex items-center gap-2 px-3 py-2 sm:px-4 sm:py-2.5 rounded-full bg-[#2A1155] dark:bg-[#7C3AED] text-white font-bold text-xs md:text-sm border-2 border-[#2A1155] dark:border-white/30 shadow-[3px_3px_0px_0px_#7C3AED] dark:shadow-[3px_3px_0px_0px_#000000] hover:translate-y-[-1px] transition-all cursor-pointer"
 		title="Share feedback on the booking process or capture & mark up your screen"
 	>
 		<span class="text-base leading-none">🛠️</span>
-		<span>Feedback &amp; Annotate Screen</span>
+		<span class="hidden sm:inline">Feedback &amp; Annotate Screen</span>
+		<span class="sm:hidden">Feedback</span>
 		<span class="hidden sm:inline-block px-1.5 py-0.5 rounded-full bg-white/15 font-mono text-[10px] uppercase tracking-wider">
 			Beta
 		</span>
