@@ -59,6 +59,33 @@ const resolvedPortalToken =
 	initialPortalToken || existingBooking?.portalToken || "";
 const resolvedBookingId = existingBooking?._id || initialBookingIdParam || "";
 const alreadySigned = Boolean(existingBooking?.signatureData);
+const existingSlotStartAt =
+	initialTrack === "sponsor-kickoff" || Boolean(initialPreMeetingFor)
+		? existingBooking?.preMeetingSlotStartAt || ""
+		: existingBooking?.slotStartAt || "";
+const existingSlotFormatted = existingSlotStartAt
+	? (() => {
+			try {
+				const d = new Date(existingSlotStartAt);
+				const pt = d.toLocaleString("en-US", {
+					weekday: "short",
+					month: "short",
+					day: "numeric",
+					hour: "numeric",
+					minute: "2-digit",
+					timeZone: "America/Los_Angeles",
+				});
+				const et = d.toLocaleTimeString("en-US", {
+					hour: "numeric",
+					minute: "2-digit",
+					timeZone: "America/New_York",
+				});
+				return `${pt} PT / ${et} ET`;
+			} catch {
+				return existingSlotStartAt;
+			}
+		})()
+	: "";
 const initialSlotParam = searchParams.get("slot") || "";
 const initialStartDate = searchParams.get("startDate") || undefined;
 
@@ -238,7 +265,7 @@ const description =
 				<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
 					<h2 class="text-lg font-bold flex items-center gap-2 flex-wrap">
 						<span class="flex items-center justify-center size-6 rounded-full bg-primary text-primary-foreground text-xs font-bold">2</span>
-						Select Preferred Recording Window
+						{existingBooking ? "Reschedule or Select Preferred Recording Window" : "Select Preferred Recording Window"}
 						{liveVerified && (
 							<span class="text-[11px] font-mono font-semibold px-2 py-0.5 rounded bg-primary/10 text-primary">
 								✓ Live Calendar FreeBusy Verified
@@ -250,52 +277,74 @@ const description =
 					</span>
 				</div>
 
+				{existingBooking && (
+					<div class="rounded-xl border border-primary/40 bg-primary/10 p-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+						<div class="flex flex-col gap-1">
+							<span class="text-xs font-bold text-primary uppercase font-mono tracking-wider">
+								{existingSlotFormatted
+									? `Current Scheduled Window: ${existingSlotFormatted}`
+									: `Rescheduling Session for ${initialName || initialCompany || "Guest"}`}
+							</span>
+							<span id="selected-slot-banner-text" class="text-xs text-foreground">
+								Tap any time slot below to select your new date &amp; time, then tap <strong>Confirm New Date &amp; Time</strong>.
+							</span>
+						</div>
+						<button
+							type="button"
+							id="btn-quick-reschedule-top"
+							class="shrink-0 px-4 py-2 rounded-xl bg-primary text-primary-foreground text-xs font-extrabold hover:bg-primary/90 transition-all shadow-xs cursor-pointer"
+						>
+							Confirm New Date &amp; Time &rarr;
+						</button>
+					</div>
+				)}
+
 				<!-- Date & Week Range Controls (Schedule Further Out) -->
-				<div class="flex flex-col md:flex-row md:items-center justify-between gap-3 p-3 rounded-xl border border-border bg-muted/30">
+				<div class="flex flex-col md:flex-row md:items-center justify-between gap-3 p-3 rounded-xl border border-border bg-muted/30 scroll-mt-24">
 					<div class="flex flex-wrap items-center gap-1.5">
 						<span class="text-xs font-semibold text-muted-foreground mr-1">Jump to:</span>
 						<button
 							type="button"
 							data-jump-offset="0"
-							class="date-jump-btn px-2.5 py-1 rounded-lg text-xs font-semibold border border-primary bg-primary/10 text-primary cursor-pointer transition-colors"
+							class="date-jump-btn px-2.5 py-1.5 rounded-lg text-xs font-semibold border border-primary bg-primary/10 text-primary cursor-pointer transition-colors"
 						>
 							Next Available
 						</button>
 						<button
 							type="button"
 							data-jump-offset="7"
-							class="date-jump-btn px-2.5 py-1 rounded-lg text-xs font-medium border border-border bg-background hover:border-primary text-foreground cursor-pointer transition-colors"
+							class="date-jump-btn px-2.5 py-1.5 rounded-lg text-xs font-medium border border-border bg-background hover:border-primary text-foreground cursor-pointer transition-colors"
 						>
 							+1 Week
 						</button>
 						<button
 							type="button"
 							data-jump-offset="14"
-							class="date-jump-btn px-2.5 py-1 rounded-lg text-xs font-medium border border-border bg-background hover:border-primary text-foreground cursor-pointer transition-colors"
+							class="date-jump-btn px-2.5 py-1.5 rounded-lg text-xs font-medium border border-border bg-background hover:border-primary text-foreground cursor-pointer transition-colors"
 						>
 							+2 Weeks
 						</button>
 						<button
 							type="button"
 							data-jump-offset="30"
-							class="date-jump-btn px-2.5 py-1 rounded-lg text-xs font-medium border border-border bg-background hover:border-primary text-foreground cursor-pointer transition-colors"
+							class="date-jump-btn px-2.5 py-1.5 rounded-lg text-xs font-medium border border-border bg-background hover:border-primary text-foreground cursor-pointer transition-colors"
 						>
 							+1 Month
 						</button>
 						<button
 							type="button"
 							data-jump-date="2026-12-07"
-							class="date-jump-btn px-2.5 py-1 rounded-lg text-xs font-medium border border-border bg-background hover:border-primary text-foreground cursor-pointer transition-colors"
+							class="date-jump-btn px-2.5 py-1.5 rounded-lg text-xs font-medium border border-border bg-background hover:border-primary text-foreground cursor-pointer transition-colors"
 						>
 							Post-re:Invent (Dec 7+)
 						</button>
 					</div>
 
-					<div class="flex items-center gap-2">
+					<div class="flex items-center justify-between sm:justify-start gap-2 w-full md:w-auto">
 						<button
 							type="button"
 							id="btn-prev-week"
-							class="px-2.5 py-1 rounded-lg text-xs font-semibold border border-border bg-background hover:bg-muted text-foreground cursor-pointer transition-colors disabled:opacity-40"
+							class="px-3 py-1.5 rounded-lg text-xs font-semibold border border-border bg-background hover:bg-muted text-foreground cursor-pointer transition-colors disabled:opacity-40 shrink-0"
 							title="Previous week"
 						>
 							&larr; Earlier
@@ -304,12 +353,12 @@ const description =
 							type="date"
 							id="slot-date-picker"
 							aria-label="Choose starting date for available recording slots"
-							class="rounded-lg border border-border bg-background px-2.5 py-1 text-xs font-mono text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+							class="flex-1 sm:flex-initial min-w-[130px] rounded-lg border border-border bg-background px-2.5 py-1.5 text-xs font-mono text-foreground focus:outline-none focus:ring-2 focus:ring-primary cursor-pointer"
 						/>
 						<button
 							type="button"
 							id="btn-next-week"
-							class="px-2.5 py-1 rounded-lg text-xs font-semibold border border-border bg-background hover:bg-muted text-foreground cursor-pointer transition-colors"
+							class="px-3 py-1.5 rounded-lg text-xs font-semibold border border-border bg-background hover:bg-muted text-foreground cursor-pointer transition-colors shrink-0"
 							title="Next week"
 						>
 							Later &rarr;
@@ -550,10 +599,32 @@ const description =
 						id="btn-confirm-booking"
 						class="w-full sm:w-auto px-8 py-3 rounded-xl bg-primary text-primary-foreground font-semibold text-sm hover:bg-primary/90 transition-all shadow-md cursor-pointer flex items-center justify-center gap-2"
 					>
-						<span>Confirm Session &amp; Sign Release</span>
+						<span>{existingBooking ? "Confirm New Date & Time" : "Confirm Session & Sign Release"}</span>
 					</button>
 				</div>
 			</section>
+		</div>
+
+		<!-- Sticky Mobile / Viewport Action Bar for Selected Slot -->
+		<div
+			id="sticky-slot-confirm-bar"
+			class="fixed bottom-4 right-4 left-4 sm:left-auto sm:max-w-md z-50 rounded-2xl border-2 border-primary bg-card/95 backdrop-blur-md p-3.5 shadow-2xl flex items-center justify-between gap-3"
+		>
+			<div class="flex flex-col min-w-0">
+				<span class="text-[10px] font-mono font-extrabold uppercase tracking-wider text-primary">
+					{existingBooking ? "Selected New Window" : "Selected Recording Window"}
+				</span>
+				<span id="sticky-selected-slot-label" class="text-xs font-bold text-foreground truncate">
+					{upcomingSlots[0] ? `${upcomingSlots[0].displayDate} · ${upcomingSlots[0].displayTime}` : "Select a time slot above"}
+				</span>
+			</div>
+			<button
+				type="button"
+				id="btn-sticky-confirm-slot"
+				class="shrink-0 px-4 py-2.5 rounded-xl bg-primary text-primary-foreground text-xs font-extrabold hover:bg-primary/90 transition-all shadow-sm cursor-pointer"
+			>
+				{alreadySigned ? "Confirm New Time →" : "Continue & Confirm →"}
+			</button>
 		</div>
 
 		<!-- Step 4: Success View (Initially Hidden) -->
@@ -702,7 +773,12 @@ const description =
 
 		const minDateObj = new Date(Date.now() + 24 * 60 * 60 * 1000);
 		const maxDateObj = new Date(Date.now() + 180 * 24 * 60 * 60 * 1000);
-		let currentStartDate = toYmd(minDateObj);
+		const initialSlotDateYmd = (() => {
+			const firstBtn = document.querySelector(".slot-btn");
+			const firstStart = firstBtn ? firstBtn.getAttribute("data-slot-start") : "";
+			return firstStart ? firstStart.slice(0, 10) : "";
+		})();
+		let currentStartDate = initialSlotDateYmd || toYmd(minDateObj);
 
 		if (datePicker && datePicker instanceof HTMLInputElement) {
 			datePicker.min = toYmd(minDateObj);
@@ -710,10 +786,33 @@ const description =
 			datePicker.value = currentStartDate;
 		}
 
+		const selectedSlotBannerText = document.getElementById("selected-slot-banner-text");
+		const stickySlotBar = document.getElementById("sticky-slot-confirm-bar");
+		const stickySlotLabel = document.getElementById("sticky-selected-slot-label");
+		const btnStickyConfirm = document.getElementById("btn-sticky-confirm-slot");
+		const btnQuickRescheduleTop = document.getElementById("btn-quick-reschedule-top");
+
+		function updateSelectedSlotUi(btnEl) {
+			if (!btnEl) return;
+			const dateSpan = btnEl.querySelector("span:first-child");
+			const timeSpan = btnEl.querySelector("span:last-child");
+			const label =
+				dateSpan && timeSpan
+					? `${dateSpan.textContent.trim()} · ${timeSpan.textContent.trim()}`
+					: btnEl.getAttribute("data-slot-start") || "";
+			if (stickySlotLabel && label) {
+				stickySlotLabel.textContent = label;
+			}
+			if (selectedSlotBannerText && label) {
+				selectedSlotBannerText.innerHTML = `Selected new window: <strong class="text-primary font-mono">${label}</strong>. Tap <strong>Confirm New Date &amp; Time</strong> to save.`;
+			}
+		}
+
 		function bindSlotButtons() {
 			const slotButtons = document.querySelectorAll(".slot-btn");
 			if (slotButtons.length > 0 && !selectedSlotStart) {
 				selectedSlotStart = slotButtons[0].getAttribute("data-slot-start") || "";
+				updateSelectedSlotUi(slotButtons[0]);
 			}
 			slotButtons.forEach((btn) => {
 				btn.addEventListener("click", () => {
@@ -724,6 +823,7 @@ const description =
 					btn.classList.add("border-primary", "bg-primary/5", "ring-1", "ring-primary");
 					btn.classList.remove("bg-card");
 					selectedSlotStart = btn.getAttribute("data-slot-start") || "";
+					updateSelectedSlotUi(btn);
 				});
 			});
 		}
@@ -752,6 +852,13 @@ const description =
 					slotGrid.innerHTML =
 						'<div class="col-span-full p-4 rounded-xl border border-border bg-card text-xs text-muted-foreground text-center">No open windows found in that week. Try clicking <strong>Later &rarr;</strong> or picking another date.</div>';
 				} else {
+					const firstAvailableDate = (slots[0].startAt || "").slice(0, 10);
+					if (firstAvailableDate) {
+						currentStartDate = firstAvailableDate;
+						if (datePicker && datePicker instanceof HTMLInputElement) {
+							datePicker.value = firstAvailableDate;
+						}
+					}
 					selectedSlotStart = slots[0].startAt || "";
 					slotGrid.innerHTML = slots
 						.map(
@@ -773,6 +880,8 @@ const description =
 						)
 						.join("");
 					bindSlotButtons();
+					const firstBtn = slotGrid.querySelector(".slot-btn");
+					if (firstBtn) updateSelectedSlotUi(firstBtn);
 				}
 
 				if (slotWindowStatus) {
@@ -802,7 +911,8 @@ const description =
 					return;
 				}
 				const offsetDays = Number(btn.getAttribute("data-jump-offset") || "0");
-				const target = new Date(minDateObj.getTime() + offsetDays * 24 * 60 * 60 * 1000);
+				const baseMs = offsetDays === 0 ? minDateObj.getTime() : new Date(`${initialSlotDateYmd || toYmd(minDateObj)}T12:00:00Z`).getTime();
+				const target = new Date(baseMs + offsetDays * 24 * 60 * 60 * 1000);
 				loadSlotsForDate(toYmd(target));
 			});
 		});
@@ -827,9 +937,13 @@ const description =
 
 		if (btnNextWeek) {
 			btnNextWeek.addEventListener("click", () => {
-				const cur = new Date(`${currentStartDate}T12:00:00Z`);
+				const lastBtn = slotGrid ? slotGrid.querySelector(".slot-btn:last-of-type") : null;
+				const lastStart = lastBtn ? lastBtn.getAttribute("data-slot-start") : "";
+				const baseIso = lastStart ? `${lastStart.slice(0, 10)}T12:00:00Z` : `${currentStartDate}T12:00:00Z`;
+				const cur = new Date(baseIso);
+				const stepMs = lastStart ? 24 * 60 * 60 * 1000 : 7 * 24 * 60 * 60 * 1000;
 				const next = new Date(
-					Math.min(maxDateObj.getTime(), cur.getTime() + 7 * 24 * 60 * 60 * 1000),
+					Math.min(maxDateObj.getTime(), cur.getTime() + stepMs),
 				);
 				loadSlotsForDate(toYmd(next));
 			});
@@ -1035,6 +1149,7 @@ const description =
 
 					const data = await res.json();
 					if (res.ok && data.success) {
+						if (stickySlotBar) stickySlotBar.classList.add("hidden");
 						const confirmedHeading = document.getElementById("confirmed-heading");
 						const confirmedSummary = document.getElementById("confirmed-summary");
 						const confirmedSlotDisplay = document.getElementById("confirmed-slot-display");
@@ -1095,13 +1210,63 @@ const description =
 					} else {
 						showError(data.message || "Failed to save booking session. Please try again.");
 						btnConfirm.removeAttribute("disabled");
-						btnConfirm.textContent = "Confirm Session & Sign Release";
+						btnConfirm.textContent = alreadySigned ? "Confirm New Date & Time" : "Confirm Session & Sign Release";
+						if (btnStickyConfirm) {
+							btnStickyConfirm.removeAttribute("disabled");
+							btnStickyConfirm.textContent = alreadySigned ? "Confirm New Time →" : "Continue & Confirm →";
+						}
+						if (btnQuickRescheduleTop) {
+							btnQuickRescheduleTop.removeAttribute("disabled");
+							btnQuickRescheduleTop.textContent = "Confirm New Date & Time →";
+						}
 					}
 				} catch {
 					showError("Failed to reserve booking session. Please try again.");
 					btnConfirm.removeAttribute("disabled");
-					btnConfirm.textContent = "Confirm Session & Sign Release";
+					btnConfirm.textContent = alreadySigned ? "Confirm New Date & Time" : "Confirm Session & Sign Release";
+					if (btnStickyConfirm) {
+						btnStickyConfirm.removeAttribute("disabled");
+						btnStickyConfirm.textContent = alreadySigned ? "Confirm New Time →" : "Continue & Confirm →";
+					}
+					if (btnQuickRescheduleTop) {
+						btnQuickRescheduleTop.removeAttribute("disabled");
+						btnQuickRescheduleTop.textContent = "Confirm New Date & Time →";
+					}
 				}
+			});
+		}
+
+		function triggerQuickOrScrollSubmit(sourceBtn) {
+			if (!btnConfirm) return;
+			const name = guestNameInput ? guestNameInput.value.trim() : "";
+			const emailInput = document.getElementById("guest-email");
+			const email = emailInput ? emailInput.value.trim() : "";
+			const topicsInput = document.getElementById("guest-topics");
+			const topics = topicsInput ? topicsInput.value.trim() : "";
+
+			if (alreadySigned && name && email && email.includes("@") && topics) {
+				if (sourceBtn) {
+					sourceBtn.setAttribute("disabled", "true");
+					sourceBtn.textContent = "Updating Calendar...";
+				}
+				btnConfirm.click();
+			} else {
+				btnConfirm.scrollIntoView({ behavior: "smooth", block: "center" });
+				if (!alreadySigned) {
+					const sigBox = document.getElementById("canvas-container");
+					if (sigBox) sigBox.scrollIntoView({ behavior: "smooth", block: "center" });
+				}
+			}
+		}
+
+		if (btnStickyConfirm) {
+			btnStickyConfirm.addEventListener("click", () => {
+				triggerQuickOrScrollSubmit(btnStickyConfirm);
+			});
+		}
+		if (btnQuickRescheduleTop) {
+			btnQuickRescheduleTop.addEventListener("click", () => {
+				triggerQuickOrScrollSubmit(btnQuickRescheduleTop);
 			});
 		}
 
