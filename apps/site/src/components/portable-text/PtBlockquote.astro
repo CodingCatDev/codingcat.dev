@@ -1,0 +1,126 @@
+---
+import { stegaClean } from "@sanity/client/stega";
+import type { BlockProps } from "astro-portabletext/types";
+import AjAnimatedMascot from "@/components/AjAnimatedMascot.astro";
+
+type Props = BlockProps;
+
+const { node } = Astro.props;
+
+const rawPlainText = stegaClean(
+	(node?.children ?? [])
+		.map((child) =>
+			"text" in child && typeof child.text === "string" ? child.text : "",
+		)
+		.join(""),
+).trim();
+
+type CalloutVariant = "tip" | "important" | "warning" | "note" | "quote";
+
+function detectVariant(text: string): CalloutVariant {
+	if (/^\[!TIP\]/i.test(text) || /^(?:aj\s+)?pro[- ]?tip\b/i.test(text) || /^aj['’]s\s+tip\b/i.test(text)) {
+		return "tip";
+	}
+	if (/^\[!IMPORTANT\]/i.test(text) || /^(?:important|sdk\s*&\s*endpoint\s+gotcha|gotcha)\b/i.test(text)) {
+		return "important";
+	}
+	if (/^\[!(?:WARNING|CAUTION)\]/i.test(text) || /^(?:warning|caution|heads\s+up)\b/i.test(text)) {
+		return "warning";
+	}
+	if (/^\[!NOTE\]/i.test(text) || /^note(?:\s+on|:)\b/i.test(text)) {
+		return "note";
+	}
+	return "quote";
+}
+
+const variant = detectVariant(rawPlainText);
+
+const VARIANT_META: Record<
+	Exclude<CalloutVariant, "quote">,
+	{
+		badge: string;
+		containerCls: string;
+		badgeCls: string;
+		showAj: boolean;
+	}
+> = {
+	tip: {
+		badge: "AJ PRO-TIP",
+		containerCls:
+			"border-[#166534] bg-[#FAF9FC] dark:border-[#86EFAC]/55 dark:bg-[#0B1326]",
+		badgeCls:
+			"border-[#166534]/40 bg-[#DCFCE7] text-[#166534] dark:border-[#86EFAC]/50 dark:bg-emerald-950/90 dark:text-[#86EFAC]",
+		showAj: true,
+	},
+	important: {
+		badge: "IMPORTANT",
+		containerCls:
+			"border-[#7C3AED] bg-[#FAF9FC] dark:border-[#C084FC]/60 dark:bg-[#0B1326]",
+		badgeCls:
+			"border-[#7C3AED]/45 bg-[#EDE9FE] text-[#4C1D95] dark:border-[#C084FC]/50 dark:bg-purple-950/90 dark:text-[#E9D5FF]",
+		showAj: false,
+	},
+	warning: {
+		badge: "WATCH OUT",
+		containerCls:
+			"border-[#B45309] bg-[#FAF9FC] dark:border-[#FACC15]/60 dark:bg-[#0B1326]",
+		badgeCls:
+			"border-[#B45309]/40 bg-[#FEF9C3] text-[#713F12] dark:border-[#FACC15]/50 dark:bg-amber-950/90 dark:text-[#FEF08A]",
+		showAj: false,
+	},
+	note: {
+		badge: "ARCHITECTURE NOTE",
+		containerCls:
+			"border-[#0369A1] bg-[#FAF9FC] dark:border-[#38BDF8]/55 dark:bg-[#0B1326]",
+		badgeCls:
+			"border-[#0369A1]/40 bg-[#E0F2FE] text-[#075985] dark:border-[#38BDF8]/50 dark:bg-sky-950/90 dark:text-[#BAE6FD]",
+		showAj: false,
+	},
+};
+
+const renderedSlot = await Astro.slots.render("default");
+const cleanedHtml = renderedSlot.replace(
+	/^\s*\[!(?:NOTE|TIP|IMPORTANT|WARNING|CAUTION)\]\s*/i,
+	"",
+);
+---
+
+{
+	variant === "quote" ? (
+		<blockquote class="cc-quote not-prose my-6 rounded-r-2xl border-l-4 border-[#7C3AED] bg-[#EDE9FE]/45 px-5 py-4 text-base leading-relaxed italic text-[#2A1155] dark:border-[#C084FC] dark:bg-[#131B2E]/85 dark:text-slate-200">
+			<Fragment set:html={cleanedHtml} />
+		</blockquote>
+	) : (
+		<aside
+			role="note"
+			class:list={[
+				"cc-callout not-prose my-6 rounded-2xl border-2 px-5 py-4 shadow-sketch-sm",
+				VARIANT_META[variant].containerCls,
+			]}
+		>
+			<div class="mb-2.5 flex items-center gap-2.5">
+				{VARIANT_META[variant].showAj && (
+					<AjAnimatedMascot
+						variant="head"
+						angle="three-quarter-right"
+						state="canonical-rest"
+						mouth="grin"
+						cls="w-8 h-auto shrink-0"
+						interactive={false}
+					/>
+				)}
+				<span
+					class:list={[
+						"inline-flex items-center rounded-full border px-2.5 py-0.5 font-mono text-xs font-extrabold tracking-wider uppercase",
+						VARIANT_META[variant].badgeCls,
+					]}
+				>
+					{VARIANT_META[variant].badge}
+				</span>
+			</div>
+			<div class="text-base leading-relaxed font-normal not-italic text-[#2A1155] dark:text-slate-100">
+				<Fragment set:html={cleanedHtml} />
+			</div>
+		</aside>
+	)
+}

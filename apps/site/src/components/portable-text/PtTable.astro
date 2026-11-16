@@ -2,6 +2,7 @@
 import { stegaClean } from "@sanity/client/stega";
 import type { Props as PtProps } from "astro-portabletext/types";
 import TierList from "@/components/TierList.astro";
+import { parseInlineMarkdownSegments } from "@/lib/inline-markdown-segments";
 
 type TableNode = {
 	_type: "table";
@@ -65,7 +66,15 @@ const isTierList =
 							<tr class="border-b-2 border-[#2A1155] bg-[#EDE9FE] text-[#2A1155] dark:border-white/20 dark:bg-[#131B2E] dark:text-white">
 								{headCells.map((cell) => (
 									<th class="border-r border-[#2A1155]/20 px-4 py-3 font-display font-extrabold last:border-r-0 dark:border-white/15">
-										{cell}
+										{parseInlineMarkdownSegments(cell).map((seg) =>
+											seg.code ? (
+												<code class="cc-inline-code">{seg.text}</code>
+											) : seg.em ? (
+												<em>{seg.text}</em>
+											) : (
+												seg.text
+											),
+										)}
 									</th>
 								))}
 							</tr>
@@ -87,7 +96,35 @@ const isTierList =
 												"font-display font-bold text-[#2A1155] dark:text-white",
 										]}
 									>
-										{cell}
+										{parseInlineMarkdownSegments(cell).map((seg) => {
+											const inner = seg.code ? (
+												<code class="cc-inline-code">{seg.text}</code>
+											) : seg.strong && seg.em ? (
+												<strong class="font-bold text-[#2A1155] dark:text-white">
+													<em>{seg.text}</em>
+												</strong>
+											) : seg.strong ? (
+												<strong class="font-bold text-[#2A1155] dark:text-white">
+													{seg.text}
+												</strong>
+											) : seg.em ? (
+												<em>{seg.text}</em>
+											) : (
+												seg.text
+											);
+											return seg.href ? (
+												<a
+													href={seg.href}
+													target={seg.href.startsWith("/") ? undefined : "_blank"}
+													rel={seg.href.startsWith("/") ? undefined : "noopener noreferrer"}
+													class="font-semibold text-[#6D28D9] underline underline-offset-2 dark:text-[#D8B4FE]"
+												>
+													{inner}
+												</a>
+											) : (
+												inner
+											);
+										})}
 									</td>
 								))}
 							</tr>
