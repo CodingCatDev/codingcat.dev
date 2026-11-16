@@ -1,6 +1,7 @@
 ---
 import { PortableText } from "astro-portabletext";
 import type { TypedObject } from "astro-portabletext/types";
+import PtBlockquote from "./PtBlockquote.astro";
 import PtCode from "./PtCode.astro";
 import PtCodePen from "./PtCodePen.astro";
 import PtCodeSandbox from "./PtCodeSandbox.astro";
@@ -60,6 +61,7 @@ const components = {
 		tierList: PtTierList,
 	},
 	block: {
+		blockquote: PtBlockquote,
 		h5: PtHeading5,
 		h6: PtHeading6,
 	},

@@ -157,6 +157,67 @@
 }
 
 /*
+ * Prose Inline Code Pills & Callout Typography Overrides
+ * Removes @tailwindcss/typography backtick pseudo-elements site-wide and
+ * styles inline `<code>` as Dual-Theme Chalkboard & Royal Purple pills.
+ */
+.prose :where(code):not(:where([class~="not-prose"], [class~="not-prose"] *))::before,
+.prose :where(code):not(:where([class~="not-prose"], [class~="not-prose"] *))::after,
+.prose :where(blockquote p:first-of-type):not(:where([class~="not-prose"], [class~="not-prose"] *))::before,
+.prose :where(blockquote p:last-of-type):not(:where([class~="not-prose"], [class~="not-prose"] *))::after {
+	content: none !important;
+}
+
+.prose :where(:not(pre) > code):not(:where([class~="not-prose"], [class~="not-prose"] *)),
+.cc-callout :where(:not(pre) > code),
+.cc-quote :where(:not(pre) > code),
+.cc-inline-code {
+	font-family: var(--font-mono);
+	font-size: 0.875em;
+	font-weight: 600;
+	font-style: normal;
+	line-height: 1.45;
+	padding: 0.14em 0.42em;
+	border-radius: 0.375rem;
+	background-color: #ede9fe;
+	color: #2a1155;
+	border: 1px solid rgba(42, 17, 85, 0.24);
+	overflow-wrap: anywhere;
+	box-decoration-break: clone;
+	-webkit-box-decoration-break: clone;
+}
+
+:root.dark .prose :where(:not(pre) > code):not(:where([class~="not-prose"], [class~="not-prose"] *)),
+:root.dark .cc-callout :where(:not(pre) > code),
+:root.dark .cc-quote :where(:not(pre) > code),
+:root.dark .cc-inline-code {
+	background-color: rgba(124, 58, 237, 0.22);
+	color: #f3e8ff;
+	border-color: rgba(192, 132, 252, 0.4);
+}
+
+.prose :where(a :not(pre) > code):not(:where([class~="not-prose"], [class~="not-prose"] *)),
+.cc-callout :where(a :not(pre) > code),
+.cc-quote :where(a :not(pre) > code) {
+	color: inherit;
+	text-decoration: underline;
+	text-underline-offset: 3px;
+}
+
+.cc-callout :where(a),
+.cc-quote :where(a) {
+	color: #6d28d9;
+	font-weight: 600;
+	text-decoration: underline;
+	text-underline-offset: 3px;
+}
+
+:root.dark .cc-callout :where(a),
+:root.dark .cc-quote :where(a) {
+	color: #d8b4fe;
+}
+
+/*
  * Hand-Drawn Borders & Sketch Shadows (from Stitch 8d131990 & b9e00f99)
  */
 .hand-border {
@@ -571,4 +632,34 @@ html.aj-drawer-open #aj-agent-drawer {
 .infinite-card-deferred {
 	content-visibility: auto;
 	contain-intrinsic-size: auto 520px;
+}
+
+/*
+ * Slide-over Mobile Navigation Sheet (#nav-drawer) animation
+ */
+@media (prefers-reduced-motion: no-preference) {
+	#nav-drawer[open] {
+		animation: cc-drawer-slide-in 200ms cubic-bezier(0.22, 1, 0.36, 1) both;
+	}
+	#nav-drawer[open]::backdrop {
+		animation: cc-drawer-backdrop-fade 200ms ease-out both;
+	}
+}
+
+@keyframes cc-drawer-slide-in {
+	from {
+		transform: translateX(100%);
+	}
+	to {
+		transform: translateX(0);
+	}
+}
+
+@keyframes cc-drawer-backdrop-fade {
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+	}
 }

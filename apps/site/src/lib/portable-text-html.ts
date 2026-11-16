@@ -1,5 +1,6 @@
 import type { PortableTextHtmlComponents } from "@portabletext/to-html";
 import { toHTML } from "@portabletext/to-html";
+import { parseInlineMarkdownSegments } from "./inline-markdown-segments";
 import { resolvePartnerUrl } from "./partner-links";
 import { escapeXml } from "./xml";
 
@@ -112,9 +113,28 @@ export function portableTextToHtml(
 					return "";
 				}
 				const [head, ...body] = rows;
+				const renderCellHtml = (rawCell: string) =>
+					parseInlineMarkdownSegments(rawCell)
+						.map((seg) => {
+							const escaped = escapeXml(seg.text);
+							let out = seg.code
+								? `<code>${escaped}</code>`
+								: seg.strong && seg.em
+									? `<strong><em>${escaped}</em></strong>`
+									: seg.strong
+										? `<strong>${escaped}</strong>`
+										: seg.em
+											? `<em>${escaped}</em>`
+											: escaped;
+							if (seg.href) {
+								out = linkTag(resolvePartnerUrl(absolute(seg.href)), out);
+							}
+							return out;
+						})
+						.join("");
 				const cells = (row: { cells?: string[] }, tag: "th" | "td") =>
 					(row.cells ?? [])
-						.map((cell) => `<${tag}>${escapeXml(cell ?? "")}</${tag}>`)
+						.map((cell) => `<${tag}>${renderCellHtml(cell ?? "")}</${tag}>`)
 						.join("");
 				return `<table><thead><tr>${cells(head, "th")}</tr></thead><tbody>${body
 					.map((row) => `<tr>${cells(row, "td")}</tr>`)

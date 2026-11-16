@@ -112,6 +112,7 @@ const baseType = defineType({
 					title: "Code",
 					options: {
 						language: "typescript",
+						withFilename: true,
 					},
 				}),
 				//Custom Schemas

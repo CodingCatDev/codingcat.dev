@@ -33,8 +33,11 @@ const cite = stegaClean(node.url) || undefined;
 
 {
 	node.content && (
-		<figure class="my-6">
-			<blockquote cite={cite} class="mt-6 border-l-2 border-primary pl-6 italic">
+		<figure class="not-prose my-6">
+			<blockquote
+				cite={cite}
+				class="cc-quote rounded-r-2xl border-l-4 border-[#7C3AED] bg-[#EDE9FE]/45 px-5 py-4 text-base leading-relaxed italic text-[#2A1155] dark:border-[#C084FC] dark:bg-[#131B2E]/85 dark:text-slate-200"
+			>
 				<PortableText value={node.content} components={components} />
 			</blockquote>
 		</figure>

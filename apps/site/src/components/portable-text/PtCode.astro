@@ -26,19 +26,63 @@ const { node } = Astro.props;
  * stegaClean: the code text is fed to a tokenizer, where stega's zero-width
  * characters would corrupt tokens and land in the copy-to-clipboard payload.
  */
-const code = stegaClean(node.code) ?? "";
+const rawCode = stegaClean(node.code) ?? "";
 const rawLang = (stegaClean(node.language) ?? "").toLowerCase().trim();
 const isDiagram = rawLang === "mermaid" || rawLang === "excalidraw";
+const isMath = rawLang === "math" || rawLang === "latex" || rawLang === "tex";
 const language = normalizeLanguage(rawLang);
-const filename = node.filename;
+const explicitFilename = stegaClean(node.filename)?.trim();
+
+// Auto-extract leading filepath comment (e.g. `// src/lib/triage.ts` or `# scripts/run.py`)
+// when `node.filename` is not explicitly set in Sanity.
+let filename = explicitFilename;
+let code = rawCode;
+if (!filename && !isDiagram && !isMath) {
+	const firstNewline = rawCode.indexOf("\n");
+	if (firstNewline > 0) {
+		const firstLine = rawCode.slice(0, firstNewline).trim();
+		const pathMatch = firstLine.match(
+			/^(?:\/\/|#)\s*((?:[A-Za-z0-9_@.-]+\/)+[A-Za-z0-9_.-]+\.[A-Za-z0-9]{1,10}|[A-Za-z0-9_.-]+\.(?:ts|tsx|js|mjs|cjs|jsx|astro|json|jsonc|py|sh|bash|yaml|yml|toml|sql|css|html|md|mdx))\s*$/,
+		);
+		if (pathMatch) {
+			filename = pathMatch[1];
+			code = rawCode.slice(firstNewline + 1).replace(/^\r?\n/, "");
+		}
+	}
+}
+
+let diagramTitle = explicitFilename;
+if (isDiagram && !diagramTitle) {
+	const titleComment = rawCode.match(/^\s*%%\s*title:\s*(.+)$/im);
+	if (titleComment) {
+		diagramTitle = titleComment[1].trim();
+	} else {
+		const subgraphs = Array.from(
+			rawCode.matchAll(/subgraph\s+[A-Za-z0-9_-]+\s*\["?([^\]"]+)"?\]/gi),
+		).map((m) => m[1].trim());
+		if (subgraphs.length >= 2) {
+			diagramTitle = `${subgraphs[0].split("(")[0].trim()} vs. ${subgraphs[1].split("(")[0].trim()}`;
+		}
+	}
+}
 ---
 
 {
-	code && isDiagram ? (
+	rawCode && isDiagram ? (
 		<ExcalidrawDiagram
-			title={filename || "Interactive Chalkboard Diagram"}
-			rawCode={code}
+			title={diagramTitle || "Interactive Chalkboard Diagram"}
+			rawCode={rawCode}
 		/>
+	) : rawCode && isMath ? (
+		<figure class="not-prose duo-card my-6 overflow-hidden">
+			<figcaption class="flex items-center justify-between border-b border-[#B4A7D6]/25 bg-[#0F172A] px-4 py-2 font-mono text-xs font-bold text-[#C5E86C]">
+				<span>{explicitFilename || "MATHEMATICAL FORMULA"}</span>
+				<span class="font-hand text-base text-[#B4A7D6]">equation</span>
+			</figcaption>
+			<div class="overflow-x-auto bg-[#FAF9FC] px-6 py-5 text-center font-mono text-base font-semibold tracking-wide text-[#2A1155] dark:bg-[#0B1326] dark:text-[#F8FAFC]">
+				{rawCode}
+			</div>
+		</figure>
 	) : (
 		code && (
 			<figure class="code-block-figure not-prose duo-card group relative my-6 overflow-visible">
