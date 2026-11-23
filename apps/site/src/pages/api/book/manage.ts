@@ -35,7 +35,10 @@ interface ManageBookingPayload {
 		| "mark_needs_reschedule"
 		| "advance_post_production"
 		| "reconcile_calendar_holds"
-		| "migrate_private_ids";
+		| "migrate_private_ids"
+		| "send_due_reminders";
+	hoursAhead?: number;
+	dryRun?: boolean;
 	bookingId?: string;
 	eventId?: string;
 	guestName?: string;
@@ -198,6 +201,155 @@ export const POST: APIRoute = async ({ request, url }) => {
 				migratedIds,
 				deletedIds,
 				rotatedTokens,
+			}),
+			{ status: 200, headers: CORS_HEADERS },
+		);
+	}
+
+	if (body.action === "send_due_reminders") {
+		if (!canWrite) {
+			return new Response(
+				JSON.stringify({
+					ok: false,
+					message: "Sanity write token unavailable",
+				}),
+				{ status: 500, headers: CORS_HEADERS },
+			);
+		}
+		const hoursAhead =
+			typeof body.hoursAhead === "number" && body.hoursAhead > 0
+				? Math.min(body.hoursAhead, 168)
+				: 24;
+		const dryRun = body.dryRun === true;
+		const nowMs = Date.now();
+		const nowIso = new Date(nowMs).toISOString();
+		const windowEndIso = new Date(
+			nowMs + hoursAhead * 60 * 60 * 1000,
+		).toISOString();
+
+		const dueDocs = await client.fetch<Array<Record<string, any>>>(
+			`*[_type == "booking" && !(_id in path("drafts.**")) && status in ["approved", "scheduled", "confirmed"] && defined(slotStartAt) && defined(guestEmail) && !defined(reminderSentAt) && slotStartAt >= $nowIso && slotStartAt <= $windowEndIso] | order(slotStartAt asc)`,
+			{ nowIso, windowEndIso },
+		);
+
+		const sent: Array<Record<string, unknown>> = [];
+		const skipped: Array<Record<string, unknown>> = [];
+		const errors: Array<Record<string, unknown>> = [];
+
+		for (const doc of dueDocs || []) {
+			const id = String(doc._id || "");
+			const guestName = String(doc.guestName || "Podcast Guest").trim();
+			const guestEmail = String(doc.guestEmail || "").trim();
+			const company = String(doc.company || "").trim();
+			const slotStartAt = String(doc.slotStartAt || "").trim();
+			if (!id || !guestEmail || !slotStartAt) {
+				skipped.push({ id, reason: "Missing guestEmail or slotStartAt" });
+				continue;
+			}
+
+			const token =
+				String(doc.portalToken || "").trim() ||
+				`spt_${crypto.randomUUID().replace(/-/g, "").slice(0, 16)}`;
+			const portalUrl = `${url.origin}/portal/${token}`;
+			const formattedSlot = new Date(slotStartAt).toLocaleString("en-US", {
+				dateStyle: "full",
+				timeStyle: "short",
+				timeZone: "America/New_York",
+			});
+			const runOfShowLines =
+				typeof doc.runOfShowNotes === "string" &&
+				doc.runOfShowNotes.trim().length > 0
+					? doc.runOfShowNotes.trim().split("\n")
+					: undefined;
+
+			if (dryRun) {
+				sent.push({
+					id,
+					guestName,
+					guestEmail,
+					slotStartAt,
+					portalUrl,
+					dryRun: true,
+				});
+				continue;
+			}
+
+			try {
+				const subjectBase =
+					String(doc.gmailSubject || "").trim() ||
+					buildCanonicalPodcastBookingSubject(guestName, company);
+				const threadId = String(doc.gmailThreadId || "").trim() || undefined;
+				const messageId = String(doc.gmailMessageId || "").trim() || undefined;
+
+				const card = buildPodcastPortalEmailCard({
+					guestName,
+					company,
+					statusBadge: "CodingCat.dev Studio · Recording Reminder",
+					headline: "Reminder: Your CodingCat.dev Podcast Recording Is Coming Up!",
+					introParagraph:
+						"just a quick reminder that your CodingCat.dev Podcast recording session is coming up soon. Below are your StreamYard Studio link and Guest Portal with your 5-part Run-of-Show.",
+					slotSummary: `${formattedSlot} ET (60 min)`,
+					portalUrl,
+					primaryCtaLabel: "Join StreamYard Studio ->",
+					primaryCtaUrl: STREAMYARD_STUDIO_URL,
+					secondaryCtaLabel: "Open Your Studio Portal ->",
+					secondaryCtaUrl: portalUrl,
+					runOfShowLines,
+				});
+
+				const emailRes = await sendCodingCatEmailDetailed({
+					to: guestEmail,
+					subject: threadId ? `Re: ${subjectBase}` : subjectBase,
+					text: card.text,
+					html: card.html,
+					...(threadId ? { threadId } : {}),
+					...(messageId
+						? { inReplyTo: messageId, references: messageId }
+						: {}),
+				});
+
+				const reminderSentAt = new Date().toISOString();
+				await client
+					.patch(id)
+					.set({
+						reminderSentAt,
+						portalToken: token,
+						...(emailRes.threadId ? { gmailThreadId: emailRes.threadId } : {}),
+						...(emailRes.rfc822MessageId
+							? { gmailMessageId: emailRes.rfc822MessageId }
+							: {}),
+					})
+					.commit();
+
+				sent.push({
+					id,
+					guestName,
+					guestEmail,
+					slotStartAt,
+					reminderSentAt,
+					emailOk: emailRes.ok,
+				});
+			} catch (err) {
+				errors.push({
+					id,
+					guestName,
+					error: err instanceof Error ? err.message : String(err),
+				});
+			}
+		}
+
+		return new Response(
+			JSON.stringify({
+				ok: errors.length === 0,
+				action: "send_due_reminders",
+				dryRun,
+				hoursAhead,
+				nowIso,
+				windowEndIso,
+				count: (dueDocs || []).length,
+				sent,
+				skipped,
+				errors,
 			}),
 			{ status: 200, headers: CORS_HEADERS },
 		);
