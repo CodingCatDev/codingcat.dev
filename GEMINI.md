@@ -10,6 +10,7 @@ Every interactive session, subagent, and script in this repository (`codingcat.d
 - @[codingcat-design-system](/home/alex/.gemini/config/skills/codingcat-design-system/SKILL.md)
 - @[codingcat-media-studio](/home/alex/.gemini/config/skills/codingcat-media-studio/SKILL.md)
 - @[codingcat-diagrams](/home/alex/.gemini/config/skills/codingcat-media-studio/references/excalidraw-diagrams.md)
+- @[codingcat-video-walkthrough-studio](/home/alex/.gemini/config/skills/codingcat-video-walkthrough-studio/SKILL.md)
 
 ## Key Rules
 
@@ -21,3 +22,4 @@ Every interactive session, subagent, and script in this repository (`codingcat.d
 2. **Zero Em-Dashes**: Never use the em-dash character anywhere in prose, UI copy, markdown, or code comments.
 3. **Always Use Tables for Comparisons**: Render Markdown or HTML tables whenever comparing two or more items.
 4. **Header & Mobile Drawer**: Never add a `"Get Started"` button to `#site-header`. Keep the mobile header clean with `Search`, `Ask Agent`, `ThemeToggle`, and the 3-line menu toggle (`#nav-drawer-toggle`).
+5. **YouTube Upload Privacy Lock (`unlisted` + `notifySubscribers=false`)**: Never upload short course overviews, lesson videos, or automated walkthroughs to YouTube (`@codingcatdev`) as `public` or with subscriber notifications enabled. Always set `status.privacyStatus: "unlisted"` and pass `notifySubscribers=false` in the upload URL.

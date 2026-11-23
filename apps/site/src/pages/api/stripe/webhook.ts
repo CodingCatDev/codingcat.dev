@@ -35,7 +35,7 @@ export const POST: APIRoute = async ({ request }) => {
 				metadata?: {
 					leadId?: string;
 					portalToken?: string;
-					milestone?: "deposit" | "balance";
+					milestone?: "full" | "deposit" | "balance";
 					companyName?: string;
 				};
 			};
@@ -56,7 +56,7 @@ export const POST: APIRoute = async ({ request }) => {
 	) {
 		const obj = event.data?.object;
 		const leadId = obj?.metadata?.leadId;
-		const milestone = obj?.metadata?.milestone || "deposit";
+		const milestone = obj?.metadata?.milestone || "full";
 		const companyName = obj?.metadata?.companyName;
 		const nowIso = new Date().toISOString();
 
@@ -80,7 +80,7 @@ export const POST: APIRoute = async ({ request }) => {
 						})
 						.commit();
 				} else {
-					// Final 50% balance paid -> mark paid in full and ensure public sponsor doc exists
+					// 100% payment (or legacy final 50% balance) -> mark paid in full and ensure public sponsor doc exists
 					const sponsorId = `sponsor-${resolvedLeadId.replace(/^(private\.)?sponsorLead-/, "")}`;
 					if (companyName) {
 						await client.createIfNotExists({
@@ -94,6 +94,7 @@ export const POST: APIRoute = async ({ request }) => {
 						.patch(resolvedLeadId)
 						.set({
 							status: "paid",
+							depositPaidAt: nowIso,
 							balancePaidAt: nowIso,
 							...(companyName
 								? {

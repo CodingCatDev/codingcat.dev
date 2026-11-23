@@ -88,7 +88,7 @@ const formatUsd = (cents: number) =>
 						id: "kickoff",
 						badge: "Step 1",
 						label: "15-Min Kickoff",
-						sublabel: "Pick slot & lock 50%",
+						sublabel: "Pick slot & lock campaign",
 						color: "green",
 					},
 					{
@@ -121,7 +121,7 @@ const formatUsd = (cents: number) =>
 						Multi-Channel Launch Bundles &amp; Rate Card
 					</h2>
 					<p class="text-sm text-muted-foreground">
-						All packages use milestone billing: <strong>50% upfront deposit</strong> to lock your production &amp; calendar slot, and <strong>50% upon publication</strong>. (Includes Dedicated Video, Integrated Mid-Roll Ad, Quick Shout-Out, Blog Post / Newsletter, and Video Series options.)
+						Simple Passionfroot-style billing: <strong>100% upfront via Card / ACH</strong>, or request a <strong>NET 15 / NET 30 corporate invoice</strong> if required by your AP team.
 					</p>
 				</div>
 				<a
@@ -154,7 +154,7 @@ const formatUsd = (cents: number) =>
 										{formatUsd(tier.totalAmountCents)}
 									</p>
 									<span class="text-xs text-muted-foreground font-medium">
-										({formatUsd(tier.depositAmountCents)} 50% deposit)
+										(100% or NET 15/30)
 									</span>
 								</div>
 								<p class="text-sm text-muted-foreground leading-relaxed">
@@ -176,7 +176,7 @@ const formatUsd = (cents: number) =>
 									data-tier-id={tier.id}
 									data-tier-name={tier.name}
 								>
-									Launch Deal Room ({formatUsd(tier.depositAmountCents)} Deposit) &rarr;
+									Launch Deal Room ({formatUsd(tier.totalAmountCents)}) &rarr;
 								</button>
 							</div>
 						</article>
@@ -191,7 +191,7 @@ const formatUsd = (cents: number) =>
 				Open Your Sponsor Deal Room
 			</h2>
 			<p class="text-sm text-muted-foreground mb-6">
-				Select your package below to immediately open your dedicated Deal Room with 50% deposit Stripe Checkout, Net-15 corporate invoice generation, and direct Google Calendar scheduling.
+				Select your package below to immediately open your dedicated Deal Room with 100% Stripe Checkout (Card / ACH), on-demand NET 15 / NET 30 corporate invoicing, and direct Google Calendar scheduling.
 			</p>
 
 			<div
@@ -295,7 +295,7 @@ const formatUsd = (cents: number) =>
 						{
 							SPONSOR_PACKAGE_TIERS.map((t) => (
 								<option value={t.id}>
-									{t.name} ({formatUsd(t.totalAmountCents)} total &middot; {formatUsd(t.depositAmountCents)} 50% deposit)
+									{t.name} ({formatUsd(t.totalAmountCents)} &middot; Card/ACH or NET 15/30)
 								</option>
 							))
 						}
@@ -359,7 +359,7 @@ const formatUsd = (cents: number) =>
 					id="submit-btn"
 					class="mt-2 inline-flex items-center justify-center rounded-md bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground shadow-sm hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary transition-colors cursor-pointer"
 				>
-					Create Deal Room &amp; View Deposit Options &rarr;
+					Create Deal Room &amp; View Billing Options &rarr;
 				</button>
 			</form>
 		</section>
@@ -478,7 +478,7 @@ const formatUsd = (cents: number) =>
 				}
 			} finally {
 				submitBtn.disabled = false;
-				submitBtn.textContent = "Create Deal Room & View Deposit Options →";
+				submitBtn.textContent = "Create Deal Room & View Billing Options →";
 			}
 		});
 	}

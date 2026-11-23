@@ -74,7 +74,7 @@ export default defineType({
               name: 'targetPackage',
               title: 'Recommended Bundle',
               type: 'string',
-              initialValue: 'Full-Stack Launch Bundle ($3,500)',
+              initialValue: 'Full-Stack Launch Bundle ($1,000)',
             }),
           ],
         },

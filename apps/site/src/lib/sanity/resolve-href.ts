@@ -18,6 +18,8 @@ export function resolveHref(
 	switch (documentType) {
 		case "post":
 			return `/post/${slug}`;
+		case "newsletter":
+			return `/newsletter/${slug}`;
 		case "podcast":
 			return `/podcast/${slug}`;
 		case "author":
@@ -40,6 +42,8 @@ export function listHref(documentType?: string): string {
 	switch (documentType) {
 		case "post":
 			return "/blog";
+		case "newsletter":
+			return "/newsletter";
 		case "podcast":
 			return "/podcasts";
 		case "author":

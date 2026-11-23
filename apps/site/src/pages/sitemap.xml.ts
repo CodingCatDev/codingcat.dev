@@ -6,17 +6,26 @@ import { escapeXml } from "@/lib/xml";
 /**
  * Hand-built rather than via @astrojs/sitemap: that integration enumerates
  * build-time routes, and every content URL here is resolved at runtime from
- * Sanity — there is no static route generation to read.
+ * Sanity. There is no static route generation to read.
  *
- * URL shape matches the Next `app/sitemap.ts` exactly; apps/site/baseline
- * holds the pre-migration snapshot to diff against.
+ * URL shape matches the Next `app/sitemap.ts` contract plus Course and Lesson
+ * canonical routes; apps/site/baseline holds the pre-migration snapshot to diff against.
  */
 export const GET: APIRoute = async ({ locals }) => {
-	const content = await locals.sanity.fetchPublished(sitemapQuery);
+	const content = await locals.sanity.fetchPublished<
+		Array<{
+			_type: string;
+			_updatedAt?: string;
+			slug: string;
+			lessonSlugs?: Array<string | null> | null;
+		}>
+	>(sitemapQuery);
 	const origin = locals.siteUrl.origin;
 	const now = new Date().toISOString();
 
-	const urls = [
+	const redirectedPageSlugs = new Set(["privacy-policy", "docs"]);
+
+	const rawUrls = [
 		{ loc: origin, lastmod: now, changefreq: "monthly", priority: "1" },
 		{
 			loc: `${origin}/search`,
@@ -49,7 +58,7 @@ export const GET: APIRoute = async ({ locals }) => {
 			priority: "0.8",
 		},
 		...TOPICS.map((t) => ({
-			loc: `${origin}/topic/${t.slug}`,
+			loc: `${origin}/topic/${encodeURI(t.slug)}`,
 			lastmod: now,
 			changefreq: "weekly",
 			priority: "0.8",
@@ -84,15 +93,50 @@ export const GET: APIRoute = async ({ locals }) => {
 			changefreq: "monthly",
 			priority: "0.5",
 		},
-		...content.map((entry) => ({
-			loc: `${origin}${entry._type === "page" ? `/${entry.slug}` : `/${entry._type}/${entry.slug}`}`,
-			lastmod: entry._updatedAt
-				? new Date(entry._updatedAt).toISOString()
-				: now,
+		{
+			loc: `${origin}/privacy`,
+			lastmod: now,
 			changefreq: "monthly",
 			priority: "0.5",
-		})),
+		},
+		...content.flatMap((entry) => {
+			if (!entry.slug) return [];
+			if (entry._type === "page" && redirectedPageSlugs.has(entry.slug)) {
+				return [];
+			}
+			const lastmod = entry._updatedAt
+				? new Date(entry._updatedAt).toISOString()
+				: now;
+			const encodedSlug = encodeURI(entry.slug.trim());
+			const primaryUrl = {
+				loc: `${origin}${entry._type === "page" ? `/${encodedSlug}` : `/${entry._type}/${encodedSlug}`}`,
+				lastmod,
+				changefreq: "monthly",
+				priority: entry._type === "course" ? "0.7" : "0.5",
+			};
+
+			if (entry._type === "course" && Array.isArray(entry.lessonSlugs)) {
+				const lessonUrls = entry.lessonSlugs
+					.filter((ls): ls is string => Boolean(ls?.trim()))
+					.map((ls) => ({
+						loc: `${origin}/course/${encodedSlug}/lesson/${encodeURI(ls.trim())}`,
+						lastmod,
+						changefreq: "monthly",
+						priority: "0.6",
+					}));
+				return [primaryUrl, ...lessonUrls];
+			}
+
+			return [primaryUrl];
+		}),
 	];
+
+	const seenLocs = new Set<string>();
+	const urls = rawUrls.filter((u) => {
+		if (seenLocs.has(u.loc)) return false;
+		seenLocs.add(u.loc);
+		return true;
+	});
 
 	const body = urls
 		.map(

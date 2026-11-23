@@ -1,9 +1,10 @@
 ---
 /**
- * Auto-generated Hand-Drawn Visual Diagram Card for every
+ * Auto-generated Content-Driven Hand-Drawn Visual & UML Diagram Card for every
  * Podcast (`/podcast/[slug]`), Blog Post (`/post/[slug]`), and Course (`/course/[slug]`).
  */
 import ExcalidrawDiagram, {
+	type ExcalidrawLayout,
 	type ExcalidrawNode,
 } from "@/components/ExcalidrawDiagram.astro";
 import AjMascot from "@/components/AjMascot.astro";
@@ -12,55 +13,80 @@ interface Props {
 	title: string;
 	kind?: "podcast" | "post" | "course";
 	tags?: Array<string | null | undefined>;
+	layout?: ExcalidrawLayout;
 }
 
-const { title, kind = "post", tags = [] } = Astro.props;
+const { title, kind = "post", tags = [], layout: propLayout } = Astro.props;
 
 const cleanTags = tags
 	.filter((t): t is string => Boolean(t && t.trim()))
-	.slice(0, 2);
+	.slice(0, 3);
 
-const topicHook =
-	cleanTags[0] ||
-	title
-		.replace(/^(CodingCat\.dev|Purrfect\.dev)\s*[-:]?\s*/i, "")
-		.split(/[:\-–|]/)[0]
-		.trim()
-		.slice(0, 22);
+const cleanTitle = title.replace(/^(CodingCat\.dev|Purrfect\.dev)\s*[-:]?\s*/i, "").trim();
+const titleSegments = cleanTitle
+	.split(/[:|,]|\s+&\s+|\s+with\s+|\s+in\s+/i)
+	.map((s) => s.trim())
+	.filter((s) => s.length >= 3);
 
-const secondHook =
+const primaryConcept = cleanTags[0] || titleSegments[0]?.slice(0, 24) || "Core Architecture";
+const secondaryConcept =
 	cleanTags[1] ||
-	(kind === "podcast" ? "Architecture & Patterns" : "Hands-On Implementation");
+	titleSegments[1]?.slice(0, 24) ||
+	(kind === "podcast" ? "Runtime Trade-Offs" : kind === "course" ? "Deterministic Engine" : "System Implementation");
+const tertiaryConcept =
+	cleanTags[2] ||
+	titleSegments[2]?.slice(0, 24) ||
+	(kind === "course" ? "Verified Production Artifact" : "Edge Delivery & Telemetry");
+
+function pickLayout(text: string, contentKind: string): ExcalidrawLayout {
+	const hay = text.toLowerCase();
+	if (/\b(vs\.?|versus|anti-pattern|myth|mistake)\b/.test(hay)) return "comparison";
+	if (/\b(auth|oauth|mcp|protocol|webhook|ssr|stream|request|seek|whisper|rpc|api)\b/.test(hay)) return "sequence";
+	if (/\b(3d|blender|three|glb|rig|class|schema|type|component|react|astro|dom|sdk)\b/.test(hay)) return "uml-class";
+	if (/\b(state|loop|agent|critic|clock|bpm|gsap|spring|audio|chatterbox|workflow)\b/.test(hay)) return "state-machine";
+	if (/\b(stack|layer|remotion|cloudflare|worker|next\.?js|sanity|platform|studio)\b/.test(hay)) return "layered-stack";
+	return contentKind === "course" ? "layered-stack" : "pipeline";
+}
+
+const resolvedLayout: ExcalidrawLayout =
+	propLayout || pickLayout(`${cleanTitle} ${cleanTags.join(" ")}`, kind);
 
 const nodes: ExcalidrawNode[] = [
 	{
-		id: "fundamentals",
-		badge: "Step 01",
-		label: topicHook || "Core Concept",
-		sublabel: "Mental model & why it matters",
+		id: "stage_1",
+		badge: resolvedLayout === "state-machine" ? "STATE 01" : "STAGE 01",
+		stereotype: "«Input / Spec»",
+		label: primaryConcept,
+		sublabel: "Schema & deterministic boundary",
 		color: "purple",
+		fields: [`+ spec: "${primaryConcept.slice(0, 16)}"`, `+ strict: boolean = true`],
+		methods: [`+ parseInput(raw): AST`, `+ validateSchema(): bool`],
 	},
 	{
-		id: "build",
-		badge: "Step 02",
-		label: secondHook,
-		sublabel: "Under the hood & live code",
+		id: "stage_2",
+		badge: resolvedLayout === "state-machine" ? "STATE 02" : "STAGE 02",
+		stereotype: "«Core Runtime»",
+		label: secondaryConcept,
+		sublabel: "Execution & state transitions",
 		color: "blue",
-		status: "good",
+		fields: [`+ engine: "${secondaryConcept.slice(0, 16)}"`, `+ latency: "< 5ms"`],
+		methods: [`+ execute(ctx): State`, `+ seekFrame(t: f64): Pose`],
 	},
 	{
-		id: "production",
-		badge: "Step 03",
-		label: "Ship It Purrfectly",
-		sublabel: "✓ Production trade-offs",
+		id: "stage_3",
+		badge: resolvedLayout === "state-machine" ? "STATE 03" : "STAGE 03",
+		stereotype: "«Verified Output»",
+		label: tertiaryConcept,
+		sublabel: "Production output & telemetry",
 		color: "green",
-		status: "good",
+		fields: [`+ target: "${tertiaryConcept.slice(0, 16)}"`, `+ status: "verified"`],
+		methods: [`+ verifyContract(): Pass`, `+ emitArtifact(): Stream`],
 	},
 ];
 
 const edges = [
-	{ from: "fundamentals", to: "build", label: "unroll the yarn" },
-	{ from: "build", to: "production", label: "✓ production ready" },
+	{ from: "stage_1", to: "stage_2", label: `1. ${primaryConcept.slice(0, 18)}` },
+	{ from: "stage_2", to: "stage_3", label: `2. ${secondaryConcept.slice(0, 18)}` },
 ];
 ---
 
@@ -77,7 +103,7 @@ const edges = [
 				how this {kind === "podcast" ? "episode" : kind === "course" ? "course" : "post"} connects together<span class="text-[#7C3AED] dark:text-[#C084FC]">.</span>
 			</h2>
 			<p class="font-hand mt-1 text-2xl font-bold text-[#4C1D95] dark:text-purple-200">
-				Follow AJ from first principles to production-ready architecture.
+				Follow AJ through the {resolvedLayout.replace("-", " ")} topology from input contract to production output.
 			</p>
 		</div>
 		<div class="hidden shrink-0 sm:block">
@@ -93,8 +119,9 @@ const edges = [
 	</div>
 
 	<ExcalidrawDiagram
-		title={`Visual Diagram: ${title.slice(0, 48)}${title.length > 48 ? "…" : ""}`}
-		caption={`Step-by-step diagram breakdown for ${title}: start with ${topicHook || "core fundamentals"}, implement ${secondHook}, and ship to production.`}
+		title={`Architecture Diagram: ${cleanTitle.slice(0, 48)}${cleanTitle.length > 48 ? "…" : ""}`}
+		caption={`Content-driven ${resolvedLayout} diagram for ${cleanTitle}: ${primaryConcept} -> ${secondaryConcept} -> ${tertiaryConcept}.`}
+		layout={resolvedLayout}
 		nodes={nodes}
 		edges={edges}
 		compact={true}

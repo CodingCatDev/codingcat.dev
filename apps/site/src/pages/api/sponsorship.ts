@@ -8,7 +8,6 @@ import {
 } from "@/lib/sanity/write-client";
 import {
 	createStripeMilestoneCheckout,
-	createStripeMilestoneInvoice,
 } from "@/lib/stripe";
 
 interface SponsorshipPayload {
@@ -167,38 +166,21 @@ export const POST: APIRoute = async ({ request, url }) => {
 		}
 	}
 
-	// 2. Optional Stripe 50% Upfront Deposit Checkout + Net-15 Invoice generation
+	// 2. Optional Stripe 100% Checkout session (NET 15 / NET 30 invoices are generated on-demand in Deal Room)
 	let stripeDepositCheckoutUrl: string | undefined;
-	let stripeDepositInvoiceId: string | undefined;
-	let stripeDepositInvoiceUrl: string | undefined;
 
 	try {
-		const [checkout, invoice] = await Promise.all([
-			createStripeMilestoneCheckout({
-				leadId,
-				portalToken,
-				companyName: company,
-				contactEmail: email,
-				packageName: selectedTier.name,
-				milestone: "deposit",
-				amountCents: selectedTier.depositAmountCents,
-				siteUrl,
-			}),
-			createStripeMilestoneInvoice({
-				leadId,
-				portalToken,
-				companyName: company,
-				contactEmail: email,
-				packageName: selectedTier.name,
-				milestone: "deposit",
-				amountCents: selectedTier.depositAmountCents,
-				siteUrl,
-				daysUntilDue: 15,
-			}),
-		]);
+		const checkout = await createStripeMilestoneCheckout({
+			leadId,
+			portalToken,
+			companyName: company,
+			contactEmail: email,
+			packageName: selectedTier.name,
+			milestone: "full",
+			amountCents: selectedTier.totalAmountCents,
+			siteUrl,
+		});
 		stripeDepositCheckoutUrl = checkout?.checkoutUrl;
-		stripeDepositInvoiceId = invoice?.invoiceId;
-		stripeDepositInvoiceUrl = invoice?.hostedInvoiceUrl;
 	} catch {
 		// Non-fatal if Stripe is not configured in local dev
 	}
@@ -218,16 +200,14 @@ export const POST: APIRoute = async ({ request, url }) => {
 				source: "inbound",
 				status: kickoffSlotStartAt
 					? "booked"
-					: stripeDepositCheckoutUrl || stripeDepositInvoiceUrl
+					: stripeDepositCheckoutUrl
 						? "deposit_sent"
 						: "new",
 				rateCard: selectedTier.id,
 				totalAmountCents: selectedTier.totalAmountCents,
-				depositAmountCents: selectedTier.depositAmountCents,
-				balanceAmountCents: selectedTier.balanceAmountCents,
+				depositAmountCents: 0,
+				balanceAmountCents: 0,
 				...(stripeDepositCheckoutUrl ? { stripeDepositCheckoutUrl } : {}),
-				...(stripeDepositInvoiceId ? { stripeDepositInvoiceId } : {}),
-				...(stripeDepositInvoiceUrl ? { stripeDepositInvoiceUrl } : {}),
 				intent:
 					message ||
 					`Selected package: ${selectedTier.name} ($${selectedTier.priceUsd})`,
@@ -252,7 +232,7 @@ export const POST: APIRoute = async ({ request, url }) => {
 			"New Sponsorship Inquiry on CodingCat.dev",
 			`Company: ${company}`,
 			`Contact: ${name} <${email}>`,
-			`Package: ${selectedTier.name} ($${selectedTier.priceUsd} total / $${selectedTier.depositAmountCents / 100} 50% deposit)`,
+			`Package: ${selectedTier.name} ($${selectedTier.priceUsd} total, 100% upfront or NET 15/30 if requested)`,
 			...(kickoffSlotStartAt
 				? [`15-Min Kickoff Slot Booked: ${kickoffSlotStartAt}`]
 				: []),
@@ -273,10 +253,8 @@ export const POST: APIRoute = async ({ request, url }) => {
 			dealRoomUrl: portalUrl,
 			kickoffSlotStartAt,
 			calendarEventUrl,
-			depositAmountUsd: selectedTier.depositAmountCents / 100,
 			totalAmountUsd: selectedTier.priceUsd,
 			stripeDepositCheckoutUrl,
-			stripeDepositInvoiceUrl,
 		}),
 		{
 			status: 200,

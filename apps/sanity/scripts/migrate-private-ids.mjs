@@ -29,9 +29,9 @@ function isPredictableToken(tok) {
 }
 
 async function run() {
-	// 1. Migrate any unprefixed top-level CRM/booking docs to private.*
+	// 1. Migrate any unprefixed top-level CRM/booking/secret/config docs to private.*
 	const publicDocs = await client.fetch(
-		`*[_type in ["booking", "sponsorLead", "sponsorPool"] && !(_id in path("private.**")) && !(_id in path("drafts.**"))]`,
+		`*[_type in ["booking", "sponsorLead", "sponsorPool", "opsDigestState", "pluginSecrets", "sponsorshipRequest", "sponsorConfig", "distributionConfig", "gcsConfig", "remotionConfig", "contentConfig", "pipelineConfig", "previewSession"] && !(_id in path("private.**")) && !(_id in path("drafts.**"))]`,
 	);
 
 	console.log(
@@ -135,6 +135,35 @@ async function run() {
 	console.log(
 		`[migrate-private-ids] Completed on ${dataset}: migrated=${migrated}, deleted=${deleted}, hardenedTokens=${hardenedCount}.`,
 	);
+
+	// 3. Enforce strict groqFilter on the Sanity Context MCP endpoint (agent-aj-mcp / mcpp0ibez8y)
+	// so private.**, drafts.**, and non-public schemas are never exposed by Sanity Context MCP tools.
+	try {
+		const mcpRes = await fetch(
+			"https://api.sanity.io/v1/context/organizations/ovF2qiKSO/mcp/mcpp0ibez8y",
+			{
+				method: "PATCH",
+				headers: {
+					"Content-Type": "application/json",
+					Authorization: `Bearer ${token}`,
+				},
+				body: JSON.stringify({
+					groqFilter:
+						'_type in ["post", "podcast", "course", "lesson", "author", "guest", "sponsor", "page", "transcript", "podcastType", "settings"] && !(_id in path("private.**")) && !(_id in path("drafts.**"))',
+				}),
+			},
+		);
+		if (mcpRes.ok) {
+			console.log(
+				"[migrate-private-ids] Verified & enforced groqFilter on Sanity Context MCP (agent-aj-mcp).",
+			);
+		}
+	} catch (mcpErr) {
+		console.warn(
+			"[migrate-private-ids] Could not update Sanity Context MCP groqFilter:",
+			mcpErr?.message || mcpErr,
+		);
+	}
 }
 
 run().catch((err) => {

@@ -28,8 +28,11 @@ export const rssAllQuery =
 }`);
 
 export const sitemapQuery =
-	defineQuery(`*[_type in ["author", "guest", "page", "podcast", "post", "sponsor"] && defined(slug.current)] | order(_type asc) | order(_updatedAt desc) {
+	defineQuery(`*[_type in ["author", "course", "guest", "page", "podcast", "post", "sponsor"] && defined(slug.current)] | order(_type asc) | order(_updatedAt desc) {
   _type,
   _updatedAt,
   "slug": slug.current,
+  _type == "course" => {
+    "lessonSlugs": sections[].lesson[]->slug.current
+  }
 }`);

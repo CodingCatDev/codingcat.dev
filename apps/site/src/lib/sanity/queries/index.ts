@@ -1,4 +1,5 @@
 export * from "./feeds";
+export * from "./newsletters";
 export * from "./pages";
 export * from "./people";
 export * from "./podcasts";

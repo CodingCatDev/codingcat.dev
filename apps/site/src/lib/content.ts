@@ -17,6 +17,7 @@ export interface ContentListItem {
 	excerpt?: string | null;
 	coverImage?: CoverImage | null;
 	date?: string | null;
+	tags?: Array<{ label?: string | null; value?: string | null }> | null;
 	author?: Array<PersonRef> | null;
 	guest?: Array<PersonRef> | null;
 }

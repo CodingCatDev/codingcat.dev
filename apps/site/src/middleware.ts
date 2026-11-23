@@ -35,6 +35,32 @@ export const onRequest = defineMiddleware(async (context, next) => {
 
 	const origin = context.locals.siteUrl.origin;
 	const pathname = context.url.pathname;
+
+	// Legacy & broken path 301 recovery for Google Search Console validation
+	if (pathname.startsWith("/page/")) {
+		const pageSlug = pathname.slice("/page/".length).replace(/\/+$/, "");
+		if (pageSlug) {
+			const dest =
+				pageSlug === "privacy-policy" ? "/privacy" : `/${pageSlug}`;
+			return context.redirect(dest, 301);
+		}
+	}
+	if (/^\/podcast\/[^/]+\/rss\.xml\/?$/.test(pathname)) {
+		return context.redirect("/podcasts/rss.xml", 301);
+	}
+	if (
+		pathname.startsWith("/cgi/go/") ||
+		pathname === "/books" ||
+		pathname === "/books/" ||
+		pathname === "/guest/columns.html" ||
+		pathname === "/guest/Pictures" ||
+		pathname === "/guest/Pictures/" ||
+		pathname === "/guest/bw-mariel-auto.jpg" ||
+		pathname === "/guest/dot-plan.txt"
+	) {
+		return context.redirect("/guest/randal-schwartz", 301);
+	}
+
 	const isDedicatedMarkdownEndpoint =
 		pathname === "/auth.md" ||
 		pathname === "/pricing.md" ||
@@ -133,6 +159,8 @@ export const onRequest = defineMiddleware(async (context, next) => {
 		const headers = new Headers(response.headers);
 		headers.set("content-type", "text/markdown; charset=utf-8");
 		headers.set("x-markdown-tokens", String(estimatedTokens));
+		headers.set("X-Robots-Tag", "noindex");
+		headers.append("Link", `<${canonicalUrl}>; rel="canonical"`);
 		headers.delete("content-length");
 
 		trackEdgeRequest({
@@ -160,6 +188,24 @@ export const onRequest = defineMiddleware(async (context, next) => {
 			"x-markdown-tokens",
 			String(Math.max(1, Math.ceil(cloneText.length / 4))),
 		);
+	}
+
+	// Prevent Google Search Console from indexing raw machine-readable / API / OAuth / portal endpoints
+	const isMachineOrAuthEndpoint =
+		isDedicatedMarkdownEndpoint ||
+		pathname.startsWith("/.well-known/") ||
+		(pathname.startsWith("/api/") && !pathname.startsWith("/api/og/")) ||
+		pathname.startsWith("/oauth") ||
+		pathname.startsWith("/agent/") ||
+		pathname.startsWith("/portal/") ||
+		pathname.startsWith("/guest-portal/") ||
+		pathname === "/llms.txt" ||
+		pathname === "/llms-full.txt" ||
+		pathname.endsWith("/llms.txt") ||
+		pathname === "/openapi.json" ||
+		pathname === "/jwks";
+	if (isMachineOrAuthEndpoint && !response.headers.has("X-Robots-Tag")) {
+		response.headers.set("X-Robots-Tag", "noindex");
 	}
 
 	if (!pathname.startsWith("/ingest") && pathname !== "/api/event") {

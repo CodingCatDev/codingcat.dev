@@ -20,10 +20,10 @@ export const SPONSOR_PACKAGE_TIERS: SponsorPackageTier[] = [
 	{
 		id: "full-stack-launch",
 		name: "Full-Stack Launch Bundle",
-		priceUsd: 3500,
-		totalAmountCents: 350000,
-		depositAmountCents: 175000,
-		balanceAmountCents: 175000,
+		priceUsd: 1000,
+		totalAmountCents: 100000,
+		depositAmountCents: 0,
+		balanceAmountCents: 0,
 		tagline: "Most Popular \u00b7 Complete Multi-Channel DevTool Launch",
 		description:
 			"Dedicated YouTube technical deep-dive (61K+ subscribers) + 4 vertical Shorts published across 7 platforms (28 native video posts via Postiz) + Canonical SEO & Agent-Ready (AEO / WebMCP / llms.txt) article on codingcat.dev syndicated to Dev.to & Hashnode + Dual-account social amplification (@CodingCatDev + @codercatdev) + Live ROI Deal Room.",
@@ -52,16 +52,52 @@ export const SPONSOR_PACKAGE_TIERS: SponsorPackageTier[] = [
 		],
 	},
 	{
+		id: "sponsor-of-the-month",
+		name: "Sponsor of the Month (4x Ads)",
+		priceUsd: 800,
+		totalAmountCents: 80000,
+		depositAmountCents: 0,
+		balanceAmountCents: 0,
+		tagline: "4x Podcast Pre-Roll Ads \u00b7 20% Bundle Savings",
+		description:
+			"Host-read ad at the beginning of 4 consecutive CodingCat.dev podcast & YouTube episodes, complete with description link, promo code, and permanent show notes placement.",
+		deliverables: [
+			{
+				title: "4x Host-Read Pre-Roll Ads across Podcast & YouTube",
+				channel: "youtube",
+			},
+			{
+				title: "Promo Code & Link in All 4 Episode Show Notes",
+				channel: "blog",
+			},
+		],
+	},
+	{
+		id: "dedicated-video",
+		name: "Standalone Dedicated YouTube Video",
+		priceUsd: 600,
+		totalAmountCents: 60000,
+		depositAmountCents: 0,
+		balanceAmountCents: 0,
+		tagline: "End-to-End Architecture & Code Walkthrough",
+		description:
+			"Full YouTube video dedicated entirely to building with your product, SDK, or platform. Includes permanent pinned link and sponsor page placement.",
+		deliverables: [
+			{ title: "Dedicated YouTube Video Walkthrough", channel: "youtube" },
+			{ title: "Social Launch Post across X & LinkedIn", channel: "x" },
+		],
+	},
+	{
 		id: "podcast-showcase",
 		name: "Sponsored Podcast & Multi-Channel Showcase",
-		priceUsd: 2000,
-		totalAmountCents: 200000,
-		depositAmountCents: 100000,
-		balanceAmountCents: 100000,
+		priceUsd: 500,
+		totalAmountCents: 50000,
+		depositAmountCents: 0,
+		balanceAmountCents: 0,
 		tagline:
 			"Fast-Track Recording \u00b7 Founder / DevRel Engineering Deep-Dive",
 		description:
-			"Priority fast-track 45-minute podcast & video episode on CodingCat.dev + 4 vertical Shorts distributed across 7 platforms + 60-second host-read mid-roll callout + Permanent show notes, canonical blog feature, and Live ROI Deal Room.",
+			"Priority fast-track 45-minute podcast & video episode on CodingCat.dev + 4 vertical Shorts distributed across 7 platforms + host-read callout + permanent show notes, canonical blog feature, and Live ROI Deal Room.",
 		deliverables: [
 			{
 				title: "45-Minute Sponsored Podcast & YouTube Video Episode",
@@ -83,80 +119,48 @@ export const SPONSOR_PACKAGE_TIERS: SponsorPackageTier[] = [
 		],
 	},
 	{
-		id: "ecosystem-integration",
-		name: "Ecosystem Integration (Mid-Roll + Social Pack)",
-		priceUsd: 950,
-		totalAmountCents: 95000,
-		depositAmountCents: 47500,
-		balanceAmountCents: 47500,
-		tagline:
-			"High-Intent Developer Reach \u00b7 60s Integration + Social Thread",
-		description:
-			"60-second host-read technical demo integrated into a relevant CodingCat.dev video + Dedicated multi-channel social thread across X, LinkedIn, Bluesky, Threads, and Mastodon + Permanent sponsor link on codingcat.dev.",
-		deliverables: [
-			{
-				title: "60-Second Host-Read Integrated Mid-Roll Ad",
-				channel: "youtube",
-			},
-			{
-				title:
-					"Multi-Channel Social Thread (X, LinkedIn, Bluesky, Threads, Mastodon)",
-				channel: "x",
-			},
-			{
-				title: "Permanent Sponsor Link & Show Notes Inclusion",
-				channel: "blog",
-			},
-		],
-	},
-	{
-		id: "dedicated-video",
-		name: "Standalone Dedicated YouTube Video",
-		priceUsd: 2500,
-		totalAmountCents: 250000,
-		depositAmountCents: 125000,
-		balanceAmountCents: 125000,
-		tagline: "End-to-End Architecture & Code Walkthrough",
-		description:
-			"Full 10-to-15 minute YouTube video dedicated entirely to building with your product, SDK, or platform. Includes permanent pinned link and sponsor page placement.",
-		deliverables: [
-			{ title: "Dedicated YouTube Video Walkthrough", channel: "youtube" },
-			{ title: "Social Launch Post across X & LinkedIn", channel: "x" },
-		],
-	},
-	{
 		id: "mid-roll-ad",
-		name: "Integrated 60s Mid-Roll Ad",
-		priceUsd: 1800,
-		totalAmountCents: 180000,
-		depositAmountCents: 90000,
-		balanceAmountCents: 90000,
-		tagline: "Flagship Tutorial Integration",
+		name: "Pre-Roll / Integrated 60s Ad",
+		priceUsd: 250,
+		totalAmountCents: 25000,
+		depositAmountCents: 0,
+		balanceAmountCents: 0,
+		tagline: "Single Episode Pre-Roll or Mid-Roll Placement",
 		description:
-			"60-second host-read integration inside a flagship tutorial or architecture breakdown, with permanent description link and chapter marker.",
+			"Host-read sponsor mention or 60-second technical integration inside a CodingCat.dev podcast or YouTube tutorial, with permanent description link and show notes.",
 		deliverables: [
-			{ title: "60-Second Integrated Mid-Roll Segment", channel: "youtube" },
+			{ title: "Host-Read Pre-Roll / 60s Integrated Ad", channel: "youtube" },
+			{ title: "Permanent Show Notes & Description Link", channel: "blog" },
 		],
 	},
 	{
-		id: "custom-series",
-		name: "Multi-Part Video Series & Advisory",
-		priceUsd: 6000,
-		totalAmountCents: 600000,
-		depositAmountCents: 300000,
-		balanceAmountCents: 300000,
-		tagline: "Custom Enterprise Campaign \u00b7 3+ Videos + Shorts + Articles",
+		id: "x-thread",
+		name: "Sponsored X Thread",
+		priceUsd: 150,
+		totalAmountCents: 15000,
+		depositAmountCents: 0,
+		balanceAmountCents: 0,
+		tagline: "Educational Technical Thread on @CodingCatDev",
 		description:
-			"Multi-part technical series covering your platform from quickstart to production scale, complete with dedicated Shorts, canonical articles, and quarterly campaign reporting.",
+			"Multi-post educational thread on X walking developers through your product, architecture, or launch announcement with code snippets or visuals.",
 		deliverables: [
-			{ title: "Multi-Part YouTube Technical Series", channel: "youtube" },
+			{ title: "Sponsored Technical Thread on X (@CodingCatDev)", channel: "x" },
+		],
+	},
+	{
+		id: "social-post",
+		name: "Sponsored Social Post (X / LinkedIn / Shorts)",
+		priceUsd: 100,
+		totalAmountCents: 10000,
+		depositAmountCents: 0,
+		balanceAmountCents: 0,
+		tagline: "Single-Platform Tweet, LinkedIn Post, or Vertical Short",
+		description:
+			"Single sponsored post on X, LinkedIn, Instagram Reel, or TikTok to promote your developer tool, launch, or event.",
+		deliverables: [
 			{
-				title: "12x Multi-Platform Vertical Shorts",
-				channel: "shorts-network",
-			},
-			{
-				title: "Canonical Documentation & Tutorial Series on CodingCat.dev",
-				channel: "blog",
+				title: "Sponsored Social Post (X Tweet, LinkedIn, or Vertical Short)",
+				channel: "x",
 			},
 		],
 	},
@@ -176,34 +180,51 @@ export function resolveSponsorTier(
 	if (
 		text.includes("full-stack") ||
 		text.includes("bundle") ||
-		text.includes("3,500") ||
-		text.includes("3500")
+		text.includes("1,000") ||
+		text.includes("1000") ||
+		text.includes("custom") ||
+		text.includes("series")
 	) {
 		return SPONSOR_PACKAGE_TIERS[0];
 	}
 	if (
-		text.includes("podcast") ||
-		text.includes("showcase") ||
-		text.includes("2,000") ||
-		text.includes("2000")
+		text.includes("month") ||
+		text.includes("4 ads") ||
+		text.includes("4x") ||
+		text.includes("800")
 	) {
 		return SPONSOR_PACKAGE_TIERS[1];
 	}
-	if (text.includes("ecosystem") || text.includes("950")) {
+	if (text.includes("dedicated") || text.includes("600")) {
 		return SPONSOR_PACKAGE_TIERS[2];
 	}
-	if (text.includes("dedicated")) {
+	if (
+		text.includes("podcast") ||
+		text.includes("showcase") ||
+		text.includes("500")
+	) {
 		return SPONSOR_PACKAGE_TIERS[3];
 	}
 	if (
 		text.includes("mid-roll") ||
-		text.includes("1,800") ||
-		text.includes("1800")
+		text.includes("pre-roll") ||
+		text.includes("ecosystem") ||
+		text.includes("250")
 	) {
 		return SPONSOR_PACKAGE_TIERS[4];
 	}
-	if (text.includes("series") || text.includes("custom")) {
+	if (text.includes("thread") || text.includes("150")) {
 		return SPONSOR_PACKAGE_TIERS[5];
+	}
+	if (
+		text.includes("tweet") ||
+		text.includes("social") ||
+		text.includes("linkedin") ||
+		text.includes("reel") ||
+		text.includes("tiktok") ||
+		text.includes("100")
+	) {
+		return SPONSOR_PACKAGE_TIERS[6];
 	}
 	return SPONSOR_PACKAGE_TIERS[0];
 }

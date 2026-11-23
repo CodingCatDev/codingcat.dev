@@ -28,10 +28,11 @@ This repository contains both the **CodingCat.dev Monorepo** (`apps/site`, `apps
    - `JetBrains Mono` (`400` to `700`): Code blocks, terminal snippets, badge tags, and metadata.
    - `Virgil`: Hand-drawn annotations, sticky notes, and labels inside visual diagrams.
 7. **AJ the Cat Mascot Guardrails**: Always reference canonical assets in `assets/` (`AJHeadphones.png`, `AJ-2D-Bipedal.jpg`, `AJ-3D-Headphones-Front.jpg`, `AJ-3D-Headphones-Left.jpg`, `AJ-3D-Headphones-Right.jpg`). Full-body AJ is always upright bipedal on two legs, wearing Royal Purple/Lavender podcast headphones and a hexagonal `"AJ"` collar tag.
+8. **NEVER Upload Short Course/Lesson Walkthroughs as `public` or Alert Subscribers (`unlisted` + `notifySubscribers=false`)**: Whenever uploading course lessons, course intros, or automated technical walkthroughs to YouTube (`@codingcatdev`), always set `status.privacyStatus: "unlisted"` and pass `notifySubscribers=false` in the upload URL so subscribers are never alerted and the public channel feed stays clean.
 
 ---
 
-## 2. The 13-Module Skill & Design System Router
+## 2. The 14-Module Skill & Design System Router
 
 Before writing UI code, drafting content, or generating visual assets, load the relevant skill module from `skills/` (or fetch it dynamically via the MCP server tools `list_codingcat_rules`, `get_codingcat_rules`, and `get_codingcat_tokens`):
 
@@ -50,6 +51,7 @@ Before writing UI code, drafting content, or generating visual assets, load the 
 | **11** | **Voice & Copy** | `skills/alex-voice-and-copy/SKILL.md` | `@alex.patterson` writing style, canonical terminology, zero em-dashes, comparison tables |
 | **12** | **Visual Prompts** | `skills/codingcat-media-studio/SKILL.md` | Hand-drawn architecture diagrams, 2D bipedal & 3D vinyl-toy AJ prompts, 16:9 YouTube thumbnails |
 | **13** | **Video & Motion** | `skills/codingcat-media-studio/references/youtube-intros-and-video.md` | First-15-second retention hooks, presenter cutaways, lower-thirds, 9:16 Shorts safe zones |
+| **14** | **Walkthrough Studio** | `skills/codingcat-video-walkthrough-studio/SKILL.md` | Deterministic `window.seek(t)` walkthroughs, RTX 5090 `F5-TTS` + `faster-whisper` voiceovers, `unlisted` + `notifySubscribers=false` YouTube uploads |
 
 ---
 

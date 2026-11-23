@@ -8,6 +8,7 @@
  *
  * Uses canonical terminology: Courses, Podcasts, Blog, and Diagrams.
  */
+import Aj3dMascotViewer from "@/components/Aj3dMascotViewer.astro";
 import AjAnimatedMascot from "@/components/AjAnimatedMascot.astro";
 ---
 
@@ -309,27 +310,89 @@ import AjAnimatedMascot from "@/components/AjAnimatedMascot.astro";
 					</a>
 				</div>
 
-				{/* Articulated Interactive 2D Vector AJ Mascot + Glowing Yarn Ball in Bottom-Right Corner */}
-				<div class="mt-4 flex items-end justify-center gap-1 sm:absolute sm:-bottom-5 sm:-right-3 sm:mt-0">
-					<div class="relative -mr-3 mb-3 size-12 shrink-0">
-						<div class="absolute inset-0 animate-pulse rounded-full bg-[#A855F7] opacity-60 blur-md"></div>
-						<svg class="relative size-full" viewBox="0 0 100 100" fill="none" aria-hidden="true">
-							<circle cx="50" cy="50" r="42" fill="#7C3AED" stroke="#2A1155" stroke-width="5"></circle>
-							<path d="M 20 40 Q 50 10 80 40" stroke="#DDD6FE" stroke-width="4" stroke-linecap="round"></path>
-							<path d="M 20 60 Q 50 90 80 60" stroke="#C4B5FD" stroke-width="4" stroke-linecap="round"></path>
-							<path d="M 30 25 Q 70 50 40 85" stroke="#EDE9FE" stroke-width="3.5" stroke-linecap="round"></path>
-						</svg>
+				{/* Articulated Interactive 2D Vector + 3D GLB AJ Mascot Toggle in Bottom-Right Corner */}
+				<div class="mt-4 flex flex-col items-end justify-center gap-1 sm:absolute sm:-bottom-5 sm:-right-3 sm:mt-0">
+					<div class="z-20 mr-2 flex items-center gap-1 rounded-full border border-[#2A1155] bg-[#131B2E]/95 px-2 py-0.5 text-[10px] font-mono font-bold text-white shadow-sketch-sm dark:border-white/30">
+						<button
+							id="hero-aj-mode-2d"
+							type="button"
+							class="rounded-full bg-[#7C3AED] px-2 py-0.5 text-white cursor-pointer"
+						>
+							2D SVG
+						</button>
+						<button
+							id="hero-aj-mode-3d"
+							type="button"
+							class="rounded-full px-2 py-0.5 text-purple-200 hover:text-white cursor-pointer"
+						>
+							3D GLB
+						</button>
 					</div>
-					<AjAnimatedMascot
-						id="hero-aj"
-						variant="full-body"
-						state="idle-wave"
-						angle="three-quarter-left"
-						caption="Purrfect code! 🐾"
-						cls="h-auto w-28 sm:w-32"
-					/>
+
+					<div class="flex items-end justify-center gap-1">
+						<div class="relative -mr-3 mb-3 size-12 shrink-0">
+							<div class="absolute inset-0 animate-pulse rounded-full bg-[#A855F7] opacity-60 blur-md"></div>
+							<svg class="relative size-full" viewBox="0 0 100 100" fill="none" aria-hidden="true">
+								<circle cx="50" cy="50" r="42" fill="#7C3AED" stroke="#2A1155" stroke-width="5"></circle>
+								<path d="M 20 40 Q 50 10 80 40" stroke="#DDD6FE" stroke-width="4" stroke-linecap="round"></path>
+								<path d="M 20 60 Q 50 90 80 60" stroke="#C4B5FD" stroke-width="4" stroke-linecap="round"></path>
+								<path d="M 30 25 Q 70 50 40 85" stroke="#EDE9FE" stroke-width="3.5" stroke-linecap="round"></path>
+							</svg>
+						</div>
+						<div id="hero-aj-2d-wrap">
+							<AjAnimatedMascot
+								id="hero-aj"
+								variant="full-body"
+								state="idle-wave"
+								angle="three-quarter-left"
+								caption="Purrfect code! 🐾"
+								cls="h-auto w-28 sm:w-32"
+							/>
+						</div>
+						<div id="hero-aj-3d-wrap" class="hidden">
+							<Aj3dMascotViewer
+								id="hero-aj-3d"
+								state="idle-wave"
+								showControls={false}
+								autoRotate={true}
+								cls="h-40 w-36 sm:h-44 sm:w-40"
+							/>
+						</div>
+					</div>
 				</div>
 			</div>
 		</div>
 	</div>
 </section>
+
+<script>
+	function initHeroAjToggle() {
+		const btn2d = document.getElementById("hero-aj-mode-2d");
+		const btn3d = document.getElementById("hero-aj-mode-3d");
+		const wrap2d = document.getElementById("hero-aj-2d-wrap");
+		const wrap3d = document.getElementById("hero-aj-3d-wrap");
+		if (!btn2d || !btn3d || !wrap2d || !wrap3d) return;
+
+		btn2d.addEventListener("click", () => {
+			wrap2d.classList.remove("hidden");
+			wrap3d.classList.add("hidden");
+			btn2d.classList.add("bg-[#7C3AED]", "text-white");
+			btn2d.classList.remove("text-purple-200");
+			btn3d.classList.remove("bg-[#7C3AED]", "text-white");
+			btn3d.classList.add("text-purple-200");
+		});
+
+		btn3d.addEventListener("click", () => {
+			wrap2d.classList.add("hidden");
+			wrap3d.classList.remove("hidden");
+			btn3d.classList.add("bg-[#7C3AED]", "text-white");
+			btn3d.classList.remove("text-purple-200");
+			btn2d.classList.remove("bg-[#7C3AED]", "text-white");
+			btn2d.classList.add("text-purple-200");
+			window.dispatchEvent(new Event("resize"));
+		});
+	}
+
+	initHeroAjToggle();
+	window.addEventListener("cc:page-load", initHeroAjToggle);
+</script>

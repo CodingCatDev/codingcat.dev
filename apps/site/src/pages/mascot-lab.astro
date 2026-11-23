@@ -10,6 +10,7 @@
  * - Inspect the 14 articulated bone `transform-origin` pivot crosshairs
  * - Sign in via `/sign-in?redirect=/mascot-lab` to save custom presets to Cloudflare D1
  */
+import Aj3dMascotViewer from "@/components/Aj3dMascotViewer.astro";
 import AjAnimatedMascot from "@/components/AjAnimatedMascot.astro";
 import {
 	AJ_BONE_PIVOTS,
@@ -200,28 +201,91 @@ const EXTENDED_POSES: Array<{
 						</div>
 					</div>
 
-					{/* Pre-rendered Stage Instances for Instant Zero-Latency Switching */}
+					{/* Pre-rendered Stage Instances for Instant Zero-Latency Switching (2D Vector + 3D GLB) */}
+					<div class="mb-2 flex flex-wrap items-center justify-between gap-2 border-b border-white/10 pb-2">
+						<div class="inline-flex items-center gap-1.5 rounded-xl border border-purple-400/40 bg-[#131B2E] p-1">
+							<button
+								id="lab-mode-2d-btn"
+								type="button"
+								class="rounded-lg bg-[#7C3AED] px-3 py-1 font-mono text-xs font-extrabold text-white cursor-pointer"
+							>
+								🎨 2D Vector SVG (57 Paths)
+							</button>
+							<button
+								id="lab-mode-3d-btn"
+								type="button"
+								class="rounded-lg px-3 py-1 font-mono text-xs font-extrabold text-purple-200 hover:bg-purple-950/60 cursor-pointer"
+							>
+								🧊 3D Three.js GLB (Vinyl Rig)
+							</button>
+						</div>
+						<a
+							href="/models/aj-3d-mascot.glb"
+							download="aj-3d-mascot.glb"
+							class="rounded-lg border border-[#C5E86C]/50 bg-[#131B2E] px-2.5 py-1 font-mono text-[11px] font-bold text-[#C5E86C] hover:bg-purple-950/70"
+						>
+							⬇ Download aj-3d-mascot.glb (756 KB)
+						</a>
+					</div>
+
 					<div class="relative my-auto flex min-h-[410px] items-center justify-center py-4">
-						{
-							[...CORE_STATES, ...EXTENDED_POSES].map((item, idx) => (
-								<div
-									data-stage-pose={item.state}
-									class:list={[
-										"lab-stage-instance flex items-center justify-center transition-opacity duration-150",
-										idx === 0 ? "block" : "hidden",
-									]}
-								>
-									<AjAnimatedMascot
-										id={`lab-aj-${item.state}`}
-										state={item.state}
-										variant="full-body"
-										angle="three-quarter-right"
-										caption="Purrfect code! 🐾"
-										cls="h-[360px] w-auto"
-									/>
-								</div>
-							))
-						}
+						<div id="lab-2d-stage-container" class="flex w-full items-center justify-center">
+							{
+								[...CORE_STATES, ...EXTENDED_POSES].map((item, idx) => (
+									<div
+										data-stage-pose={item.state}
+										class:list={[
+											"lab-stage-instance flex items-center justify-center transition-opacity duration-150",
+											idx === 0 ? "block" : "hidden",
+										]}
+									>
+										<AjAnimatedMascot
+											id={`lab-aj-${item.state}`}
+											state={item.state}
+											variant="full-body"
+											angle="three-quarter-right"
+											caption="Purrfect code! 🐾"
+											cls="h-[360px] w-auto"
+										/>
+									</div>
+								))
+							}
+						</div>
+
+						<div id="lab-3d-stage-container" class="hidden w-full">
+							<Aj3dMascotViewer
+								id="lab-aj-3d-main"
+								state="idle-wave"
+								cls="h-[390px] w-full"
+							/>
+						</div>
+					</div>
+
+					{/* Deterministic Frame Function Scrubber (`window.seek(t)`) */}
+					<div class="mb-2 flex flex-wrap items-center gap-3 rounded-xl border border-purple-400/30 bg-[#131B2E]/90 px-3.5 py-2 text-xs">
+						<span class="font-mono font-extrabold text-[#C5E86C]">
+							⏱ window.seek(t):
+						</span>
+						<input
+							id="lab-seek-slider"
+							type="range"
+							min="0"
+							max="15"
+							step="0.016"
+							value="0"
+							class="h-2 flex-1 accent-[#C5E86C] cursor-pointer"
+							aria-label="Scrub deterministic frame time t in seconds"
+						/>
+						<span id="lab-seek-readout" class="w-28 text-right font-mono font-bold text-purple-200">
+							Live RAF (60fps)
+						</span>
+						<button
+							id="lab-seek-reset-btn"
+							type="button"
+							class="rounded-lg border border-white/20 bg-purple-950/80 px-2.5 py-0.5 font-mono text-[11px] font-bold text-white hover:border-[#C5E86C] cursor-pointer"
+						>
+							Resume Live
+						</button>
 					</div>
 
 					{/* Stage Footer Bar */}
@@ -705,6 +769,7 @@ const EXTENDED_POSES: Array<{
 		let showPivots = false;
 		let celebrateCount = 0;
 		let isAuthenticated = false;
+		let is3dMode = false;
 
 		const stageWell = document.getElementById("lab-stage-well");
 		const activeBadge = document.getElementById("lab-active-badge");
@@ -714,6 +779,15 @@ const EXTENDED_POSES: Array<{
 		const pivotsCheckbox = document.getElementById(
 			"lab-toggle-pivots",
 		) as HTMLInputElement | null;
+		const mode2dBtn = document.getElementById("lab-mode-2d-btn");
+		const mode3dBtn = document.getElementById("lab-mode-3d-btn");
+		const stage2dContainer = document.getElementById("lab-2d-stage-container");
+		const stage3dContainer = document.getElementById("lab-3d-stage-container");
+		const seekSlider = document.getElementById(
+			"lab-seek-slider",
+		) as HTMLInputElement | null;
+		const seekReadout = document.getElementById("lab-seek-readout");
+		const seekResetBtn = document.getElementById("lab-seek-reset-btn");
 
 		function getActiveStageWrapper(): HTMLElement | null {
 			return document.querySelector<HTMLElement>(
@@ -783,7 +857,16 @@ const EXTENDED_POSES: Array<{
 			}
 
 			if (codeOutput) {
-				codeOutput.textContent = `<AjAnimatedMascot state="${activeState}" variant="${activeVariant}" angle="${activeAngle}" mouth="${activeMouth}" caption="Purrfect code! 🐾" />`;
+				if (is3dMode) {
+					codeOutput.textContent = `<Aj3dMascotViewer state="${activeState}" modelUrl="/models/aj-3d-mascot.glb" cls="h-[380px] w-full" />`;
+				} else {
+					codeOutput.textContent = `<AjAnimatedMascot state="${activeState}" variant="${activeVariant}" angle="${activeAngle}" mouth="${activeMouth}" caption="Purrfect code! 🐾" />`;
+				}
+			}
+
+			const viewer3d = document.getElementById("lab-aj-3d-main");
+			if (viewer3d) {
+				viewer3d.dataset.state = activeState;
 			}
 
 			// Highlight active buttons
@@ -890,6 +973,48 @@ const EXTENDED_POSES: Array<{
 		pivotsCheckbox?.addEventListener("change", () => {
 			showPivots = Boolean(pivotsCheckbox.checked);
 			syncStageUI();
+		});
+
+		mode2dBtn?.addEventListener("click", () => {
+			is3dMode = false;
+			stage2dContainer?.classList.remove("hidden");
+			stage2dContainer?.classList.add("flex");
+			stage3dContainer?.classList.add("hidden");
+			mode2dBtn.classList.add("bg-[#7C3AED]", "text-white");
+			mode2dBtn.classList.remove("text-purple-200");
+			mode3dBtn?.classList.remove("bg-[#7C3AED]", "text-white");
+			mode3dBtn?.classList.add("text-purple-200");
+			syncStageUI();
+		});
+
+		mode3dBtn?.addEventListener("click", () => {
+			is3dMode = true;
+			stage2dContainer?.classList.add("hidden");
+			stage2dContainer?.classList.remove("flex");
+			stage3dContainer?.classList.remove("hidden");
+			mode3dBtn.classList.add("bg-[#7C3AED]", "text-white");
+			mode3dBtn.classList.remove("text-purple-200");
+			mode2dBtn?.classList.remove("bg-[#7C3AED]", "text-white");
+			mode2dBtn?.classList.add("text-purple-200");
+			syncStageUI();
+			window.dispatchEvent(new Event("resize"));
+		});
+
+		seekSlider?.addEventListener("input", () => {
+			const t = Number.parseFloat(seekSlider.value || "0");
+			const f = Math.round(t * 60);
+			if (seekReadout) {
+				seekReadout.textContent = `t=${t.toFixed(2)}s (f#${f})`;
+			}
+			const w = window as unknown as { seek?: (sec: number) => void };
+			w.seek?.(t);
+		});
+
+		seekResetBtn?.addEventListener("click", () => {
+			if (seekReadout) {
+				seekReadout.textContent = "Live RAF (60fps)";
+			}
+			window.location.reload();
 		});
 
 		document
