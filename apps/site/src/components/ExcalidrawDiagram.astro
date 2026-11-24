@@ -1,10 +1,14 @@
 ---
 /**
- * Hand-Drawn Visual Diagram Engine (`ExcalidrawDiagram.astro`).
+ * Hand-Drawn Visual Diagram & UML Engine (`ExcalidrawDiagram.astro`).
  *
- * Dual-Theme Diagram Canvas matching Google Stitch screens:
- * - Light Mode: `8d1319903d504a79ae56110486455e17`
- * - Dark Mode: `b9e00f99c0d34e9884bf7766a014577b`
+ * Supports 6 Content-Driven Topologies on the CodingCat.dev Dark Whiteboard Canvas:
+ * - `pipeline`: Multi-stage architectural dataflow + optional cylinder store
+ * - `sequence`: UML Sequence Diagram (participant headers, lifelines, activation bars, sync/return arrows)
+ * - `uml-class`: 3-compartment UML Class / Interface / Rig Hierarchy boxes (`«stereotype»`, `+ fields`, `+ methods()`)
+ * - `state-machine`: UML State Machine with initial bullseye state, state nodes, and feedback loop arrow
+ * - `layered-stack`: Horizontal Architectural Tier Stack with inner component pills
+ * - `comparison`: Anti-Pattern (`✗`) vs. Recommended (`✓`) comparison (only when explicitly requested)
  */
 
 export type ExcalidrawColor =
@@ -15,6 +19,14 @@ export type ExcalidrawColor =
 	| "purple"
 	| "red";
 
+export type ExcalidrawLayout =
+	| "pipeline"
+	| "sequence"
+	| "uml-class"
+	| "state-machine"
+	| "layered-stack"
+	| "comparison";
+
 export interface ExcalidrawNode {
 	id: string;
 	label: string;
@@ -22,17 +34,23 @@ export interface ExcalidrawNode {
 	color?: ExcalidrawColor;
 	badge?: string;
 	status?: "good" | "bad";
+	stereotype?: string;
+	fields?: string[];
+	methods?: string[];
+	shape?: "box" | "cylinder" | "diamond";
 }
 
 export interface ExcalidrawEdge {
 	from: string;
 	to: string;
 	label?: string;
+	dashed?: boolean;
 }
 
 interface Props {
 	title?: string;
 	caption?: string;
+	layout?: ExcalidrawLayout;
 	nodes?: ExcalidrawNode[];
 	edges?: ExcalidrawEdge[];
 	rawCode?: string;
@@ -42,6 +60,7 @@ interface Props {
 const {
 	title = "Architecture Diagram",
 	caption,
+	layout: propLayout,
 	nodes: propNodes,
 	edges: propEdges,
 	rawCode,
@@ -58,7 +77,6 @@ const COLOR_MAP: Record<
 		nodeFill: string;
 	}
 > = {
-	/* Mint / Emerald (#86EFAC) */
 	green: {
 		hex: "#86EFAC",
 		patternId: "hatch-mint",
@@ -66,7 +84,6 @@ const COLOR_MAP: Record<
 		textOnBadge: "#166534",
 		nodeFill: "#064E3B",
 	},
-	/* Sky Blue (#38BDF8 / #BAE6FD) */
 	blue: {
 		hex: "#BAE6FD",
 		patternId: "hatch-sky",
@@ -74,7 +91,6 @@ const COLOR_MAP: Record<
 		textOnBadge: "#0369A1",
 		nodeFill: "#0C4A6E",
 	},
-	/* Sunny Yellow (#FEF08A / #FACC15) */
 	orange: {
 		hex: "#FEF08A",
 		patternId: "hatch-yellow",
@@ -82,7 +98,6 @@ const COLOR_MAP: Record<
 		textOnBadge: "#713F12",
 		nodeFill: "#422006",
 	},
-	/* Sunny Yellow (#FEF08A / #FACC15) */
 	yellow: {
 		hex: "#FEF08A",
 		patternId: "hatch-yellow",
@@ -90,7 +105,6 @@ const COLOR_MAP: Record<
 		textOnBadge: "#713F12",
 		nodeFill: "#422006",
 	},
-	/* Royal / Candy Purple (#7C3AED / #C084FC) */
 	purple: {
 		hex: "#EDE9FE",
 		patternId: "hatch-purple",
@@ -98,7 +112,6 @@ const COLOR_MAP: Record<
 		textOnBadge: "#2A1155",
 		nodeFill: "#2A1155",
 	},
-	/* Candy Pink / Coral (#FBCFE8 / #F472B6) */
 	red: {
 		hex: "#FBCFE8",
 		patternId: "hatch-pink",
@@ -115,6 +128,31 @@ const PALETTE_CYCLE: ExcalidrawColor[] = [
 	"green",
 	"red",
 ];
+
+function inferLayoutFromTopic(text: string, raw?: string): ExcalidrawLayout {
+	if (raw) {
+		if (/sequenceDiagram/i.test(raw)) return "sequence";
+		if (/classDiagram/i.test(raw)) return "uml-class";
+		if (/stateDiagram/i.test(raw)) return "state-machine";
+	}
+	const hay = text.toLowerCase();
+	if (/\b(vs\.?|versus|anti-pattern|myth|mistake)\b/.test(hay)) {
+		return "comparison";
+	}
+	if (/\b(auth|oauth|handshake|webhook|request|response|sequence|seek|rpc|protocol|ssr|stream)\b/.test(hay)) {
+		return "sequence";
+	}
+	if (/\b(class|schema|interface|type|rig|hierarchy|bone|glb|three\.?js|component|dom|model|sdk)\b/.test(hay)) {
+		return "uml-class";
+	}
+	if (/\b(state|loop|agent|critic|retry|lifecycle|clock|bpm|machine|workflow|hook)\b/.test(hay)) {
+		return "state-machine";
+	}
+	if (/\b(stack|layer|tier|architecture|platform|runtime|edge|cloudflare|next\.?js|astro)\b/.test(hay)) {
+		return "layered-stack";
+	}
+	return "pipeline";
+}
 
 interface ComparisonTrack {
 	title: string;
@@ -227,7 +265,7 @@ function parseMermaidOrText(raw: string): {
 				!l.startsWith("%%") &&
 				l !== "end" &&
 				!l.startsWith("subgraph ") &&
-				!l.match(/^(graph|flowchart|sequenceDiagram|stateDiagram)/i),
+				!l.match(/^(graph|flowchart|sequenceDiagram|stateDiagram|classDiagram)/i),
 		);
 
 	const parsed = parseArrowLines(lines);
@@ -260,32 +298,30 @@ const resolved =
 			: {
 					nodes: [
 						{
-							id: "idea",
-							badge: "01. Prompt",
-							label: "User Intent",
-							sublabel: "Ask how it works",
+							id: "ingest",
+							badge: "STAGE 01",
+							label: "Input & Schema",
+							sublabel: "Type-safe request boundary",
 							color: "purple" as ExcalidrawColor,
 						},
 						{
-							id: "code",
-							badge: "02. Agent Loop",
-							label: "Sketch & Build",
-							sublabel: "Write real code",
+							id: "engine",
+							badge: "STAGE 02",
+							label: "Core Execution",
+							sublabel: "Deterministic state & logic",
 							color: "blue" as ExcalidrawColor,
-							status: "good" as const,
 						},
 						{
-							id: "ship",
-							badge: "03. Edge Deploy",
-							label: "Ship to Prod",
-							sublabel: "✓ Purrfect pattern",
+							id: "output",
+							badge: "STAGE 03",
+							label: "Edge Delivery",
+							sublabel: "Verified production output",
 							color: "green" as ExcalidrawColor,
-							status: "good" as const,
 						},
 					],
 					edges: [
-						{ from: "idea", to: "code", label: "unroll yarn" },
-						{ from: "code", to: "ship", label: "✓ verified" },
+						{ from: "ingest", to: "engine", label: "validated payload" },
+						{ from: "engine", to: "output", label: "zero-drift emit" },
 					],
 				};
 
@@ -293,22 +329,53 @@ const nodes = resolved.nodes;
 const edges = resolved.edges;
 const tracks = "tracks" in resolved ? resolved.tracks : undefined;
 const hasDualTracks = Boolean(tracks && tracks.length >= 2);
-const count =
-	hasDualTracks && tracks
-		? Math.max(tracks[0].nodes.length, tracks[1].nodes.length, 1)
-		: Math.max(nodes.length, 1);
+const layout: ExcalidrawLayout = hasDualTracks
+	? "comparison"
+	: propLayout || inferLayoutFromTopic(`${title} ${caption || ""}`, rawCode);
+
+const LAYOUT_BADGE_MAP: Record<ExcalidrawLayout, string> = {
+	sequence: "UML SEQUENCE DIAGRAM",
+	"uml-class": "UML CLASS & RIG DIAGRAM",
+	"state-machine": "STATE MACHINE & LOOP",
+	"layered-stack": "LAYERED SYSTEM STACK",
+	pipeline: "DATAFLOW PIPELINE",
+	comparison: "PATTERN COMPARISON",
+};
+
+const maxTrackNodes = hasDualTracks && tracks
+	? Math.max(tracks[0].nodes.length, tracks[1].nodes.length, 1)
+	: Math.max(nodes.length, 1);
+const count = maxTrackNodes;
 const stepSpan = hasDualTracks ? 276 : 336;
-const svgWidth = Math.max(count * stepSpan, 1008);
-const svgHeight = hasDualTracks ? 368 : compact ? 236 : 264;
-const boxW = hasDualTracks ? 216 : 248;
-const boxH = hasDualTracks ? 86 : 104;
-const boxY = Math.round((svgHeight - boxH) / 2) - 8;
+const svgWidth =
+	layout === "layered-stack" || layout === "sequence"
+		? 1008
+		: Math.max(count * stepSpan, 1008);
+const svgHeight = hasDualTracks
+	? 368
+	: layout === "sequence"
+		? 310
+		: layout === "uml-class"
+			? 290
+			: layout === "state-machine"
+				? 295
+				: layout === "layered-stack"
+					? 300
+					: compact
+						? 236
+						: 264;
+const boxW = hasDualTracks ? 216 : 252;
+const boxH = hasDualTracks ? 86 : layout === "uml-class" ? 174 : 106;
+const boxY =
+	layout === "state-machine"
+		? 54
+		: Math.round((svgHeight - boxH) / 2) - 8;
 
 const uid = `diagram-${Math.random().toString(36).slice(2, 9)}`;
 const a11ySummary = nodes
 	.map(
 		(n, idx) =>
-			`Step ${idx + 1}: ${n.label}${n.sublabel ? ` (${n.sublabel})` : ""}`,
+			`Node ${idx + 1}: ${n.label}${n.sublabel ? ` (${n.sublabel})` : ""}`,
 	)
 	.join(" -> ");
 ---
@@ -317,8 +384,8 @@ const a11ySummary = nodes
 	{/* Top Diagram Canvas Header Bar */}
 	<div class="mb-4 flex flex-wrap items-center justify-between gap-2 border-b-2 border-dashed border-[#2A1155]/15 pb-3 dark:border-white/15">
 		<div class="flex min-w-0 items-center gap-2">
-			<span class="inline-flex size-3.5 shrink-0 rounded-full border border-[#2A1155] bg-[#FBCFE8] dark:border-black/60 dark:bg-[#F472B6]"></span>
-			<span class="inline-flex size-3.5 shrink-0 rounded-full border border-[#2A1155] bg-[#FEF08A] dark:border-black/60 dark:bg-[#FACC15]"></span>
+			<span class="inline-flex size-3.5 shrink-0 rounded-full border border-[#2A1155] bg-[#EDE9FE] dark:border-black/60 dark:bg-[#C084FC]"></span>
+			<span class="inline-flex size-3.5 shrink-0 rounded-full border border-[#2A1155] bg-[#BAE6FD] dark:border-black/60 dark:bg-[#38BDF8]"></span>
 			<span class="inline-flex size-3.5 shrink-0 rounded-full border border-[#2A1155] bg-[#86EFAC] dark:border-black/60 dark:bg-[#86EFAC]"></span>
 			<span class="ml-1.5 min-w-0 flex-1 break-words font-hand text-xl font-bold tracking-wide text-[#2A1155] dark:text-white">
 				✏️ {title}
@@ -326,45 +393,230 @@ const a11ySummary = nodes
 		</div>
 		<div class="flex items-center gap-2">
 			<span class="rounded-full border border-[#166534]/30 bg-[#DCFCE7] px-2.5 py-0.5 font-mono text-xs font-bold text-[#166534] dark:border-emerald-400/40 dark:bg-emerald-950/80 dark:text-[#86EFAC]">
-				✓ Good Pattern
+				{LAYOUT_BADGE_MAP[layout]}
 			</span>
 			<span class="rounded-full border border-[#7C3AED]/40 bg-[#EDE9FE] px-3 py-0.5 font-mono text-xs font-bold text-[#7C3AED] dark:border-purple-400/40 dark:bg-purple-950/80 dark:text-purple-200">
-				VISUAL DIAGRAM
+				ARCHITECTURE DIAGRAM
 			</span>
 		</div>
 	</div>
 
-	{/* Responsive Hand-Drawn SVG Flowchart */}
-	<div class="w-full overflow-x-auto rounded-2xl border-2 border-[#2A1155] bg-[#2A1155] p-3 dark:border-white/20 dark:bg-[#060E20]">
+	{/* Responsive Hand-Drawn SVG Canvas */}
+	<div class="w-full overflow-x-auto rounded-2xl border-2 border-[#2A1155] bg-[#060E20] p-3 dark:border-white/20">
 		<svg
 			viewBox={`0 0 ${svgWidth} ${svgHeight}`}
-			class="mx-auto h-auto w-full min-w-[580px] select-none"
+			class="mx-auto h-auto w-full min-w-[600px] select-none"
 			role="img"
 			aria-labelledby={`${uid}-title ${uid}-desc`}
 		>
 			<title id={`${uid}-title`}>{title}</title>
 			<desc id={`${uid}-desc`}>
-				Visual architectural diagram showing: {a11ySummary}. {caption ?? ""}
+				{LAYOUT_BADGE_MAP[layout]} showing: {a11ySummary}. {caption ?? ""}
 			</desc>
 			<defs>
-				<pattern id="hatch-mint" width="10" height="10" patternTransform="rotate(35 0 0)" patternUnits="userSpaceOnUse">
+				<pattern id="hatch-mint" width="10" height="10" patternTransform="rotate(45 0 0)" patternUnits="userSpaceOnUse">
 					<line x1="0" y1="0" x2="0" y2="10" stroke="#86EFAC" stroke-width="3" stroke-opacity="0.3" />
 				</pattern>
-				<pattern id="hatch-sky" width="10" height="10" patternTransform="rotate(35 0 0)" patternUnits="userSpaceOnUse">
+				<pattern id="hatch-sky" width="10" height="10" patternTransform="rotate(45 0 0)" patternUnits="userSpaceOnUse">
 					<line x1="0" y1="0" x2="0" y2="10" stroke="#38BDF8" stroke-width="3" stroke-opacity="0.3" />
 				</pattern>
-				<pattern id="hatch-yellow" width="10" height="10" patternTransform="rotate(35 0 0)" patternUnits="userSpaceOnUse">
+				<pattern id="hatch-yellow" width="10" height="10" patternTransform="rotate(45 0 0)" patternUnits="userSpaceOnUse">
 					<line x1="0" y1="0" x2="0" y2="10" stroke="#FACC15" stroke-width="3" stroke-opacity="0.3" />
 				</pattern>
-				<pattern id="hatch-purple" width="10" height="10" patternTransform="rotate(35 0 0)" patternUnits="userSpaceOnUse">
+				<pattern id="hatch-purple" width="10" height="10" patternTransform="rotate(45 0 0)" patternUnits="userSpaceOnUse">
 					<line x1="0" y1="0" x2="0" y2="10" stroke="#C084FC" stroke-width="3.5" stroke-opacity="0.35" />
 				</pattern>
-				<pattern id="hatch-pink" width="10" height="10" patternTransform="rotate(35 0 0)" patternUnits="userSpaceOnUse">
+				<pattern id="hatch-pink" width="10" height="10" patternTransform="rotate(45 0 0)" patternUnits="userSpaceOnUse">
 					<line x1="0" y1="0" x2="0" y2="10" stroke="#F472B6" stroke-width="3" stroke-opacity="0.32" />
 				</pattern>
 			</defs>
 
-			{/* Dual-Subgraph Comparison Tracks */}
+			{/* ============================================================
+			    ARCHETYPE 1: UML SEQUENCE DIAGRAM (`layout === "sequence"`)
+			    ============================================================ */}
+			{
+				layout === "sequence" && (
+					<g>
+						{/* Combined Fragment Frame */}
+						<rect
+							x="28"
+							y="96"
+							width={svgWidth - 56}
+							height={svgHeight - 112}
+							rx="8"
+							fill="none"
+							stroke="#B4A7D6"
+							stroke-width="1.6"
+							stroke-dasharray="8 5"
+							stroke-opacity="0.55"
+						/>
+						<polygon
+							points="28,96 254,96 242,118 28,118"
+							fill="#1E1B4B"
+							stroke="#B4A7D6"
+							stroke-width="1.6"
+						/>
+						<text
+							x="38"
+							y="111"
+							fill="#C5E86C"
+							style="font-family: var(--font-mono); font-size: 11px; font-weight: 800;"
+						>
+							loop [deterministic execution]
+						</text>
+
+						{nodes.map((node, idx) => {
+							const colSpan = (svgWidth - 80) / Math.max(nodes.length, 1);
+							const cx = Math.round(40 + idx * colSpan + colSpan / 2);
+							const pw = Math.min(220, colSpan - 20);
+							const px = Math.round(cx - pw / 2);
+							const colorKey = node.color ?? PALETTE_CYCLE[idx % PALETTE_CYCLE.length];
+							const palette = COLOR_MAP[colorKey];
+
+							return (
+								<g>
+									{/* Participant Header Box */}
+									<rect x={px} y="16" width={pw} height="64" rx="12" fill={palette.nodeFill} fill-opacity="0.92" />
+									<rect x={px} y="16" width={pw} height="64" rx="12" fill={`url(#${palette.patternId})`} />
+									<rect x={px} y="16" width={pw} height="64" rx="12" fill="none" stroke="#FFFFFF" stroke-width="2.2" />
+									<rect x={px + 2} y="14" width={pw} height="64" rx="13" fill="none" stroke={palette.border} stroke-width="1.8" />
+									<text
+										x={cx}
+										y="44"
+										text-anchor="middle"
+										fill="#FFFFFF"
+										style="font-family: var(--font-hand); font-size: 17px; font-weight: 700;"
+									>
+										{node.label.slice(0, 22)}
+									</text>
+									<text
+										x={cx}
+										y="66"
+										text-anchor="middle"
+										fill={palette.hex}
+										style="font-family: var(--font-mono); font-size: 11px; font-weight: 700;"
+									>
+										{node.sublabel ? node.sublabel.slice(0, 24) : node.badge || `Participant 0${idx + 1}`}
+									</text>
+
+									{/* Dashed Lifeline + Activation Bar */}
+									<line
+										x1={cx}
+										y1="80"
+										x2={cx}
+										y2={svgHeight - 18}
+										stroke={palette.border}
+										stroke-width="2"
+										stroke-dasharray="7 5"
+										stroke-opacity="0.65"
+									/>
+									<rect
+										x={cx - 6}
+										y="118"
+										width="12"
+										height={svgHeight - 148}
+										rx="4"
+										fill="#0B1326"
+										stroke={palette.border}
+										stroke-width="2"
+									/>
+								</g>
+							);
+						})}
+
+						{/* Sequence Message Arrows */}
+						{nodes.map((_, idx) => {
+							if (idx >= nodes.length - 1) return null;
+							const colSpan = (svgWidth - 80) / Math.max(nodes.length, 1);
+							const x1 = Math.round(40 + idx * colSpan + colSpan / 2) + 8;
+							const x2 = Math.round(40 + (idx + 1) * colSpan + colSpan / 2) - 8;
+							const ySync = 148 + idx * 54;
+							const yRet = ySync + 28;
+							const midX = Math.round((x1 + x2) / 2);
+							const reqLabel = (edges[idx]?.label || `${idx + 1}. invoke(${nodes[idx + 1].id})`).slice(0, 28);
+							const reqPillW = Math.max(reqLabel.length * 8.6 + 24, 168);
+							const retLabel = `ack / verified state`;
+
+							return (
+								<g>
+									{/* Forward Call */}
+									<line x1={x1} y1={ySync} x2={x2} y2={ySync} stroke="#FFFFFF" stroke-width="2.4" />
+									<polygon points={`${x2},${ySync} ${x2 - 10},${ySync - 5} ${x2 - 10},${ySync + 5}`} fill="#FFFFFF" />
+									<rect x={midX - reqPillW / 2} y={ySync - 21} width={reqPillW} height="20" rx="7" fill="#050811" stroke="#B4A7D6" stroke-width="1.2" />
+									<text x={midX} y={ySync - 7} text-anchor="middle" fill="#FEF08A" style="font-family: var(--font-hand); font-size: 13.5px; font-weight: 700;">
+										{reqLabel}
+									</text>
+
+									{/* Dashed Return */}
+									<line x1={x2} y1={yRet} x2={x1} y2={yRet} stroke="#86EFAC" stroke-width="2" stroke-dasharray="6 4" />
+									<polyline points={`${x1 + 10},${yRet - 5} ${x1},${yRet} ${x1 + 10},${yRet + 5}`} fill="none" stroke="#86EFAC" stroke-width="2.2" />
+									<text x={midX} y={yRet - 5} text-anchor="middle" fill="#86EFAC" style="font-family: var(--font-mono); font-size: 10.5px; font-weight: 700;">
+										{retLabel}
+									</text>
+								</g>
+							);
+						})}
+					</g>
+				)
+			}
+
+			{/* ============================================================
+			    ARCHETYPE 2: LAYERED SYSTEM STACK (`layout === "layered-stack"`)
+			    ============================================================ */}
+			{
+				layout === "layered-stack" && (
+					<g>
+						{nodes.slice(0, 3).map((node, idx) => {
+							const bandX = 36;
+							const bandW = svgWidth - 72;
+							const bandH = 74;
+							const bandY = 16 + idx * 94;
+							const colorKey = node.color ?? PALETTE_CYCLE[idx % PALETTE_CYCLE.length];
+							const palette = COLOR_MAP[colorKey];
+
+							return (
+								<g>
+									<rect x={bandX} y={bandY} width={bandW} height={bandH} rx="14" fill={palette.nodeFill} fill-opacity="0.9" />
+									<rect x={bandX} y={bandY} width={bandW} height={bandH} rx="14" fill={`url(#${palette.patternId})`} />
+									<rect x={bandX} y={bandY} width={bandW} height={bandH} rx="14" fill="none" stroke="#FFFFFF" stroke-width="2.2" />
+									<rect x={bandX + 2} y={bandY - 2} width={bandW} height={bandH} rx="15" fill="none" stroke={palette.border} stroke-width="1.8" />
+
+									{/* Tier Pill */}
+									<rect x={bandX + 16} y={bandY + 14} width="148" height="24" rx="8" fill="#0B1326" stroke={palette.border} stroke-width="1.6" />
+									<text x={bandX + 90} y={bandY + 30} text-anchor="middle" fill={palette.hex} style="font-family: var(--font-mono); font-size: 11px; font-weight: 800;">
+										{node.badge || `TIER 0${idx + 1}`}
+									</text>
+
+									{/* Layer Primary Label */}
+									<text x={bandX + 186} y={bandY + 32} fill="#FFFFFF" style="font-family: var(--font-hand); font-size: 19px; font-weight: 700;">
+										{node.label}
+									</text>
+									<text x={bandX + 186} y={bandY + 56} fill="#FEF08A" style="font-family: var(--font-hand); font-size: 15px;">
+										{node.sublabel || "Deterministic runtime boundary"}
+									</text>
+
+									{/* Right-Side Component Pills */}
+									<rect x={bandX + bandW - 230} y={bandY + 18} width="208" height="38" rx="10" fill="#0B1326" stroke="#FFFFFF" stroke-width="1.6" />
+									<text x={bandX + bandW - 126} y={bandY + 42} text-anchor="middle" fill="#86EFAC" style="font-family: var(--font-mono); font-size: 12px; font-weight: 700;">
+										{edges[idx]?.label || "Typed Contract"}
+									</text>
+
+									{idx < Math.min(nodes.length, 3) - 1 && (
+										<g>
+											<line x1={svgWidth / 2} y1={bandY + bandH + 2} x2={svgWidth / 2} y2={bandY + bandH + 18} stroke="#C5E86C" stroke-width="2.5" />
+											<polygon points={`${svgWidth / 2},${bandY + bandH + 20} ${svgWidth / 2 - 6},${bandY + bandH + 11} ${svgWidth / 2 + 6},${bandY + bandH + 11}`} fill="#C5E86C" />
+										</g>
+									)}
+								</g>
+							);
+						})}
+					</g>
+				)
+			}
+
+			{/* ============================================================
+			    DUAL-SUBGRAPH PATTERN COMPARISON (`hasDualTracks`)
+			    ============================================================ */}
 			{
 				hasDualTracks && tracks && (
 					<g>
@@ -380,10 +632,7 @@ const a11ySummary = nodes
 									<rect
 										x="24"
 										y={rowBaseY}
-										width={Math.min(
-											svgWidth - 48,
-											Math.max(track.title.length * 9 + 72, 320),
-										)}
+										width={Math.min(svgWidth - 48, Math.max(track.title.length * 9 + 72, 320))}
 										height="28"
 										rx="10"
 										fill={headerBg}
@@ -402,9 +651,7 @@ const a11ySummary = nodes
 									{track.nodes.map((node, nIdx) => {
 										const x = Math.round(nIdx * stepSpan + (stepSpan - boxW) / 2);
 										const y = trackBoxY + (nIdx % 2 === 0 ? -2 : 2);
-										const colorKey =
-											node.color ??
-											(isBad ? "red" : PALETTE_CYCLE[nIdx % PALETTE_CYCLE.length]);
+										const colorKey = node.color ?? (isBad ? "red" : PALETTE_CYCLE[nIdx % PALETTE_CYCLE.length]);
 										const palette = COLOR_MAP[colorKey];
 
 										return (
@@ -470,203 +717,292 @@ const a11ySummary = nodes
 				)
 			}
 
-			{/* Layer 1: Node Boxes */}
+			{/* ============================================================
+			    ARCHETYPES 3-6: UML CLASS, STATE MACHINE, PIPELINE, COMPARISON
+			    ============================================================ */}
 			{
-				!hasDualTracks && nodes.map((node, index) => {
-					const x = Math.round(index * stepSpan + (stepSpan - boxW) / 2);
-					const y = boxY + (index % 2 === 0 ? -4 : 6);
-					const colorKey = node.color ?? PALETTE_CYCLE[index % PALETTE_CYCLE.length];
-					const palette = COLOR_MAP[colorKey];
-					const isBad = colorKey === "red" || node.status === "bad";
-					const isGood =
-						colorKey === "green" ||
-						colorKey === "orange" ||
-						node.status === "good" ||
-						index === nodes.length - 1;
-
-					return (
-						<g>
-							{/* Solid backing inside node for AAA text readability */}
-							<rect
-								x={x}
-								y={y}
-								width={boxW}
-								height={boxH}
-								rx="14"
-								fill={palette.nodeFill}
-								fill-opacity="0.92"
-							/>
-
-							{/* Cross-Hatched Marker Fill */}
-							<rect
-								x={x}
-								y={y}
-								width={boxW}
-								height={boxH}
-								rx="14"
-								fill={`url(#${palette.patternId})`}
-							/>
-
-							{/* Outer Sketchy Chalk Stroke #1 */}
-							<rect
-								x={x}
-								y={y}
-								width={boxW}
-								height={boxH}
-								rx="14"
-								fill="none"
-								stroke="#FFFFFF"
-								stroke-width="2.4"
-							/>
-
-							{/* Offset Double-Stroke Accent Line #2 */}
-							<rect
-								x={x + 2.5}
-								y={y - 2}
-								width={boxW}
-								height={boxH}
-								rx="16"
-								fill="none"
-								stroke={palette.border}
-								stroke-width="2"
-								stroke-opacity="0.95"
-							/>
-
-							{/* Evaluation Marker Badge (✓ Mint or ✗ Coral) */}
+				!hasDualTracks && layout !== "sequence" && layout !== "layered-stack" && (
+					<g>
+						{/* Initial UML Bullseye for State Machine */}
+						{layout === "state-machine" && (
 							<g>
-								<circle
-									cx={x + boxW - 18}
-									cy={y + 18}
-									r="11"
-									fill={isBad ? "#FCA5A5" : isGood ? "#86EFAC" : "#EDE9FE"}
-									stroke="#2A1155"
-									stroke-width="2"
+								<circle cx="22" cy={boxY + boxH / 2} r="9" fill="#C5E86C" stroke="#FFFFFF" stroke-width="2.2" />
+								<line x1="31" y1={boxY + boxH / 2} x2="42" y2={boxY + boxH / 2} stroke="#C5E86C" stroke-width="2.4" />
+							</g>
+						)}
+
+						{/* Node Boxes / 3-Compartment UML Classes */}
+						{nodes.map((node, index) => {
+							const x = Math.round(index * stepSpan + (stepSpan - boxW) / 2);
+							const y = boxY + (index % 2 === 0 ? -3 : 4);
+							const colorKey = node.color ?? PALETTE_CYCLE[index % PALETTE_CYCLE.length];
+							const palette = COLOR_MAP[colorKey];
+							const isBad = colorKey === "red" || node.status === "bad";
+							const fields = node.fields ?? [
+								`+ id: "${node.id}"`,
+								`+ state: ${node.badge || "Ready"}`,
+							];
+							const methods = node.methods ?? [
+								`+ execute(): Result<T>`,
+								`+ verify(): boolean`,
+							];
+
+							return (
+								<g>
+									{/* Solid backing inside node for AAA text readability */}
+									<rect
+										x={x}
+										y={y}
+										width={boxW}
+										height={boxH}
+										rx={layout === "state-machine" ? "24" : "14"}
+										fill={palette.nodeFill}
+										fill-opacity="0.92"
+									/>
+
+									{/* Cross-Hatched Marker Fill */}
+									<rect
+										x={x}
+										y={y}
+										width={boxW}
+										height={boxH}
+										rx={layout === "state-machine" ? "24" : "14"}
+										fill={`url(#${palette.patternId})`}
+									/>
+
+									{/* Outer Sketchy Chalk Stroke #1 */}
+									<rect
+										x={x}
+										y={y}
+										width={boxW}
+										height={boxH}
+										rx={layout === "state-machine" ? "24" : "14"}
+										fill="none"
+										stroke="#FFFFFF"
+										stroke-width="2.4"
+									/>
+
+									{/* Offset Double-Stroke Accent Line #2 */}
+									<rect
+										x={x + 2.5}
+										y={y - 2}
+										width={boxW}
+										height={boxH}
+										rx={layout === "state-machine" ? "26" : "16"}
+										fill="none"
+										stroke={palette.border}
+										stroke-width="2"
+										stroke-opacity="0.95"
+									/>
+
+									{/* Evaluation Marker Badge ONLY for explicit `comparison` layout */}
+									{layout === "comparison" && (
+										<g>
+											<circle
+												cx={x + boxW - 18}
+												cy={y + 18}
+												r="11"
+												fill={isBad ? "#FCA5A5" : "#86EFAC"}
+												stroke="#2A1155"
+												stroke-width="2"
+											/>
+											<text
+												x={x + boxW - 18}
+												y={y + 22}
+												text-anchor="middle"
+												fill="#2A1155"
+												style="font-family: var(--font-mono); font-size: 12px; font-weight: 900;"
+											>
+												{isBad ? "✗" : "✓"}
+											</text>
+										</g>
+									)}
+
+									{/* UML 3-Compartment Class Layout */}
+									{layout === "uml-class" ? (
+										<g>
+											<rect x={x + 6} y={y + 56} width={boxW - 12} height={boxH - 62} rx="8" fill="#070B16" fill-opacity="0.92" />
+											<line x1={x} y1={y + 56} x2={x + boxW} y2={y + 56} stroke="#FFFFFF" stroke-width="2" />
+											<line x1={x} y1={y + 114} x2={x + boxW} y2={y + 114} stroke={palette.border} stroke-width="1.6" stroke-dasharray="6 4" />
+											<text x={x + boxW / 2} y={y + 21} text-anchor="middle" fill={palette.hex} style="font-family: var(--font-mono); font-size: 11px; font-weight: 700;">
+												{node.stereotype || `«${node.badge || "interface"}»`}
+											</text>
+											<text x={x + boxW / 2} y={y + 44} text-anchor="middle" fill="#FFFFFF" style="font-family: var(--font-hand); font-size: 17px; font-weight: 700;">
+												{node.label.slice(0, 24)}
+											</text>
+											{fields.slice(0, 2).map((f, fIdx) => (
+												<text x={x + 14} y={y + 78 + fIdx * 20} fill="#E2E8F0" style="font-family: var(--font-mono); font-size: 11.5px;">
+													{f.slice(0, 28)}
+												</text>
+											))}
+											{methods.slice(0, 2).map((m, mIdx) => (
+												<text x={x + 14} y={y + 136 + mIdx * 20} fill="#86EFAC" style="font-family: var(--font-mono); font-size: 11.5px;">
+													{m.slice(0, 28)}
+												</text>
+											))}
+										</g>
+									) : (
+										<g>
+											{/* Optional Step Pill Badge */}
+											{node.badge && (
+												<g>
+													<rect
+														x={x + 14}
+														y={y - 13}
+														width={Math.min(boxW - 28, Math.max(node.badge.length * 9.2 + 24, 84))}
+														height="24"
+														rx="8"
+														fill={palette.hex}
+														stroke="#2A1155"
+														stroke-width="2"
+													/>
+													<text
+														x={x + 14 + Math.min(boxW - 28, Math.max(node.badge.length * 9.2 + 24, 84)) / 2}
+														y={y + 3}
+														text-anchor="middle"
+														fill={palette.textOnBadge}
+														style="font-family: var(--font-mono); font-size: 11px; font-weight: 800; text-transform: uppercase;"
+													>
+														{node.badge}
+													</text>
+												</g>
+											)}
+
+											{/* Node Primary Label */}
+											<text
+												x={x + boxW / 2}
+												y={node.sublabel ? y + 48 : y + 58}
+												text-anchor="middle"
+												fill="#FFFFFF"
+												style="font-family: var(--font-hand); font-size: 17px; font-weight: 700;"
+											>
+												{node.label.length > 26 ? `${node.label.slice(0, 24)}…` : node.label}
+											</text>
+
+											{/* Node Hand-Drawn Sub-label */}
+											{node.sublabel && (
+												<text
+													x={x + boxW / 2}
+													y={y + 76}
+													text-anchor="middle"
+													fill="#FEF08A"
+													style="font-family: var(--font-hand); font-size: 14.5px; font-weight: 400;"
+												>
+													{node.sublabel.length > 30
+														? `${node.sublabel.slice(0, 28)}…`
+														: node.sublabel}
+												</text>
+											)}
+										</g>
+									)}
+								</g>
+							);
+						})}
+
+						{/* Connecting Arrows & High-Contrast Pill Labels */}
+						{nodes.map((_, index) => {
+							if (index >= nodes.length - 1) return null;
+							const x = Math.round(index * stepSpan + (stepSpan - boxW) / 2);
+							const y = boxY + (index % 2 === 0 ? -3 : 4);
+							const nextX = Math.round((index + 1) * stepSpan + (stepSpan - boxW) / 2);
+							const nextY = boxY + ((index + 1) % 2 === 0 ? -3 : 4);
+							const edge = edges[index];
+							const midX = Math.round((x + boxW + nextX) / 2);
+							const labelY = Math.max(y, nextY) + boxH + 26;
+							const pillW = edge?.label ? Math.max(edge.label.length * 8.2 + 22, 88) : 0;
+
+							return (
+								<g>
+									<path
+										d={`M ${x + boxW + 6} ${y + boxH / 2} C ${x + boxW + 34} ${y + boxH / 2 - 16}, ${nextX - 34} ${nextY + boxH / 2 - 16}, ${nextX - 8} ${nextY + boxH / 2}`}
+										fill="none"
+										stroke="#D8B4FE"
+										stroke-width="3"
+										stroke-dasharray={layout === "uml-class" ? "none" : "7 5"}
+										stroke-linecap="round"
+									/>
+									{layout === "uml-class" ? (
+										<polygon
+											points={`${nextX - 4},${nextY + boxH / 2} ${nextX - 14},${nextY + boxH / 2 - 6} ${nextX - 24},${nextY + boxH / 2} ${nextX - 14},${nextY + boxH / 2 + 6}`}
+											fill="#FEF08A"
+											stroke="#FFFFFF"
+											stroke-width="1.5"
+										/>
+									) : (
+										<path
+											d={`M ${nextX - 18} ${nextY + boxH / 2 - 8} L ${nextX - 5} ${nextY + boxH / 2} L ${nextX - 17} ${nextY + boxH / 2 + 8}`}
+											fill="none"
+											stroke="#FEF08A"
+											stroke-width="3.2"
+											stroke-linecap="round"
+											stroke-linejoin="round"
+										/>
+									)}
+									{edge?.label && (
+										<g>
+											<rect
+												x={midX - pillW / 2}
+												y={labelY - 16}
+												width={pillW}
+												height="24"
+												rx="12"
+												fill="#0B1326"
+												fill-opacity="0.92"
+												stroke="#D8B4FE"
+												stroke-width="1.5"
+											/>
+											<text
+												x={midX}
+												y={labelY}
+												text-anchor="middle"
+												fill="#FEF08A"
+												style="font-family: var(--font-hand); font-size: 14.5px; font-weight: 700;"
+											>
+												{edge.label}
+											</text>
+										</g>
+									)}
+								</g>
+							);
+						})}
+
+						{/* Feedback Loop Return Arrow for State Machine */}
+						{layout === "state-machine" && nodes.length >= 2 && (
+							<g>
+								<path
+									d={`M ${Math.round((nodes.length - 1) * stepSpan + stepSpan / 2)} ${boxY + boxH + 8} C ${svgWidth * 0.72} ${svgHeight - 10}, ${svgWidth * 0.28} ${svgHeight - 10}, ${Math.round(stepSpan / 2)} ${boxY + boxH + 8}`}
+									fill="none"
+									stroke="#FACC15"
+									stroke-width="2.4"
+									stroke-dasharray="7 5"
+								/>
+								<polygon
+									points={`${Math.round(stepSpan / 2)},${boxY + boxH + 6} ${Math.round(stepSpan / 2) - 6},${boxY + boxH + 16} ${Math.round(stepSpan / 2) + 8},${boxY + boxH + 15}`}
+									fill="#FACC15"
+								/>
+								<rect
+									x={svgWidth / 2 - 110}
+									y={svgHeight - 36}
+									width="220"
+									height="22"
+									rx="10"
+									fill="#0B1326"
+									stroke="#FACC15"
+									stroke-width="1.5"
 								/>
 								<text
-									x={x + boxW - 18}
-									y={y + 22}
+									x={svgWidth / 2}
+									y={svgHeight - 21}
 									text-anchor="middle"
-									fill="#2A1155"
-									style="font-family: var(--font-mono); font-size: 12px; font-weight: 900;"
+									fill="#FACC15"
+									style="font-family: var(--font-mono); font-size: 11px; font-weight: 800;"
 								>
-									{isBad ? "✗" : "✓"}
+									[feedback loop] verify & refine
 								</text>
 							</g>
-
-							{/* Optional Step Pill Badge */}
-							{node.badge && (
-								<g>
-									<rect
-										x={x + 14}
-										y={y - 13}
-										width={Math.max(node.badge.length * 8.5 + 18, 64)}
-										height="23"
-										rx="8"
-										fill={palette.hex}
-										stroke="#2A1155"
-										stroke-width="2"
-									/>
-									<text
-										x={x + 14 + Math.max(node.badge.length * 8.5 + 18, 64) / 2}
-										y={y + 2}
-										text-anchor="middle"
-										fill={palette.textOnBadge}
-										style="font-family: var(--font-mono); font-size: 11px; font-weight: 800; text-transform: uppercase;"
-									>
-										{node.badge}
-									</text>
-								</g>
-							)}
-
-							{/* Node Primary Label */}
-							<text
-								x={x + boxW / 2}
-								y={node.sublabel ? y + 48 : y + 58}
-								text-anchor="middle"
-								fill="#FFFFFF"
-								style="font-family: var(--font-hand); font-size: 17px; font-weight: 700;"
-							>
-								{node.label.length > 26 ? `${node.label.slice(0, 24)}…` : node.label}
-							</text>
-
-							{/* Node Hand-Drawn Sub-label */}
-							{node.sublabel && (
-								<text
-									x={x + boxW / 2}
-									y={y + 76}
-									text-anchor="middle"
-									fill="#FEF08A"
-									style="font-family: var(--font-hand); font-size: 14.5px; font-weight: 400;"
-								>
-									{node.sublabel.length > 30
-										? `${node.sublabel.slice(0, 28)}…`
-										: node.sublabel}
-								</text>
-							)}
-						</g>
-					);
-				})
-			}
-
-			{/* Layer 2: Connecting Arrows & High-Contrast Pill Labels (Never occluded by boxes) */}
-			{
-				!hasDualTracks && nodes.map((_, index) => {
-					if (index >= nodes.length - 1) return null;
-					const x = Math.round(index * stepSpan + (stepSpan - boxW) / 2);
-					const y = boxY + (index % 2 === 0 ? -4 : 6);
-					const nextX = Math.round((index + 1) * stepSpan + (stepSpan - boxW) / 2);
-					const nextY = boxY + ((index + 1) % 2 === 0 ? -4 : 6);
-					const edge = edges[index];
-					const midX = Math.round((x + boxW + nextX) / 2);
-					const labelY = Math.max(y, nextY) + boxH + 26;
-					const pillW = edge?.label ? Math.max(edge.label.length * 8.2 + 22, 88) : 0;
-
-					return (
-						<g>
-							<path
-								d={`M ${x + boxW + 6} ${y + boxH / 2} C ${x + boxW + 34} ${y + boxH / 2 - 18}, ${nextX - 34} ${nextY + boxH / 2 - 18}, ${nextX - 8} ${nextY + boxH / 2}`}
-								fill="none"
-								stroke="#D8B4FE"
-								stroke-width="3"
-								stroke-dasharray="7 5"
-								stroke-linecap="round"
-							/>
-							<path
-								d={`M ${nextX - 18} ${nextY + boxH / 2 - 8} L ${nextX - 5} ${nextY + boxH / 2} L ${nextX - 17} ${nextY + boxH / 2 + 8}`}
-								fill="none"
-								stroke="#FEF08A"
-								stroke-width="3.2"
-								stroke-linecap="round"
-								stroke-linejoin="round"
-							/>
-							{edge?.label && (
-								<g>
-									<rect
-										x={midX - pillW / 2}
-										y={labelY - 16}
-										width={pillW}
-										height="24"
-										rx="12"
-										fill="#0B1326"
-										fill-opacity="0.92"
-										stroke="#D8B4FE"
-										stroke-width="1.5"
-										stroke-dasharray="4 3"
-									/>
-									<text
-										x={midX}
-										y={labelY}
-										text-anchor="middle"
-										fill="#FEF08A"
-										style="font-family: var(--font-hand); font-size: 14.5px; font-weight: 700;"
-									>
-										{edge.label}
-									</text>
-								</g>
-							)}
-						</g>
-					);
-				})
+						)}
+					</g>
+				)
 			}
 		</svg>
 	</div>

@@ -12,14 +12,7 @@ import { escapeXml } from "@/lib/xml";
  * canonical routes; apps/site/baseline holds the pre-migration snapshot to diff against.
  */
 export const GET: APIRoute = async ({ locals }) => {
-	const content = await locals.sanity.fetchPublished<
-		Array<{
-			_type: string;
-			_updatedAt?: string;
-			slug: string;
-			lessonSlugs?: Array<string | null> | null;
-		}>
-	>(sitemapQuery);
+	const content = await locals.sanity.fetchPublished(sitemapQuery);
 	const origin = locals.siteUrl.origin;
 	const now = new Date().toISOString();
 
@@ -100,7 +93,9 @@ export const GET: APIRoute = async ({ locals }) => {
 			priority: "0.5",
 		},
 		...content.flatMap((entry) => {
-			if (!entry.slug) return [];
+			if (!entry.slug) {
+				return [];
+			}
 			if (entry._type === "page" && redirectedPageSlugs.has(entry.slug)) {
 				return [];
 			}
@@ -133,7 +128,9 @@ export const GET: APIRoute = async ({ locals }) => {
 
 	const seenLocs = new Set<string>();
 	const urls = rawUrls.filter((u) => {
-		if (seenLocs.has(u.loc)) return false;
+		if (seenLocs.has(u.loc)) {
+			return false;
+		}
 		seenLocs.add(u.loc);
 		return true;
 	});

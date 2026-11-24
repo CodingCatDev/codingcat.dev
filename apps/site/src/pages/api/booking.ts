@@ -15,9 +15,7 @@ import {
 	getSanityServerClient,
 	resolveSponsorTier,
 } from "@/lib/sanity/write-client";
-import {
-	createStripeMilestoneCheckout,
-} from "@/lib/stripe";
+import { createStripeMilestoneCheckout } from "@/lib/stripe";
 
 interface BookingPayload {
 	bookingId?: string;

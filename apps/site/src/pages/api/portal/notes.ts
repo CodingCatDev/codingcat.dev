@@ -792,7 +792,7 @@ export const POST: APIRoute = async ({ request, url }) => {
 			: primaryDoc?.runOfShowNotes || "";
 
 	const combinedOutlineBlock: string[] = [];
-	if (threadItem && threadItem.message) {
+	if (threadItem?.message) {
 		combinedOutlineBlock.push(
 			`💬 Latest Note from ${resolvedAuthorName}:`,
 			threadItem.message,
@@ -898,7 +898,7 @@ export const POST: APIRoute = async ({ request, url }) => {
 				patchFields.gmailSubject = canonicalSubject;
 			} else if (authorRole === "guest" || noteType === "feedback") {
 				// Guest -> Host (alex@codingcat.dev) alert in the canonical Gmail thread
-				const opsAppUrl =
+				const _opsAppUrl =
 					"https://www.sanity.io/@ovF2qiKSO/application/bv37w3mpgxoi5p12dg9kmp9r/";
 				const isFeedback = noteType === "feedback";
 				const card = buildPodcastPortalEmailCard({

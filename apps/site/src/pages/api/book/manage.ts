@@ -285,7 +285,8 @@ export const POST: APIRoute = async ({ request, url }) => {
 					guestName,
 					company,
 					statusBadge: "CodingCat.dev Studio · Recording Reminder",
-					headline: "Reminder: Your CodingCat.dev Podcast Recording Is Coming Up!",
+					headline:
+						"Reminder: Your CodingCat.dev Podcast Recording Is Coming Up!",
 					introParagraph:
 						"just a quick reminder that your CodingCat.dev Podcast recording session is coming up soon. Below are your StreamYard Studio link and Guest Portal with your 5-part Run-of-Show.",
 					slotSummary: `${formattedSlot} ET (60 min)`,
@@ -303,9 +304,7 @@ export const POST: APIRoute = async ({ request, url }) => {
 					text: card.text,
 					html: card.html,
 					...(threadId ? { threadId } : {}),
-					...(messageId
-						? { inReplyTo: messageId, references: messageId }
-						: {}),
+					...(messageId ? { inReplyTo: messageId, references: messageId } : {}),
 				});
 
 				const reminderSentAt = new Date().toISOString();

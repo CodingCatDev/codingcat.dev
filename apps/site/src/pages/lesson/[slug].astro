@@ -1,0 +1,32 @@
+---
+/**
+ * Legacy `/lesson/[slug]` redirect route.
+ *
+ * Looks up the parent course in Sanity and issues a 301 permanent redirect to
+ * `/course/[courseSlug]/lesson/[slug]` (or `/courses` if the lesson is unattached).
+ */
+import { lessonParentCourseQuery } from "@/lib/sanity/queries";
+
+const { slug } = Astro.params;
+if (!slug) {
+	return new Response(null, { status: 404 });
+}
+
+const lesson = await Astro.locals.sanity.fetchPublished(
+	lessonParentCourseQuery,
+	{ slug },
+);
+
+if (!lesson?.slug) {
+	return new Response(null, { status: 404 });
+}
+
+if (lesson.courseSlug) {
+	return Astro.redirect(
+		`/course/${encodeURIComponent(lesson.courseSlug)}/lesson/${encodeURIComponent(lesson.slug)}`,
+		301,
+	);
+}
+
+return Astro.redirect("/courses", 301);
+---

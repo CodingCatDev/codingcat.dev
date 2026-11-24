@@ -1,0 +1,335 @@
+---
+/**
+ * `Aj3dMascotViewer.astro`
+ *
+ * Interactive 3D Vinyl-Toy AJ the Cat WebGL/WebGPU Viewer powered by Three.js + GLTFLoader
+ * and wired to CodingCat.dev's deterministic `window.seek(t)` + closed-form spring engine
+ * (`@/lib/aj-motion-engine`).
+ *
+ * Features:
+ * - Lazy-loaded when visible or when toggled to 3D mode (zero LCP impact)
+ * - Loads `/models/aj-3d-mascot.glb` (or builds the canonical procedural fallback immediately)
+ * - Royal Purple (`#7C3AED`) & Electric Lime (`#C5E86C`) rim lighting matching `aj-mascot-prompts.md`
+ * - Interactive drag-to-orbit + cursor pupil tracking (`AjEyeLeftPupil`, `AjEyeRightPupil`)
+ * - Responds to `window.seek(t)` (`cc:seek` event) and `window.setAjAudioAmplitude(amp, bpm)` (`cc:audio-beat`)
+ * - Click / Space triggers closed-form spring `celebrate` jump
+ */
+import type { AjAnimationState } from "@/components/aj-rig/ajRigTypes";
+
+export interface Props {
+	id?: string;
+	state?: AjAnimationState;
+	cls?: string;
+	modelUrl?: string;
+	autoRotate?: boolean;
+	showControls?: boolean;
+}
+
+const {
+	id = `aj-3d-${Math.random().toString(36).slice(2, 8)}`,
+	state = "idle-wave",
+	cls = "h-[360px] w-full",
+	modelUrl = "/models/aj-3d-mascot.glb",
+	autoRotate = false,
+	showControls = true,
+} = Astro.props;
+---
+
+<div
+	id={id}
+	data-aj-3d-viewer
+	data-state={state}
+	data-model-url={modelUrl}
+	data-auto-rotate={autoRotate ? "true" : "false"}
+	class:list={[
+		"relative overflow-hidden rounded-2xl border-2 border-[#2A1155] bg-[#0B1326] shadow-sketch-sm select-none dark:border-white/25",
+		cls,
+	]}
+	role="region"
+	aria-label="Interactive 3D AJ the Cat Mascot"
+>
+	<canvas
+		data-aj-3d-canvas
+		class="block h-full w-full cursor-grab active:cursor-grabbing"
+	></canvas>
+
+	{
+		showControls && (
+			<div class="pointer-events-none absolute inset-x-3 bottom-3 flex flex-wrap items-center justify-between gap-2">
+				<span class="rounded-full border border-purple-400/40 bg-[#131B2E]/90 px-2.5 py-1 font-mono text-[10px] font-extrabold uppercase tracking-wider text-[#C5E86C] backdrop-blur-sm">
+					🧊 Three.js GLB · seek(t) Ready
+				</span>
+				<span class="rounded-full border border-white/15 bg-[#131B2E]/85 px-2.5 py-1 font-mono text-[10px] font-bold text-purple-200 backdrop-blur-sm">
+					Drag to Orbit · Click to Jump
+				</span>
+			</div>
+		)
+	}
+</div>
+
+<script>
+	import * as THREE from "three";
+	import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
+	import { computeAjPoseAtTime } from "@/lib/aj-motion-engine";
+	import type { AjAnimationState } from "@/components/aj-rig/ajRigTypes";
+
+	function initAj3dViewers() {
+		const containers = document.querySelectorAll<HTMLElement>(
+			"[data-aj-3d-viewer]",
+		);
+		if (!containers.length) return;
+
+		containers.forEach((container) => {
+			if (container.dataset.hydrated === "true") return;
+			container.dataset.hydrated = "true";
+
+			const canvas = container.querySelector<HTMLCanvasElement>(
+				"[data-aj-3d-canvas]",
+			);
+			if (!canvas) return;
+
+			const modelUrl =
+				container.dataset.modelUrl || "/models/aj-3d-mascot.glb";
+
+			const scene = new THREE.Scene();
+			const camera = new THREE.PerspectiveCamera(34, 1, 0.1, 50);
+			camera.position.set(0, 1.85, 5.2);
+			camera.lookAt(0, 1.45, 0);
+
+			let renderer: THREE.WebGLRenderer | null = null;
+			try {
+				renderer = new THREE.WebGLRenderer({
+					canvas,
+					antialias: true,
+					alpha: true,
+					powerPreference: "high-performance",
+				});
+				renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+				renderer.toneMapping = THREE.ACESFilmicToneMapping;
+				renderer.toneMappingExposure = 1.15;
+			} catch {
+				return;
+			}
+
+			// Studio Lighting: Key + Royal Purple (#7C3AED) Rim + Electric Lime (#C5E86C) Rim
+			const ambient = new THREE.AmbientLight(0xd8b4fe, 0.85);
+			scene.add(ambient);
+
+			const keyLight = new THREE.DirectionalLight(0xfffbeb, 2.2);
+			keyLight.position.set(2.8, 4.2, 3.6);
+			scene.add(keyLight);
+
+			const purpleRim = new THREE.SpotLight(0x7c3aed, 6.5, 12, Math.PI / 3, 0.5);
+			purpleRim.position.set(-3.2, 2.8, -1.8);
+			scene.add(purpleRim);
+
+			const limeRim = new THREE.SpotLight(0xc5e86c, 5.0, 12, Math.PI / 3, 0.5);
+			limeRim.position.set(3.2, 2.4, -1.5);
+			scene.add(limeRim);
+
+			const fillLight = new THREE.PointLight(0xb4a7d6, 1.4, 8);
+			fillLight.position.set(0, 0.8, 2.6);
+			scene.add(fillLight);
+
+			const rigRoot = new THREE.Group();
+			scene.add(rigRoot);
+
+			// Node references for bone animation
+			const nodes: Record<string, THREE.Object3D | undefined> = {};
+			const celebrateImpulses: number[] = [];
+			let isSeekLocked = false;
+			let lockedSeekTime = 0;
+			let liveAudioAmp = 0;
+			let liveBpm = 120;
+
+			// Orbit interaction state
+			let isDragging = false;
+			let prevX = 0;
+			let targetYaw = -0.18;
+			let currentYaw = -0.18;
+			let pointerNormX = 0;
+			let pointerNormY = 0;
+
+			const loader = new GLTFLoader();
+			loader.load(
+				modelUrl,
+				(gltf) => {
+					const model = gltf.scene;
+					model.traverse((obj) => {
+						if (obj.name) {
+							nodes[obj.name] = obj;
+						}
+					});
+					rigRoot.add(model);
+				},
+				undefined,
+				() => {
+					// Fallback minimal vinyl sphere if GLB fetch is blocked offline
+					const geo = new THREE.SphereGeometry(0.8, 32, 32);
+					const mat = new THREE.MeshStandardMaterial({
+						color: 0x7c3aed,
+						roughness: 0.3,
+					});
+					rigRoot.add(new THREE.Mesh(geo, mat));
+				},
+			);
+
+			function resizeRenderer() {
+				if (!renderer) return;
+				const rect = container.getBoundingClientRect();
+				const w = Math.max(rect.width, 160);
+				const h = Math.max(rect.height, 160);
+				camera.aspect = w / h;
+				camera.updateProjectionMatrix();
+				renderer.setSize(w, h, false);
+			}
+
+			resizeRenderer();
+			const ro = new ResizeObserver(resizeRenderer);
+			ro.observe(container);
+
+			function applyPoseAtTime(t: number) {
+				const activeState = (container.dataset.state ||
+					"idle-wave") as AjAnimationState;
+				const pose = computeAjPoseAtTime(t, activeState, {
+					bpm: liveBpm,
+					audioAmplitude: liveAudioAmp,
+					celebrateImpulses,
+				});
+
+				const body = nodes.AjBodyRoot;
+				const head = nodes.AjHeadGroup;
+				const earL = nodes.AjEarLeft;
+				const earR = nodes.AjEarRight;
+				const armR = nodes.AjArmRight;
+				const armL = nodes.AjArmLeft;
+				const tail = nodes.AjTail;
+				const jaw = nodes.AjJawMouth;
+				const pupilL = nodes.AjEyeLeftPupil;
+				const pupilR = nodes.AjEyeRightPupil;
+
+				if (body) {
+					body.position.y = 0.18 + pose.bodyTranslateY * 0.012;
+					body.scale.set(pose.bodyScaleX, pose.bodyScaleY, pose.bodyScaleX);
+				}
+				if (head) {
+					head.position.y = 1.32 + pose.headNodY * 0.01;
+					head.rotation.z = THREE.MathUtils.degToRad(pose.headRotateDeg);
+					head.rotation.y = pointerNormX * 0.28;
+					head.rotation.x = -pointerNormY * 0.18;
+				}
+				if (earL) {
+					earL.rotation.z =
+						0.42 + THREE.MathUtils.degToRad(pose.earLeftRotateDeg);
+				}
+				if (earR) {
+					earR.rotation.z =
+						-0.42 + THREE.MathUtils.degToRad(pose.earRightRotateDeg);
+				}
+				if (armR) {
+					armR.rotation.z = THREE.MathUtils.degToRad(pose.armRightRotateDeg);
+				}
+				if (armL) {
+					armL.rotation.z = THREE.MathUtils.degToRad(pose.armLeftRotateDeg);
+				}
+				if (tail) {
+					tail.rotation.y = THREE.MathUtils.degToRad(pose.tailRotateDeg);
+				}
+				if (jaw) {
+					jaw.scale.set(
+						1.25,
+						pose.isBlinking ? 0.55 : pose.jawOpenScaleY * 0.9,
+						0.32,
+					);
+				}
+				if (pupilL && pupilR) {
+					const blinkScaleY = pose.isBlinking ? 0.08 : 1.0;
+					pupilL.scale.y = blinkScaleY;
+					pupilR.scale.y = blinkScaleY;
+					pupilL.position.x = pointerNormX * 0.045;
+					pupilL.position.y = pointerNormY * 0.04;
+					pupilR.position.x = pointerNormX * 0.045;
+					pupilR.position.y = pointerNormY * 0.04;
+				}
+
+				currentYaw += (targetYaw - currentYaw) * 0.12;
+				rigRoot.rotation.y = currentYaw;
+			}
+
+			// Pointer & Orbit events
+			container.addEventListener("pointerdown", (e: PointerEvent) => {
+				isDragging = true;
+				prevX = e.clientX;
+			});
+			window.addEventListener("pointerup", () => {
+				isDragging = false;
+			});
+			window.addEventListener(
+				"pointermove",
+				(e: PointerEvent) => {
+					const rect = container.getBoundingClientRect();
+					if (rect.width > 0 && rect.height > 0) {
+						pointerNormX = Math.max(
+							-1,
+							Math.min(
+								1,
+								((e.clientX - (rect.left + rect.width / 2)) / rect.width) * 2,
+							),
+						);
+						pointerNormY = Math.max(
+							-1,
+							Math.min(
+								1,
+								-((e.clientY - (rect.top + rect.height / 2)) / rect.height) * 2,
+							),
+						);
+					}
+					if (isDragging) {
+						const dx = e.clientX - prevX;
+						prevX = e.clientX;
+						targetYaw += dx * 0.012;
+					}
+				},
+				{ passive: true },
+			);
+
+			container.addEventListener("click", () => {
+				const nowSec = isSeekLocked
+					? lockedSeekTime
+					: performance.now() / 1000;
+				celebrateImpulses.push(nowSec);
+				if (celebrateImpulses.length > 6) celebrateImpulses.shift();
+			});
+
+			// Listen to global `cc:seek` and `cc:audio-beat` events
+			window.addEventListener("cc:seek", ((e: CustomEvent) => {
+				isSeekLocked = true;
+				lockedSeekTime = Number(e.detail?.time ?? 0);
+				applyPoseAtTime(lockedSeekTime);
+				renderer?.render(scene, camera);
+			}) as EventListener);
+
+			window.addEventListener("cc:audio-beat", ((e: CustomEvent) => {
+				liveAudioAmp = Number(e.detail?.amplitude ?? 0);
+				liveBpm = Number(e.detail?.bpm ?? 120);
+			}) as EventListener);
+
+			function tick() {
+				requestAnimationFrame(tick);
+				if (container.offsetParent === null) return; // Skip rendering when hidden
+				if (!isSeekLocked) {
+					const t = performance.now() / 1000;
+					if (container.dataset.autoRotate === "true" && !isDragging) {
+						targetYaw = Math.sin(t * 0.45) * 0.45;
+					}
+					applyPoseAtTime(t);
+				}
+				renderer?.render(scene, camera);
+			}
+			requestAnimationFrame(tick);
+		});
+	}
+
+	initAj3dViewers();
+	window.addEventListener("cc:page-load", initAj3dViewers);
+</script>

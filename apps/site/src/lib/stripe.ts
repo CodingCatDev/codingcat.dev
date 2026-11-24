@@ -63,7 +63,9 @@ export async function createStripeMilestoneCheckout(
 				: "CodingCat.dev Sponsorship Campaign (100% upfront card or ACH payment).";
 
 	const successNotice =
-		params.milestone === "full" ? "paid_success" : `${params.milestone}_success`;
+		params.milestone === "full"
+			? "paid_success"
+			: `${params.milestone}_success`;
 
 	const body = toFormUrlEncoded({
 		mode: "payment",

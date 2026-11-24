@@ -112,11 +112,13 @@ export default defineConfig({
 		},
 		"/course/local-rtx-5090-voice-cloning-f5-tts-chatterbox-whisper": {
 			status: 301,
-			destination: "/post/local-rtx-5090-voice-cloning-f5-tts-chatterbox-whisper",
+			destination:
+				"/post/local-rtx-5090-voice-cloning-f5-tts-chatterbox-whisper",
 		},
 		"/course/visual-qa-reference-grammar-chrome-devtools-mcp-ffmpeg": {
 			status: 301,
-			destination: "/post/visual-qa-reference-grammar-chrome-devtools-mcp-ffmpeg",
+			destination:
+				"/post/visual-qa-reference-grammar-chrome-devtools-mcp-ffmpeg",
 		},
 		"/course/hybrid-web-ai-gemini-nano-firebase-workers": {
 			status: 301,

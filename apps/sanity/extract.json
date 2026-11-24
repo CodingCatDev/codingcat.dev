@@ -1802,6 +1802,13 @@
         },
         "optional": true
       },
+      "reminderSentAt": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "string"
+        },
+        "optional": true
+      },
       "sponsorLeadRef": {
         "type": "objectAttribute",
         "value": {
@@ -2418,11 +2425,7 @@
             },
             {
               "type": "string",
-              "value": "podcast-showcase"
-            },
-            {
-              "type": "string",
-              "value": "ecosystem-integration"
+              "value": "sponsor-of-the-month"
             },
             {
               "type": "string",
@@ -2430,11 +2433,40 @@
             },
             {
               "type": "string",
+              "value": "podcast-showcase"
+            },
+            {
+              "type": "string",
               "value": "mid-roll-ad"
             },
             {
               "type": "string",
-              "value": "custom-series"
+              "value": "x-thread"
+            },
+            {
+              "type": "string",
+              "value": "social-post"
+            }
+          ]
+        },
+        "optional": true
+      },
+      "paymentTerms": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "union",
+          "of": [
+            {
+              "type": "string",
+              "value": "upfront"
+            },
+            {
+              "type": "string",
+              "value": "net15"
+            },
+            {
+              "type": "string",
+              "value": "net30"
             }
           ]
         },

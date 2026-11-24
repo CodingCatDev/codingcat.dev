@@ -207,24 +207,17 @@ describe("Tier 1 - Feature Coverage", () => {
 			);
 		});
 
-		it("1.8 sponsorships.astro renders the 5 tiers and inquiry form", () => {
+		it("1.8 sponsorships.astro renders package tiers and inquiry form", () => {
 			const sponsorFile = fs.readFileSync(
 				path.resolve(SRC_DIR, "pages/sponsorships.astro"),
 				"utf-8",
 			);
 			assert.ok(sponsorFile.includes("BaseLayout"), "Must use BaseLayout");
 			assert.ok(sponsorFile.includes("Breadcrumbs"), "Must render Breadcrumbs");
-			assert.ok(sponsorFile.includes("Dedicated Video"), "Must render Tier 1");
 			assert.ok(
-				sponsorFile.includes("Integrated Mid-Roll Ad"),
-				"Must render Tier 2",
+				sponsorFile.includes("SPONSOR_PACKAGE_TIERS"),
+				"Must render SPONSOR_PACKAGE_TIERS",
 			);
-			assert.ok(sponsorFile.includes("Quick Shout-Out"), "Must render Tier 3");
-			assert.ok(
-				sponsorFile.includes("Blog Post / Newsletter"),
-				"Must render Tier 4",
-			);
-			assert.ok(sponsorFile.includes("Video Series"), "Must render Tier 5");
 			assert.ok(
 				sponsorFile.includes("sponsorship-form"),
 				"Must include inquiry form",
@@ -745,13 +738,15 @@ describe("Tier 1 - Feature Coverage", () => {
 			assert.equal(ogUtils.TYPE_COLORS.Author, "#ec4899");
 		});
 
-		it("5.3 titleFontSize dynamically scales for lengths: <=40 (56), 41-60 (48), >60 (42)", () => {
+		it("5.3 titleFontSize dynamically scales for lengths: <=30 (56), 31-50 (50), 51-70 (44), >70 (38)", () => {
 			assert.equal(ogUtils.titleFontSize("Short Title"), 56);
-			assert.equal(ogUtils.titleFontSize("A".repeat(40)), 56);
-			assert.equal(ogUtils.titleFontSize("A".repeat(41)), 48);
-			assert.equal(ogUtils.titleFontSize("A".repeat(60)), 48);
-			assert.equal(ogUtils.titleFontSize("A".repeat(61)), 42);
-			assert.equal(ogUtils.titleFontSize("A".repeat(120)), 42);
+			assert.equal(ogUtils.titleFontSize("A".repeat(30)), 56);
+			assert.equal(ogUtils.titleFontSize("A".repeat(31)), 50);
+			assert.equal(ogUtils.titleFontSize("A".repeat(50)), 50);
+			assert.equal(ogUtils.titleFontSize("A".repeat(51)), 44);
+			assert.equal(ogUtils.titleFontSize("A".repeat(70)), 44);
+			assert.equal(ogUtils.titleFontSize("A".repeat(71)), 38);
+			assert.equal(ogUtils.titleFontSize("A".repeat(120)), 38);
 		});
 
 		it("5.4 All 4 OG image endpoints exist and export GET handler with parameter parsing", () => {

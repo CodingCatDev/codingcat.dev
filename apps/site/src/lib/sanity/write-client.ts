@@ -144,7 +144,10 @@ export const SPONSOR_PACKAGE_TIERS: SponsorPackageTier[] = [
 		description:
 			"Multi-post educational thread on X walking developers through your product, architecture, or launch announcement with code snippets or visuals.",
 		deliverables: [
-			{ title: "Sponsored Technical Thread on X (@CodingCatDev)", channel: "x" },
+			{
+				title: "Sponsored Technical Thread on X (@CodingCatDev)",
+				channel: "x",
+			},
 		],
 	},
 	{

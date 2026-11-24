@@ -83,7 +83,8 @@ export const POST: APIRoute = async ({ request, url }) => {
 				? existingLead.depositAmountCents
 				: Math.round(tier.totalAmountCents / 2)
 			: milestone === "balance"
-				? existingLead?.balanceAmountCents && existingLead.balanceAmountCents > 0
+				? existingLead?.balanceAmountCents &&
+					existingLead.balanceAmountCents > 0
 					? existingLead.balanceAmountCents
 					: Math.round(tier.totalAmountCents / 2)
 				: existingLead?.totalAmountCents && existingLead.totalAmountCents > 0

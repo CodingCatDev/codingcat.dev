@@ -40,8 +40,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
 	if (pathname.startsWith("/page/")) {
 		const pageSlug = pathname.slice("/page/".length).replace(/\/+$/, "");
 		if (pageSlug) {
-			const dest =
-				pageSlug === "privacy-policy" ? "/privacy" : `/${pageSlug}`;
+			const dest = pageSlug === "privacy-policy" ? "/privacy" : `/${pageSlug}`;
 			return context.redirect(dest, 301);
 		}
 	}

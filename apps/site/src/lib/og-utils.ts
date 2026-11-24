@@ -571,10 +571,7 @@ function mascotShowcaseElement({
  * - Massive readable typography, large cover artwork (440x248) or 210px mascot medallion.
  * - Top full-bleed gradient accent stripe.
  */
-function cardShell(
-	accentBarGradient: string,
-	content: any,
-) {
+function cardShell(accentBarGradient: string, content: any) {
 	return h(
 		"div",
 		{

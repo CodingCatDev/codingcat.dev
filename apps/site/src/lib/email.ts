@@ -242,7 +242,7 @@ export function buildPodcastPortalEmailCard(
 	};
 }
 
-function buildMimeMessage(opts: {
+function _buildMimeMessage(opts: {
 	from: string;
 	fromName: string;
 	to: string | string[];
@@ -368,7 +368,7 @@ async function getGoogleGmailAccessToken(): Promise<string | null> {
 	return fallbackToken;
 }
 
-async function sendViaGmailApi(
+async function _sendViaGmailApi(
 	rawMime: string,
 	threadId?: string,
 ): Promise<{ ok: boolean; id?: string; threadId?: string }> {

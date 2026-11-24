@@ -6,9 +6,7 @@ import {
 	getSanityServerClient,
 	resolveSponsorTier,
 } from "@/lib/sanity/write-client";
-import {
-	createStripeMilestoneCheckout,
-} from "@/lib/stripe";
+import { createStripeMilestoneCheckout } from "@/lib/stripe";
 
 interface SponsorshipPayload {
 	name?: string;
