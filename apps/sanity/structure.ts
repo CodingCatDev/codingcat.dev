@@ -2,7 +2,7 @@ import { CogIcon } from "@sanity/icons/Cog";
 import { DocumentTextIcon } from "@sanity/icons/DocumentText";
 import { UserIcon } from "@sanity/icons/User";
 import { FaCat, FaFire, FaGraduationCap, FaPodcast, FaRocket, FaShareAlt } from "react-icons/fa";
-import { HiOutlineBookOpen, HiOutlineDocumentText, HiOutlinePencilAlt } from "react-icons/hi";
+import { HiOutlineBookOpen, HiOutlineDocumentText, HiOutlineMail, HiOutlinePencilAlt } from "react-icons/hi";
 import { PiCurrencyDollarSimpleFill } from "react-icons/pi";
 import type { StructureResolver } from "sanity/structure";
 
@@ -15,6 +15,7 @@ const MANAGED_DOCUMENT_TYPES = new Set([
 	"course",
 	"lesson",
 	"post",
+	"newsletter",
 	"podcast",
 	"podcastType",
 	"page",
@@ -226,7 +227,7 @@ export const editorialStructure: StructureResolver = (S) =>
 								.child(
 									S.document()
 										.schemaType("sponsorConfig")
-										.documentId("sponsorConfig")
+										.documentId("private.sponsorConfig")
 										.title("Sponsor Rate Card & Config"),
 								),
 						]),
@@ -526,6 +527,63 @@ export const editorialStructure: StructureResolver = (S) =>
 				),
 
 			S.documentTypeListItem("page").title("Pages").icon(DocumentTextIcon),
+
+			// Newsletter (The Purrfect Dispatch)
+			S.listItem()
+				.title("Newsletter (The Purrfect Dispatch)")
+				.icon(HiOutlineMail)
+				.child(
+					S.list()
+						.title("Newsletter (The Purrfect Dispatch)")
+						.items([
+							S.listItem()
+								.title("All Newsletter Issues")
+								.icon(HiOutlineMail)
+								.child(
+									S.documentTypeList("newsletter")
+										.title("All Newsletter Issues")
+										.defaultOrdering([
+											{ field: "issueNumber", direction: "desc" },
+											{ field: "date", direction: "desc" },
+										]),
+								),
+							S.listItem()
+								.title("Draft Issues (Ready for Approval)")
+								.child(
+									S.documentList()
+										.title("Draft Issues")
+										.schemaType("newsletter")
+										.filter(
+											'_type == "newsletter" && (_id in path("drafts.**") || _originalId in path("drafts.**") || deliveryStatus == "draft")',
+										)
+										.defaultOrdering([
+											{ field: "issueNumber", direction: "desc" },
+										]),
+								),
+							S.listItem()
+								.title("Scheduled in Buttondown")
+								.child(
+									S.documentList()
+										.title("Scheduled Issues")
+										.schemaType("newsletter")
+										.filter('_type == "newsletter" && deliveryStatus == "scheduled"')
+										.defaultOrdering([
+											{ field: "sendAt", direction: "asc" },
+										]),
+								),
+							S.listItem()
+								.title("Sent Archive")
+								.child(
+									S.documentList()
+										.title("Sent Issues")
+										.schemaType("newsletter")
+										.filter('_type == "newsletter" && deliveryStatus == "sent"')
+										.defaultOrdering([
+											{ field: "issueNumber", direction: "desc" },
+										]),
+								),
+						]),
+				),
 
 			S.divider(),
 

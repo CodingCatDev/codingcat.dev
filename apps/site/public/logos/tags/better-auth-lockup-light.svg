@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 246 64" width="246" height="64" role="img" aria-label="Better-Auth">
+  <g transform="translate(14.00, 14.00) scale(1.5000)" fill="#2A1155">
+    <path d="M12 2 4 5.5v6.1c0 5.1 3.4 9.8 8 11.4 4.6-1.6 8-6.3 8-11.4V5.5L12 2zm0 4.5a2.8 2.8 0 0 1 1.4 5.22V16h-2.8v-4.28A2.8 2.8 0 0 1 12 6.5z"/>
+  </g>
+  <text x="64" y="41" fill="#2A1155" font-family="'Nunito', 'Inter', system-ui, -apple-system, sans-serif" font-size="25" font-weight="900" letter-spacing="-0.02em">Better-Auth</text>
+</svg>

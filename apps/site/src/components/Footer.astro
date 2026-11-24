@@ -14,6 +14,7 @@ const primaryLinks = [
 
 const communityLinks = [
 	{ href: "/about", label: "About" },
+	{ href: "/newsletter", label: "Newsletter Archive" },
 	{ href: "/guests", label: "Podcast Guests" },
 	{ href: "/authors", label: "Authors" },
 	{ href: "/sponsors", label: "Sponsors" },
@@ -163,9 +164,17 @@ const socialLinks = [
 
 			{/* Newsletter Box ("The Purrfect Dispatch" from Stitch 8d131990 & b9e00f99) */}
 			<div class="rounded-2xl border-2 border-[#2A1155] bg-[#EDE9FE] p-6 dark:border-purple-400/30 dark:bg-purple-950/50 lg:col-span-4 hand-border-rect shadow-sketch-sm">
-				<h4 class="font-display text-lg font-black text-[#2A1155] dark:text-white">
-					The Purrfect Dispatch 🐾
-				</h4>
+				<div class="flex items-center justify-between gap-2">
+					<h4 class="font-display text-lg font-black text-[#2A1155] dark:text-white">
+						The Purrfect Dispatch
+					</h4>
+					<a
+						href="/newsletter"
+						class="font-mono text-xs font-bold text-[#7C3AED] hover:underline dark:text-[#C084FC]"
+					>
+						Archive →
+					</a>
+				</div>
 				<p class="mt-1 mb-4 text-xs font-medium text-[#2A1155]/75 dark:text-purple-200/80">
 					Get weekly courses, podcast episodes, blog posts, and system diagrams in your inbox.
 				</p>

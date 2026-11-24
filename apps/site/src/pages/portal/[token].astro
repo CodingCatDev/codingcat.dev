@@ -31,8 +31,14 @@ const [
 	{ slots: kickoffSlots, liveVerified: calendarLiveVerified },
 	{ slots: recordingSlots },
 ] = await Promise.all([
-	getMultiCalendarAvailableSlots(6, 15),
-	getMultiCalendarAvailableSlots(6, 45),
+	getMultiCalendarAvailableSlots(6, 15).catch(() => ({
+		slots: [],
+		liveVerified: false,
+	})),
+	getMultiCalendarAvailableSlots(6, 45).catch(() => ({
+		slots: [],
+		liveVerified: false,
+	})),
 ]);
 
 interface DeliverableItem {
@@ -267,7 +273,12 @@ let portalData: LeadPortalData = {
 	contactEmail: fallbackEmail,
 	source: token?.startsWith("spt_pf_") ? "passionfroot" : "booking",
 	billingProvider: token?.startsWith("spt_pf_") ? "passionfroot" : "stripe",
-	status: paymentNotice === "deposit_success" ? "deposit_paid" : "new",
+	status:
+		paymentNotice === "paid_success"
+			? "paid"
+			: paymentNotice === "deposit_success"
+				? "deposit_paid"
+				: "new",
 	rateCard: fallbackTier.id,
 	packageName: fallbackTier.name,
 	packageDescription: fallbackTier.description,
@@ -500,11 +511,13 @@ try {
 				: doc?.source || bookingDoc?.track || "booking",
 			billingProvider: isPf ? "passionfroot" : doc?.billingProvider || "stripe",
 			status:
-				paymentNotice === "deposit_success"
-					? "deposit_paid"
-					: paymentNotice === "balance_success"
-						? "paid"
-						: doc?.status || bookingDoc?.status || "new",
+				paymentNotice === "paid_success"
+					? "paid"
+					: paymentNotice === "deposit_success"
+						? "deposit_paid"
+						: paymentNotice === "balance_success"
+							? "paid"
+							: doc?.status || bookingDoc?.status || "new",
 			rateCard: tier.id,
 			packageName:
 				!doc && bookingDoc?.track === "editorial"
@@ -518,8 +531,8 @@ try {
 				!doc && bookingDoc?.track === "editorial"
 					? 0
 					: doc?.totalAmountCents || tier.totalAmountCents,
-			depositAmountCents: doc?.depositAmountCents || tier.depositAmountCents,
-			balanceAmountCents: doc?.balanceAmountCents || tier.balanceAmountCents,
+			depositAmountCents: doc?.depositAmountCents ?? tier.depositAmountCents,
+			balanceAmountCents: doc?.balanceAmountCents ?? tier.balanceAmountCents,
 			depositPaidAt: doc?.depositPaidAt,
 			balancePaidAt: doc?.balancePaidAt,
 			stripeDepositCheckoutUrl: doc?.stripeDepositCheckoutUrl,
@@ -626,12 +639,18 @@ const formatUsd = (cents: number) =>
 const isDepositPaid =
 	Boolean(portalData.depositPaidAt) ||
 	portalData.status === "deposit_paid" ||
-	portalData.status === "booked" ||
 	portalData.status === "balance_sent" ||
 	portalData.status === "paid";
 
 const isBalancePaid =
 	Boolean(portalData.balancePaidAt) || portalData.status === "paid";
+
+const isLegacyPartialDepositPaid =
+	!isBalancePaid &&
+	isDepositPaid &&
+	portalData.depositAmountCents > 0 &&
+	portalData.balanceAmountCents > 0 &&
+	portalData.depositAmountCents < portalData.totalAmountCents;
 
 interface FormattedSessionSlot {
 	iso: string;
@@ -1049,7 +1068,7 @@ const pageDescription = !portalFound
 						? "Billed via Passionfroot Escrow"
 						: portalData.totalAmountCents === 0
 							? "Includes StreamYard Studio & Sanity Asset Vault"
-							: `50% Deposit (${formatUsd(portalData.depositAmountCents)}) + 50% on Publish`}
+							: "100% Card / ACH Checkout or NET 15 / NET 30 Invoice"}
 				</span>
 			</div>
 		</header>
@@ -2819,117 +2838,133 @@ const pageDescription = !portalFound
 					) : (
 						<>
 							<p class="text-xs text-muted-foreground leading-relaxed">
-								Lock your production and recording window with a 50% upfront deposit via instant card/ACH checkout or a Net-15 corporate invoice. The remaining 50% balance is billed only when your deliverables go live.
+								Pay 100% upfront via instant Card / ACH Checkout, or generate a <strong>NET 15</strong> or <strong>NET 30</strong> corporate Stripe Hosted Invoice (ACH, Wire, or Corporate Card) while your campaign moves straight into production.
 							</p>
 
-							<!-- Milestone 1: 50% Upfront Deposit -->
-							<div class="p-4 rounded-xl border border-border bg-background flex flex-col gap-3">
-								<div class="flex items-center justify-between">
-									<div>
-										<span class="text-xs font-semibold uppercase tracking-wider text-primary">
-											Milestone 1 &middot; Upfront Deposit (50%)
+							{isLegacyPartialDepositPaid ? (
+								<div class="p-4 rounded-xl border border-border bg-background flex flex-col gap-3">
+									<div class="flex items-center justify-between">
+										<div>
+											<span class="text-xs font-semibold uppercase tracking-wider text-primary">
+												Remaining Balance (Legacy 50/50 Plan)
+											</span>
+											<h3 class="text-base font-bold text-foreground">
+												50% Deposit Received &middot; Final Balance Due
+											</h3>
+										</div>
+										<span class="text-xl font-bold text-foreground">
+											{formatUsd(portalData.balanceAmountCents)}
 										</span>
-										<h3 class="text-base font-bold text-foreground">
-											Lock Production &amp; Calendar Slot
-										</h3>
 									</div>
-									<span class="text-xl font-bold text-foreground">
-										{formatUsd(portalData.depositAmountCents)}
-									</span>
+									<div class="flex flex-wrap gap-2 pt-1">
+										<button
+											type="button"
+											data-milestone="balance"
+											data-mode="checkout"
+											class="stripe-action-btn px-4 py-2 rounded-lg bg-primary text-primary-foreground text-xs font-semibold hover:bg-primary/90 transition-colors cursor-pointer"
+										>
+											Pay {formatUsd(portalData.balanceAmountCents)} Balance (Card / ACH) &rarr;
+										</button>
+										<button
+											type="button"
+											data-milestone="balance"
+											data-mode="invoice"
+											data-days="15"
+											class="stripe-action-btn px-3.5 py-2 rounded-lg border border-border bg-card text-foreground text-xs font-semibold hover:bg-muted transition-colors cursor-pointer"
+										>
+											Request NET 15 Invoice
+										</button>
+										<button
+											type="button"
+											data-milestone="balance"
+											data-mode="invoice"
+											data-days="30"
+											class="stripe-action-btn px-3.5 py-2 rounded-lg border border-border bg-card text-foreground text-xs font-semibold hover:bg-muted transition-colors cursor-pointer"
+										>
+											Request NET 30 Invoice
+										</button>
+									</div>
 								</div>
+							) : (
+								<div class="p-4 rounded-xl border border-border bg-background flex flex-col gap-3">
+									<div class="flex items-center justify-between">
+										<div>
+											<span class="text-xs font-semibold uppercase tracking-wider text-primary">
+												Campaign Sponsorship &middot; 100% Total
+											</span>
+											<h3 class="text-base font-bold text-foreground">
+												{portalData.packageName}
+											</h3>
+										</div>
+										<span class="text-xl font-bold text-foreground">
+											{formatUsd(portalData.totalAmountCents)}
+										</span>
+									</div>
 
-								{
-									isDepositPaid ? (
+									{isBalancePaid ? (
 										<div class="text-xs font-semibold text-green-600 dark:text-green-400">
-											✓ 50% Deposit Paid {portalData.depositPaidAt ? `on ${new Date(portalData.depositPaidAt).toLocaleDateString()}` : ""}
+											✓ Paid in Full {portalData.balancePaidAt ? `on ${new Date(portalData.balancePaidAt).toLocaleDateString()}` : ""}
 										</div>
 									) : (
-										<div class="flex flex-wrap gap-2 pt-1">
-											{portalData.stripeDepositCheckoutUrl ? (
-												<a
-													href={portalData.stripeDepositCheckoutUrl}
-													class="px-4 py-2 rounded-lg bg-primary text-primary-foreground text-xs font-semibold hover:bg-primary/90 transition-colors"
-												>
-													Pay {formatUsd(portalData.depositAmountCents)} Deposit Now &rarr;
-												</a>
-											) : (
-												<button
-													type="button"
-													data-milestone="deposit"
-													data-mode="checkout"
-													class="stripe-action-btn px-4 py-2 rounded-lg bg-primary text-primary-foreground text-xs font-semibold hover:bg-primary/90 transition-colors cursor-pointer"
-												>
-													Pay {formatUsd(portalData.depositAmountCents)} Deposit (Card / ACH) &rarr;
-												</button>
-											)}
+										<div class="flex flex-col gap-2.5 pt-1">
+											<div class="flex flex-wrap gap-2">
+												{portalData.stripeDepositCheckoutUrl ? (
+													<a
+														href={portalData.stripeDepositCheckoutUrl}
+														class="px-4 py-2 rounded-lg bg-primary text-primary-foreground text-xs font-semibold hover:bg-primary/90 transition-colors"
+													>
+														Pay {formatUsd(portalData.totalAmountCents)} Now (Card / ACH) &rarr;
+													</a>
+												) : (
+													<button
+														type="button"
+														data-milestone="full"
+														data-mode="checkout"
+														class="stripe-action-btn px-4 py-2 rounded-lg bg-primary text-primary-foreground text-xs font-semibold hover:bg-primary/90 transition-colors cursor-pointer"
+													>
+														Pay {formatUsd(portalData.totalAmountCents)} Now (Card / ACH) &rarr;
+													</button>
+												)}
 
-											{portalData.stripeDepositInvoiceUrl ? (
-												<a
-													href={portalData.stripeDepositInvoiceUrl}
-													target="_blank"
-													rel="noopener noreferrer"
-													class="px-4 py-2 rounded-lg border border-border bg-card text-foreground text-xs font-semibold hover:bg-muted transition-colors"
-												>
-													View Net-15 Corporate Invoice &nearr;
-												</a>
-											) : (
+												{portalData.stripeDepositInvoiceUrl && (
+													<a
+														href={portalData.stripeDepositInvoiceUrl}
+														target="_blank"
+														rel="noopener noreferrer"
+														class="px-4 py-2 rounded-lg border border-primary/40 bg-primary/10 text-primary text-xs font-semibold hover:bg-primary/20 transition-colors"
+													>
+														View Corporate Invoice &nearr;
+													</a>
+												)}
+											</div>
+
+											<div class="flex flex-wrap items-center gap-2 pt-1 border-t border-border/60">
+												<span class="text-[11px] text-muted-foreground font-medium">
+													Need AP / Net Terms?
+												</span>
 												<button
 													type="button"
-													data-milestone="deposit"
+													data-milestone="full"
 													data-mode="invoice"
-													class="stripe-action-btn px-4 py-2 rounded-lg border border-border bg-card text-foreground text-xs font-semibold hover:bg-muted transition-colors cursor-pointer"
+													data-days="15"
+													class="stripe-action-btn px-3 py-1.5 rounded-lg border border-border bg-card text-foreground text-xs font-semibold hover:bg-muted transition-colors cursor-pointer"
 												>
-													Request Net-15 Hosted Invoice
+													Generate NET 15 Invoice
 												</button>
-											)}
+												<button
+													type="button"
+													data-milestone="full"
+													data-mode="invoice"
+													data-days="30"
+													class="stripe-action-btn px-3 py-1.5 rounded-lg border border-border bg-card text-foreground text-xs font-semibold hover:bg-muted transition-colors cursor-pointer"
+												>
+													Generate NET 30 Invoice
+												</button>
+											</div>
 										</div>
-									)
-								}
-							</div>
-
-							<!-- Milestone 2: 50% Final Balance -->
-							<div class="p-4 rounded-xl border border-border bg-background flex flex-col gap-3">
-								<div class="flex items-center justify-between">
-									<div>
-										<span class="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-											Milestone 2 &middot; Final Balance on Publish (50%)
-										</span>
-										<h3 class="text-base font-bold text-foreground">
-											Due Upon Campaign Publication
-										</h3>
-									</div>
-									<span class="text-xl font-bold text-foreground">
-										{formatUsd(portalData.balanceAmountCents)}
-									</span>
+									)}
 								</div>
-
-								{
-									isBalancePaid ? (
-										<div class="text-xs font-semibold text-green-600 dark:text-green-400">
-											✓ Paid in Full
-										</div>
-									) : (
-										<div class="flex flex-wrap gap-2 pt-1">
-											<button
-												type="button"
-												data-milestone="balance"
-												data-mode="checkout"
-												class="stripe-action-btn px-3.5 py-1.5 rounded-lg border border-border bg-card text-foreground text-xs font-semibold hover:bg-muted transition-colors cursor-pointer"
-											>
-												Pay {formatUsd(portalData.balanceAmountCents)} Balance (Checkout)
-											</button>
-											<button
-												type="button"
-												data-milestone="balance"
-												data-mode="invoice"
-												class="stripe-action-btn px-3.5 py-1.5 rounded-lg border border-border bg-card text-foreground text-xs font-semibold hover:bg-muted transition-colors cursor-pointer"
-											>
-												Generate Net-15 Balance Invoice
-											</button>
-										</div>
-									)
-								}
-							</div>
+							)}
 
 							<div id="stripe-feedback" class="hidden text-xs p-3 rounded-lg border border-border bg-muted/50"></div>
 						</>
@@ -4436,11 +4471,32 @@ const pageDescription = !portalFound
 							bookingFeedback.classList.remove("hidden");
 						}
 						bookBtn.textContent = "✓ Calendar Invite Updated!";
-						setTimeout(() => {
-							const nextUrl = new URL(window.location.href);
-							nextUrl.hash = "booked-sessions";
+						setTimeout(async () => {
+							const canonicalBase =
+								typeof data.portalUrl === "string" && data.portalUrl.startsWith("http")
+									? data.portalUrl
+									: `${window.location.origin}${window.location.pathname}`;
+							const nextUrl = new URL(canonicalBase);
 							nextUrl.searchParams.set("bookedSlot", slotStartAt);
-							window.location.href = nextUrl.toString();
+							nextUrl.hash = "booked-sessions";
+							try {
+								const preflight = await fetch(`${nextUrl.pathname}${nextUrl.search}`, {
+									credentials: "same-origin",
+									headers: { Accept: "text/html" },
+									cache: "no-store",
+								});
+								if (preflight.ok) {
+									window.location.assign(nextUrl.toString());
+									return;
+								}
+							} catch {
+								// Fall through and keep the guest on the confirmed portal view
+							}
+							window.history.replaceState({}, "", nextUrl.toString());
+							if (bookingFeedback) {
+								bookingFeedback.innerHTML +=
+									' <button type="button" onclick="window.location.reload()" class="underline font-semibold text-primary ml-2">Refresh Portal</button>';
+							}
 						}, 900);
 						return;
 					}
@@ -4464,8 +4520,10 @@ const pageDescription = !portalFound
 
 	document.querySelectorAll(".stripe-action-btn").forEach((btn) => {
 		btn.addEventListener("click", async () => {
-			const milestone = btn.getAttribute("data-milestone") || "deposit";
+			const milestone = btn.getAttribute("data-milestone") || "full";
 			const mode = btn.getAttribute("data-mode") || "checkout";
+			const daysAttr = btn.getAttribute("data-days");
+			const daysUntilDue = daysAttr ? Number(daysAttr) : undefined;
 			const feedback = document.getElementById("stripe-feedback");
 			const originalText = btn.textContent;
 			btn.setAttribute("disabled", "true");
@@ -4483,6 +4541,7 @@ const pageDescription = !portalFound
 						tier: tierId,
 						milestone,
 						mode,
+						...(daysUntilDue ? { daysUntilDue } : {}),
 					}),
 				});
 				const data = await res.json();

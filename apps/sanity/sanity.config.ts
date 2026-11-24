@@ -32,6 +32,7 @@ import page from "./schemas/documents/page";
 import podcast from "./schemas/documents/podcast";
 import podcastType from "./schemas/documents/podcastType";
 import post from "./schemas/documents/post";
+import newsletter from "./schemas/documents/newsletter";
 import settings from "./schemas/singletons/settings";
 import sponsorConfig from "./schemas/singletons/sponsorConfig";
 import sponsor from "./schemas/documents/sponsor";
@@ -99,6 +100,8 @@ function resolveHref(type: string, slug?: string): string | undefined {
 	switch (type) {
 		case "post":
 			return `/post/${slug}`;
+		case "newsletter":
+			return `/newsletter/${slug}`;
 		case "podcast":
 			return `/podcast/${slug}`;
 		case "course":
@@ -136,6 +139,11 @@ const coursesLocation = {
 	href: "/courses",
 } satisfies DocumentLocation;
 
+const newsletterLocation = {
+	title: "Newsletter",
+	href: "/newsletter",
+} satisfies DocumentLocation;
+
 // ── Shared schema types ──────────────────────────────────────────────
 const schemaTypes = [
 	// Portable text block types (table & tierList)
@@ -156,6 +164,7 @@ const schemaTypes = [
 	podcast,
 	podcastType,
 	post,
+	newsletter,
 	sponsor,
 	sponsorLead,
 	sponsorPool,
@@ -176,6 +185,10 @@ function buildPlugins(previewUrl: string): PluginOptions[] {
 								{
 									route: "/post/:slug",
 									filter: `_type == "post" && slug.current == $slug`,
+								},
+								{
+									route: "/newsletter/:slug",
+									filter: `_type == "newsletter" && slug.current == $slug`,
 								},
 								{
 									route: "/podcast/:slug",
@@ -226,6 +239,29 @@ function buildPlugins(previewUrl: string): PluginOptions[] {
 														]
 													: []),
 												blogLocation,
+												homeLocation,
+											],
+										};
+									},
+								}),
+								newsletter: defineLocations({
+									select: {
+										title: "title",
+										slug: "slug.current",
+									},
+									resolve: (doc) => {
+										const href = resolveHref("newsletter", doc?.slug);
+										return {
+											locations: [
+												...(href
+													? [
+															{
+																title: doc?.title || "Untitled",
+																href,
+															},
+														]
+													: []),
+												newsletterLocation,
 												homeLocation,
 											],
 										};

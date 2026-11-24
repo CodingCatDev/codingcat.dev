@@ -129,8 +129,8 @@ export default defineType({
       options: {
         list: [
           {title: 'Editorial Guest Application (Free / Review Queue)', value: 'editorial'},
-          {title: 'Sponsored Podcast & Multi-Channel Showcase ($2,000 Fast-Track)', value: 'sponsored'},
-          {title: 'Full-Stack Launch Bundle ($3,500 Kickoff & Demo)', value: 'full-stack-launch'},
+          {title: 'Sponsored Podcast & Multi-Channel Showcase ($500 Fast-Track)', value: 'sponsored'},
+          {title: 'Full-Stack Launch Bundle ($1,000 Kickoff & Demo)', value: 'full-stack-launch'},
           {title: '15m Pre-Meeting / Sponsor Kickoff (Google Meet)', value: 'sponsor-kickoff'},
         ],
       },
@@ -437,6 +437,11 @@ export default defineType({
       name: 'gmailSubject',
       title: 'Canonical Email Subject Line',
       type: 'string',
+    }),
+    defineField({
+      name: 'reminderSentAt',
+      title: 'Reminder Email Sent At (UTC ISO)',
+      type: 'datetime',
     }),
     defineField({
       name: 'sponsorLeadRef',

@@ -36,3 +36,4 @@ This skill provides the complete 10-module UI and visual design specification fo
 1. **Header & Mobile 3-Line Navigation Drawer**: Never place a `"Get Started"` button in the top header (`#site-header`). Keep the header strictly for the logo, desktop links (`lg:flex`), and right-side utility icons (`Search`, `Ask Agent`, `ThemeToggle`, and the mobile 3-line menu `#nav-drawer-toggle`).
 2. **No Em-Dashes**: Never use the em-dash character in any UI copy, component labels, documentation, or code comments.
 3. **Always Use Tables for Comparisons**: Whenever presenting feature matrices, architectural trade-offs, or token mappings, render a styled Markdown or HTML comparison table.
+4. **Never Use Paw Emojis (`🐾`) with `codingcat.dev`**: Never pair the paw emoji (`🐾`) with `codingcat.dev` or `CodingCat.dev` in badges, headers, thumbnails, video overlays, or UI elements; always use the official AJ logo (`assets/AJHeadphones.png` or `<AjMascot />`).

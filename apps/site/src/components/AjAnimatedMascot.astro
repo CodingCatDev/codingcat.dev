@@ -787,6 +787,16 @@ const isLeftAngle = angle === "three-quarter-left";
 </style>
 
 <script>
+	import { computeAjPoseAtTime } from "@/lib/aj-motion-engine";
+	import type { AjAnimationState } from "@/components/aj-rig/ajRigTypes";
+
+	declare global {
+		interface Window {
+			seek?: (t: number) => void;
+			setAjAudioAmplitude?: (amp: number, bpm?: number) => void;
+		}
+	}
+
 	function initAjMascots() {
 		const reducedMotion = window.matchMedia(
 			"(prefers-reduced-motion: reduce)",
@@ -798,6 +808,103 @@ const isLeftAngle = angle === "three-quarter-left";
 		let pointerX = window.innerWidth / 2;
 		let pointerY = window.innerHeight / 2;
 		let rafPending = false;
+		const celebrateImpulsesMap = new WeakMap<HTMLElement, number[]>();
+		let currentAudioAmplitude = 0;
+		let currentBpm = 120;
+
+		function applyDeterministicSeekToWrapper(
+			wrapper: HTMLElement,
+			t: number,
+		) {
+			const svg = wrapper.querySelector<SVGSVGElement>("[data-aj-rig]");
+			if (!svg) return;
+			svg.classList.add("is-seek-mode");
+
+			const state = (wrapper.dataset.state || "idle-wave") as AjAnimationState;
+			const impulses = celebrateImpulsesMap.get(wrapper) || [];
+			const pose = computeAjPoseAtTime(t, state, {
+				bpm: currentBpm,
+				audioAmplitude: currentAudioAmplitude,
+				celebrateImpulses: impulses,
+			});
+
+			const bodyRoot = svg.querySelector<SVGGElement>(".aj-body-root");
+			const headGroup = svg.querySelector<SVGGElement>(".aj-bone-head");
+			const earLeft = svg.querySelector<SVGGElement>(".aj-bone-ear-left");
+			const earRight = svg.querySelector<SVGGElement>(".aj-bone-ear-right");
+			const armRight = svg.querySelector<SVGGElement>(".aj-bone-arm-right");
+			const armLeft = svg.querySelector<SVGGElement>(".aj-bone-arm-left");
+			const tail = svg.querySelector<SVGGElement>(".aj-bone-tail");
+			const talkingFrame = svg.querySelector<SVGGElement>(".aj-talking-frame");
+
+			if (bodyRoot) {
+				bodyRoot.style.animation = "none";
+				bodyRoot.style.transform = `translateY(${pose.bodyTranslateY.toFixed(2)}px) scale(${pose.bodyScaleX.toFixed(3)}, ${pose.bodyScaleY.toFixed(3)})`;
+			}
+			if (headGroup) {
+				headGroup.style.animation = "none";
+				headGroup.style.transform = `translateY(${pose.headNodY.toFixed(2)}px) rotate(${pose.headRotateDeg.toFixed(2)}deg)`;
+			}
+			if (earLeft) {
+				earLeft.style.animation = "none";
+				earLeft.style.transform = `rotate(${pose.earLeftRotateDeg.toFixed(2)}deg)`;
+			}
+			if (earRight) {
+				earRight.style.animation = "none";
+				earRight.style.transform = `rotate(${pose.earRightRotateDeg.toFixed(2)}deg)`;
+			}
+			if (armRight) {
+				armRight.style.animation = "none";
+				armRight.style.transform = `rotate(${pose.armRightRotateDeg.toFixed(2)}deg)`;
+			}
+			if (armLeft) {
+				armLeft.style.animation = "none";
+				armLeft.style.transform = `rotate(${pose.armLeftRotateDeg.toFixed(2)}deg)`;
+			}
+			if (tail) {
+				tail.style.animation = "none";
+				tail.style.transform = `rotate(${pose.tailRotateDeg.toFixed(2)}deg)`;
+			}
+			if (talkingFrame) {
+				talkingFrame.style.animation = "none";
+				talkingFrame.style.transform = `scaleY(${pose.jawOpenScaleY.toFixed(3)})`;
+			}
+			svg.classList.toggle("is-blinking", pose.isBlinking);
+		}
+
+		// Expose deterministic Frame Function `window.seek(t)` (`@0xnicc0` / `@seeconvm` contract)
+		window.seek = (t: number) => {
+			document
+				.querySelectorAll<HTMLElement>("[data-aj-mascot]")
+				.forEach((wrapper) => {
+					applyDeterministicSeekToWrapper(wrapper, t);
+				});
+			window.dispatchEvent(
+				new CustomEvent("cc:seek", { detail: { time: t, bpm: currentBpm, audioAmplitude: currentAudioAmplitude } }),
+			);
+		};
+
+		// Expose live Web Audio API / Podcast amplitude bridge
+		window.setAjAudioAmplitude = (amp: number, bpm = 120) => {
+			currentAudioAmplitude = Math.max(0, Math.min(1, amp));
+			currentBpm = bpm;
+			const nowSec = performance.now() / 1000;
+			document
+				.querySelectorAll<HTMLElement>("[data-aj-mascot]")
+				.forEach((wrapper) => {
+					const svg = wrapper.querySelector<SVGSVGElement>("[data-aj-rig]");
+					if (!svg) return;
+					if (currentAudioAmplitude > 0.02) {
+						wrapper.dataset.mouth = "talking";
+						applyDeterministicSeekToWrapper(wrapper, nowSec);
+					}
+				});
+			window.dispatchEvent(
+				new CustomEvent("cc:audio-beat", {
+					detail: { amplitude: currentAudioAmplitude, bpm: currentBpm, time: nowSec },
+				}),
+			);
+		};
 
 		function updatePupilTracking() {
 			rafPending = false;

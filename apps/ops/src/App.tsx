@@ -220,29 +220,39 @@ const RATE_CARD_TIERS: Record<
 	{ label: string; totalCents: number; depositCents: number }
 > = {
 	"full-stack-launch": {
-		label: "Full-Stack Launch Bundle ($3,500)",
-		totalCents: 350000,
-		depositCents: 175000,
+		label: "Full-Stack Launch Bundle ($1,000)",
+		totalCents: 100000,
+		depositCents: 0,
 	},
-	"podcast-showcase": {
-		label: "Sponsored Podcast & Showcase ($2,000)",
-		totalCents: 200000,
-		depositCents: 100000,
+	"sponsor-of-the-month": {
+		label: "Sponsor of the Month (4x Ads, $800)",
+		totalCents: 80000,
+		depositCents: 0,
 	},
 	"dedicated-video": {
-		label: "Dedicated YouTube Video ($2,500)",
-		totalCents: 250000,
-		depositCents: 125000,
+		label: "Dedicated YouTube Video ($600)",
+		totalCents: 60000,
+		depositCents: 0,
+	},
+	"podcast-showcase": {
+		label: "Sponsored Podcast & Showcase ($500)",
+		totalCents: 50000,
+		depositCents: 0,
 	},
 	"mid-roll-ad": {
-		label: "Integrated 60s Mid-Roll Ad ($1,800)",
-		totalCents: 180000,
-		depositCents: 90000,
+		label: "Pre-Roll / Integrated 60s Ad ($250)",
+		totalCents: 25000,
+		depositCents: 0,
 	},
-	"ecosystem-integration": {
-		label: "Ecosystem Integration ($950)",
-		totalCents: 95000,
-		depositCents: 47500,
+	"x-thread": {
+		label: "Sponsored X Thread ($150)",
+		totalCents: 15000,
+		depositCents: 0,
+	},
+	"social-post": {
+		label: "Sponsored Social Post ($100)",
+		totalCents: 10000,
+		depositCents: 0,
 	},
 };
 
@@ -251,10 +261,10 @@ const LEAD_STATUS_OPTIONS = [
 	{ value: "contacted", label: "Contacted" },
 	{ value: "replied", label: "Reply Draft Ready / Replied" },
 	{ value: "negotiating", label: "Negotiating" },
-	{ value: "deposit_sent", label: "50% Deposit Sent" },
-	{ value: "deposit_paid", label: "50% Deposit Paid" },
+	{ value: "deposit_sent", label: "Invoice / Checkout Sent" },
+	{ value: "deposit_paid", label: "Deposit Paid (Legacy)" },
 	{ value: "booked", label: "Booked / In Production" },
-	{ value: "balance_sent", label: "Final 50% Balance Sent" },
+	{ value: "balance_sent", label: "Final Invoice Sent" },
 	{ value: "paid", label: "Paid in Full (100% — Archive)" },
 	{ value: "cancelled", label: "Cancelled / Declined (Archive)" },
 	{ value: "archived", label: "Archived / Completed" },
@@ -875,8 +885,8 @@ export function App() {
 			status: "new",
 			rateCard: newRateCard,
 			totalAmountCents: tier.totalCents,
-			depositAmountCents: tier.depositCents,
-			balanceAmountCents: tier.totalCents - tier.depositCents,
+			depositAmountCents: 0,
+			balanceAmountCents: 0,
 			intent: newIntent.trim() || tier.label,
 			deliverables: [
 				{
@@ -1234,9 +1244,9 @@ export function App() {
 			source: "booking",
 			status: "negotiating",
 			rateCard: "podcast-showcase",
-			totalAmountCents: 200000,
-			depositAmountCents: 100000,
-			balanceAmountCents: 100000,
+			totalAmountCents: 50000,
+			depositAmountCents: 0,
+			balanceAmountCents: 0,
 			intent: b.topics || "Sponsored Podcast & Multi-Channel Showcase",
 		};
 		try {
@@ -4497,7 +4507,7 @@ export function App() {
 																<span
 																	style={{ color: "#6b7280", fontWeight: 400 }}
 																>
-																	({formatUsd(lead.depositAmountCents)} deposit)
+																	(100% / NET 15-30)
 																</span>
 															</div>
 														)}
@@ -5805,7 +5815,7 @@ export function App() {
 															>
 																{isPf
 																	? "🌱 Passionfroot Escrow"
-																	: "⚡ Direct Stripe 50/50"}
+																	: "⚡ Direct Stripe 100% / NET"}
 															</span>
 															<span
 																style={{
@@ -5902,21 +5912,7 @@ export function App() {
 																	? "✓ Copied #vault"
 																	: "Copy #vault URL"}
 															</button>
-															{!isPf && !isDepositPaid && (
-																<button
-																	type="button"
-																	onClick={() =>
-																		handleUpdateLeadStatus(
-																			lead._id,
-																			"deposit_paid",
-																		)
-																	}
-																	style={btnStyle}
-																>
-																	Mark 50% Deposit Paid
-																</button>
-															)}
-															{!isPf && isDepositPaid && !isBalancePaid && (
+															{!isPf && !isBalancePaid && (
 																<button
 																	type="button"
 																	onClick={() =>

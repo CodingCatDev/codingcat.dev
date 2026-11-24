@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 64" width="200" height="64" role="img" aria-label="Vercel">
+  <g transform="translate(14.00, 14.00) scale(1.5000)" fill="#111827">
+    <path d="m12 1.608 12 20.784H0Z"/>
+  </g>
+  <text x="64" y="41" fill="#2A1155" font-family="'Nunito', 'Inter', system-ui, -apple-system, sans-serif" font-size="25" font-weight="900" letter-spacing="-0.02em">Vercel</text>
+</svg>

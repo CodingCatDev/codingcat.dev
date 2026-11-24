@@ -6,7 +6,7 @@ export interface StripeMilestoneSessionParams {
 	companyName: string;
 	contactEmail: string;
 	packageName: string;
-	milestone: "deposit" | "balance";
+	milestone: "full" | "deposit" | "balance";
 	amountCents: number;
 	siteUrl: string;
 }
@@ -37,8 +37,8 @@ function toFormUrlEncoded(
 }
 
 /**
- * Creates a Stripe Checkout Session for either the 50% Upfront Deposit
- * or the 50% Final Balance on Publish.
+ * Creates a Stripe Checkout Session for a sponsorship (100% single payment,
+ * or legacy 50% deposit / balance milestones).
  */
 export async function createStripeMilestoneCheckout(
 	params: StripeMilestoneSessionParams,
@@ -51,17 +51,26 @@ export async function createStripeMilestoneCheckout(
 	const label =
 		params.milestone === "deposit"
 			? `50% Upfront Deposit: ${params.packageName} (${params.companyName})`
-			: `50% Final Balance: ${params.packageName} (${params.companyName})`;
+			: params.milestone === "balance"
+				? `50% Final Balance: ${params.packageName} (${params.companyName})`
+				: `${params.packageName} (${params.companyName})`;
 
 	const description =
 		params.milestone === "deposit"
 			? "Locks your production & recording slot on CodingCat.dev. Remaining 50% balance due upon publication."
-			: "Final 50% balance upon publication of your CodingCat.dev launch campaign.";
+			: params.milestone === "balance"
+				? "Final 50% balance upon publication of your CodingCat.dev launch campaign."
+				: "CodingCat.dev Sponsorship Campaign (100% upfront card or ACH payment).";
+
+	const successNotice =
+		params.milestone === "full"
+			? "paid_success"
+			: `${params.milestone}_success`;
 
 	const body = toFormUrlEncoded({
 		mode: "payment",
 		customer_email: params.contactEmail,
-		success_url: `${params.siteUrl}/portal/${params.portalToken}?payment=${params.milestone}_success`,
+		success_url: `${params.siteUrl}/portal/${params.portalToken}?payment=${successNotice}`,
 		cancel_url: `${params.siteUrl}/portal/${params.portalToken}?payment=cancelled`,
 		"line_items[0][price_data][currency]": "usd",
 		"line_items[0][price_data][unit_amount]": params.amountCents,
@@ -142,10 +151,13 @@ export async function createStripeMilestoneInvoice(
 		customerId = customer.id;
 	}
 
+	const daysUntilDue = params.daysUntilDue === 30 ? 30 : 15;
 	const label =
 		params.milestone === "deposit"
 			? `50% Upfront Deposit: ${params.packageName} (${params.companyName})`
-			: `50% Final Balance: ${params.packageName} (${params.companyName})`;
+			: params.milestone === "balance"
+				? `50% Final Balance: ${params.packageName} (${params.companyName})`
+				: `${params.packageName} (${params.companyName}) - NET ${daysUntilDue}`;
 
 	// 2. Create draft invoice
 	const invoiceRes = await fetch("https://api.stripe.com/v1/invoices", {
@@ -154,11 +166,12 @@ export async function createStripeMilestoneInvoice(
 		body: toFormUrlEncoded({
 			customer: customerId,
 			collection_method: "send_invoice",
-			days_until_due: params.daysUntilDue ?? 15,
-			description: `CodingCat.dev Sponsorship (${params.packageName}) — Deal Room: ${params.siteUrl}/portal/${params.portalToken}`,
+			days_until_due: daysUntilDue,
+			description: `CodingCat.dev Sponsorship (${params.packageName}) | NET ${daysUntilDue} | Deal Room: ${params.siteUrl}/portal/${params.portalToken}`,
 			"metadata[leadId]": params.leadId,
 			"metadata[portalToken]": params.portalToken,
 			"metadata[milestone]": params.milestone,
+			"metadata[daysUntilDue]": daysUntilDue,
 			"metadata[companyName]": params.companyName,
 			"metadata[packageName]": params.packageName,
 		}),
@@ -236,6 +249,14 @@ export async function verifyStripeWebhookSignature(
 		return false;
 	}
 
+	const tsNum = Number(timestamp);
+	if (
+		!Number.isFinite(tsNum) ||
+		Math.abs(Math.floor(Date.now() / 1000) - tsNum) > 300
+	) {
+		return false;
+	}
+
 	const signedPayload = `${timestamp}.${payload}`;
 	const encoder = new TextEncoder();
 	const key = await crypto.subtle.importKey(
@@ -254,5 +275,12 @@ export async function verifyStripeWebhookSignature(
 		.map((b) => b.toString(16).padStart(2, "0"))
 		.join("");
 
-	return expectedHex === signature;
+	if (expectedHex.length !== signature.length) {
+		return false;
+	}
+	let mismatch = 0;
+	for (let i = 0; i < expectedHex.length; i++) {
+		mismatch |= expectedHex.charCodeAt(i) ^ signature.charCodeAt(i);
+	}
+	return mismatch === 0;
 }

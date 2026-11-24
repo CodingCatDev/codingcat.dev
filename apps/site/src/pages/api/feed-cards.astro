@@ -61,7 +61,7 @@ const pageSize =
 const sliceEnd = offset + pageSize;
 
 const topicSlug = stegaClean(params.get("topic") ?? "").trim();
-const topicDef = topicSlug ? TOPICS_BY_SLUG[topicSlug] : undefined;
+const topicDef = topicSlug ? TOPICS_BY_SLUG[topicSlug.toLowerCase()] : undefined;
 
 const refPodcastQuery = groq`*[_type == "podcast" && references($refId) && defined(slug.current)] | order(date desc, _updatedAt desc) [$offset...$limit] {
 	${baseFieldsNoContent},
@@ -80,7 +80,10 @@ const matchesSearch = (item: ContentListItem, q: string) => {
 	if (!q) {
 		return true;
 	}
-	const hay = `${stegaClean(item.title ?? "")} ${stegaClean(item.excerpt ?? "")}`.toLowerCase();
+	const tagsText = (item.tags ?? [])
+		.map((t) => `${t?.label ?? ""} ${t?.value ?? ""}`)
+		.join(" ");
+	const hay = `${stegaClean(item.title ?? "")} ${stegaClean(item.excerpt ?? "")} ${stegaClean(tagsText)}`.toLowerCase();
 	return hay.includes(q);
 };
 
@@ -101,6 +104,7 @@ if (refId && (rawType === "podcast" || rawType === "post")) {
 						stegaClean(item.title ?? ""),
 						stegaClean(item.excerpt ?? ""),
 						topicDef,
+						item.tags,
 					)
 				: true;
 			const okSearch = matchesSearch(item, searchQuery);
@@ -163,6 +167,7 @@ if (refId && (rawType === "podcast" || rawType === "post")) {
 					stegaClean(item.title ?? ""),
 					stegaClean(item.excerpt ?? ""),
 					topicDef,
+					item.tags,
 				)
 			: true;
 		const okSearch = matchesSearch(item, searchQuery);

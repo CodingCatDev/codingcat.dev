@@ -16,7 +16,11 @@ export const baseFieldsNoContent = `
   excerpt,
   coverImage,
   ogImage,
-  "date": coalesce(date, _createdAt)
+  "date": coalesce(date, _createdAt),
+  tags[]{
+    label,
+    value
+  }
 `;
 
 export const personRefFields = `
@@ -47,7 +51,13 @@ export const portableTextFields = `
         @.reference->_type == "page" => {
           "href": "/" + @.reference->slug.current
         },
-        @.reference->_type != "page" => {
+        @.reference->_type == "lesson" => {
+          "href": coalesce(
+            "/course/" + *[_type == "course" && ^.reference._ref in sections[].lesson[]._ref][0].slug.current + "/lesson/" + @.reference->slug.current,
+            "/lesson/" + @.reference->slug.current
+          )
+        },
+        @.reference->_type != "page" && @.reference->_type != "lesson" && defined(@.reference->_type) && defined(@.reference->slug.current) => {
           "href": "/" + @.reference->_type + "/" + @.reference->slug.current
         }
       },

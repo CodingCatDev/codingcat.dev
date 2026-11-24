@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 202 64" width="202" height="64" role="img" aria-label="Remotion">
+  <g transform="translate(14.00, 14.00) scale(1.5000)" fill="#60A5FA">
+    <path d="M4 4.5A2.5 2.5 0 0 1 7.75 2.3l13 7.5a2.5 2.5 0 0 1 0 4.33l-13 7.5A2.5 2.5 0 0 1 4 19.5v-15zm3.5 3.05v8.9L15.2 12 7.5 7.55z"/>
+  </g>
+  <text x="64" y="41" fill="#FFFFFF" font-family="'Nunito', 'Inter', system-ui, -apple-system, sans-serif" font-size="25" font-weight="900" letter-spacing="-0.02em">Remotion</text>
+</svg>

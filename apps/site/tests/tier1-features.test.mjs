@@ -166,12 +166,20 @@ describe("Tier 1 - Feature Coverage", () => {
 			assert.ok(searchFile.includes("search-input"), "Must have search input");
 			assert.ok(searchFile.includes("/api/search"), "Must query /api/search");
 			assert.ok(
+				searchFile.includes('data-type="course"'),
+				"Must have course filter",
+			);
+			assert.ok(
 				searchFile.includes('data-type="post"'),
 				"Must have post filter",
 			);
 			assert.ok(
 				searchFile.includes('data-type="podcast"'),
 				"Must have podcast filter",
+			);
+			assert.ok(
+				searchFile.includes('data-type="youtube"'),
+				"Must have youtube filter",
 			);
 			assert.ok(
 				searchFile.includes('data-type="author"'),
@@ -190,29 +198,26 @@ describe("Tier 1 - Feature Coverage", () => {
 				"SearchModal must define modal dialog",
 			);
 			assert.ok(
+				modalFile.includes('data-type="youtube"'),
+				"SearchModal must have youtube filter",
+			);
+			assert.ok(
 				apiFile.includes("semanticSearchQuery"),
 				"API must utilize semanticSearchQuery",
 			);
 		});
 
-		it("1.8 sponsorships.astro renders the 5 tiers and inquiry form", () => {
+		it("1.8 sponsorships.astro renders package tiers and inquiry form", () => {
 			const sponsorFile = fs.readFileSync(
 				path.resolve(SRC_DIR, "pages/sponsorships.astro"),
 				"utf-8",
 			);
 			assert.ok(sponsorFile.includes("BaseLayout"), "Must use BaseLayout");
 			assert.ok(sponsorFile.includes("Breadcrumbs"), "Must render Breadcrumbs");
-			assert.ok(sponsorFile.includes("Dedicated Video"), "Must render Tier 1");
 			assert.ok(
-				sponsorFile.includes("Integrated Mid-Roll Ad"),
-				"Must render Tier 2",
+				sponsorFile.includes("SPONSOR_PACKAGE_TIERS"),
+				"Must render SPONSOR_PACKAGE_TIERS",
 			);
-			assert.ok(sponsorFile.includes("Quick Shout-Out"), "Must render Tier 3");
-			assert.ok(
-				sponsorFile.includes("Blog Post / Newsletter"),
-				"Must render Tier 4",
-			);
-			assert.ok(sponsorFile.includes("Video Series"), "Must render Tier 5");
 			assert.ok(
 				sponsorFile.includes("sponsorship-form"),
 				"Must include inquiry form",
@@ -1847,17 +1852,27 @@ describe("Tier 1 - Feature Coverage", () => {
 			);
 		});
 
-		it("7.20 Agent AJ /api/chat integrates Cloudflare Clairic (@cf/cloudflare/clairic) extraction cascade and fastpath fallback", async () => {
+		it("7.20 Agent AJ /api/chat integrates Cloudflare Clairic (@cf/cloudflare/clairic) extraction cascade and Cloudflare free model cascade", async () => {
 			const chatModule = loadModule("src/pages/api/chat.ts");
 			assert.equal(chatModule.CLAIRIC_MODEL_ID, "@cf/cloudflare/clairic");
+			assert.equal(
+				chatModule.PRIMARY_CF_MODEL_ID,
+				"@cf/meta/llama-3.1-8b-instruct-fp8",
+			);
+			assert.equal(
+				chatModule.FALLBACK_CF_MODEL_ID,
+				"@cf/meta/llama-3.2-3b-instruct",
+			);
 			assert.equal(typeof chatModule.extractIntentWithClairic, "function");
 
-			// 1. Verify GET /api/chat advertises Clairic extraction model
+			// 1. Verify GET /api/chat advertises Clairic extraction model and Cloudflare free models
 			const statusRes = await chatModule.GET({
 				request: new Request("https://codingcat.dev/api/chat"),
 			});
 			assert.equal(statusRes.status, 200);
 			const statusData = await statusRes.json();
+			assert.equal(statusData.model, "@cf/meta/llama-3.1-8b-instruct-fp8");
+			assert.equal(statusData.fallbackModel, "@cf/meta/llama-3.2-3b-instruct");
 			assert.equal(statusData.extractionModel, "@cf/cloudflare/clairic");
 			assert.equal(statusData.cascadeArchitecture, "extract-route-synthesize");
 
@@ -2269,6 +2284,314 @@ describe("Tier 1 - Feature Coverage", () => {
 			assert.equal(
 				oauthMeta.authorization_endpoint,
 				"https://codingcat.dev/oauth2/authorize",
+			);
+		});
+	});
+
+	// ── 16. AJ MCP & Sanity Context MCP Security Stress Tests & Course Availability ──
+	describe("AJ MCP Security Stress Tests (Zero private.* Leaks) & Course Availability", () => {
+		const portalSec = loadModule("src/lib/portal-security.ts");
+		const mcpModule = loadModule("src/pages/api/mcp.ts");
+		const chatModule = loadModule("src/pages/api/chat.ts");
+		const locals = { siteUrl: new URL("https://codingcat.dev") };
+
+		it("16.1 isForbiddenPrivateQuery and isForbiddenDocumentId block all private.*, asset, secret, and CRM vectors", () => {
+			const forbiddenQueries = [
+				'*[_id in path("private.**")]',
+				'*[_type == "booking"]',
+				'*[_type == "sponsorLead"]',
+				'*[_type == "sponsorPool"]',
+				'*[_type == "opsDigestState"]',
+				'*[_type == "pluginSecrets"]',
+				'*[_id == "secrets.cloudinary"]',
+				'*[_type == "sponsorshipRequest"]',
+				'*[_type == "previewSession"]',
+				'*[_type == "sanity.fileAsset"]',
+				'*[_type == "sanity.imageAsset"]',
+				'*[_type == "media.tag"]',
+				"*[defined(portalToken)]",
+				"*[defined(sharedAssets)]",
+				"*[defined(guestEmail)]",
+				"*[defined(roughCutUrl)]",
+				'*[_id in path("drafts.**")]',
+				'*[_id in path("versions.**")]',
+				'*[_type == "automatedVideo"]',
+				'*[_type == "contentIdea"]',
+				'*[_type == "short"]',
+				'*[_type == "headshot"]',
+				'*[_type == "speakingEvent"]',
+				'*[_type == "talkAbstract"]',
+				'*[_type == "settings"]',
+			];
+			for (const q of forbiddenQueries) {
+				assert.equal(
+					portalSec.isForbiddenPrivateQuery(q),
+					true,
+					`Query should be blocked: ${q}`,
+				);
+			}
+
+			const forbiddenIds = [
+				"private.booking-edaa31db78dc4c21",
+				"private.sponsorLead-spt_mastra",
+				"private.opsDigestState",
+				"private.secrets.cloudinary",
+				"secrets.cloudinary",
+				"drafts.post-1",
+				"versions.r1.post-1",
+				"file-0077863bcc8e3c5e3dabd2c646fccc1b84dd92f3-mp4",
+				"image-123456-800x600-png",
+				"booking-1234",
+				"sponsorlead-1234",
+				"_.listeners",
+				"settings",
+				"short-yt-123",
+				"event-devnexus-2026",
+				"talk-mcp-101",
+				"headshot-alex-1",
+			];
+			for (const id of forbiddenIds) {
+				assert.equal(
+					portalSec.isForbiddenDocumentId(id),
+					true,
+					`Document ID should be blocked: ${id}`,
+				);
+			}
+
+			// Verify AST-level public GROQ filter injection for wildcard queries
+			const rewritten = portalSec.enforcePublicGroqFilter(
+				'*[true || _type != "post"][0...5]',
+			);
+			assert.ok(
+				rewritten.includes('!(_id in path("private.**"))'),
+				'Wildcard GROQ query must be wrapped with !(_id in path("private.**"))',
+			);
+			assert.ok(
+				rewritten.includes('_type in ["post","podcast","course","lesson"'),
+				"Wildcard GROQ query must enforce public _type allowlist",
+			);
+		});
+
+		it("16.2 /mcp tools/call rejects private.*, fileAsset, and mutation queries on query_content and array_field_reader", async () => {
+			const attackPayloads = [
+				{
+					name: "query_content",
+					arguments: { query: '*[_id in path("private.**")]' },
+				},
+				{
+					name: "groq_query",
+					arguments: { query: '*[_type == "sanity.fileAsset"]' },
+				},
+				{
+					name: "query_content",
+					arguments: { query: '*[_type == "pluginSecrets"]' },
+				},
+				{
+					name: "array_field_reader",
+					arguments: {
+						mode: "range",
+						documentId: "private.booking-edaa31db78dc4c21",
+						field: "sharedAssets",
+					},
+				},
+				{
+					name: "array_field_reader",
+					arguments: {
+						mode: "range",
+						documentId: "file-0077863bcc8e3c5e3dabd2c646fccc1b84dd92f3-mp4",
+						field: "source",
+					},
+				},
+			];
+
+			for (const params of attackPayloads) {
+				const req = new Request("https://codingcat.dev/mcp", {
+					method: "POST",
+					headers: { "Content-Type": "application/json" },
+					body: JSON.stringify({
+						jsonrpc: "2.0",
+						id: 99,
+						method: "tools/call",
+						params,
+					}),
+				});
+				const res = await mcpModule.POST({ request: req, locals });
+				assert.equal(res.status, 200);
+				const data = await res.json();
+				assert.equal(
+					data.result?.isError,
+					true,
+					`Expected isError=true for ${params.name} with ${JSON.stringify(params.arguments)}`,
+				);
+				assert.ok(
+					data.result.content[0].text.includes("Access denied"),
+					"Must return explicit Access denied message",
+				);
+			}
+		});
+
+		it("16.3 /mcp exposes course and lesson schemas, tool enums, and Clairic extraction for courses", async () => {
+			// 1. tools/list includes course & lesson in search_content and get_recent_content enums
+			const listReq = new Request("https://codingcat.dev/mcp", {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({
+					jsonrpc: "2.0",
+					id: 1,
+					method: "tools/list",
+					params: {},
+				}),
+			});
+			const listRes = await mcpModule.POST({ request: listReq, locals });
+			const listData = await listRes.json();
+			const searchTool = listData.result.tools.find(
+				(t) => t.name === "search_content",
+			);
+			const recentTool = listData.result.tools.find(
+				(t) => t.name === "get_recent_content",
+			);
+			assert.ok(
+				searchTool.inputSchema.properties.type.enum.includes("course") &&
+					searchTool.inputSchema.properties.type.enum.includes("lesson"),
+				"search_content type enum must include course and lesson",
+			);
+			assert.ok(
+				recentTool.inputSchema.properties.type.enum.includes("course") &&
+					recentTool.inputSchema.properties.type.enum.includes("lesson"),
+				"get_recent_content type enum must include course and lesson",
+			);
+
+			// 2. schema_explorer returns all 11 public document schemas
+			for (const schemaType of [
+				"course",
+				"lesson",
+				"podcast",
+				"post",
+				"transcript",
+				"author",
+				"guest",
+				"sponsor",
+				"newsletter",
+				"page",
+				"podcastType",
+			]) {
+				const schemaReq = new Request("https://codingcat.dev/mcp", {
+					method: "POST",
+					headers: { "Content-Type": "application/json" },
+					body: JSON.stringify({
+						jsonrpc: "2.0",
+						id: 2,
+						method: "tools/call",
+						params: {
+							name: "schema_explorer",
+							arguments: { type: schemaType },
+						},
+					}),
+				});
+				const schemaRes = await mcpModule.POST({ request: schemaReq, locals });
+				const schemaData = await schemaRes.json();
+				assert.equal(schemaData.result.isError, false);
+				const parsedSchema = JSON.parse(schemaData.result.content[0].text);
+				assert.equal(parsedSchema.name, schemaType);
+			}
+
+			// 3. Clairic fastpath extraction handles course and YouTube queries cleanly
+			const courseAvail = await chatModule.extractIntentWithClairic(
+				"What courses are available on CodingCat.dev?",
+			);
+			assert.equal(courseAvail.intent, "recent_content");
+			assert.equal(courseAvail.contentType, "course");
+
+			const courseTopic = await chatModule.extractIntentWithClairic(
+				"Do you have any courses on MCP?",
+			);
+			assert.equal(courseTopic.intent, "topic_search");
+			assert.equal(courseTopic.contentType, "course");
+			assert.equal(courseTopic.searchQuery, "MCP");
+
+			const youtubeTopic = await chatModule.extractIntentWithClairic(
+				"Find YouTube videos about Cloudflare Workers",
+			);
+			assert.equal(youtubeTopic.intent, "topic_search");
+			assert.equal(youtubeTopic.contentType, "youtube");
+			assert.equal(youtubeTopic.searchQuery, "Cloudflare Workers");
+		});
+	});
+
+	// ── Navigation Pillar Resolution & Header Accessibility ───────────────
+	describe("Navigation Pillar Active State & Header A11y", () => {
+		it("maps detail and secondary routes to their parent high-level navigation category", async () => {
+			const navModule = await loadModule("src/lib/navigation.ts");
+			const { matchNavHref, resolveActivePillar } = navModule;
+
+			// 1. Blog post detail page -> Blog active (aria-current="true"), Courses/Podcasts inactive
+			const postPath =
+				"/post/the-five-layers-of-agentic-context-why-canon-only-turns-when-someone-signs-off";
+			assert.equal(matchNavHref(postPath, "/blog").isActive, true);
+			assert.equal(matchNavHref(postPath, "/blog").ariaCurrent, "true");
+			assert.equal(matchNavHref(postPath, "/courses").isActive, false);
+			assert.equal(matchNavHref(postPath, "/podcasts").isActive, false);
+			assert.equal(matchNavHref(postPath, "/").isActive, false);
+			assert.equal(resolveActivePillar(postPath)?.id, "blog");
+
+			// 2. Course detail & lesson pages -> Courses active
+			const coursePath = "/course/mcp-in-production";
+			assert.equal(matchNavHref(coursePath, "/courses").isActive, true);
+			assert.equal(matchNavHref(coursePath, "/courses").ariaCurrent, "true");
+			assert.equal(matchNavHref(coursePath, "/blog").isActive, false);
+			assert.equal(resolveActivePillar(coursePath)?.id, "courses");
+
+			const lessonPath = "/course/mcp-in-production/lesson/intro";
+			assert.equal(matchNavHref(lessonPath, "/courses").isActive, true);
+			assert.equal(resolveActivePillar(lessonPath)?.id, "courses");
+
+			// 3. Podcast detail & guest pages -> Podcasts active
+			const podcastPath =
+				"/podcast/genai-for-engineers-what-s-real-what-s-not-and-what-s-coming";
+			assert.equal(matchNavHref(podcastPath, "/podcasts").isActive, true);
+			assert.equal(matchNavHref(podcastPath, "/podcasts").ariaCurrent, "true");
+			assert.equal(matchNavHref(podcastPath, "/courses").isActive, false);
+			assert.equal(resolveActivePillar(podcastPath)?.id, "podcasts");
+
+			assert.equal(
+				matchNavHref("/guest/kent-c-dodds", "/podcasts").isActive,
+				true,
+			);
+			assert.equal(matchNavHref("/guests/page/2", "/podcasts").isActive, true);
+
+			// 4. Author & Newsletter pages -> Blog active
+			assert.equal(
+				matchNavHref("/author/alex-patterson", "/blog").isActive,
+				true,
+			);
+			assert.equal(matchNavHref("/newsletter/issue-1", "/blog").isActive, true);
+
+			// 5. Topic & Sponsor detail pages -> Topics / Sponsors active
+			assert.equal(matchNavHref("/topic/cloudflare", "/topics").isActive, true);
+			assert.equal(matchNavHref("/sponsor/sanity", "/sponsors").isActive, true);
+
+			// 6. Exact index match -> aria-current="page"
+			assert.equal(matchNavHref("/blog", "/blog").ariaCurrent, "page");
+			assert.equal(matchNavHref("/", "/").ariaCurrent, "page");
+			assert.equal(resolveActivePillar("/"), null);
+		});
+
+		it("Header.astro uses dialog slide-over sheet, skip link, and removes permanent purple Courses override", () => {
+			const headerSrc = fs.readFileSync(
+				path.resolve(SRC_DIR, "components/Header.astro"),
+				"utf-8",
+			);
+			assert.ok(
+				headerSrc.includes('href="#main-content"'),
+				"Header must include a Skip to main content link",
+			);
+			assert.ok(
+				headerSrc.includes('<dialog\n\tid="nav-drawer"'),
+				"Mobile drawer must use a native <dialog> element",
+			);
+			assert.ok(
+				headerSrc.includes('variant="desktop-pill"'),
+				"Desktop nav links must use the desktop-pill variant",
 			);
 		});
 	});

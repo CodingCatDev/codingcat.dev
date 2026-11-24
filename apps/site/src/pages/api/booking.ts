@@ -15,10 +15,7 @@ import {
 	getSanityServerClient,
 	resolveSponsorTier,
 } from "@/lib/sanity/write-client";
-import {
-	createStripeMilestoneCheckout,
-	createStripeMilestoneInvoice,
-} from "@/lib/stripe";
+import { createStripeMilestoneCheckout } from "@/lib/stripe";
 
 interface BookingPayload {
 	bookingId?: string;
@@ -147,7 +144,6 @@ export const POST: APIRoute = async ({ request, url }) => {
 	});
 	const portalUrl = `${siteUrl}/portal/${portalToken}?${queryFallback.toString()}`;
 	let stripeDepositCheckoutUrl: string | undefined;
-	let stripeDepositInvoiceUrl: string | undefined;
 
 	if (isSponsored) {
 		const tier = resolveSponsorTier(
@@ -157,31 +153,17 @@ export const POST: APIRoute = async ({ request, url }) => {
 
 		if (!existingToken && bookingSource !== "passionfroot") {
 			try {
-				const [checkout, invoice] = await Promise.all([
-					createStripeMilestoneCheckout({
-						leadId,
-						portalToken,
-						companyName: company,
-						contactEmail: guestEmail,
-						packageName: tier.name,
-						milestone: "deposit",
-						amountCents: tier.depositAmountCents,
-						siteUrl,
-					}),
-					createStripeMilestoneInvoice({
-						leadId,
-						portalToken,
-						companyName: company,
-						contactEmail: guestEmail,
-						packageName: tier.name,
-						milestone: "deposit",
-						amountCents: tier.depositAmountCents,
-						siteUrl,
-						daysUntilDue: 15,
-					}),
-				]);
+				const checkout = await createStripeMilestoneCheckout({
+					leadId,
+					portalToken,
+					companyName: company,
+					contactEmail: guestEmail,
+					packageName: tier.name,
+					milestone: "full",
+					amountCents: tier.totalAmountCents,
+					siteUrl,
+				});
 				stripeDepositCheckoutUrl = checkout?.checkoutUrl;
-				stripeDepositInvoiceUrl = invoice?.hostedInvoiceUrl;
 			} catch {
 				// Stripe optional in dev
 			}
@@ -213,10 +195,9 @@ export const POST: APIRoute = async ({ request, url }) => {
 						status: "booked",
 						rateCard: tier.id,
 						totalAmountCents: tier.totalAmountCents,
-						depositAmountCents: tier.depositAmountCents,
-						balanceAmountCents: tier.balanceAmountCents,
+						depositAmountCents: 0,
+						balanceAmountCents: 0,
 						...(stripeDepositCheckoutUrl ? { stripeDepositCheckoutUrl } : {}),
-						...(stripeDepositInvoiceUrl ? { stripeDepositInvoiceUrl } : {}),
 						intent: topics,
 						deliverables: tier.deliverables.map((d, idx) => ({
 							_key: `deliv-${idx}`,
@@ -568,7 +549,6 @@ export const POST: APIRoute = async ({ request, url }) => {
 			gmailThreadId: activeThreadId,
 			gmailSubject: canonicalSubject,
 			stripeDepositCheckoutUrl,
-			stripeDepositInvoiceUrl,
 		}),
 		{ status: 200, headers: { "Content-Type": "application/json" } },
 	);

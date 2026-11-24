@@ -1,0 +1,29 @@
+name: Send Podcast Booking Reminders
+
+on:
+  schedule:
+    - cron: "0 * * * *" # Run hourly (24h lookahead + reminderSentAt idempotency)
+  workflow_dispatch:
+    inputs:
+      hours_ahead:
+        description: "Lookahead window in hours"
+        required: false
+        default: "24"
+        type: string
+      dry_run:
+        description: "Preview due reminders without sending emails"
+        required: false
+        default: false
+        type: boolean
+
+jobs:
+  send-booking-reminders:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger CodingCat.dev Booking Reminders
+        run: |
+          HOURS="${{ inputs.hours_ahead || '24' }}"
+          DRY_RUN="${{ inputs.dry_run || 'false' }}"
+          curl --fail-with-body -sS -X POST "https://codingcat.dev/api/book/manage" \
+            -H "Content-Type: application/json" \
+            -d "{\"action\":\"send_due_reminders\",\"hoursAhead\":${HOURS},\"dryRun\":${DRY_RUN}}"

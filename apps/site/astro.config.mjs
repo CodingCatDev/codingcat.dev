@@ -44,7 +44,7 @@ export default defineConfig({
 		// Images are Sanity CDN URLs already transformed by @sanity/image-url;
 		// do not route them through Cloudflare Images.
 		imageService: "passthrough",
-		platformProxy: { enabled: true },
+		remoteBindings: false,
 	}),
 	integrations: [react()],
 	// Replaces next/font/google. The CSS variable names match the ones
@@ -95,9 +95,45 @@ export default defineConfig({
 		"/rss.xml": { status: 301, destination: "/blog/rss.xml" },
 		"/podcast/rss.xml": { status: 301, destination: "/podcasts/rss.xml" },
 		"/feed.xml": { status: 301, destination: "/blog/rss.xml" },
+		"/feeds": { status: 301, destination: "/blog/rss.xml" },
+		"/courses/rss.xml": { status: 301, destination: "/blog/rss.xml" },
+		"/api/youtube/rss.xml": { status: 301, destination: "/podcasts/rss.xml" },
+		"/login": { status: 301, destination: "/sign-in" },
+		"/shorts": { status: 301, destination: "/podcasts" },
+		"/studio": { status: 301, destination: "/" },
+		"/portal": { status: 301, destination: "/sponsorships" },
+		"/post/meta-muse-vs-grok-bot-2026-persistent-ai-agent-landscape": {
+			status: 301,
+			destination: "/course/full-stack-ai-agents-typescript",
+		},
+		"/course/deterministic-html5-video-rendering-hyperframes-gsap": {
+			status: 301,
+			destination: "/post/deterministic-html5-video-rendering-hyperframes-gsap",
+		},
+		"/course/local-rtx-5090-voice-cloning-f5-tts-chatterbox-whisper": {
+			status: 301,
+			destination:
+				"/post/local-rtx-5090-voice-cloning-f5-tts-chatterbox-whisper",
+		},
+		"/course/visual-qa-reference-grammar-chrome-devtools-mcp-ffmpeg": {
+			status: 301,
+			destination:
+				"/post/visual-qa-reference-grammar-chrome-devtools-mcp-ffmpeg",
+		},
+		"/course/hybrid-web-ai-gemini-nano-firebase-workers": {
+			status: 301,
+			destination: "/course/hybrid-web-ai-gemini-nano-webmcp-firebase",
+		},
+		"/course/odin-react-19-and-typescript": {
+			status: 301,
+			destination: "/course/odin-modern-react-and-typescript",
+		},
 	},
 	vite: {
 		plugins: [tailwindcss(), rawFonts([".ttf", ".otf"])],
 		assetsInclude: ["**/*.wasm"],
+		optimizeDeps: {
+			include: ["astro/assets/services/noop"],
+		},
 	},
 });

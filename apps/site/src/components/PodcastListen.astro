@@ -1,5 +1,6 @@
 ---
 import { stegaClean } from "@sanity/client/stega";
+import AjAnimatedMascot from "@/components/AjAnimatedMascot.astro";
 
 interface ListenLinks {
 	youtube?: string | null;
@@ -71,14 +72,34 @@ const buttonClass =
 
 {
 	hasAnyOption && (
-		<div class="duo-card hand-border my-6 flex w-full flex-col flex-wrap items-center justify-start gap-4 p-5 sm:flex-row sm:p-6">
-			<div class="flex w-full items-center justify-between gap-2 sm:w-auto">
-				<span class="font-display text-lg font-black text-[#2A1155] dark:text-white">
-					🎧 Listen &amp; Subscribe
-				</span>
+		<div
+			data-podcast-listen-card
+			class="duo-card hand-border my-6 flex w-full flex-col flex-wrap items-center justify-start gap-4 p-5 sm:flex-row sm:p-6"
+		>
+			<div class="flex w-full items-center justify-between gap-3 sm:w-auto">
+				<div class="flex items-center gap-2.5">
+					<AjAnimatedMascot
+						variant="head"
+						state="podcast-groove"
+						angle="three-quarter-right"
+						cls="w-12 h-12 shrink-0"
+					/>
+					<div>
+						<span class="font-display text-lg font-black text-[#2A1155] dark:text-white">
+							🎧 Listen &amp; Subscribe
+						</span>
+						<span
+							data-aj-beat-status
+							class="block font-mono text-[10px] font-bold text-[#7C3AED] dark:text-[#C5E86C]"
+						>
+							120 BPM Beat-Synced Lip-Sync Ready
+						</span>
+					</div>
+				</div>
 			</div>
 			{src && (
 				<audio
+					data-podcast-audio
 					class="w-full sm:min-w-[260px] sm:flex-1"
 					controls
 					preload="none"
@@ -249,3 +270,77 @@ const buttonClass =
 		</div>
 	)
 }
+
+<script>
+	function initPodcastBeatSync() {
+		const cards = document.querySelectorAll<HTMLElement>(
+			"[data-podcast-listen-card]",
+		);
+		if (!cards.length) return;
+
+		cards.forEach((card) => {
+			if (card.dataset.beatHydrated === "true") return;
+			card.dataset.beatHydrated = "true";
+
+			const audio = card.querySelector<HTMLAudioElement>(
+				"[data-podcast-audio]",
+			);
+			const statusBadge = card.querySelector<HTMLElement>(
+				"[data-aj-beat-status]",
+			);
+			if (!audio) return;
+
+			let rafId = 0;
+
+			function driveLipSyncLoop() {
+				if (!audio || audio.paused || audio.ended) {
+					const w = window as unknown as {
+						setAjAudioAmplitude?: (amp: number, bpm?: number) => void;
+					};
+					w.setAjAudioAmplitude?.(0, 120);
+					if (statusBadge) {
+						statusBadge.textContent = "120 BPM Beat-Synced Lip-Sync Ready";
+					}
+					return;
+				}
+
+				const t = audio.currentTime || performance.now() / 1000;
+				// Deterministic speech & beat envelope at 120 BPM (safe across cross-origin CDN MP3s)
+				const syllableEnvelope =
+					0.35 +
+					0.35 * Math.abs(Math.sin(t * 9.5)) +
+					0.25 * Math.abs(Math.cos(t * 15.2));
+				const w = window as unknown as {
+					setAjAudioAmplitude?: (amp: number, bpm?: number) => void;
+				};
+				w.setAjAudioAmplitude?.(syllableEnvelope, 120);
+				if (statusBadge) {
+					statusBadge.textContent = `🎙️ AJ Lip-Sync Active · t=${t.toFixed(1)}s`;
+				}
+				rafId = requestAnimationFrame(driveLipSyncLoop);
+			}
+
+			audio.addEventListener("play", () => {
+				cancelAnimationFrame(rafId);
+				rafId = requestAnimationFrame(driveLipSyncLoop);
+			});
+			audio.addEventListener("pause", () => {
+				cancelAnimationFrame(rafId);
+				const w = window as unknown as {
+					setAjAudioAmplitude?: (amp: number, bpm?: number) => void;
+				};
+				w.setAjAudioAmplitude?.(0, 120);
+			});
+			audio.addEventListener("ended", () => {
+				cancelAnimationFrame(rafId);
+				const w = window as unknown as {
+					setAjAudioAmplitude?: (amp: number, bpm?: number) => void;
+				};
+				w.setAjAudioAmplitude?.(0, 120);
+			});
+		});
+	}
+
+	initPodcastBeatSync();
+	window.addEventListener("cc:page-load", initPodcastBeatSync);
+</script>

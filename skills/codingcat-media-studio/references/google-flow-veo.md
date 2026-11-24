@@ -25,7 +25,7 @@ Spoken Dialogue / Voiceover:
 "[Insert punchy 12-to-20 word spoken script here. Zero em-dashes. Direct, authoritative Senior Solutions Architect delivery.]"
 
 Subject appearance and likeness:
-A man in his mid-40s with short styled light-brown hair, warm blue-green eyes, and a neatly trimmed salt-and-pepper beard. Exact facial features, bone structure, and facial hair pattern matching the presenter from @codingcatthumbnails watermarked_img_7983427428736598214.jpg. He is wearing a clean black crew-neck t-shirt and a sleek round black smartwatch (Google Pixel Watch) on his left wrist. Both hands have no rings, and his right wrist is completely bare.
+A man in his mid-40s with short styled light-brown hair, warm blue-green eyes, and a neatly trimmed salt-and-pepper beard. Exact facial features, bone structure, and facial hair pattern matching the presenter from @codingcatthumbnails. He is wearing a clean black crew-neck t-shirt with the official AJ the Cat headphone mascot logo (black cat head with big lime-green eyes, purple headphones reading "CodingCat.dev Podcast", white die-cut outline) screen-printed on the chest, and a sleek round black smartwatch (Google Pixel Watch) on his left wrist. Both hands have no rings, and his right wrist is completely bare.
 
 Action, delivery, and background setting:
 Alex delivers a decisive, authoritative statement, looking straight down the lens with strong confidence. He brings both hands forward in a steady, natural hand gesture to punctuate the final line. A bold, clean text card snaps on-screen for a beat reading "[3-4 WORD ALL-CAPS HOOK]" before fading.
@@ -48,5 +48,5 @@ Veo 3.1 in Google Flow lets you anchor up to **3 reference images ("Ingredients"
 | Ingredient Slot | What to Upload from `assets/` | Purpose in Veo 3.1 |
 | :--- | :--- | :--- |
 | **Slot 1: Character / Presenter (`@Alex` or `@AJ`)** | `assets/alex-likeness/alex-likeness-10.jpg` (or `02`, `03`, `11`) **OR** `assets/AJ-3D-Headphones-Front.jpg` | Locks in Alex Patterson's exact facial likeness or AJ the Cat's 3D vinyl-toy proportions and headphones. |
-| **Slot 2: Technical Subject (`@Diagram` or `@Logo`)** | Dark-mode Architecture Diagram (`#000000` canvas) **OR** official vendor logo (`Sanity-Full_logo--white_on_black.png`, Firebase, AWS Amplify) | Anchors the exact technical diagram or official brand mark. |
+| **Slot 2: Technical Subject (`@Diagram` or `@Logo`)** | Dark-mode Architecture Diagram (`#000000` canvas) **OR** `assets/AJHeadphones.png` (or specific framework/cloud logo when relevant) | Anchors the exact technical diagram or official brand mark. |
 | **Slot 3: Studio Environment / Style (`@Studio`)** | Purple & black checkered studio wall or Dark Obsidian (`#0B1326` / `#0F172A`) backdrop | Maintains consistent Royal Purple (`#7C3AED`) and Electric Lime (`#C5E86C`) rim lighting across cuts. |

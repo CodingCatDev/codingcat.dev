@@ -86,7 +86,7 @@ export default defineType({
       type: 'string',
       options: {
         list: [
-          {title: 'CodingCat.dev Stripe (50% Deposit / 50% Balance)', value: 'stripe'},
+          {title: 'CodingCat.dev Stripe (100% / NET 15-30)', value: 'stripe'},
           {title: 'Passionfroot Managed Billing', value: 'passionfroot'},
         ],
       },
@@ -120,20 +120,34 @@ export default defineType({
       type: 'string',
       options: {
         list: [
-          {title: 'Full-Stack Launch Bundle ($3,500)', value: 'full-stack-launch'},
-          {title: 'Sponsored Podcast & Multi-Channel Showcase ($2,000)', value: 'podcast-showcase'},
-          {title: 'Ecosystem Integration / Mid-Roll + Social Pack ($950)', value: 'ecosystem-integration'},
-          {title: 'Dedicated YouTube Video ($2,500)', value: 'dedicated-video'},
-          {title: 'Integrated Mid-Roll Ad ($1,800)', value: 'mid-roll-ad'},
-          {title: 'Custom Video Series (Custom)', value: 'custom-series'},
+          {title: 'Full-Stack Launch Bundle ($1,000)', value: 'full-stack-launch'},
+          {title: 'Sponsor of the Month (4x Ads, $800)', value: 'sponsor-of-the-month'},
+          {title: 'Dedicated YouTube Video ($600)', value: 'dedicated-video'},
+          {title: 'Sponsored Podcast & Multi-Channel Showcase ($500)', value: 'podcast-showcase'},
+          {title: 'Pre-Roll / Integrated 60s Ad ($250)', value: 'mid-roll-ad'},
+          {title: 'Sponsored X Thread ($150)', value: 'x-thread'},
+          {title: 'Sponsored Social Post ($100)', value: 'social-post'},
         ],
       },
+    }),
+    defineField({
+      name: 'paymentTerms',
+      title: 'Payment Terms',
+      type: 'string',
+      options: {
+        list: [
+          {title: '100% Upfront (Card / ACH Checkout)', value: 'upfront'},
+          {title: 'NET 15 Corporate Invoice', value: 'net15'},
+          {title: 'NET 30 Corporate Invoice', value: 'net30'},
+        ],
+      },
+      initialValue: 'upfront',
     }),
     defineField({
       name: 'totalAmountCents',
       title: 'Total Package Amount (Cents)',
       type: 'number',
-      description: 'Total contract value in USD cents (e.g. 350000 = $3,500.00)',
+      description: 'Total contract value in USD cents (e.g. 100000 = $1,000.00)',
     }),
     defineField({
       name: 'depositAmountCents',

@@ -684,7 +684,7 @@ const CSS_NEW_LESSONS = [
 		slug: "css-scroll-driven-animations",
 		excerpt:
 			"Build silky-smooth 60fps scroll progress bars and viewport reveal animations in pure CSS with zero JavaScript scroll listeners.",
-		youtube: "https://youtu.be/7d6iJHEPMZI",
+		youtube: "https://youtu.be/8MbM3BiqwVs",
 		date: NOW_ISO,
 		heading1: "Offloading Scroll Animations from the Main Thread to the Compositor",
 		intro:
@@ -710,7 +710,7 @@ const CSS_NEW_LESSONS = [
 		slug: "css-view-transitions-api",
 		excerpt:
 			"Create native app-like morph transitions between multi-page Astro routes using @view-transition { navigation: auto } and view-transition-name.",
-		youtube: "https://youtu.be/7d6iJHEPMZI",
+		youtube: "https://youtu.be/H9LXOmaVpXI",
 		date: NOW_ISO,
 		heading1: "App-Like Route Morphing Without a Heavy SPA Router",
 		intro:

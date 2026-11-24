@@ -221,13 +221,13 @@ describe("Tier 3 - Cross-Feature Combinations", () => {
 
 		it("3.1 Short title (<= 30 chars) receives 56px font size", () => {
 			const title = "Astro vs Next.js";
-			assert.ok(title.length <= 30);
+			assert.equal(title.length <= 30, true);
 			assert.equal(ogUtils.titleFontSize(title), 56);
 		});
 
-		it("3.2 Medium-long title (51-70 chars) receives 44px font size", () => {
+		it("3.2 Medium title (51-70 chars) receives 44px font size", () => {
 			const title = "Complete Guide to Cloudflare Workers with Astro SSR";
-			assert.ok(title.length >= 51 && title.length <= 70);
+			assert.ok(title.length > 50 && title.length <= 70);
 			assert.equal(ogUtils.titleFontSize(title), 44);
 		});
 

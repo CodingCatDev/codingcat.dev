@@ -42,14 +42,14 @@ function buildTailoredConcepts(
 			hook: `Most teams wire up ${companyName} in a weekend prototype and hit scaling walls in production. Here is how to structure ${companyName} in 60 seconds without burning token or latency budgets.`,
 			angle:
 				"End-to-end production build on CodingCat.dev showing real SDK integration, latency benchmarks, and 4 vertical Shorts syndicated across 7 developer networks.",
-			targetPackage: "Full-Stack Launch Bundle ($3,500)",
+			targetPackage: "Full-Stack Launch Bundle ($1,000)",
 		},
 		{
 			title: `Under the Hood of ${companyName}: Engineering Deep-Dive (${cleanSummary.slice(0, 60)})`,
 			hook: `What happens under the hood when you replace brittle glue code with ${companyName}? Let us walk through the live architecture.`,
 			angle:
 				"45-minute technical founder/staff-engineer podcast showcase + canonical AEO/WebMCP article on codingcat.dev syndicated to Dev.to and Hashnode.",
-			targetPackage: "Sponsored Podcast & Multi-Channel Showcase ($2,000)",
+			targetPackage: "Sponsored Podcast & Multi-Channel Showcase ($500)",
 		},
 	];
 
@@ -69,7 +69,7 @@ function buildTailoredConcepts(
 			`2. "${concepts[1].title}"`,
 			`   Angle: ${concepts[1].angle}`,
 			"",
-			"Our Full-Stack Launch Bundle ($3,500 total, locked with a 50% upfront deposit and 50% on publish) includes the dedicated YouTube build, 4 vertical Shorts published across 7 platforms (28 native video posts), a canonical SEO + Agent-Ready (WebMCP / llms.txt) article on codingcat.dev syndicated to Dev.to and Hashnode, and a live ROI Deal Room.",
+			"Our Full-Stack Launch Bundle ($1,000 total, paid via Card/ACH or NET 15/30 invoice if required) includes the dedicated YouTube build, 4 vertical Shorts published across 7 platforms (28 native video posts), a canonical SEO + Agent-Ready (WebMCP / llms.txt) article on codingcat.dev syndicated to Dev.to and Hashnode, and a live ROI Deal Room.",
 			"",
 			"If you are open to a quick 15-minute scoping call this week, you can pick a live conflict-free slot or open a Sponsor Deal Room here:",
 			"https://codingcat.dev/sponsorships#sponsorship-form",

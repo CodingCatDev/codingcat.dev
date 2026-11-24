@@ -1,6 +1,7 @@
 import { env } from "cloudflare:workers";
 import type { APIRoute } from "astro";
 import {
+	enforcePublicGroqFilter,
 	isForbiddenDocumentId,
 	isForbiddenPrivateQuery,
 } from "../../lib/portal-security";
@@ -9,6 +10,7 @@ import {
 	semanticSearchQuery,
 	textSearchFallbackQuery,
 } from "../../lib/sanity/queries/search";
+import { youtubeId } from "../../lib/youtube";
 
 export const prerender = false;
 
@@ -41,20 +43,32 @@ const MCP_TOOLS = [
 		name: "search_content",
 		title: "Search CodingCat.dev Content",
 		description:
-			"Search CodingCat.dev podcasts, tutorials, blog articles, authors, guests, and video transcripts using hybrid semantic search and keyword ranking. ALWAYS use this tool first when asked to find, recommend, list, or search for content on a topic (e.g. 'Sanity', 'Vercel', 'Next.js', 'Astro', 'TypeScript', 'AI', 'Tailwind', etc.).",
+			"Search CodingCat.dev courses, lessons, podcasts, blog posts, authors, guests, sponsors, newsletters, and YouTube transcripts using hybrid semantic search and keyword ranking. ALWAYS use this tool first when asked to find, recommend, list, or search for content on a topic (e.g. 'Sanity', 'Vercel', 'Next.js', 'Astro', 'TypeScript', 'AI', 'MCP', 'Tailwind', etc.).",
 		inputSchema: {
 			type: "object",
 			properties: {
 				query: {
 					type: "string",
 					description:
-						"Search keywords, topic, or question (e.g. 'Sanity', 'Vercel', 'Next.js 15', 'Lee Robinson', 'Guillermo Rauch', 'AI agents').",
+						"Search keywords, topic, or question (e.g. 'Sanity', 'Vercel', 'Next.js 15', 'Lee Robinson', 'Guillermo Rauch', 'AI agents', 'MCP').",
 				},
 				type: {
 					type: "string",
 					description:
-						"Optional content type filter: 'all', 'podcast', 'post', 'author', 'guest'. Defaults to 'all'.",
-					enum: ["all", "podcast", "post", "author", "guest"],
+						"Optional content type filter: 'all', 'course', 'lesson', 'podcast', 'post', 'youtube', 'transcript', 'author', 'guest', 'sponsor', 'newsletter'. Defaults to 'all'.",
+					enum: [
+						"all",
+						"course",
+						"lesson",
+						"podcast",
+						"post",
+						"youtube",
+						"transcript",
+						"author",
+						"guest",
+						"sponsor",
+						"newsletter",
+					],
 				},
 				limit: {
 					type: "integer",
@@ -68,14 +82,14 @@ const MCP_TOOLS = [
 		name: "get_content_by_slug",
 		title: "Get Content by Slug",
 		description:
-			"Retrieve complete details, show notes, transcript summary, links, and guest/author metadata for a specific podcast episode or article by its slug.",
+			"Retrieve complete details, course sections & lessons, show notes, transcript summary, YouTube video metadata, links, and guest/author metadata for a specific course, lesson, podcast episode, blog post, newsletter, sponsor, page, or transcript by its slug or YouTube video ID.",
 		inputSchema: {
 			type: "object",
 			properties: {
 				slug: {
 					type: "string",
 					description:
-						"The slug of the content item (e.g. '0-6-nextjs-with-guillermo-rauch', 'how-to-secure-vercel-cron-job-routes-in-next-js-14-app-router').",
+						"The slug or YouTube video ID of the content item (e.g. 'mcp-in-production', '0-6-nextjs-with-guillermo-rauch', 'how-to-secure-vercel-cron-job-routes-in-next-js-14-app-router').",
 				},
 			},
 			required: ["slug"],
@@ -85,15 +99,24 @@ const MCP_TOOLS = [
 		name: "get_recent_content",
 		title: "Get Recent Content",
 		description:
-			"Retrieve the most recently published podcast episodes or blog articles from CodingCat.dev, ordered by publication date.",
+			"Retrieve the most recently published courses, lessons, podcast episodes, blog posts, newsletters, or YouTube videos from CodingCat.dev, ordered by publication date.",
 		inputSchema: {
 			type: "object",
 			properties: {
 				type: {
 					type: "string",
 					description:
-						"Content type filter: 'all', 'podcast', or 'post'. Defaults to 'all'.",
-					enum: ["all", "podcast", "post"],
+						"Content type filter: 'all', 'course', 'lesson', 'podcast', 'post', 'youtube', 'transcript', or 'newsletter'. Defaults to 'all'.",
+					enum: [
+						"all",
+						"course",
+						"lesson",
+						"podcast",
+						"post",
+						"youtube",
+						"transcript",
+						"newsletter",
+					],
 				},
 				limit: {
 					type: "integer",
@@ -106,14 +129,14 @@ const MCP_TOOLS = [
 		name: "query_content",
 		title: "Query Content Lake",
 		description:
-			"Execute a read-only query against the CodingCat.dev Sanity dataset. Supports GROQ queries such as count(*[_type == 'podcast']), *[_type == 'podcast'][0...5]{title, 'slug': slug.current}, or filtering by tags.",
+			"Execute a read-only query against the CodingCat.dev Sanity dataset across all 11 public document types (course, lesson, podcast, post, transcript, author, guest, sponsor, newsletter, page, podcastType). Supports GROQ queries such as count(*[_type == 'course']), *[_type == 'course'][0...5]{title, 'slug': slug.current}, or filtering by tags.",
 		inputSchema: {
 			type: "object",
 			properties: {
 				query: {
 					type: "string",
 					description:
-						"GROQ query to execute (e.g. count(*[_type == 'podcast']) or *[_type == 'guest'][0...10]{name, 'slug': slug.current}).",
+						"GROQ query to execute (e.g. count(*[_type == 'course']) or *[_type == 'course'][0...10]{title, 'slug': slug.current}).",
 				},
 			},
 			required: ["query"],
@@ -139,7 +162,7 @@ const MCP_TOOLS = [
 		name: "initial_context",
 		title: "Initial Context",
 		description:
-			"Get initial overview, document counts, and usage instructions for the CodingCat.dev dataset.",
+			"Get initial overview, document counts across all public document types (courses, lessons, podcasts, blog posts, transcripts, authors, guests, sponsors, newsletters, pages, podcastTypes), and usage instructions for the CodingCat.dev dataset.",
 		inputSchema: {
 			type: "object",
 			properties: {},
@@ -149,14 +172,14 @@ const MCP_TOOLS = [
 		name: "schema_explorer",
 		title: "Schema Explorer",
 		description:
-			"Inspect schema types and fields in the CodingCat.dev dataset (e.g. 'podcast', 'post', 'author', 'guest', 'sponsor').",
+			"Inspect schema types and fields in the CodingCat.dev dataset ('course', 'lesson', 'podcast', 'post', 'transcript', 'author', 'guest', 'sponsor', 'newsletter', 'page', 'podcastType').",
 		inputSchema: {
 			type: "object",
 			properties: {
 				type: {
 					type: "string",
 					description:
-						"Schema type name ('podcast', 'post', 'author', 'guest', 'sponsor').",
+						"Schema type name ('course', 'lesson', 'podcast', 'post', 'transcript', 'author', 'guest', 'sponsor', 'newsletter', 'page', 'podcastType').",
 				},
 			},
 			required: ["type"],
@@ -491,7 +514,7 @@ function buildMcpHtml(
 			var tools = [
 				{
 					name: "search_content",
-					description: "Search CodingCat.dev courses, podcasts, blog posts, guests, and sponsors",
+					description: "Search CodingCat.dev courses, lessons, podcasts, blog posts, YouTube videos, guests, authors, sponsors, and newsletters",
 					inputSchema: {
 						type: "object",
 						properties: {
@@ -501,7 +524,7 @@ function buildMcpHtml(
 							},
 							type: {
 								type: "string",
-								enum: ["all", "course", "podcast", "post", "guest", "author", "sponsor"],
+								enum: ["all", "course", "lesson", "podcast", "post", "youtube", "transcript", "guest", "author", "sponsor", "newsletter"],
 								description: "Optional content type filter"
 							},
 							limit: {
@@ -1178,7 +1201,12 @@ async function handleSearchContent(
 	}
 
 	const rawType = args.type ? String(args.type).toLowerCase() : null;
-	const filterType = rawType && rawType !== "all" ? rawType : null;
+	const filterType =
+		rawType && rawType !== "all"
+			? rawType === "transcript"
+				? "youtube"
+				: rawType
+			: null;
 	const limit = Math.min(Math.max(Number(args.limit) || 10, 1), 24);
 
 	let results: any[] = [];
@@ -1210,18 +1238,38 @@ async function handleSearchContent(
 
 	if (!results.length) {
 		try {
-			const directQuery = `*[_type in ["post", "podcast", "author", "guest"] && defined(slug.current) && (${filterType ? `_type == "${filterType}"` : "true"}) && (
+			const directQuery = `*[_type in ["post", "podcast", "course", "lesson", "transcript", "author", "guest", "sponsor", "newsletter"] && (defined(slug.current) || _type == "transcript") && coalesce(archived, false) != true && (_type != "transcript" || !defined(contentRef) || contentRef->_type in ["post", "podcast", "course", "lesson"]) && (${
+				filterType === "youtube"
+					? `_type == "transcript" || defined(youtube) || defined(listenLinks.youtube) || defined(transcript->youtubeId)`
+					: filterType
+						? `_type == "${filterType}"`
+						: "true"
+			}) && (
 				title match $term ||
 				name match $term ||
 				excerpt match $term ||
+				summary match $term ||
+				description match $term ||
 				transcript->summary match $term
 			)][0...24]{
 				_id,
 				_type,
 				"title": coalesce(title, name, "Untitled"),
-				"slug": slug.current,
-				"excerpt": coalesce(excerpt, transcript->summary),
-				date
+				"slug": coalesce(slug.current, contentRef->slug.current, youtubeId),
+				"courseSlug": select(
+					_type == "lesson" => *[_type == "course" && references(^._id)][0].slug.current,
+					contentRef->_type == "lesson" => *[_type == "course" && references(^.contentRef._ref)][0].slug.current,
+					null
+				),
+				"parentType": contentRef->_type,
+				"parentSlug": contentRef->slug.current,
+				"excerpt": coalesce(excerpt, summary, description, transcript->summary),
+				"youtube": coalesce(youtubeUrl, youtube, listenLinks.youtube, transcript->youtubeUrl),
+				"youtubeId": coalesce(youtubeId, transcript->youtubeId),
+				"duration": coalesce(duration, transcript->duration),
+				"durationSeconds": coalesce(durationSeconds, transcript->durationSeconds),
+				"viewCount": coalesce(statistics.viewCount, statistics.youtube.viewCount, transcript->statistics.viewCount),
+				"date": coalesce(date, publishedAt, _createdAt)
 			}`;
 			const direct = await client.fetch(directQuery, { term: `*${query}*` });
 			if (Array.isArray(direct) && direct.length > 0) {
@@ -1233,19 +1281,43 @@ async function handleSearchContent(
 	}
 
 	const formatted = results.slice(0, limit).map((item: any) => {
-		const section =
-			item._type === "podcast"
-				? "podcast"
-				: item._type === "post"
-					? "post"
-					: item._type;
+		const routeType =
+			item._type === "transcript" && item.parentType
+				? item.parentType
+				: item._type;
+		const ytId =
+			(typeof item.youtubeId === "string" && item.youtubeId) ||
+			youtubeId(item.youtube);
+		const youtubeUrl =
+			item.youtube ||
+			(ytId ? `https://www.youtube.com/watch?v=${ytId}` : undefined);
+		const thumbnailUrl = ytId
+			? `https://i.ytimg.com/vi/${ytId}/mqdefault.jpg`
+			: undefined;
+		const url =
+			routeType === "lesson" && item.courseSlug && item.slug
+				? `https://codingcat.dev/course/${item.courseSlug}/lesson/${item.slug}`
+				: routeType === "lesson"
+					? "https://codingcat.dev/courses"
+					: routeType === "transcript"
+						? youtubeUrl || "https://www.youtube.com/@CodingCatDev"
+						: `https://codingcat.dev/${routeType}/${item.slug}`;
 		return {
 			title: item.title,
 			type: item._type,
 			slug: item.slug,
-			url: `https://codingcat.dev/${section}/${item.slug}`,
+			...(item.courseSlug ? { courseSlug: item.courseSlug } : {}),
+			...(item.parentType ? { parentType: item.parentType } : {}),
+			url,
 			date: item.date || null,
 			excerpt: item.excerpt || item.transcriptSummary || "",
+			...(youtubeUrl ? { youtube: youtubeUrl } : {}),
+			...(ytId ? { youtubeId: ytId } : {}),
+			...(thumbnailUrl ? { thumbnailUrl } : {}),
+			...(item.duration ? { duration: item.duration } : {}),
+			...(typeof item.viewCount === "number"
+				? { viewCount: item.viewCount }
+				: {}),
 		};
 	});
 
@@ -1286,20 +1358,47 @@ async function handleGetContentBySlug(
 		};
 	}
 
-	const query = `*[_type in ["podcast", "post", "author", "guest"] && slug.current == $slug][0]{
+	const query = `*[
+		(_type in ["course", "lesson", "podcast", "post", "author", "guest", "sponsor", "newsletter", "page", "podcastType"] && slug.current == $slug) ||
+		(_type == "transcript" && (youtubeId == $slug || _id == $slug || contentRef->slug.current == $slug) && (!defined(contentRef) || contentRef->_type in ["post", "podcast", "course", "lesson"]))
+	][0]{
 		_id,
 		_type,
-		"title": coalesce(title, "Untitled"),
-		"slug": slug.current,
-		date,
-		excerpt,
-		"transcriptSummary": transcript->summary,
-		"transcriptText": transcript->fullText,
+		"title": coalesce(title, name, "Untitled"),
+		"slug": coalesce(slug.current, contentRef->slug.current, youtubeId),
+		"courseSlug": select(
+			_type == "lesson" => *[_type == "course" && references(^._id)][0].slug.current,
+			contentRef->_type == "lesson" => *[_type == "course" && references(^.contentRef._ref)][0].slug.current,
+			null
+		),
+		"parentType": contentRef->_type,
+		"parentSlug": contentRef->slug.current,
+		"date": coalesce(date, publishedAt, _createdAt),
+		lastUpdated,
+		archived,
+		"excerpt": coalesce(excerpt, summary, description, transcript->summary),
+		"transcriptSummary": coalesce(summary, transcript->summary),
+		"transcriptText": coalesce(fullText, transcript->fullText),
+		"chapters": coalesce(chapters, transcript->chapters),
 		"guest": guest[]->{ "title": coalesce(title, "Anonymous"), "slug": slug.current, excerpt },
 		"author": author[]->{ "title": coalesce(title, "Anonymous"), "slug": slug.current, excerpt },
+		"sections": select(_type == "course" => sections[]{
+			title,
+			"lessons": lesson[]->{
+				title,
+				"slug": slug.current,
+				excerpt,
+				youtube,
+				locked
+			}
+		}, null),
 		spotify,
 		listenLinks,
-		youtube
+		"youtube": coalesce(youtubeUrl, youtube, listenLinks.youtube, transcript->youtubeUrl),
+		"youtubeId": coalesce(youtubeId, transcript->youtubeId),
+		"duration": coalesce(duration, transcript->duration),
+		"durationSeconds": coalesce(durationSeconds, transcript->durationSeconds),
+		"statistics": coalesce(statistics, transcript->statistics)
 	}`;
 
 	const doc = await client.fetch(query, { slug });
@@ -1317,13 +1416,18 @@ async function handleGetContentBySlug(
 		};
 	}
 
-	const section =
-		doc._type === "podcast"
-			? "podcast"
-			: doc._type === "post"
-				? "post"
-				: doc._type;
-	const url = `https://codingcat.dev/${section}/${doc.slug}`;
+	const routeType =
+		doc._type === "transcript" && doc.parentType ? doc.parentType : doc._type;
+	const url =
+		routeType === "lesson" && doc.courseSlug
+			? `https://codingcat.dev/course/${doc.courseSlug}/lesson/${doc.slug}`
+			: routeType === "lesson"
+				? "https://codingcat.dev/courses"
+				: routeType === "transcript"
+					? doc.youtube || `https://www.youtube.com/watch?v=${doc.youtubeId}`
+					: routeType === "page"
+						? `https://codingcat.dev/${doc.slug}`
+						: `https://codingcat.dev/${routeType}/${doc.slug}`;
 
 	return {
 		content: [
@@ -1341,32 +1445,139 @@ async function handleGetRecentContent(
 	args: Record<string, any>,
 ) {
 	const rawType = args.type ? String(args.type).toLowerCase() : "all";
+	const limit = Math.min(Math.max(Number(args.limit) || 10, 1), 20);
+
+	if (rawType === "youtube" || rawType === "transcript") {
+		const ytQuery = `*[_type == "transcript" && (!defined(contentRef) || contentRef->_type in ["post", "podcast", "course", "lesson"])] | order(coalesce(publishedAt, _createdAt) desc)[0...$limit]{
+			_id,
+			_type,
+			"title": coalesce(title, "Untitled"),
+			"slug": coalesce(contentRef->slug.current, youtubeId),
+			"courseSlug": select(contentRef->_type == "lesson" => *[_type == "course" && references(^.contentRef._ref)][0].slug.current, null),
+			"parentType": contentRef->_type,
+			"parentSlug": contentRef->slug.current,
+			"date": coalesce(publishedAt, _createdAt),
+			"excerpt": coalesce(summary, description),
+			"youtube": youtubeUrl,
+			youtubeId,
+			duration,
+			durationSeconds,
+			"viewCount": statistics.viewCount
+		}`;
+		const ytResults = await client.fetch(ytQuery, { limit });
+		const formattedYt = (ytResults || []).map((item: any) => {
+			const routeType = item.parentType || "transcript";
+			const ytId = item.youtubeId || youtubeId(item.youtube);
+			const youtubeUrl =
+				item.youtube ||
+				(ytId ? `https://www.youtube.com/watch?v=${ytId}` : undefined);
+			return {
+				title: item.title,
+				type: "youtube",
+				slug: item.slug,
+				...(item.courseSlug ? { courseSlug: item.courseSlug } : {}),
+				...(item.parentType ? { parentType: item.parentType } : {}),
+				url:
+					routeType === "lesson" && item.courseSlug && item.slug
+						? `https://codingcat.dev/course/${item.courseSlug}/lesson/${item.slug}`
+						: routeType !== "transcript" && item.slug
+							? `https://codingcat.dev/${routeType}/${item.slug}`
+							: youtubeUrl || "https://www.youtube.com/@CodingCatDev",
+				date: item.date || null,
+				excerpt: item.excerpt || "",
+				...(youtubeUrl ? { youtube: youtubeUrl } : {}),
+				...(ytId
+					? {
+							youtubeId: ytId,
+							thumbnailUrl: `https://i.ytimg.com/vi/${ytId}/mqdefault.jpg`,
+						}
+					: {}),
+				...(item.duration ? { duration: item.duration } : {}),
+				...(typeof item.viewCount === "number"
+					? { viewCount: item.viewCount }
+					: {}),
+			};
+		});
+		return {
+			content: [
+				{
+					type: "text",
+					text: JSON.stringify(
+						{
+							filter: rawType,
+							count: formattedYt.length,
+							results: formattedYt,
+						},
+						null,
+						2,
+					),
+				},
+			],
+			isError: false,
+		};
+	}
+
 	const types =
 		rawType === "podcast"
 			? ["podcast"]
 			: rawType === "post"
 				? ["post"]
-				: ["podcast", "post"];
-	const limit = Math.min(Math.max(Number(args.limit) || 10, 1), 20);
+				: rawType === "course"
+					? ["course"]
+					: rawType === "lesson"
+						? ["lesson"]
+						: rawType === "newsletter"
+							? ["newsletter"]
+							: ["course", "podcast", "post", "newsletter"];
 
-	const query = `*[_type in $types && defined(slug.current)] | order(date desc, _createdAt desc)[0...$limit]{
+	const query = `*[_type in $types && defined(slug.current) && coalesce(archived, false) != true] | order(date desc, _createdAt desc)[0...$limit]{
 		_id,
 		_type,
 		"title": coalesce(title, name, "Untitled"),
 		"slug": slug.current,
+		"courseSlug": select(_type == "lesson" => *[_type == "course" && references(^._id)][0].slug.current, null),
 		date,
-		excerpt
+		"excerpt": coalesce(excerpt, transcript->summary),
+		"youtube": coalesce(youtube, listenLinks.youtube, transcript->youtubeUrl),
+		"youtubeId": transcript->youtubeId,
+		"duration": transcript->duration,
+		"viewCount": coalesce(statistics.youtube.viewCount, transcript->statistics.viewCount)
 	}`;
 
 	const results = await client.fetch(query, { types, limit });
-	const formatted = (results || []).map((item: any) => ({
-		title: item.title,
-		type: item._type,
-		slug: item.slug,
-		url: `https://codingcat.dev/${item._type === "podcast" ? "podcast" : "post"}/${item.slug}`,
-		date: item.date || null,
-		excerpt: item.excerpt || "",
-	}));
+	const formatted = (results || []).map((item: any) => {
+		const ytId =
+			(typeof item.youtubeId === "string" && item.youtubeId) ||
+			youtubeId(item.youtube);
+		const youtubeUrl =
+			item.youtube ||
+			(ytId ? `https://www.youtube.com/watch?v=${ytId}` : undefined);
+		return {
+			title: item.title,
+			type: item._type,
+			slug: item.slug,
+			...(item.courseSlug ? { courseSlug: item.courseSlug } : {}),
+			url:
+				item._type === "lesson" && item.courseSlug
+					? `https://codingcat.dev/course/${item.courseSlug}/lesson/${item.slug}`
+					: item._type === "lesson"
+						? "https://codingcat.dev/courses"
+						: `https://codingcat.dev/${item._type}/${item.slug}`,
+			date: item.date || null,
+			excerpt: item.excerpt || "",
+			...(youtubeUrl ? { youtube: youtubeUrl } : {}),
+			...(ytId
+				? {
+						youtubeId: ytId,
+						thumbnailUrl: `https://i.ytimg.com/vi/${ytId}/mqdefault.jpg`,
+					}
+				: {}),
+			...(item.duration ? { duration: item.duration } : {}),
+			...(typeof item.viewCount === "number"
+				? { viewCount: item.viewCount }
+				: {}),
+		};
+	});
 
 	return {
 		content: [
@@ -1432,7 +1643,7 @@ async function handleQueryContent(
 					type: "text",
 					text: JSON.stringify({
 						error:
-							"Access denied: GROQ queries via MCP are restricted to public content types (podcast, post, course, lesson, author, guest, sponsor, transcript).",
+							"Access denied: GROQ queries via MCP are restricted to public content types (podcast, post, course, lesson, transcript, author, guest, sponsor, newsletter, page, podcastType).",
 					}),
 				},
 			],
@@ -1472,6 +1683,9 @@ async function handleQueryContent(
 	// Remove [_score > 0]
 	cleanQuery = cleanQuery.replace(/\[_score\s*>\s*0\]/g, "");
 
+	// Enforce AST-level public document allowlist on all *[...] scopes
+	cleanQuery = enforcePublicGroqFilter(cleanQuery);
+
 	try {
 		const result = await client.fetch(cleanQuery);
 
@@ -1500,7 +1714,10 @@ async function handleQueryContent(
 										title: r.title,
 										type: r._type,
 										slug: r.slug,
-										url: `https://codingcat.dev/${r._type === "podcast" ? "podcast" : "post"}/${r.slug}`,
+										url:
+											r._type === "lesson" && r.courseSlug
+												? `https://codingcat.dev/course/${r.courseSlug}/lesson/${r.slug}`
+												: `https://codingcat.dev/${r._type}/${r.slug}`,
 										excerpt: r.excerpt || "",
 									})),
 									null,
@@ -1545,14 +1762,28 @@ async function handleInitialContext(
 	try {
 		const [counts, sanityContextInitial] = await Promise.all([
 			client.fetch(`{
+				"courses": count(*[_type == "course" && coalesce(archived, false) != true]),
+				"lessons": count(*[_type == "lesson"]),
 				"podcasts": count(*[_type == "podcast"]),
 				"posts": count(*[_type == "post"]),
+				"transcripts": count(*[_type == "transcript" && (!defined(contentRef) || contentRef->_type in ["post", "podcast", "course", "lesson"])]),
 				"authors": count(*[_type == "author"]),
 				"guests": count(*[_type == "guest"]),
+				"sponsors": count(*[_type == "sponsor"]),
+				"newsletters": count(*[_type == "newsletter"]),
+				"pages": count(*[_type == "page"]),
+				"podcastTypes": count(*[_type == "podcastType"]),
+				"featuredCourses": *[_type == "course" && defined(slug.current) && coalesce(archived, false) != true] | order(date desc)[0...5]{
+					title,
+					"slug": slug.current,
+					date,
+					excerpt
+				},
 				"recentPodcasts": *[_type == "podcast" && defined(slug.current)] | order(date desc)[0...3]{
 					title,
 					"slug": slug.current,
-					date
+					date,
+					"youtube": coalesce(youtube, listenLinks.youtube, transcript->youtubeUrl)
 				}
 			}`),
 			callSanityContextMcpTool("initial_context", {}).catch(() => null),
@@ -1566,13 +1797,40 @@ async function handleInitialContext(
 		const summary = {
 			platform: "CodingCat.dev",
 			description:
-				"CodingCat.dev is an educational web development learning platform and weekly podcast covering modern web development, frameworks, AI agents, cloud architectures, and headless CMS.",
+				"CodingCat.dev is an educational web development learning platform and weekly podcast covering modern web development, courses, frameworks, AI agents, cloud architectures, and headless CMS.",
+			publicDocumentTypes: [
+				"course",
+				"lesson",
+				"podcast",
+				"post",
+				"transcript",
+				"author",
+				"guest",
+				"sponsor",
+				"newsletter",
+				"page",
+				"podcastType",
+			],
 			statistics: {
+				totalCourses: counts.courses,
+				totalLessons: counts.lessons,
 				totalPodcasts: counts.podcasts,
 				totalPosts: counts.posts,
+				totalTranscripts: counts.transcripts,
 				totalGuests: counts.guests,
 				totalAuthors: counts.authors,
+				totalSponsors: counts.sponsors,
+				totalNewsletters: counts.newsletters,
+				totalPages: counts.pages,
+				totalPodcastTypes: counts.podcastTypes,
 			},
+			featuredCourses: (counts.featuredCourses || []).map((c: any) => ({
+				title: c.title,
+				slug: c.slug,
+				url: `https://codingcat.dev/course/${c.slug}`,
+				date: c.date,
+				excerpt: c.excerpt || "",
+			})),
 			recentPodcasts: (counts.recentPodcasts || []).map((p: any) => ({
 				title: p.title,
 				slug: p.slug,
@@ -1583,9 +1841,9 @@ async function handleInitialContext(
 				? { sanityContextKnowledgeBase: knowledgeBaseContext }
 				: {}),
 			recommendedTools: [
-				"search_content: Fast semantic & keyword search across all episodes, tutorials, and transcripts.",
-				"get_content_by_slug: Retrieve full episode or post details, show notes, and transcript summaries.",
-				"get_recent_content: Get the newest podcasts and articles.",
+				"search_content: Fast semantic & keyword search across all courses, lessons, episodes, tutorials, and transcripts.",
+				"get_content_by_slug: Retrieve full course (with sections & lessons), lesson, episode, or post details, show notes, and transcript summaries.",
+				"get_recent_content: Get the newest courses, lessons, podcasts, and blog posts.",
 				"query_content: Run custom read-only GROQ queries.",
 				"knowledge_base_read: Read full entries from the Sanity Context Knowledge Base (e.g. 'AJ Knowlege Jokes').",
 			],
@@ -1643,10 +1901,110 @@ async function handleSchemaExplorer(
 	_client: ReturnType<typeof getSanityClient>,
 	args: Record<string, any>,
 ) {
-	const type = String(args.type || "")
-		.toLowerCase()
-		.trim();
+	const type = String(args.type || "").trim();
 	const schemas: Record<string, any> = {
+		course: {
+			name: "course",
+			title: "Course",
+			description:
+				"Full-stack web development and AI engineering course composed of structured sections and video/text lessons.",
+			fields: [
+				{ name: "title", type: "string", description: "Course title" },
+				{
+					name: "slug",
+					type: "slug",
+					description: "URL slug identifier (e.g. 'mcp-in-production')",
+				},
+				{ name: "date", type: "datetime", description: "Release date" },
+				{
+					name: "lastUpdated",
+					type: "datetime",
+					description: "Last updated timestamp",
+				},
+				{
+					name: "archived",
+					type: "boolean",
+					description: "Whether the course is archived",
+				},
+				{
+					name: "coverImage",
+					type: "image",
+					description: "16:9 course cover image",
+				},
+				{
+					name: "excerpt",
+					type: "text",
+					description: "Course summary excerpt",
+				},
+				{
+					name: "author",
+					type: "array",
+					description: "References to author / instructor documents",
+				},
+				{
+					name: "sections",
+					type: "array",
+					description:
+						"Course sections ({ title, lesson[] -> references to lesson documents })",
+				},
+				{
+					name: "content",
+					type: "array",
+					description: "Portable Text course overview",
+				},
+				{
+					name: "youtube",
+					type: "string",
+					description: "Course intro YouTube video URL",
+				},
+			],
+		},
+		lesson: {
+			name: "lesson",
+			title: "Lesson",
+			description:
+				"Individual course lesson with video walkthrough, code examples, and Portable Text guide.",
+			fields: [
+				{ name: "title", type: "string", description: "Lesson title" },
+				{ name: "slug", type: "slug", description: "URL slug identifier" },
+				{ name: "date", type: "datetime", description: "Publication date" },
+				{
+					name: "locked",
+					type: "boolean",
+					description: "Whether the lesson requires Pro access",
+				},
+				{
+					name: "coverImage",
+					type: "image",
+					description: "16:9 lesson cover image",
+				},
+				{
+					name: "excerpt",
+					type: "text",
+					description: "Lesson summary excerpt",
+				},
+				{
+					name: "author",
+					type: "array",
+					description: "References to author documents",
+				},
+				{
+					name: "content",
+					type: "array",
+					description: "Portable Text lesson body and code blocks",
+				},
+				{
+					name: "youtube",
+					type: "string",
+					description: "Lesson YouTube video URL",
+				},
+				{
+					name: "transcript",
+					type: "reference",
+					description: "Reference to transcript document",
+				},
+			],
+		},
 		podcast: {
 			name: "podcast",
 			title: "Podcast Episode",
@@ -1833,6 +2191,18 @@ async function handleSchemaExplorer(
 			fields: [
 				{ name: "title", type: "string", description: "Video title" },
 				{ name: "youtubeId", type: "string", description: "YouTube video ID" },
+				{ name: "youtubeUrl", type: "url", description: "YouTube watch URL" },
+				{
+					name: "contentRef",
+					type: "reference",
+					description: "Reference to parent podcast, lesson, course, or post",
+				},
+				{ name: "duration", type: "string", description: "Video duration" },
+				{
+					name: "durationSeconds",
+					type: "number",
+					description: "Video duration in seconds",
+				},
 				{ name: "status", type: "string", description: "Transcript status" },
 				{ name: "summary", type: "text", description: "Transcript summary" },
 				{ name: "fullText", type: "text", description: "Full transcript text" },
@@ -1845,11 +2215,60 @@ async function handleSchemaExplorer(
 				},
 			],
 		},
+		newsletter: {
+			name: "newsletter",
+			title: "Newsletter Issue",
+			description: "CodingCat.dev newsletter dispatch issue.",
+			fields: [
+				{
+					name: "title",
+					type: "string",
+					description: "Newsletter issue title",
+				},
+				{ name: "slug", type: "slug", description: "URL slug identifier" },
+				{ name: "date", type: "datetime", description: "Publication date" },
+				{ name: "excerpt", type: "text", description: "Short summary excerpt" },
+				{
+					name: "content",
+					type: "array",
+					description: "Portable Text newsletter body",
+				},
+			],
+		},
+		page: {
+			name: "page",
+			title: "Site Page",
+			description: "Standalone public site page on CodingCat.dev.",
+			fields: [
+				{ name: "title", type: "string", description: "Page title" },
+				{ name: "slug", type: "slug", description: "URL slug identifier" },
+				{ name: "excerpt", type: "text", description: "Page description" },
+				{
+					name: "content",
+					type: "array",
+					description: "Portable Text page content",
+				},
+			],
+		},
+		podcastType: {
+			name: "podcastType",
+			title: "Podcast Series / Show Type",
+			description: "Podcast series classification metadata.",
+			fields: [
+				{ name: "title", type: "string", description: "Series title" },
+				{ name: "slug", type: "slug", description: "URL slug identifier" },
+			],
+		},
 	};
 
-	if (type && schemas[type]) {
+	const matchedSchema =
+		schemas[type] ||
+		Object.entries(schemas).find(
+			([k]) => k.toLowerCase() === type.toLowerCase(),
+		)?.[1];
+	if (type && matchedSchema) {
 		return {
-			content: [{ type: "text", text: JSON.stringify(schemas[type], null, 2) }],
+			content: [{ type: "text", text: JSON.stringify(matchedSchema, null, 2) }],
 			isError: false,
 		};
 	}
@@ -1861,12 +2280,17 @@ async function handleSchemaExplorer(
 				text: JSON.stringify(
 					{
 						availableTypes: [
+							"course",
+							"lesson",
 							"podcast",
 							"post",
+							"transcript",
 							"guest",
 							"author",
 							"sponsor",
-							"transcript",
+							"newsletter",
+							"page",
+							"podcastType",
 						],
 						schemas,
 					},
@@ -1914,7 +2338,7 @@ async function handleArrayFieldReader(
 		};
 	}
 
-	const query = `*[_id == $id && _type in ["podcast", "post", "course", "lesson", "author", "guest", "sponsor", "page"]][0][$field]`;
+	const query = `*[_id == $id && _type in ["podcast", "post", "course", "lesson", "transcript", "author", "guest", "sponsor", "newsletter", "page", "podcastType"]][0][$field]`;
 	const data = await client.fetch(query, { id: documentId, field });
 	return {
 		content: [{ type: "text", text: JSON.stringify(data || [], null, 2) }],

@@ -283,44 +283,58 @@ function createImageBlock(assetRef, alt, caption, keySeed) {
   };
 }
 
-function parseInlineMarkdown(text) {
+function parseInlineMarkdown(text, inheritedMarks = {}) {
   const segments = [];
-  const pattern = /(\*\*[^*]+\*\*|`[^`]+`|\[[^\]]+\]\([^)]+\)|\*[^*]+\*)/g;
+  const pattern =
+    /(\*\*\[[^\]]+\]\([^)]+\)\*\*|\*\*(?:`[^`]+`|[^*])+\*\*|`[^`]+`|\[[^\]]+\]\([^)]+\)|\*[^*]+\*)/g;
   let lastIdx = 0;
   let match;
   while ((match = pattern.exec(text)) !== null) {
     if (match.index > lastIdx) {
-      segments.push({ text: text.slice(lastIdx, match.index) });
+      segments.push({ ...inheritedMarks, text: text.slice(lastIdx, match.index) });
     }
     const tokenStr = match[0];
     if (tokenStr.startsWith("**") && tokenStr.endsWith("**")) {
       const inner = tokenStr.slice(2, -2);
       const linkMatch = inner.match(/^\[([^\]]+)\]\(([^)]+)\)$/);
       if (linkMatch) {
-        segments.push({ text: linkMatch[1], href: linkMatch[2], strong: true });
+        segments.push(
+          ...parseInlineMarkdown(linkMatch[1], {
+            ...inheritedMarks,
+            href: linkMatch[2],
+            strong: true,
+          })
+        );
       } else {
-        segments.push({ text: inner, strong: true });
+        segments.push(...parseInlineMarkdown(inner, { ...inheritedMarks, strong: true }));
       }
     } else if (tokenStr.startsWith("`") && tokenStr.endsWith("`")) {
-      segments.push({ text: tokenStr.slice(1, -1), code: true });
+      segments.push({ ...inheritedMarks, text: tokenStr.slice(1, -1), code: true });
     } else if (tokenStr.startsWith("[") && tokenStr.includes("](")) {
       const linkMatch = tokenStr.match(/^\[([^\]]+)\]\(([^)]+)\)$/);
       if (linkMatch) {
-        segments.push({ text: linkMatch[1], href: linkMatch[2] });
+        segments.push(
+          ...parseInlineMarkdown(linkMatch[1], {
+            ...inheritedMarks,
+            href: linkMatch[2],
+          })
+        );
       } else {
-        segments.push({ text: tokenStr });
+        segments.push({ ...inheritedMarks, text: tokenStr });
       }
     } else if (tokenStr.startsWith("*") && tokenStr.endsWith("*")) {
-      segments.push({ text: tokenStr.slice(1, -1), em: true });
+      segments.push(
+        ...parseInlineMarkdown(tokenStr.slice(1, -1), { ...inheritedMarks, em: true })
+      );
     } else {
-      segments.push({ text: tokenStr });
+      segments.push({ ...inheritedMarks, text: tokenStr });
     }
     lastIdx = pattern.lastIndex;
   }
   if (lastIdx < text.length) {
-    segments.push({ text: text.slice(lastIdx) });
+    segments.push({ ...inheritedMarks, text: text.slice(lastIdx) });
   }
-  return segments.length > 0 ? segments : [{ text }];
+  return segments.length > 0 ? segments : [{ ...inheritedMarks, text }];
 }
 
 async function uploadJpegToSanity(filename, targetDataset) {

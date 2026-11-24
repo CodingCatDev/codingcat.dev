@@ -11,14 +11,13 @@ All canonical mascot files live in `/home/alex/codingcat.dev/assets/` (and are s
 | `aj_3d_headphones_front` | `assets/AJ-3D-Headphones-Front.jpg` | 3D stylized vinyl-toy / Pixar-grade render (front 3/4 view on pedestal) | YouTube thumbnails, 3D video bumpers, hero feature cards, and multimodal 3D character references. |
 | `aj_3d_headphones_left` | `assets/AJ-3D-Headphones-Left.jpg` | 3D stylized vinyl-toy render (left profile turnaround) | Side-facing thumbnail reactions (looking right toward a diagram) and 3D modeling reference. |
 | `aj_3d_headphones_right` | `assets/AJ-3D-Headphones-Right.jpg` | 3D stylized vinyl-toy render (right profile turnaround) | Side-facing thumbnail reactions (looking left toward a diagram) and 3D modeling reference. |
-| `alex_likeness_library` | `assets/alex-likeness/alex-likeness-01.jpg` .. `13.jpg` | `2048x2048` studio portraits of Alex Patterson against pure `#000000` black | Multimodal character likeness reference & cutouts for 16:9 YouTube thumbnails, blog covers, and social graphics. |
-| `sanity_official_logos` | `assets/logos/sanity-logos/` (`Sanity-Full_logo`, `Sanity-Symbol`, `Sanity-Logotype`) | Official Sanity brand assets (white-on-black, black-on-white, SVG/PNG) | **Always use these official Sanity logos** (the angular zig-zag symbol + serif `Sanity` wordmark). **NEVER** use the legacy red-square `"S"` icon. |
+| `alex_likeness_library` | `assets/alex-likeness/alex-likeness-01.jpg` .. `16.jpg` | `2048x2048` studio portraits of Alex Patterson against pure `#000000` black wearing his black crew-neck t-shirt with the screen-printed AJ the Cat headphone mascot logo on the chest | Multimodal character likeness reference & cutouts for 16:9 YouTube thumbnails, blog covers, and social graphics. |
 | `firebase_official_logos` | `assets/logos/firebase-brand-assets/` | Official Firebase Primary Lockups, Logomarks, and Product Icons (Genkit, App Hosting, Data Connect, Vertex AI, etc.) | Thumbnails, blog covers, and architecture diagrams referencing Firebase products. |
 | `aws_amplify_logo` | `assets/logos/Amplify.svg` & `assets/logos/Amplify.png` | Official AWS Amplify logo | Thumbnails, blog covers, and diagrams referencing AWS Amplify. |
 
 ## Canonical Alex Patterson Studio Likeness Library (`assets/alex-likeness/`)
 
-All 13 studio portraits from the canonical likeness album (`https://photos.app.goo.gl/bmrt6shq5YKfG16SA`) are `2048x2048` high-resolution images on a pure `#000000` studio black background, stored in `assets/alex-likeness/` across `/home/alex/codingcat.dev`, `/home/alex/codingcat-social-agent`, and `~/code/codingcatdev-agent-toolkit`:
+All 16 studio portraits are `2048x2048` high-resolution images on a pure `#000000` studio black background featuring Alex Patterson wearing his fitted matte-black crew-neck t-shirt with the screen-printed CodingCat.dev AJ the Cat headphone mascot logo (`AJHeadphones.png`) on the chest, stored in `assets/alex-likeness/` across `/home/alex/codingcat.dev`, `/home/alex/codingcat-social-agent`, and `~/code/codingcatdev-agent-toolkit`:
 
 | File | Pose & Direction | Best Thumbnail / Cover Placement |
 | :--- | :--- | :--- |
@@ -35,6 +34,9 @@ All 13 studio portraits from the canonical likeness album (`https://photos.app.g
 | `assets/alex-likeness/alex-likeness-11.jpg` | Pointing right with right index finger, excited open-mouth smile | **Left-third placement (Primary)** pointing right directly at a diagram |
 | `assets/alex-likeness/alex-likeness-12.jpg` | Thinking / stroking chin with left hand, looking left thoughtfully | Architectural trade-offs, system design evaluations, and debugging |
 | `assets/alex-likeness/alex-likeness-13.jpg` | Facepalm covering forehead/right eye (`"Oh no / Bug"` pose) | Post-mortems, security vulnerabilities, or painful dev mistakes |
+| `assets/alex-likeness/alex-likeness-14.jpg` | Skeptical Senior Solutions Architect (`"Wait, really?"`) raised eyebrow, arms crossed below AJ chest logo | Myth-busting, vendor hype critiques, and hot-take reviews |
+| `assets/alex-likeness/alex-likeness-15.jpg` | Open-palm two-hand presenting / weighing two architectural options with AJ chest logo centered | A vs. B framework comparisons, Tier Lists, and Trade-Off Matrix thumbnails |
+| `assets/alex-likeness/alex-likeness-16.jpg` | Big joyful laugh (`"Ship It!"`) double index-finger point left with AJ chest logo | Course launches, shipped milestones, and developer productivity wins |
 
 ## Strict Anatomical & Visual Rules for AJ the Cat
 Whenever selecting, compositing, or generating new poses of AJ using the reference images above, enforce every single trait below:

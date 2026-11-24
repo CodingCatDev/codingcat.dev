@@ -4,6 +4,22 @@
       "type": "http",
       "url": "http://localhost:8788/mcp",
       "description": "CodingCat.dev Agent Toolkit & Design System MCP Server (Cloudflare Worker via Hono). Exposes list_codingcat_rules, get_codingcat_rules, and get_codingcat_tokens."
+    },
+    "chrome-devtools": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "chrome-devtools-mcp@latest",
+        "--headless"
+      ],
+      "description": "Chrome DevTools MCP Server (github.com/ChromeDevTools/chrome-devtools-mcp). Lets agents inspect rendered HTML/GSAP/Three.js/Remotion video frames, audit DOM bounds, catch overlapping text, and verify layout before MP4 export."
+    },
+    "blender": {
+      "command": "/home/alex/.local/bin/uvx",
+      "args": [
+        "blender-mcp"
+      ],
+      "description": "Blender MCP Server (github.com/ahujasid/mcp-for-blender). Lets AI agents create, manipulate, rig, and render 3D scenes in Blender."
     }
   }
 }

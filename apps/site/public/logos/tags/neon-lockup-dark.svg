@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 64" width="200" height="64" role="img" aria-label="Neon">
+  <g transform="translate(14.00, 14.00) scale(1.5000)" fill="#00E599">
+    <path d="M4 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v15.2a1 1 0 0 1-1.78.63L12 12.1V19a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4zm3.2 1.2v12.6h1.6V7.9l7.9 9.7V5.2H7.2z"/>
+  </g>
+  <text x="64" y="41" fill="#FFFFFF" font-family="'Nunito', 'Inter', system-ui, -apple-system, sans-serif" font-size="25" font-weight="900" letter-spacing="-0.02em">Neon</text>
+</svg>

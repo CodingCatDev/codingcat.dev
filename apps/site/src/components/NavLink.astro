@@ -1,19 +1,21 @@
 ---
-import { stegaClean } from "@sanity/client/stega";
+import { matchNavHref } from "@/lib/navigation";
 
 /**
- * Replaces the Next `nav-link.tsx` client component. Active-path detection
- * ran through `usePathname()` there, which forced the whole nav to be a
- * client island; under SSR the pathname is already known at render time, so
- * this ships zero JS.
+ * SSR navigation link with automatic pillar-aware active state detection.
+ * Maps singular detail pages (e.g. /post/[slug], /course/[slug], /podcast/[slug])
+ * to their parent navigation category and sets WAI-ARIA `aria-current` ("page" for
+ * exact matches, "true" for descendant/pillar matches).
  */
 interface Props {
 	href: string;
 	class?: string;
 	target?: string;
 	rel?: string;
-	/** Match descendant routes too, e.g. /blog marks /blog/page/2 active. */
+	/** Match descendant and pillar detail routes too (default: true). */
 	prefix?: boolean;
+	/** Visual treatment preset. */
+	variant?: "inline" | "desktop-pill" | "mobile-secondary";
 }
 
 const {
@@ -22,28 +24,78 @@ const {
 	target,
 	rel,
 	prefix = true,
+	variant = "inline",
 } = Astro.props;
 
-const cleanHref = stegaClean(href) || "/";
-const current = Astro.url.pathname.replace(/\/+$/, "") || "/";
-const normalized = cleanHref.replace(/\/+$/, "") || "/";
+const { cleanHref, isExternal, isActive, ariaCurrent } = matchNavHref(
+	Astro.url.pathname,
+	href,
+	{ prefix },
+);
 
-const isExternal = /^https?:\/\//.test(cleanHref);
-const isActive =
-	!isExternal &&
-	(normalized === "/"
-		? current === "/"
-		: prefix
-			? current === normalized || current.startsWith(`${normalized}/`)
-			: current === normalized);
+const desktopPillClasses = [
+	"inline-flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-sm font-extrabold transition-all duration-150",
+	"focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7C3AED] focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-[#C084FC] dark:focus-visible:ring-offset-[#131B2E]",
+	isActive
+		? "border-2 border-[#2A1155] bg-[#EDE9FE] text-[#2A1155] shadow-[2px_3px_0px_0px_#2A1155] dark:border-[#C084FC] dark:bg-[#7C3AED]/30 dark:text-white dark:shadow-[2px_3px_0px_0px_rgba(192,132,252,0.45)]"
+		: "border-2 border-transparent text-[#2A1155]/80 hover:border-[#2A1155]/25 hover:bg-[#EDE9FE]/55 hover:text-[#2A1155] dark:text-slate-300 dark:hover:border-white/20 dark:hover:bg-white/8 dark:hover:text-white",
+];
+
+const mobileSecondaryClasses = [
+	"inline-flex min-h-11 items-center justify-between gap-2 rounded-xl px-3.5 py-2.5 text-sm font-extrabold transition-all duration-150",
+	"focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7C3AED] dark:focus-visible:ring-[#C084FC]",
+	isActive
+		? "border-2 border-[#2A1155] bg-[#EDE9FE] text-[#2A1155] shadow-[2px_3px_0px_0px_#2A1155] dark:border-[#C084FC] dark:bg-[#7C3AED]/30 dark:text-white dark:shadow-[2px_3px_0px_0px_rgba(192,132,252,0.45)]"
+		: "border-2 border-[#2A1155]/30 bg-white text-[#2A1155]/90 hover:border-[#2A1155] hover:bg-[#F5F3FB] dark:border-white/18 dark:bg-[#131B2E] dark:text-slate-200 dark:hover:border-[#C084FC]/60 dark:hover:bg-[#171F33]",
+];
+
+const inlineClasses = [
+	"rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7C3AED] dark:focus-visible:ring-[#C084FC]",
+	className,
+	isActive &&
+		"underline decoration-[#7C3AED] dark:decoration-[#C084FC] decoration-2 underline-offset-4 text-[#7C3AED] dark:text-[#C084FC] font-extrabold",
+];
+
+const resolvedClasses =
+	variant === "desktop-pill"
+		? [...desktopPillClasses, className]
+		: variant === "mobile-secondary"
+			? [...mobileSecondaryClasses, className]
+			: inlineClasses;
 ---
 
 <a
 	href={cleanHref}
-	class:list={[className, isActive && "underline decoration-primary"]}
+	class:list={resolvedClasses}
 	target={target}
 	rel={rel ?? (isExternal ? "noopener noreferrer" : undefined)}
-	aria-current={isActive ? "page" : undefined}
+	aria-current={ariaCurrent}
+	data-active={isActive ? "true" : undefined}
 >
-	<slot />
+	{
+		variant === "desktop-pill" && isActive && (
+			<span
+				class="size-2 shrink-0 rounded-full bg-[#7C3AED] ring-2 ring-[#2A1155]/15 dark:bg-[#86EFAC] dark:ring-[#86EFAC]/30"
+				aria-hidden="true"
+			/>
+		)
+	}
+	<span><slot /></span>
+	{
+		variant === "mobile-secondary" && (
+			isActive ? (
+				<span
+					class="size-2 shrink-0 rounded-full bg-[#7C3AED] ring-2 ring-[#2A1155]/15 dark:bg-[#86EFAC] dark:ring-[#86EFAC]/30"
+					aria-hidden="true"
+				/>
+			) : (
+				<span
+					class="font-mono text-xs text-[#2A1155]/45 dark:text-slate-400"
+					aria-hidden="true"
+				>
+					→
+				</span>
+			)
+		)
+	}
 </a>
