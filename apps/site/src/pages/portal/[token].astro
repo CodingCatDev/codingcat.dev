@@ -1866,55 +1866,93 @@ const pageDescription = !portalFound
 
 		{isMultiGuest && (
 			<section id="episode-guests" class="flex flex-col gap-4 p-5 rounded-2xl border border-border bg-card shadow-xs">
-				<div class="flex flex-col gap-1">
-					<h2 class="text-xl font-bold tracking-tight">
-						Guests on This Episode ({portalGuests.length})
-					</h2>
-					<p class="text-xs text-muted-foreground">
-						Each guest signs in with their own email, completes their own speaker profile, and signs their own media release.
-					</p>
+				<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+					<div class="flex flex-col gap-1">
+						<h2 class="text-xl font-bold tracking-tight">
+							Guests on This Episode ({portalGuests.length})
+						</h2>
+						<p class="text-xs text-muted-foreground">
+							{isPortalHost
+								? "Select a guest tab below to inspect or edit their speaker bio, headshot, social links, and media release status."
+								: "Each guest signs in with their own email, completes their own speaker profile, and signs their own media release."}
+						</p>
+					</div>
+					{activeGuest && (
+						<span class="w-fit text-xs font-mono font-bold px-3 py-1 rounded-full bg-primary/15 text-primary border border-primary/30">
+							Viewing: {activeGuest.name}
+						</span>
+					)}
 				</div>
-				<ul class="flex flex-col gap-2">
-					{portalGuests.map((g) => (
-						<li class={`flex flex-col sm:flex-row sm:items-center justify-between gap-2 p-3.5 rounded-xl border ${
-							g._key === activeGuest?._key ? "border-primary/50 bg-primary/5" : "border-border bg-background"
-						}`}>
-							<div class="flex flex-col gap-0.5">
-								<span class="text-sm font-bold text-foreground">
-									{g.name}
-									{g._key === signedInGuestKey && (
-										<span class="ml-1.5 text-[11px] font-mono px-2 py-0.5 rounded-full bg-primary/15 text-primary font-semibold">You</span>
-									)}
-								</span>
-								<span class="text-[11px] font-mono text-muted-foreground">{g.email}</span>
+				<div role="tablist" aria-label="Episode Guests" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+					{portalGuests.map((g) => {
+						const isActive = g._key === activeGuest?._key;
+						const tabHref = `/portal/${encodeURIComponent(portalData.portalToken)}?guest=${encodeURIComponent(g._key)}#episode-guests`;
+						const tabClass = isActive
+							? "flex flex-col gap-2.5 p-4 rounded-xl border-2 border-primary bg-primary/10 shadow-xs text-left transition-all"
+							: isPortalHost
+								? "flex flex-col gap-2.5 p-4 rounded-xl border border-border bg-background hover:border-primary/60 hover:bg-primary/5 text-left transition-all cursor-pointer"
+								: "flex flex-col gap-2.5 p-4 rounded-xl border border-border bg-background/60 opacity-85 text-left";
+						const inner = (
+							<>
+								<div class="flex items-start justify-between gap-2">
+									<div class="flex flex-col gap-0.5 min-w-0">
+										<span class="text-sm font-bold text-foreground truncate">
+											{g.name}
+											{g._key === signedInGuestKey && (
+												<span class="ml-1.5 text-[11px] font-mono px-2 py-0.5 rounded-full bg-primary/15 text-primary font-semibold">You</span>
+											)}
+										</span>
+										<span class="text-[11px] font-mono text-muted-foreground truncate">{g.email}</span>
+									</div>
+									{isActive ? (
+										<span class="shrink-0 text-[10px] font-mono font-extrabold uppercase tracking-wider px-2 py-0.5 rounded-full bg-primary text-primary-foreground">
+											Active
+										</span>
+									) : isPortalHost ? (
+										<span class="shrink-0 text-[10px] font-mono font-bold uppercase tracking-wider px-2 py-0.5 rounded-full border border-primary/40 text-primary">
+											Switch &rarr;
+										</span>
+									) : null}
+								</div>
+								<div class="flex flex-wrap items-center gap-1.5">
+									<span class={`text-[11px] font-mono font-bold px-2 py-0.5 rounded-full ${
+										g.guestSlug
+											? "bg-emerald-500/15 text-emerald-700 dark:text-emerald-300"
+											: "bg-amber-500/15 text-amber-700 dark:text-amber-300"
+									}`}>
+										{g.guestSlug ? "✓ Profile Linked" : "Profile Needed"}
+									</span>
+									<span class={`text-[11px] font-mono font-bold px-2 py-0.5 rounded-full ${
+										g.signatureData
+											? "bg-emerald-500/15 text-emerald-700 dark:text-emerald-300"
+											: "bg-amber-500/15 text-amber-700 dark:text-amber-300"
+									}`}>
+										{g.signatureData ? "✓ Release Signed" : "Release Pending"}
+									</span>
+								</div>
+							</>
+						);
+
+						return isPortalHost ? (
+							<a
+								role="tab"
+								aria-selected={isActive ? "true" : "false"}
+								href={tabHref}
+								class={tabClass}
+							>
+								{inner}
+							</a>
+						) : (
+							<div
+								role="tab"
+								aria-selected={isActive ? "true" : "false"}
+								class={tabClass}
+							>
+								{inner}
 							</div>
-							<div class="flex flex-wrap items-center gap-2">
-								<span class={`text-[11px] font-mono font-bold px-2 py-0.5 rounded-full ${
-									g.guestSlug
-										? "bg-emerald-500/15 text-emerald-700 dark:text-emerald-300"
-										: "bg-amber-500/15 text-amber-700 dark:text-amber-300"
-								}`}>
-									{g.guestSlug ? "✓ Profile Started" : "Profile Needed"}
-								</span>
-								<span class={`text-[11px] font-mono font-bold px-2 py-0.5 rounded-full ${
-									g.signatureData
-										? "bg-emerald-500/15 text-emerald-700 dark:text-emerald-300"
-										: "bg-amber-500/15 text-amber-700 dark:text-amber-300"
-								}`}>
-									{g.signatureData ? "✓ Release Signed" : "Release Pending"}
-								</span>
-								{isPortalHost && g._key !== activeGuest?._key && (
-									<a
-										href={`?guest=${encodeURIComponent(g._key)}#guest-profile`}
-										class="text-[11px] font-bold px-2.5 py-1 rounded-lg border border-primary text-primary hover:bg-primary/10 transition-colors"
-									>
-										View / Edit Profile
-									</a>
-								)}
-							</div>
-						</li>
-					))}
-				</ul>
+						);
+					})}
+				</div>
 			</section>
 		)}
 
