@@ -39,6 +39,7 @@ import sponsor from "./schemas/documents/sponsor";
 import sponsorLead from "./schemas/documents/sponsorLead";
 import sponsorPool from "./schemas/documents/sponsorPool";
 import booking from "./schemas/documents/booking";
+import bookingBlackout from "./schemas/documents/bookingBlackout";
 import tableSchema, { rowType } from "./schemas/custom/table";
 import tierListSchema, {
 	tierDetailType,
@@ -169,6 +170,7 @@ const schemaTypes = [
 	sponsorLead,
 	sponsorPool,
 	booking,
+	bookingBlackout,
 	syndication,
 	transcript,
 	trendSignal,

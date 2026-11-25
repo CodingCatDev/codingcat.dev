@@ -10,6 +10,7 @@ const MANAGED_DOCUMENT_TYPES = new Set([
 	"settings",
 	"sponsorConfig",
 	"booking",
+	"bookingBlackout",
 	"sponsorLead",
 	"sponsorPool",
 	"course",
@@ -113,6 +114,20 @@ export const editorialStructure: StructureResolver = (S) =>
 										)
 										.defaultOrdering([
 											{ field: "slotStartAt", direction: "desc" },
+										]),
+								),
+							S.listItem()
+								.title("Portal Booking Blackouts (Travel / Conferences)")
+								.child(
+									S.documentList()
+										.title("Portal Booking Blackouts")
+										.schemaType("bookingBlackout")
+										.apiVersion("2025-02-19")
+										.filter(
+											'_type == "bookingBlackout" && (_id in path("private.**") || _id in path("*"))',
+										)
+										.defaultOrdering([
+											{ field: "startDate", direction: "asc" },
 										]),
 								),
 							S.listItem()

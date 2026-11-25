@@ -8,6 +8,7 @@ import {
 } from "@/lib/email";
 import {
 	cancelGoogleCalendarBookingEvent,
+	checkPortalBookingBlackout,
 	createGoogleCalendarBookingEvent,
 	STREAMYARD_STUDIO_URL,
 } from "@/lib/google-calendar";
@@ -91,6 +92,26 @@ export const POST: APIRoute = async ({ request, url }) => {
 				message: "Guest name, valid email, and talking points are required.",
 			}),
 			{ status: 400, headers: { "Content-Type": "application/json" } },
+		);
+	}
+
+	// Enforce portal-only blackout windows (e.g. travel/conferences) without
+	// blocking Google Calendar or Sanity coworker bookings.
+	const blockedSlot =
+		(await checkPortalBookingBlackout(slotStartAt)) ||
+		(preMeetingSlotStartAt
+			? await checkPortalBookingBlackout(preMeetingSlotStartAt)
+			: null);
+	if (blockedSlot) {
+		return new Response(
+			JSON.stringify({
+				success: false,
+				code: "PORTAL_BLACKOUT",
+				message:
+					blockedSlot.reason ||
+					`${blockedSlot.title || "This date"} is blocked for portal bookings (${blockedSlot.startDate} to ${blockedSlot.endDate}). Please pick another available slot.`,
+			}),
+			{ status: 409, headers: { "Content-Type": "application/json" } },
 		);
 	}
 

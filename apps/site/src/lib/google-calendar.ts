@@ -115,6 +115,78 @@ export interface CalendarCheckStatus {
 	error?: string;
 }
 
+export interface PortalBookingBlackout {
+	_id: string;
+	title?: string;
+	startDate: string;
+	endDate: string;
+	reason?: string;
+}
+
+function toNewYorkDateYmd(isoTimestamp: string): string | null {
+	const d = new Date(isoTimestamp);
+	if (Number.isNaN(d.getTime())) {
+		return null;
+	}
+	return new Intl.DateTimeFormat("en-CA", {
+		timeZone: "America/New_York",
+		year: "numeric",
+		month: "2-digit",
+		day: "2-digit",
+	}).format(d);
+}
+
+export async function fetchPortalBookingBlackouts(): Promise<
+	PortalBookingBlackout[]
+> {
+	try {
+		const { client } = getSanityServerClient();
+		const docs = await client.fetch<PortalBookingBlackout[]>(
+			`*[_type == "bookingBlackout" && active != false && defined(startDate) && defined(endDate)]{
+				_id,
+				title,
+				startDate,
+				endDate,
+				reason
+			}`,
+		);
+		return Array.isArray(docs) ? docs : [];
+	} catch {
+		return [];
+	}
+}
+
+export function findMatchingPortalBlackout(
+	isoTimestamp: string,
+	blackouts: PortalBookingBlackout[],
+): PortalBookingBlackout | null {
+	const ymd = toNewYorkDateYmd(isoTimestamp);
+	if (!ymd || blackouts.length === 0) {
+		return null;
+	}
+	return (
+		blackouts.find(
+			(b) =>
+				typeof b.startDate === "string" &&
+				typeof b.endDate === "string" &&
+				ymd >= b.startDate &&
+				ymd <= b.endDate,
+		) ?? null
+	);
+}
+
+/**
+ * Checks whether a requested portal booking or rebooking timestamp falls inside
+ * an active Sanity `bookingBlackout` window (America/New_York calendar dates).
+ * Leaves Google Calendar and direct Sanity coworker bookings completely open.
+ */
+export async function checkPortalBookingBlackout(
+	isoTimestamp: string,
+): Promise<PortalBookingBlackout | null> {
+	const blackouts = await fetchPortalBookingBlackouts();
+	return findMatchingPortalBlackout(isoTimestamp, blackouts);
+}
+
 async function getAccessToken(
 	refreshTokenOverride?: string,
 ): Promise<string | null> {
@@ -436,7 +508,7 @@ export async function getMultiCalendarAvailableSlots(
 	calendarStatuses: CalendarCheckStatus[];
 }> {
 	const candidates = generateDefaultCandidateSlots(
-		21,
+		28,
 		durationMinutes,
 		startDate,
 	);
@@ -444,8 +516,16 @@ export async function getMultiCalendarAvailableSlots(
 		return { slots: [], liveVerified: false, calendarStatuses: [] };
 	}
 
-	const timeMin = candidates[0].startAt;
-	const timeMax = candidates[candidates.length - 1].endAt;
+	const blackouts = await fetchPortalBookingBlackouts();
+	const unblockedCandidates = candidates.filter(
+		(slot) => !findMatchingPortalBlackout(slot.startAt, blackouts),
+	);
+	if (unblockedCandidates.length === 0) {
+		return { slots: [], liveVerified: true, calendarStatuses: [] };
+	}
+
+	const timeMin = unblockedCandidates[0].startAt;
+	const timeMax = unblockedCandidates[unblockedCandidates.length - 1].endAt;
 	const { liveVerified, busyRanges, calendarStatuses } = await fetchBusyRanges(
 		timeMin,
 		timeMax,
@@ -497,23 +577,20 @@ export async function getMultiCalendarAvailableSlots(
 
 	if (!liveVerified && busyRanges.length === 0) {
 		return {
-			slots: spreadSlotsAcrossDays(candidates, maxSlots),
+			slots: spreadSlotsAcrossDays(unblockedCandidates, maxSlots),
 			liveVerified: false,
 			calendarStatuses,
 		};
 	}
 
-	const available = candidates.filter((slot) => {
+	const available = unblockedCandidates.filter((slot) => {
 		const slotStart = new Date(slot.startAt).getTime();
 		const slotEnd = new Date(slot.endAt).getTime();
 		return !busyRanges.some((b) => slotStart < b.endMs && slotEnd > b.startMs);
 	});
 
 	return {
-		slots: spreadSlotsAcrossDays(
-			available.length > 0 ? available : candidates,
-			maxSlots,
-		),
+		slots: spreadSlotsAcrossDays(available, maxSlots),
 		liveVerified: true,
 		calendarStatuses,
 	};
